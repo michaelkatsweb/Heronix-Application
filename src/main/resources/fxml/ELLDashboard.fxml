@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.ELLDashboardController"
+            prefWidth="1500" prefHeight="950"
+            style="-fx-background-color: #f5f5f5;">
+
+    <!-- Top: Header & Filters -->
+    <top>
+        <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
+            <Label text="ELL Program Dashboard" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+            <Label text="English Language Learner program overview, compliance monitoring, and student progress tracking"
+                   style="-fx-font-size: 13px; -fx-text-fill: #666;" wrapText="true"/>
+
+            <!-- Title III Compliance Banner -->
+            <HBox spacing="10" style="-fx-background-color: #e3f2fd; -fx-padding: 12; -fx-border-radius: 5; -fx-background-radius: 5;">
+                <Label text="📋" style="-fx-font-size: 16px;"/>
+                <VBox spacing="5">
+                    <Label text="Title III Compliance & Federal Reporting"
+                           style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #1565c0;"/>
+                    <Label text="Annual assessments, progress monitoring, and parent notification are required by federal law. Ensure timely reclassification reviews."
+                           style="-fx-font-size: 12px; -fx-text-fill: #424242;" wrapText="true"/>
+                </VBox>
+            </HBox>
+
+            <!-- Filters -->
+            <HBox spacing="15" style="-fx-padding: 10 0 0 0;">
+                <VBox spacing="5">
+                    <Label text="ELL Status" style="-fx-font-weight: bold;"/>
+                    <ComboBox fx:id="statusFilterComboBox" prefWidth="180">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="ALL"/>
+                                <String fx:value="ACTIVE"/>
+                                <String fx:value="RECLASSIFIED"/>
+                                <String fx:value="MONITORED"/>
+                                <String fx:value="EXITED"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Proficiency Level" style="-fx-font-weight: bold;"/>
+                    <ComboBox fx:id="proficiencyFilterComboBox" prefWidth="180">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="ALL"/>
+                                <String fx:value="ENTERING"/>
+                                <String fx:value="EMERGING"/>
+                                <String fx:value="DEVELOPING"/>
+                                <String fx:value="EXPANDING"/>
+                                <String fx:value="BRIDGING"/>
+                                <String fx:value="REACHING"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Grade Level" style="-fx-font-weight: bold;"/>
+                    <ComboBox fx:id="gradeLevelFilterComboBox" prefWidth="120">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="ALL"/>
+                                <String fx:value="K"/>
+                                <String fx:value="1"/>
+                                <String fx:value="2"/>
+                                <String fx:value="3"/>
+                                <String fx:value="4"/>
+                                <String fx:value="5"/>
+                                <String fx:value="6"/>
+                                <String fx:value="7"/>
+                                <String fx:value="8"/>
+                                <String fx:value="9"/>
+                                <String fx:value="10"/>
+                                <String fx:value="11"/>
+                                <String fx:value="12"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Program Type" style="-fx-font-weight: bold;"/>
+                    <ComboBox fx:id="programTypeFilterComboBox" prefWidth="200">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="ALL"/>
+                                <String fx:value="ESL_PULL_OUT"/>
+                                <String fx:value="ESL_PUSH_IN"/>
+                                <String fx:value="SHELTERED_ENGLISH"/>
+                                <String fx:value="DUAL_LANGUAGE"/>
+                                <String fx:value="NEWCOMER"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                </VBox>
+
+                <VBox spacing="5" alignment="BOTTOM_LEFT">
+                    <Label text=" "/>
+                    <HBox spacing="10">
+                        <Button text="Apply Filters" onAction="#handleApplyFilters"
+                                style="-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20; -fx-cursor: hand;"/>
+                        <Button text="Reset" onAction="#handleResetFilters"
+                                style="-fx-background-color: #757575; -fx-text-fill: white; -fx-padding: 8 20; -fx-cursor: hand;"/>
+                        <Button text="Refresh" onAction="#handleRefresh"
+                                style="-fx-background-color: #388e3c; -fx-text-fill: white; -fx-padding: 8 20; -fx-cursor: hand;"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Dashboard Content -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="20" style="-fx-padding: 20;">
+
+                <!-- Summary Statistics Cards -->
+                <GridPane hgap="15" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="16.66"/>
+                        <ColumnConstraints percentWidth="16.66"/>
+                        <ColumnConstraints percentWidth="16.66"/>
+                        <ColumnConstraints percentWidth="16.66"/>
+                        <ColumnConstraints percentWidth="16.66"/>
+                        <ColumnConstraints percentWidth="16.67"/>
+                    </columnConstraints>
+
+                    <!-- Total ELL Students Card -->
+                    <VBox spacing="10" styleClass="stat-card"
+                          style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5; -fx-border-color: #e0e0e0; -fx-border-width: 1;"
+                          GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Total ELL Students" style="-fx-font-size: 11px; -fx-text-fill: #757575;"/>
+                        <Label fx:id="totalELLLabel" text="0" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+                        <Label fx:id="totalELLPercentLabel" text="0% of enrollment" style="-fx-font-size: 10px; -fx-text-fill: #757575;"/>
+                    </VBox>
+
+                    <!-- Active ELL Card -->
+                    <VBox spacing="10" styleClass="stat-card"
+                          style="-fx-background-color: #e8f5e9; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                          GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Active ELL" style="-fx-font-size: 11px; -fx-text-fill: #2e7d32;"/>
+                        <Label fx:id="activeELLLabel" text="0" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                        <Label fx:id="activeELLPercentLabel" text="0% of total" style="-fx-font-size: 10px; -fx-text-fill: #2e7d32;"/>
+                    </VBox>
+
+                    <!-- Monitored Students Card -->
+                    <VBox spacing="10" styleClass="stat-card"
+                          style="-fx-background-color: #fff3e0; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                          GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <Label text="Monitored Students" style="-fx-font-size: 11px; -fx-text-fill: #e65100;"/>
+                        <Label fx:id="monitoredLabel" text="0" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+                        <Label fx:id="monitoredYearsLabel" text="Across 1-4 years" style="-fx-font-size: 10px; -fx-text-fill: #e65100;"/>
+                    </VBox>
+
+                    <!-- Eligible for Reclassification Card -->
+                    <VBox spacing="10" styleClass="stat-card"
+                          style="-fx-background-color: #f3e5f5; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                          GridPane.columnIndex="3" GridPane.rowIndex="0">
+                        <Label text="Eligible for Reclass" style="-fx-font-size: 11px; -fx-text-fill: #6a1b9a;"/>
+                        <Label fx:id="eligibleReclassLabel" text="0" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #6a1b9a;"/>
+                        <Label fx:id="eligibleReclassPercentLabel" text="0% of active" style="-fx-font-size: 10px; -fx-text-fill: #6a1b9a;"/>
+                    </VBox>
+
+                    <!-- Assessments Overdue Card -->
+                    <VBox spacing="10" styleClass="stat-card"
+                          style="-fx-background-color: #ffebee; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                          GridPane.columnIndex="4" GridPane.rowIndex="0">
+                        <Label text="Assessments Overdue" style="-fx-font-size: 11px; -fx-text-fill: #c62828;"/>
+                        <Label fx:id="assessmentsOverdueLabel" text="0" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                        <Label fx:id="assessmentsDueLabel" text="0 due this month" style="-fx-font-size: 10px; -fx-text-fill: #c62828;"/>
+                    </VBox>
+
+                    <!-- Title III Funded Card -->
+                    <VBox spacing="10" styleClass="stat-card"
+                          style="-fx-background-color: #e1f5fe; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                          GridPane.columnIndex="5" GridPane.rowIndex="0">
+                        <Label text="Title III Funded" style="-fx-font-size: 11px; -fx-text-fill: #0277bd;"/>
+                        <Label fx:id="titleIIIFundedLabel" text="0" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #0277bd;"/>
+                        <Label fx:id="titleIIIPercentLabel" text="0% of eligible" style="-fx-font-size: 10px; -fx-text-fill: #0277bd;"/>
+                    </VBox>
+                </GridPane>
+
+                <!-- Charts Section -->
+                <GridPane hgap="20" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="50"/>
+                    </columnConstraints>
+
+                    <!-- Proficiency Levels Chart -->
+                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                          GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Students by Proficiency Level" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <BarChart fx:id="proficiencyBarChart" legendVisible="false" prefHeight="300">
+                            <xAxis>
+                                <CategoryAxis label="Proficiency Level" fx:id="proficiencyXAxis"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Number of Students" fx:id="proficiencyYAxis"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+
+                    <!-- Program Types Chart -->
+                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                          GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Students by Program Type" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <PieChart fx:id="programTypesPieChart" legendVisible="true" prefHeight="300"/>
+                    </VBox>
+
+                    <!-- Languages Spoken Chart -->
+                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                          GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                        <Label text="Top 10 Languages Spoken" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <BarChart fx:id="languagesBarChart" legendVisible="false" prefHeight="250">
+                            <xAxis>
+                                <CategoryAxis label="Language" fx:id="languagesXAxis"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Number of Students" fx:id="languagesYAxis"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+                </GridPane>
+
+                <!-- Alerts & Action Items -->
+                <GridPane hgap="20" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="50"/>
+                    </columnConstraints>
+
+                    <!-- Assessments Due -->
+                    <VBox spacing="15" style="-fx-background-color: #fff9c4; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                          GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="⚠ Annual Assessments Due" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #f57f17;"/>
+                        <ListView fx:id="assessmentsDueListView" prefHeight="200"/>
+                    </VBox>
+
+                    <!-- Parent Notifications Needed -->
+                    <VBox spacing="15" style="-fx-background-color: #ffebee; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                          GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="📧 Parent Notifications Needed" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                        <ListView fx:id="parentNotificationsListView" prefHeight="200"/>
+                    </VBox>
+
+                    <!-- Reclassification Candidates -->
+                    <VBox spacing="15" style="-fx-background-color: #e8f5e9; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                          GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label text="🌟 Reclassification Candidates" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                        <ListView fx:id="reclassificationCandidatesListView" prefHeight="200"/>
+                    </VBox>
+
+                    <!-- Progress Monitoring Overdue -->
+                    <VBox spacing="15" style="-fx-background-color: #fff3e0; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                          GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label text="📊 Progress Monitoring Overdue" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+                        <ListView fx:id="progressMonitoringOverdueListView" prefHeight="200"/>
+                    </VBox>
+                </GridPane>
+
+                <!-- ELL Students Table -->
+                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="ELL Students List" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="searchField" promptText="Search students..." prefWidth="250"
+                                   style="-fx-padding: 8;"/>
+                        <Button text="Add New ELL Student" onAction="#handleAddStudent"
+                                style="-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <TableView fx:id="ellStudentsTable" prefHeight="400">
+                        <columns>
+                            <TableColumn fx:id="studentNameColumn" text="Student Name" prefWidth="180"/>
+                            <TableColumn fx:id="studentIdColumn" text="Student ID" prefWidth="100"/>
+                            <TableColumn fx:id="gradeColumn" text="Grade" prefWidth="70"/>
+                            <TableColumn fx:id="statusColumn" text="ELL Status" prefWidth="150"/>
+                            <TableColumn fx:id="proficiencyColumn" text="Proficiency" prefWidth="120"/>
+                            <TableColumn fx:id="programColumn" text="Program" prefWidth="180"/>
+                            <TableColumn fx:id="nativeLanguageColumn" text="Native Language" prefWidth="120"/>
+                            <TableColumn fx:id="yearsInProgramColumn" text="Years in Program" prefWidth="120"/>
+                            <TableColumn fx:id="lastAssessmentColumn" text="Last Assessment" prefWidth="120"/>
+                            <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
+                        </columns>
+                    </TableView>
+
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <Label fx:id="totalStudentsLabel" text="Showing 0 students"/>
+                    </HBox>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Bottom: Status Bar -->
+    <bottom>
+        <HBox spacing="15" style="-fx-background-color: white; -fx-padding: 12; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;" alignment="CENTER_LEFT">
+            <Label text="Last Refreshed:" style="-fx-font-weight: bold;"/>
+            <Label fx:id="lastRefreshedLabel" text="--"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="statusLabel" text="Ready" style="-fx-text-fill: #757575;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

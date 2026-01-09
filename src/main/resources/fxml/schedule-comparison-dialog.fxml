@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+
+<DialogPane xmlns="http://javafx.com/javafx/21"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.heronix.ui.controller.ScheduleComparisonDialogController"
+    stylesheets="@../css/modern-theme.css"
+    prefWidth="900" prefHeight="700">
+
+    <headerText>Compare Schedules</headerText>
+
+    <content>
+        <VBox spacing="15" styleClass="dialog-content">
+            <padding><Insets top="15" right="20" bottom="15" left="20" /></padding>
+
+            <!-- SCHEDULE SELECTION -->
+            <GridPane hgap="15" vgap="10">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50" />
+                    <ColumnConstraints percentWidth="50" />
+                </columnConstraints>
+
+                <!-- Schedule 1 -->
+                <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <Label text="Schedule 1:" styleClass="section-header" />
+                    <ComboBox fx:id="schedule1ComboBox" prefWidth="400" promptText="Select first schedule..." />
+                    <Text fx:id="schedule1InfoText" wrappingWidth="400"
+                        style="-fx-fill: #7f8c8d; -fx-font-size: 12px;" />
+                </VBox>
+
+                <!-- Schedule 2 -->
+                <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <Label text="Schedule 2:" styleClass="section-header" />
+                    <ComboBox fx:id="schedule2ComboBox" prefWidth="400" promptText="Select second schedule..." />
+                    <Text fx:id="schedule2InfoText" wrappingWidth="400"
+                        style="-fx-fill: #7f8c8d; -fx-font-size: 12px;" />
+                </VBox>
+            </GridPane>
+
+            <Separator />
+
+            <!-- COMPARISON RESULTS (hidden until comparison is run) -->
+            <VBox fx:id="comparisonResultsBox" spacing="15" visible="false" managed="false">
+
+                <!-- METRICS SUMMARY -->
+                <Label text="Quality Metrics Comparison:" styleClass="section-header" />
+
+                <GridPane hgap="20" vgap="12"
+                    style="-fx-background-color: #f8f9fa; -fx-background-radius: 8; -fx-padding: 15;">
+                    <columnConstraints>
+                        <ColumnConstraints prefWidth="180" />
+                        <ColumnConstraints prefWidth="140" halignment="CENTER" />
+                        <ColumnConstraints prefWidth="140" halignment="CENTER" />
+                        <ColumnConstraints prefWidth="120" halignment="CENTER" />
+                    </columnConstraints>
+
+                    <!-- Header Row -->
+                    <Label text="Metric" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                        style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+                    <Label fx:id="schedule1NameLabel" text="Schedule 1" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                        style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2980b9;" />
+                    <Label fx:id="schedule2NameLabel" text="Schedule 2" GridPane.columnIndex="2" GridPane.rowIndex="0"
+                        style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #27ae60;" />
+                    <Label text="Winner" GridPane.columnIndex="3" GridPane.rowIndex="0"
+                        style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+
+                    <!-- Hard Score -->
+                    <Label text="Hard Score (Conflicts):" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <Label fx:id="schedule1HardScoreLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                        styleClass="metric-value" />
+                    <Label fx:id="schedule2HardScoreLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1"
+                        styleClass="metric-value" />
+                    <Label fx:id="hardScoreWinnerLabel" text="—" GridPane.columnIndex="3" GridPane.rowIndex="1"
+                        style="-fx-font-weight: bold;" />
+
+                    <!-- Soft Score -->
+                    <Label text="Soft Score (Quality):" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                    <Label fx:id="schedule1SoftScoreLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                        styleClass="metric-value" />
+                    <Label fx:id="schedule2SoftScoreLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="2"
+                        styleClass="metric-value" />
+                    <Label fx:id="softScoreWinnerLabel" text="—" GridPane.columnIndex="3" GridPane.rowIndex="2"
+                        style="-fx-font-weight: bold;" />
+
+                    <!-- Conflict Count -->
+                    <Label text="Total Conflicts:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                    <Label fx:id="schedule1ConflictsLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3"
+                        styleClass="metric-value" />
+                    <Label fx:id="schedule2ConflictsLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="3"
+                        styleClass="metric-value" />
+                    <Label fx:id="conflictsWinnerLabel" text="—" GridPane.columnIndex="3" GridPane.rowIndex="3"
+                        style="-fx-font-weight: bold;" />
+
+                    <!-- Generation Method -->
+                    <Label text="Generation Method:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                    <Label fx:id="schedule1MethodLabel" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="4"
+                        style="-fx-font-size: 12px;" />
+                    <Label fx:id="schedule2MethodLabel" text="N/A" GridPane.columnIndex="2" GridPane.rowIndex="4"
+                        style="-fx-font-size: 12px;" />
+                    <Label text="—" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                </GridPane>
+
+                <Separator />
+
+                <!-- VISUAL COMPARISON CHART -->
+                <Label text="Visual Comparison:" styleClass="section-header" />
+
+                <BarChart fx:id="comparisonChart" prefHeight="250" legendVisible="true">
+                    <xAxis>
+                        <CategoryAxis label="Metrics" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Score" />
+                    </yAxis>
+                </BarChart>
+
+                <Separator />
+
+                <!-- RECOMMENDATION -->
+                <VBox spacing="10" style="-fx-background-color: #d4edda; -fx-background-radius: 8; -fx-padding: 15;">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="💡" style="-fx-font-size: 24px;" />
+                        <Label text="Recommendation:" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #155724;" />
+                    </HBox>
+                    <Text fx:id="recommendationText" wrappingWidth="820"
+                        style="-fx-fill: #155724; -fx-font-size: 14px;" />
+                </VBox>
+
+            </VBox>
+
+            <!-- LOADING INDICATOR (shown during comparison) -->
+            <VBox fx:id="loadingBox" spacing="10" visible="false" managed="false"
+                style="-fx-background-color: #fff3cd; -fx-background-radius: 5; -fx-padding: 15;" alignment="CENTER">
+                <ProgressIndicator prefHeight="60" prefWidth="60" />
+                <Label text="Comparing schedules..." style="-fx-font-size: 14px; -fx-text-fill: #856404;" />
+            </VBox>
+
+        </VBox>
+    </content>
+
+    <buttonTypes>
+        <ButtonType fx:constant="CANCEL" />
+        <ButtonType fx:id="compareButtonType" text="Compare Schedules" buttonData="OK_DONE" />
+    </buttonTypes>
+
+</DialogPane>

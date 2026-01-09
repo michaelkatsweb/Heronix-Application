@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+Transfer Out Documentation Form
+Location: src/main/resources/fxml/TransferOutDocumentationForm.fxml
+
+Handles students transferring to other schools with comprehensive
+document preparation, records transfer, and acknowledgment tracking.
+
+@author Heronix Educational Systems LLC
+@version 1.0.0
+@since 2025-12-24
+-->
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.TransferOutDocumentationFormController"
+            styleClass="content-pane">
+
+    <!-- Top: Header and Quick Actions -->
+    <top>
+        <VBox styleClass="header-section" spacing="10">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+
+            <!-- Title and Transfer Out Number -->
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="Transfer Out Documentation" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Transfer Out #:" styleClass="label-bold"/>
+                <TextField fx:id="transferOutNumberField" editable="false" prefWidth="150"
+                           promptText="Auto-generated" styleClass="readonly-field"/>
+                <Label text="Status:" styleClass="label-bold"/>
+                <Label fx:id="statusLabel" text="DRAFT" styleClass="status-label"/>
+            </HBox>
+
+            <!-- Quick Actions -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button text="Start Records Preparation" onAction="#startRecordsPreparation" styleClass="action-button"/>
+                <Button text="Mark Ready to Send" onAction="#markReadyToSend" styleClass="action-button"/>
+                <Button text="Record Sent" onAction="#recordSent" styleClass="success-button"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Save" onAction="#save" styleClass="primary-button"/>
+                <Button text="Cancel" onAction="#cancel" styleClass="secondary-button"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Form Content -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="form-scroll-pane">
+            <VBox spacing="20" styleClass="form-container">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- Section 1: Student Information -->
+                <VBox spacing="10" styleClass="form-section">
+                    <Label text="Student Information" styleClass="section-title"/>
+                    <Separator/>
+
+                    <GridPane hgap="15" vgap="10" styleClass="form-grid">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <!-- Row 1: Student Selection -->
+                        <Label text="Student:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="field-label required"/>
+                        <HBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="2">
+                            <TextField fx:id="studentSearchField" promptText="Search by name or ID" HBox.hgrow="ALWAYS"/>
+                            <Button text="Search" onAction="#searchStudent"/>
+                        </HBox>
+                        <Label fx:id="studentNameLabel" text="No student selected" GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="info-label"/>
+
+                        <!-- Row 2 -->
+                        <Label text="Student ID:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="field-label"/>
+                        <TextField fx:id="studentIdField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="readonly-field"/>
+
+                        <Label text="Current Grade:" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="field-label"/>
+                        <TextField fx:id="currentGradeField" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                        <!-- Row 3 -->
+                        <Label text="Current Homeroom:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="field-label"/>
+                        <TextField fx:id="currentHomeroomField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="Last Attendance Date:" GridPane.columnIndex="2" GridPane.rowIndex="2" styleClass="field-label"/>
+                        <DatePicker fx:id="lastAttendanceDate" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Section 2: Transfer Information -->
+                <VBox spacing="10" styleClass="form-section">
+                    <Label text="Transfer Information" styleClass="section-title"/>
+                    <Separator/>
+
+                    <GridPane hgap="15" vgap="10" styleClass="form-grid">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <!-- Row 1 -->
+                        <Label text="Request Date:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="field-label required"/>
+                        <DatePicker fx:id="requestDate" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Expected Transfer Date:" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="field-label"/>
+                        <DatePicker fx:id="expectedTransferDate" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                        <!-- Row 2 -->
+                        <Label text="Actual Transfer Date:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="field-label"/>
+                        <DatePicker fx:id="actualTransferDate" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Reason for Transfer:" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="field-label"/>
+                        <ComboBox fx:id="transferReason" GridPane.columnIndex="3" GridPane.rowIndex="1" prefWidth="200"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Section 3: Destination School -->
+                <VBox spacing="10" styleClass="form-section">
+                    <Label text="Destination School" styleClass="section-title"/>
+                    <Separator/>
+
+                    <GridPane hgap="15" vgap="10" styleClass="form-grid">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="75"/>
+                        </columnConstraints>
+
+                        <!-- School Info -->
+                        <Label text="School Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="field-label required"/>
+                        <TextField fx:id="destinationSchoolName" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="District:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="field-label"/>
+                        <TextField fx:id="destinationSchoolDistrict" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Address:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="field-label"/>
+                        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <TextField fx:id="destinationCity" promptText="City" HBox.hgrow="ALWAYS"/>
+                            <ComboBox fx:id="destinationState" promptText="State" prefWidth="100"/>
+                            <TextField fx:id="destinationZip" promptText="ZIP" prefWidth="100"/>
+                        </HBox>
+
+                        <!-- Contact Info -->
+                        <Label text="Phone:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="field-label"/>
+                        <TextField fx:id="destinationPhone" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="field-label"/>
+                        <TextField fx:id="destinationEmail" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                        <Label text="Fax:" GridPane.columnIndex="0" GridPane.rowIndex="5" styleClass="field-label"/>
+                        <TextField fx:id="destinationFax" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                        <!-- Contact Person -->
+                        <Label text="Contact Person:" GridPane.columnIndex="0" GridPane.rowIndex="6" styleClass="field-label"/>
+                        <TextField fx:id="destinationContactPerson" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+
+                        <Label text="Contact Email:" GridPane.columnIndex="0" GridPane.rowIndex="7" styleClass="field-label"/>
+                        <TextField fx:id="destinationContactEmail" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+
+                        <Label text="Contact Phone:" GridPane.columnIndex="0" GridPane.rowIndex="8" styleClass="field-label"/>
+                        <TextField fx:id="destinationContactPhone" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Section 4: Documents Checklist -->
+                <VBox spacing="10" styleClass="form-section">
+                    <Label text="Documents Package (12 Items)" styleClass="section-title"/>
+                    <Separator/>
+
+                    <GridPane hgap="20" vgap="10" styleClass="form-grid">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <!-- Column 1 -->
+                        <CheckBox fx:id="transcriptIncluded" text="Official Transcript" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="attendanceRecordIncluded" text="Attendance Record" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <CheckBox fx:id="disciplineRecordIncluded" text="Discipline Record" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <CheckBox fx:id="immunizationRecordIncluded" text="Immunization Record" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <CheckBox fx:id="healthRecordIncluded" text="Health Records" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <CheckBox fx:id="iepIncluded" text="IEP (if applicable)" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+
+                        <!-- Column 2 -->
+                        <CheckBox fx:id="plan504Included" text="504 Plan (if applicable)" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="testScoresIncluded" text="Standardized Test Scores" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <CheckBox fx:id="cumulativeFileIncluded" text="Cumulative File" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <CheckBox fx:id="birthCertificateIncluded" text="Birth Certificate Copy" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <CheckBox fx:id="withdrawalFormIncluded" text="Withdrawal Form" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                        <CheckBox fx:id="parentRequestIncluded" text="Parent Request Letter" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                    </GridPane>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="document-summary">
+                        <Label text="Documents Included:" styleClass="label-bold"/>
+                        <Label fx:id="documentsIncludedCount" text="0 / 12" styleClass="count-label"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Select All" onAction="#selectAllDocuments"/>
+                        <Button text="Clear All" onAction="#clearAllDocuments"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Section 5: Transmission Details -->
+                <VBox spacing="10" styleClass="form-section">
+                    <Label text="Transmission Details" styleClass="section-title"/>
+                    <Separator/>
+
+                    <GridPane hgap="15" vgap="10" styleClass="form-grid">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="75"/>
+                        </columnConstraints>
+
+                        <Label text="Transmission Method:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="field-label"/>
+                        <ComboBox fx:id="transmissionMethod" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="250"/>
+
+                        <Label text="Sent Date:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="field-label"/>
+                        <DatePicker fx:id="sentDate" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Tracking Number:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="field-label"/>
+                        <TextField fx:id="trackingNumber" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="Sent By:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="field-label"/>
+                        <TextField fx:id="sentByField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="readonly-field"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Section 6: Acknowledgment -->
+                <VBox spacing="10" styleClass="form-section">
+                    <Label text="Acknowledgment of Receipt" styleClass="section-title"/>
+                    <Separator/>
+
+                    <GridPane hgap="15" vgap="10" styleClass="form-grid">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="75"/>
+                        </columnConstraints>
+
+                        <CheckBox fx:id="parentConsentObtained" text="Parent Consent Obtained" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+
+                        <Label text="Acknowledged By:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="field-label"/>
+                        <TextField fx:id="acknowledgedBy" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Acknowledgment Method:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="field-label"/>
+                        <ComboBox fx:id="acknowledgmentMethod" GridPane.columnIndex="1" GridPane.rowIndex="2" prefWidth="250"/>
+
+                        <Label text="Acknowledgment Date:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="field-label"/>
+                        <DatePicker fx:id="acknowledgmentDate" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="Acknowledgment Notes:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="field-label" GridPane.valignment="TOP"/>
+                        <TextArea fx:id="acknowledgmentNotes" GridPane.columnIndex="1" GridPane.rowIndex="4" prefRowCount="2" wrapText="true"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Section 7: Administrative Notes -->
+                <VBox spacing="10" styleClass="form-section">
+                    <Label text="Administrative Notes" styleClass="section-title"/>
+                    <Separator/>
+
+                    <TextArea fx:id="administrativeNotes" prefRowCount="4" wrapText="true"
+                              promptText="Internal notes for staff use only..."/>
+                </VBox>
+
+                <!-- Section 8: Audit Information -->
+                <VBox spacing="10" styleClass="form-section audit-section">
+                    <Label text="Audit Information" styleClass="section-subtitle"/>
+                    <Separator/>
+
+                    <GridPane hgap="15" vgap="5" styleClass="audit-grid">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <Label text="Created By:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="audit-label"/>
+                        <Label fx:id="createdByLabel" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="audit-value"/>
+
+                        <Label text="Created At:" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="audit-label"/>
+                        <Label fx:id="createdAtLabel" GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="audit-value"/>
+
+                        <Label text="Assigned Staff:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="audit-label"/>
+                        <Label fx:id="assignedStaffLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="audit-value"/>
+
+                        <Label text="Processing Days:" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="audit-label"/>
+                        <Label fx:id="processingDaysLabel" GridPane.columnIndex="3" GridPane.rowIndex="1" styleClass="audit-value"/>
+                    </GridPane>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

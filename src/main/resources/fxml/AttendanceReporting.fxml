@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+Attendance Reporting & Analytics View
+Location: src/main/resources/fxml/AttendanceReporting.fxml
+-->
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:id="rootContainer"
+      fx:controller="com.heronix.ui.controller.AttendanceReportingController"
+      styleClass="root"
+      spacing="20">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header Section -->
+    <HBox alignment="CENTER_LEFT" spacing="15" styleClass="card">
+        <Label text="📊 Attendance Reports & Analytics" styleClass="label-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- Main Tab Pane -->
+    <TabPane fx:id="mainTabPane" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+
+        <!-- ========== ADA/ADM REPORT TAB ========== -->
+        <Tab fx:id="adaAdmTab" text="📈 ADA/ADM Report" closable="false">
+            <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="scroll-pane">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <Label text="📈 Average Daily Attendance / Average Daily Membership"
+                           styleClass="label-title"/>
+
+                    <!-- Selection Controls -->
+                    <VBox spacing="15" styleClass="card">
+                        <Label text="📅 Select Period" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <VBox spacing="5">
+                                <Label text="Campus:" style="-fx-font-weight: bold;"/>
+                                <ComboBox fx:id="adaCampusComboBox" promptText="Select Campus"
+                                          prefWidth="250"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Start Date:" style="-fx-font-weight: bold;"/>
+                                <DatePicker fx:id="adaStartDatePicker" prefWidth="180"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="End Date:" style="-fx-font-weight: bold;"/>
+                                <DatePicker fx:id="adaEndDatePicker" prefWidth="180"/>
+                            </VBox>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="📄 Generate Report" onAction="#handleGenerateAdaReport"
+                                    styleClass="button-primary" minWidth="150"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- ADA/ADM Metrics -->
+                    <HBox spacing="15">
+                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                            <Label text="📊 ADA (Average Daily Attendance)" styleClass="label"/>
+                            <Label fx:id="adaValueLabel" text="0.00"
+                                   style="-fx-font-size: 36; -fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
+                        </VBox>
+
+                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                            <Label text="👥 ADM (Average Daily Membership)" styleClass="label"/>
+                            <Label fx:id="admValueLabel" text="0.00"
+                                   style="-fx-font-size: 36; -fx-font-weight: bold; -fx-text-fill: #2196F3;"/>
+                        </VBox>
+
+                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                            <Label text="📈 Attendance Rate" styleClass="label"/>
+                            <Label fx:id="attendanceRateLabel" text="0.0%"
+                                   style="-fx-font-size: 36; -fx-font-weight: bold;"/>
+                        </VBox>
+
+                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                            <Label text="📅 Total School Days" styleClass="label"/>
+                            <Label fx:id="totalDaysLabel" text="0"
+                                   style="-fx-font-size: 36; -fx-font-weight: bold;"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Detailed Report Output -->
+                    <VBox spacing="10" styleClass="card" VBox.vgrow="ALWAYS">
+                        <Label text="📄 Detailed Report" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                        <TextArea fx:id="adaReportOutput" editable="false" wrapText="true"
+                                  prefHeight="300" promptText="Generate a report to see detailed ADA/ADM calculations..."/>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <!-- ========== TEACHER STATS TAB ========== -->
+        <Tab fx:id="teacherStatsTab" text="👨‍🏫 Teacher Statistics" closable="false">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- Selection Controls -->
+                <VBox spacing="15" styleClass="card">
+                    <Label text="📅 Select Period" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <VBox spacing="5">
+                            <Label text="Start Date:" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="teacherStartDatePicker" prefWidth="180"/>
+                        </VBox>
+
+                        <VBox spacing="5">
+                            <Label text="End Date:" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="teacherEndDatePicker" prefWidth="180"/>
+                        </VBox>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="📊 Load Statistics" onAction="#handleLoadTeacherStats"
+                                styleClass="button-primary" minWidth="150"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Teacher Stats Table -->
+                <VBox spacing="15" styleClass="card" VBox.vgrow="ALWAYS">
+                    <Label text="👨‍🏫 Teacher Attendance Statistics" styleClass="label-title"/>
+
+                    <TableView fx:id="teacherStatsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="teacherNameCol" text="Teacher Name"
+                                         prefWidth="200" minWidth="150"/>
+                            <TableColumn fx:id="totalClassesCol" text="Courses"
+                                         prefWidth="100" minWidth="80"/>
+                            <TableColumn fx:id="totalRecordsCol" text="Total Records"
+                                         prefWidth="120" minWidth="100"/>
+                            <TableColumn fx:id="avgAttendanceCol" text="Avg Attendance %"
+                                         prefWidth="140" minWidth="120"/>
+                            <TableColumn fx:id="totalAbsencesCol" text="Total Absences"
+                                         prefWidth="130" minWidth="110"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="Select a date range to load teacher statistics"/>
+                        </placeholder>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </Tab>
+
+        <!-- ========== GRADE-LEVEL SUMMARY TAB ========== -->
+        <Tab fx:id="gradeSummaryTab" text="🎓 Grade-Level Summary" closable="false">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- Selection Controls -->
+                <VBox spacing="15" styleClass="card">
+                    <Label text="📅 Select Period" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <VBox spacing="5">
+                            <Label text="Start Date:" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="gradeStartDatePicker" prefWidth="180"/>
+                        </VBox>
+
+                        <VBox spacing="5">
+                            <Label text="End Date:" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="gradeEndDatePicker" prefWidth="180"/>
+                        </VBox>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="📊 Load Summary" onAction="#handleLoadGradeSummary"
+                                styleClass="button-primary" minWidth="150"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Grade Summary Table -->
+                <VBox spacing="15" styleClass="card" VBox.vgrow="ALWAYS">
+                    <Label text="🎓 Grade-Level Attendance Summary" styleClass="label-title"/>
+
+                    <TableView fx:id="gradeSummaryTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="gradeLevelCol" text="Grade Level"
+                                         prefWidth="120" minWidth="100"/>
+                            <TableColumn fx:id="gradeStudentsCol" text="Total Students"
+                                         prefWidth="130" minWidth="110"/>
+                            <TableColumn fx:id="gradePresentCol" text="Total Present"
+                                         prefWidth="120" minWidth="100"/>
+                            <TableColumn fx:id="gradeAbsentCol" text="Total Absent"
+                                         prefWidth="120" minWidth="100"/>
+                            <TableColumn fx:id="gradeRateCol" text="Attendance Rate %"
+                                         prefWidth="150" minWidth="130"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="Select a date range to load grade-level summary"/>
+                        </placeholder>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </Tab>
+
+        <!-- ========== STUDENT ATTENDANCE TAB ========== -->
+        <Tab fx:id="studentAttendanceTab" text="👨‍🎓 Student Attendance" closable="false">
+            <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="scroll-pane">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <Label text="👨‍🎓 Student Attendance Report" styleClass="label-title"/>
+
+                    <!-- Selection Controls -->
+                    <VBox spacing="15" styleClass="card">
+                        <Label text="📅 Select Student and Period" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <VBox spacing="5">
+                                <Label text="Student:" style="-fx-font-weight: bold;"/>
+                                <ComboBox fx:id="studentComboBox" promptText="Select Student"
+                                          prefWidth="300"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Start Date:" style="-fx-font-weight: bold;"/>
+                                <DatePicker fx:id="studentStartDatePicker" prefWidth="180"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="End Date:" style="-fx-font-weight: bold;"/>
+                                <DatePicker fx:id="studentEndDatePicker" prefWidth="180"/>
+                            </VBox>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="📄 Generate Report" onAction="#handleLoadStudentReport"
+                                    styleClass="button-primary" minWidth="150"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Student Attendance Metrics -->
+                    <HBox spacing="15">
+                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                            <Label text="✅ Days Present" styleClass="label"/>
+                            <Label fx:id="totalPresentLabel" text="0"
+                                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
+                        </VBox>
+
+                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                            <Label text="❌ Days Absent" styleClass="label"/>
+                            <Label fx:id="totalAbsentLabel" text="0"
+                                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #F44336;"/>
+                        </VBox>
+
+                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                            <Label text="⏰ Days Tardy" styleClass="label"/>
+                            <Label fx:id="totalTardyLabel" text="0"
+                                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #FF9800;"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Attendance Rate -->
+                    <VBox spacing="10" styleClass="card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="📈 Attendance Rate" styleClass="label"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="studentAttendanceRateLabel" text="0.0%"
+                                   style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+                        </HBox>
+                        <ProgressBar fx:id="studentAttendanceProgress" prefWidth="Infinity" prefHeight="20"/>
+                    </VBox>
+
+                    <!-- Detailed Report Output -->
+                    <VBox spacing="10" styleClass="card" VBox.vgrow="ALWAYS">
+                        <Label text="📄 Detailed Report" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                        <TextArea fx:id="studentReportOutput" editable="false" wrapText="true"
+                                  prefHeight="300" promptText="Select a student and generate a report..."/>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <!-- ========== CHRONIC ABSENTEEISM TAB ========== -->
+        <Tab fx:id="chronicAbsenceTab" text="⚠️ Chronic Absenteeism" closable="false">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- Selection Controls -->
+                <VBox spacing="15" styleClass="card">
+                    <Label text="📅 Select Period and Threshold" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <VBox spacing="5">
+                            <Label text="Campus (Optional):" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="chronicCampusComboBox" promptText="All Campuses"
+                                      prefWidth="200"/>
+                        </VBox>
+
+                        <VBox spacing="5">
+                            <Label text="Start Date:" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="chronicStartDatePicker" prefWidth="180"/>
+                        </VBox>
+
+                        <VBox spacing="5">
+                            <Label text="End Date:" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="chronicEndDatePicker" prefWidth="180"/>
+                        </VBox>
+
+                        <VBox spacing="5">
+                            <Label text="Threshold (Days):" style="-fx-font-weight: bold;"/>
+                            <Spinner fx:id="thresholdSpinner" prefWidth="120" editable="true"/>
+                        </VBox>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="📊 Load Alerts" onAction="#handleLoadChronicAbsences"
+                                styleClass="button-primary" minWidth="150"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Chronic Absence Table -->
+                <VBox spacing="15" styleClass="card" VBox.vgrow="ALWAYS">
+                    <Label text="⚠️ Chronic Absence Alerts" styleClass="label-title"/>
+
+                    <TableView fx:id="chronicAbsenceTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="chronicStudentCol" text="Student Name"
+                                         prefWidth="200" minWidth="150"/>
+                            <TableColumn fx:id="chronicGradeCol" text="Grade"
+                                         prefWidth="80" minWidth="60"/>
+                            <TableColumn fx:id="chronicAbsencesCol" text="Total Absences"
+                                         prefWidth="130" minWidth="110"/>
+                            <TableColumn fx:id="chronicRateCol" text="Absence Rate %"
+                                         prefWidth="140" minWidth="120"/>
+                            <TableColumn fx:id="chronicAlertCol" text="Alert Level"
+                                         prefWidth="120" minWidth="100"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="Select criteria to load chronic absence alerts"/>
+                        </placeholder>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </Tab>
+    </TabPane>
+</VBox>

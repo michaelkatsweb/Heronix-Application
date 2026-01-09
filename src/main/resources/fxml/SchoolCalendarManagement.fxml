@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.SchoolCalendarManagementController"
+            stylesheets="@../css/application.css"
+            prefWidth="1700" prefHeight="950">
+
+    <!-- Top: Header -->
+    <top>
+        <VBox spacing="15" style="-fx-background-color: linear-gradient(to right, #ff5722, #e64a19); -fx-padding: 20;">
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="School Calendar Management"
+                           style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label text="Manage academic calendar, events, holidays, and school-wide scheduling"
+                           style="-fx-font-size: 13px; -fx-text-fill: white;"/>
+                </VBox>
+
+                <!-- Quick Actions -->
+                <VBox spacing="5" alignment="CENTER_RIGHT">
+                    <Button text="+ New Event" onAction="#handleNewEvent"
+                            style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 8 20; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                    <Button text="📤 Export Calendar" onAction="#handleExportCalendar"
+                            style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-padding: 8 20; -fx-cursor: hand;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Calendar Navigation & Stats -->
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Button text="◀ Prev" onAction="#handlePreviousMonth"
+                        style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-padding: 6 15; -fx-cursor: hand;"/>
+                <Label fx:id="currentMonthLabel" text="December 2024"
+                       style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                <Button text="Next ▶" onAction="#handleNextMonth"
+                        style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-padding: 6 15; -fx-cursor: hand;"/>
+                <Button text="Today" onAction="#handleToday"
+                        style="-fx-background-color: rgba(255,255,255,0.3); -fx-text-fill: white; -fx-padding: 6 15; -fx-cursor: hand;"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <VBox spacing="3" style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 10; -fx-border-radius: 5;">
+                    <Label text="Events This Month" style="-fx-text-fill: white; -fx-font-size: 10px;"/>
+                    <Label fx:id="eventsThisMonthLabel" text="24"
+                           style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="3" style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 10; -fx-border-radius: 5;">
+                    <Label text="School Days" style="-fx-text-fill: white; -fx-font-size: 10px;"/>
+                    <Label fx:id="schoolDaysLabel" text="18"
+                           style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="3" style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 10; -fx-border-radius: 5;">
+                    <Label text="Holidays" style="-fx-text-fill: white; -fx-font-size: 10px;"/>
+                    <Label fx:id="holidaysLabel" text="5"
+                           style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Main Content -->
+    <center>
+        <SplitPane dividerPositions="0.7" style="-fx-background-color: #f5f5f5;">
+
+            <!-- Calendar View -->
+            <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white;">
+                <!-- View Selector -->
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="View:" style="-fx-font-weight: bold;"/>
+                    <ToggleButton fx:id="monthViewButton" text="Month" selected="true"/>
+                    <ToggleButton fx:id="weekViewButton" text="Week"/>
+                    <ToggleButton fx:id="dayViewButton" text="Day"/>
+                    <ToggleButton fx:id="agendaViewButton" text="Agenda"/>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Label text="Filter:" style="-fx-font-weight: bold;"/>
+                    <ComboBox fx:id="eventFilterComboBox" prefWidth="150">
+                        <items>
+                            <String fx:value="All Events"/>
+                            <String fx:value="Academic"/>
+                            <String fx:value="Holidays"/>
+                            <String fx:value="Sports"/>
+                            <String fx:value="Activities"/>
+                            <String fx:value="Testing"/>
+                            <String fx:value="Parent Events"/>
+                        </items>
+                    </ComboBox>
+                </HBox>
+
+                <!-- Calendar Grid -->
+                <VBox spacing="0" VBox.vgrow="ALWAYS" style="-fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                    <!-- Day Headers -->
+                    <GridPane fx:id="calendarHeaderGrid" style="-fx-background-color: #f5f5f5;">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                        </columnConstraints>
+                        <Label text="Sunday" GridPane.columnIndex="0"
+                               style="-fx-padding: 10; -fx-font-weight: bold; -fx-alignment: center; -fx-border-color: #e0e0e0; -fx-border-width: 0 1 1 0;"
+                               maxWidth="Infinity"/>
+                        <Label text="Monday" GridPane.columnIndex="1"
+                               style="-fx-padding: 10; -fx-font-weight: bold; -fx-alignment: center; -fx-border-color: #e0e0e0; -fx-border-width: 0 1 1 0;"
+                               maxWidth="Infinity"/>
+                        <Label text="Tuesday" GridPane.columnIndex="2"
+                               style="-fx-padding: 10; -fx-font-weight: bold; -fx-alignment: center; -fx-border-color: #e0e0e0; -fx-border-width: 0 1 1 0;"
+                               maxWidth="Infinity"/>
+                        <Label text="Wednesday" GridPane.columnIndex="3"
+                               style="-fx-padding: 10; -fx-font-weight: bold; -fx-alignment: center; -fx-border-color: #e0e0e0; -fx-border-width: 0 1 1 0;"
+                               maxWidth="Infinity"/>
+                        <Label text="Thursday" GridPane.columnIndex="4"
+                               style="-fx-padding: 10; -fx-font-weight: bold; -fx-alignment: center; -fx-border-color: #e0e0e0; -fx-border-width: 0 1 1 0;"
+                               maxWidth="Infinity"/>
+                        <Label text="Friday" GridPane.columnIndex="5"
+                               style="-fx-padding: 10; -fx-font-weight: bold; -fx-alignment: center; -fx-border-color: #e0e0e0; -fx-border-width: 0 1 1 0;"
+                               maxWidth="Infinity"/>
+                        <Label text="Saturday" GridPane.columnIndex="6"
+                               style="-fx-padding: 10; -fx-font-weight: bold; -fx-alignment: center; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;"
+                               maxWidth="Infinity"/>
+                    </GridPane>
+
+                    <!-- Calendar Days Grid -->
+                    <GridPane fx:id="calendarDaysGrid" VBox.vgrow="ALWAYS">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints percentHeight="16.66"/>
+                            <RowConstraints percentHeight="16.66"/>
+                            <RowConstraints percentHeight="16.66"/>
+                            <RowConstraints percentHeight="16.66"/>
+                            <RowConstraints percentHeight="16.66"/>
+                            <RowConstraints percentHeight="16.66"/>
+                        </rowConstraints>
+                    </GridPane>
+                </VBox>
+
+                <!-- Legend -->
+                <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10; -fx-background-color: #fafafa;">
+                    <Label text="Legend:" style="-fx-font-weight: bold;"/>
+                    <HBox spacing="5" alignment="CENTER">
+                        <Label text="●" style="-fx-text-fill: #2196f3; -fx-font-size: 16px;"/>
+                        <Label text="Academic"/>
+                    </HBox>
+                    <HBox spacing="5" alignment="CENTER">
+                        <Label text="●" style="-fx-text-fill: #f44336; -fx-font-size: 16px;"/>
+                        <Label text="Holiday"/>
+                    </HBox>
+                    <HBox spacing="5" alignment="CENTER">
+                        <Label text="●" style="-fx-text-fill: #4caf50; -fx-font-size: 16px;"/>
+                        <Label text="Sports"/>
+                    </HBox>
+                    <HBox spacing="5" alignment="CENTER">
+                        <Label text="●" style="-fx-text-fill: #ff9800; -fx-font-size: 16px;"/>
+                        <Label text="Activities"/>
+                    </HBox>
+                    <HBox spacing="5" alignment="CENTER">
+                        <Label text="●" style="-fx-text-fill: #673ab7; -fx-font-size: 16px;"/>
+                        <Label text="Testing"/>
+                    </HBox>
+                    <HBox spacing="5" alignment="CENTER">
+                        <Label text="●" style="-fx-text-fill: #00bcd4; -fx-font-size: 16px;"/>
+                        <Label text="Parent Events"/>
+                    </HBox>
+                </HBox>
+            </VBox>
+
+            <!-- Right Panel: Event Details & List -->
+            <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white;">
+                <Label text="Event Details" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                <!-- Selected Date Info -->
+                <VBox spacing="8" style="-fx-background-color: #e3f2fd; -fx-padding: 15; -fx-border-radius: 5;">
+                    <Label fx:id="selectedDateLabel" text="No date selected"
+                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1565c0;"/>
+                    <Label fx:id="selectedDateEventsLabel" text="Click a date to view events"
+                           style="-fx-font-size: 11px; -fx-text-fill: #757575;"/>
+                </VBox>
+
+                <!-- Events List for Selected Date -->
+                <VBox spacing="10" VBox.vgrow="ALWAYS">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Events" style="-fx-font-weight: bold;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="+ Add Event" onAction="#handleAddEventToDate"
+                                style="-fx-font-size: 11px; -fx-padding: 4 8; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <ListView fx:id="dateEventsListView" VBox.vgrow="ALWAYS">
+                        <placeholder>
+                            <Label text="No events on selected date" style="-fx-text-fill: #9e9e9e;"/>
+                        </placeholder>
+                    </ListView>
+                </VBox>
+
+                <!-- Quick Add Event -->
+                <VBox spacing="10" style="-fx-background-color: #f9f9f9; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                    <Label text="Quick Add Event" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+
+                    <TextField fx:id="quickEventTitleField" promptText="Event title..."/>
+
+                    <HBox spacing="10">
+                        <DatePicker fx:id="quickEventDatePicker" promptText="Select date" HBox.hgrow="ALWAYS"/>
+                        <ComboBox fx:id="quickEventCategoryComboBox" promptText="Category" prefWidth="120">
+                            <items>
+                                <String fx:value="Academic"/>
+                                <String fx:value="Holiday"/>
+                                <String fx:value="Sports"/>
+                                <String fx:value="Activities"/>
+                                <String fx:value="Testing"/>
+                                <String fx:value="Parent Events"/>
+                            </items>
+                        </ComboBox>
+                    </HBox>
+
+                    <Button text="Add Event" onAction="#handleQuickAddEvent"
+                            style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"
+                            maxWidth="Infinity"/>
+                </VBox>
+
+                <!-- Academic Year Settings -->
+                <VBox spacing="10" style="-fx-background-color: #fff3e0; -fx-padding: 15; -fx-border-color: #ff9800; -fx-border-width: 2;">
+                    <Label text="Academic Year Settings" style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #e65100;"/>
+
+                    <GridPane hgap="10" vgap="8">
+                        <Label text="School Year:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <ComboBox fx:id="academicYearComboBox" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="150">
+                            <items>
+                                <String fx:value="2024-2025"/>
+                                <String fx:value="2023-2024"/>
+                                <String fx:value="2025-2026"/>
+                            </items>
+                        </ComboBox>
+
+                        <Label text="Total Days:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <Label fx:id="totalSchoolDaysLabel" text="180 days" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                               style="-fx-font-weight: bold;"/>
+
+                        <Label text="Days Elapsed:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <Label fx:id="daysElapsedLabel" text="75 days" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                    </GridPane>
+
+                    <Button text="Manage Academic Calendar" onAction="#handleManageAcademicCalendar"
+                            style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-padding: 6; -fx-cursor: hand;"
+                            maxWidth="Infinity"/>
+                </VBox>
+            </VBox>
+
+        </SplitPane>
+    </center>
+
+    <!-- Bottom: Status Bar -->
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_LEFT"
+              style="-fx-background-color: #fafafa; -fx-padding: 12; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <Label fx:id="statusLabel" text="Calendar loaded" style="-fx-font-size: 11px;"/>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="lastUpdatedLabel" text="Last updated: Just now" style="-fx-font-size: 11px; -fx-text-fill: #757575;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="📅 Import Calendar" onAction="#handleImportCalendar"
+                    style="-fx-padding: 6 15; -fx-cursor: hand;"/>
+            <Button text="🖨 Print Calendar" onAction="#handlePrintCalendar"
+                    style="-fx-padding: 6 15; -fx-cursor: hand;"/>
+            <Button text="⚙ Settings" onAction="#handleSettings"
+                    style="-fx-padding: 6 15; -fx-cursor: hand;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

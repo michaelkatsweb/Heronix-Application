@@ -1,0 +1,119 @@
+package com.heronix.service;
+
+import com.heronix.model.domain.Student;
+import com.heronix.repository.StudentRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Service for Student operations
+ *
+ * @author Heronix SIS Team
+ * @version 1.0.0
+ * @since 2025-12-24
+ */
+@Service
+@Transactional
+@RequiredArgsConstructor
+@Slf4j
+public class StudentService {
+
+    private final StudentRepository studentRepository;
+
+    /**
+     * Get all students
+     */
+    public List<Student> getAllStudents() {
+        log.debug("Getting all students");
+        return studentRepository.findAll();
+    }
+
+    /**
+     * Alias for getAllStudents
+     */
+    public List<Student> findAllStudents() {
+        return getAllStudents();
+    }
+
+    /**
+     * Another alias for getAllStudents
+     */
+    public List<Student> findAll() {
+        return getAllStudents();
+    }
+
+    /**
+     * Get student by ID
+     */
+    public Optional<Student> getStudentById(Long id) {
+        log.debug("Getting student by ID: {}", id);
+        return studentRepository.findById(id);
+    }
+
+    /**
+     * Get student by student ID
+     */
+    public Optional<Student> getStudentByStudentId(String studentId) {
+        log.debug("Getting student by student ID: {}", studentId);
+        return studentRepository.findByStudentId(studentId);
+    }
+
+    /**
+     * Create student
+     */
+    public Student createStudent(Student student) {
+        log.info("Creating student: {}", student.getStudentId());
+        return studentRepository.save(student);
+    }
+
+    /**
+     * Update student
+     */
+    public Student updateStudent(Student student) {
+        log.info("Updating student: {}", student.getId());
+        return studentRepository.save(student);
+    }
+
+    /**
+     * Delete student
+     */
+    public void deleteStudent(Long id) {
+        log.info("Deleting student ID: {}", id);
+        studentRepository.deleteById(id);
+    }
+
+    /**
+     * Search students by name
+     */
+    public List<Student> searchByName(String searchTerm) {
+        log.debug("Searching students by name: {}", searchTerm);
+        return studentRepository.searchByName(searchTerm);
+    }
+
+    /**
+     * Get active students
+     */
+    public List<Student> getActiveStudents() {
+        log.debug("Getting active students");
+        return studentRepository.findByStudentStatus(Student.StudentStatus.ACTIVE);
+    }
+
+    /**
+     * Count all students
+     */
+    public long countAllStudents() {
+        return studentRepository.count();
+    }
+
+    /**
+     * Count active students
+     */
+    public long countActiveStudents() {
+        return studentRepository.countByStudentStatus(Student.StudentStatus.ACTIVE);
+    }
+}

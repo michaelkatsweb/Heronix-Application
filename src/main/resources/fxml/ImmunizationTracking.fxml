@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.ImmunizationTrackingController"
+            styleClass="content-pane">
+
+    <top>
+        <VBox styleClass="header-section">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="Immunization Tracking" styleClass="page-title"/>
+            <Label text="Track student immunizations and compliance with state requirements"
+                   styleClass="page-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.7">
+            <!-- Main Form -->
+            <ScrollPane fitToWidth="true" styleClass="form-scroll-pane">
+                <VBox spacing="20" styleClass="form-container">
+                    <padding>
+                        <Insets top="20" right="40" bottom="20" left="40"/>
+                    </padding>
+
+                    <!-- Student Selection -->
+                    <VBox spacing="15" styleClass="form-section">
+                        <Label text="Student Information" styleClass="section-header"/>
+
+                        <GridPane hgap="15" vgap="15">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="25"/>
+                                <ColumnConstraints percentWidth="25"/>
+                            </columnConstraints>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Student *" styleClass="field-label"/>
+                                <ComboBox fx:id="studentComboBox" promptText="Select Student"
+                                          maxWidth="Infinity"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="Grade" styleClass="field-label"/>
+                                <TextField fx:id="gradeField" editable="false"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                                <Label text="Date of Birth" styleClass="field-label"/>
+                                <TextField fx:id="dateOfBirthField" editable="false"/>
+                            </VBox>
+                        </GridPane>
+
+                        <Button text="View Student's Immunization Record" onAction="#handleViewRecord"
+                                style="-fx-font-weight: bold;"/>
+                    </VBox>
+
+                    <!-- Vaccine Information -->
+                    <VBox spacing="15" styleClass="form-section">
+                        <Label text="Vaccine Information" styleClass="section-header"/>
+
+                        <GridPane hgap="15" vgap="15">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="25"/>
+                                <ColumnConstraints percentWidth="25"/>
+                            </columnConstraints>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Vaccine Type *" styleClass="field-label"/>
+                                <ComboBox fx:id="vaccineTypeComboBox" promptText="Select Vaccine"
+                                          maxWidth="Infinity">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="DTaP"/>
+                                            <String fx:value="POLIO"/>
+                                            <String fx:value="MMR"/>
+                                            <String fx:value="HEPATITIS_B"/>
+                                            <String fx:value="VARICELLA"/>
+                                            <String fx:value="HEPATITIS_A"/>
+                                            <String fx:value="MENINGOCOCCAL"/>
+                                            <String fx:value="HPV"/>
+                                            <String fx:value="HIB"/>
+                                            <String fx:value="PNEUMOCOCCAL"/>
+                                            <String fx:value="ROTAVIRUS"/>
+                                            <String fx:value="INFLUENZA"/>
+                                            <String fx:value="COVID_19"/>
+                                            <String fx:value="OTHER"/>
+                                        </FXCollections>
+                                    </items>
+                                </ComboBox>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="Dose Number *" styleClass="field-label"/>
+                                <TextField fx:id="doseNumberField" promptText="e.g., 1, 2, 3"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                                <Label text="Total Doses Required" styleClass="field-label"/>
+                                <TextField fx:id="totalDosesField" promptText="Auto-filled"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <Label text="Vaccine Brand Name" styleClass="field-label"/>
+                                <TextField fx:id="vaccineNameField" promptText="e.g., Pfizer BioNTech"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                  GridPane.columnSpan="2">
+                                <Label text="Administration Date *" styleClass="field-label"/>
+                                <DatePicker fx:id="administrationDatePicker" maxWidth="Infinity"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                <CheckBox fx:id="isBoosterCheckBox" text="This is a Booster Dose"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Provider Information -->
+                    <VBox spacing="15" styleClass="form-section">
+                        <Label text="Provider Information" styleClass="section-header"/>
+
+                        <GridPane hgap="15" vgap="15">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Administered By" styleClass="field-label"/>
+                                <TextField fx:id="administeredByField"
+                                           promptText="Physician name or clinic"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="Administration Location" styleClass="field-label"/>
+                                <TextField fx:id="administrationLocationField"
+                                           promptText="Clinic, hospital, school"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <Label text="Lot Number" styleClass="field-label"/>
+                                <TextField fx:id="lotNumberField" promptText="Vaccine lot number"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <Label text="Manufacturer" styleClass="field-label"/>
+                                <TextField fx:id="manufacturerField" promptText="e.g., Pfizer, Moderna"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                <Label text="Vaccine Expiration Date" styleClass="field-label"/>
+                                <DatePicker fx:id="expirationDatePicker" maxWidth="Infinity"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Verification -->
+                    <VBox spacing="15" styleClass="form-section"
+                          style="-fx-background-color: #e8f5e9; -fx-padding: 15;">
+                        <Label text="Verification & Documentation" styleClass="section-header"/>
+
+                        <GridPane hgap="15" vgap="15">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Verification Method *" styleClass="field-label"/>
+                                <ComboBox fx:id="verificationMethodComboBox" promptText="Select Method"
+                                          maxWidth="Infinity">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="PAPER_RECORD"/>
+                                            <String fx:value="ELECTRONIC_RECORD"/>
+                                            <String fx:value="STATE_REGISTRY"/>
+                                            <String fx:value="PHYSICIAN_STATEMENT"/>
+                                            <String fx:value="PARENT_STATEMENT"/>
+                                            <String fx:value="SCHOOL_RECORD"/>
+                                        </FXCollections>
+                                    </items>
+                                </ComboBox>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="Verification Date" styleClass="field-label"/>
+                                <DatePicker fx:id="verificationDatePicker" maxWidth="Infinity"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <Label text="Verified By" styleClass="field-label"/>
+                                <ComboBox fx:id="verifiedByComboBox" promptText="Select Staff"
+                                          maxWidth="Infinity"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2"
+                                  GridPane.columnSpan="2">
+                                <HBox spacing="20">
+                                    <CheckBox fx:id="verifiedCheckBox" text="Record Verified"
+                                              style="-fx-font-weight: bold;"/>
+                                    <CheckBox fx:id="documentationOnFileCheckBox"
+                                              text="Documentation on File"
+                                              style="-fx-font-weight: bold;"/>
+                                    <CheckBox fx:id="meetsStateRequirementCheckBox"
+                                              text="Meets State Requirement"/>
+                                </HBox>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="3"
+                                  GridPane.columnSpan="2">
+                                <Label text="Documentation File Path" styleClass="field-label"/>
+                                <HBox spacing="10">
+                                    <TextField fx:id="documentationFilePathField"
+                                               promptText="Path to scanned immunization card"
+                                               HBox.hgrow="ALWAYS"/>
+                                    <Button text="Browse..." onAction="#handleBrowseFile"/>
+                                </HBox>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Exemptions -->
+                    <VBox spacing="15" styleClass="form-section"
+                          style="-fx-background-color: #fff9c4; -fx-padding: 15;">
+                        <Label text="Exemptions (if applicable)" styleClass="section-header"/>
+
+                        <GridPane hgap="20" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="33"/>
+                                <ColumnConstraints percentWidth="33"/>
+                                <ColumnConstraints percentWidth="34"/>
+                            </columnConstraints>
+
+                            <CheckBox fx:id="medicalExemptionCheckBox" text="Medical Exemption"
+                                      GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <CheckBox fx:id="religiousExemptionCheckBox" text="Religious Exemption"
+                                      GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <CheckBox fx:id="philosophicalExemptionCheckBox" text="Philosophical Exemption"
+                                      GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                        </GridPane>
+
+                        <VBox spacing="15" fx:id="exemptionDetailsBox" visible="false" managed="false">
+                            <HBox spacing="20">
+                                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                    <Label text="Exemption Expiration Date" styleClass="field-label"/>
+                                    <DatePicker fx:id="exemptionExpirationDatePicker" maxWidth="Infinity"/>
+                                </VBox>
+                                <VBox spacing="5">
+                                    <Label text=" " styleClass="field-label"/>
+                                    <CheckBox fx:id="exemptionDocumentationCheckBox"
+                                              text="Exemption Documentation on File"
+                                              style="-fx-font-weight: bold;"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+
+                    <!-- Next Dose & Follow-Up -->
+                    <VBox spacing="15" styleClass="form-section">
+                        <Label text="Next Dose & Follow-Up" styleClass="section-header"/>
+
+                        <GridPane hgap="15" vgap="15">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Next Dose Due Date" styleClass="field-label"/>
+                                <DatePicker fx:id="nextDoseDueDatePicker" maxWidth="Infinity"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="Booster Due Date" styleClass="field-label"/>
+                                <DatePicker fx:id="boosterDueDatePicker" maxWidth="Infinity"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Adverse Reactions -->
+                    <VBox spacing="15" styleClass="form-section">
+                        <Label text="Adverse Reactions" styleClass="section-header"/>
+
+                        <CheckBox fx:id="adverseReactionCheckBox" text="⚠ Adverse Reaction Reported"
+                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"/>
+
+                        <VBox spacing="15" fx:id="adverseReactionBox" visible="false" managed="false"
+                              style="-fx-background-color: #ffebee; -fx-padding: 15;">
+                            <VBox spacing="5">
+                                <Label text="Reaction Severity" styleClass="field-label"
+                                       style="-fx-text-fill: #d32f2f;"/>
+                                <ComboBox fx:id="reactionSeverityComboBox" promptText="Select Severity"
+                                          maxWidth="Infinity">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="NONE"/>
+                                            <String fx:value="MILD"/>
+                                            <String fx:value="MODERATE"/>
+                                            <String fx:value="SEVERE"/>
+                                            <String fx:value="LIFE_THREATENING"/>
+                                        </FXCollections>
+                                    </items>
+                                </ComboBox>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Reaction Description *" styleClass="field-label"
+                                       style="-fx-text-fill: #d32f2f;"/>
+                                <TextArea fx:id="adverseReactionDescriptionTextArea"
+                                          promptText="Describe reaction symptoms, onset, duration..."
+                                          wrapText="true" prefRowCount="3"
+                                          style="-fx-border-color: #d32f2f; -fx-border-width: 2;"/>
+                            </VBox>
+                        </VBox>
+                    </VBox>
+
+                    <!-- Notes -->
+                    <VBox spacing="15" styleClass="form-section">
+                        <Label text="Additional Notes" styleClass="section-header"/>
+
+                        <VBox spacing="5">
+                            <Label text="Notes" styleClass="field-label"/>
+                            <TextArea fx:id="notesTextArea"
+                                      promptText="Additional information, special circumstances..."
+                                      wrapText="true" prefRowCount="3"/>
+                        </VBox>
+                    </VBox>
+
+                </VBox>
+            </ScrollPane>
+
+            <!-- Right Sidebar - Student's Complete Immunization Record -->
+            <ScrollPane fitToWidth="true" styleClass="sidebar-scroll">
+                <VBox spacing="20" style="-fx-padding: 15;">
+                    <Label text="Student's Immunization Record"
+                           style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+
+                    <!-- Compliance Status -->
+                    <VBox spacing="10" styleClass="sidebar-section"
+                          style="-fx-background-color: #e3f2fd; -fx-padding: 10;">
+                        <Label text="Compliance Status" style="-fx-font-weight: bold;"/>
+                        <Label fx:id="complianceStatusLabel" text="--"
+                               style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                    </VBox>
+
+                    <!-- Required Vaccines Status -->
+                    <VBox spacing="10" styleClass="sidebar-section">
+                        <Label text="Required Vaccines" style="-fx-font-weight: bold;"/>
+                        <ListView fx:id="requiredVaccinesListView" prefHeight="200">
+                            <placeholder>
+                                <Label text="Select a student"/>
+                            </placeholder>
+                        </ListView>
+                    </VBox>
+
+                    <!-- Incomplete Series -->
+                    <VBox spacing="10" styleClass="sidebar-section"
+                          style="-fx-background-color: #fff3e0; -fx-padding: 10;">
+                        <Label text="⚠ Incomplete Series"
+                               style="-fx-font-weight: bold; -fx-text-fill: #f57c00;"/>
+                        <ListView fx:id="incompleteSeriesListView" prefHeight="120">
+                            <placeholder>
+                                <Label text="No incomplete series"/>
+                            </placeholder>
+                        </ListView>
+                    </VBox>
+
+                    <!-- Overdue Doses -->
+                    <VBox spacing="10" styleClass="sidebar-section"
+                          style="-fx-background-color: #ffebee; -fx-padding: 10;">
+                        <Label text="⚠ Overdue Doses"
+                               style="-fx-font-weight: bold; -fx-text-fill: #d32f2f;"/>
+                        <ListView fx:id="overdueListView" prefHeight="100">
+                            <placeholder>
+                                <Label text="No overdue doses"/>
+                            </placeholder>
+                        </ListView>
+                    </VBox>
+
+                    <!-- Exemptions -->
+                    <VBox spacing="10" styleClass="sidebar-section">
+                        <Label text="Exemptions" style="-fx-font-weight: bold;"/>
+                        <Label fx:id="exemptionsLabel" text="None" wrapText="true"/>
+                    </VBox>
+
+                </VBox>
+            </ScrollPane>
+        </SplitPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="button-bar">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label fx:id="statusIndicator" text=""/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="saveButton" text="Save Immunization Record" onAction="#handleSave"
+                    styleClass="primary-button"/>
+            <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

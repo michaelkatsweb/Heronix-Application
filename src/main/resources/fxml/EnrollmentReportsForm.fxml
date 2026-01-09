@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.EnrollmentReportsFormController"
+            styleClass="content-pane">
+
+    <top>
+        <VBox styleClass="header-section" spacing="10">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label text="Enrollment Reports and Analytics" styleClass="page-title"/>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="20" styleClass="form-container">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <Label text="Enrollment Analytics Dashboard - Coming Soon" style="-fx-font-size: 18px;"/>
+                <Label text="This feature will include:" style="-fx-font-size: 14px;"/>
+                <VBox spacing="5">
+                    <Label text="• Enrollment statistics by grade level"/>
+                    <Label text="• Application status breakdown"/>
+                    <Label text="• Monthly enrollment trends"/>
+                    <Label text="• Demographic reports"/>
+                    <Label text="• Special services tracking"/>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

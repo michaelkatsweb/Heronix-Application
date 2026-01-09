@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+  Sibling Enrollment Linking Form
+  Links siblings during enrollment for family tracking and discounts
+
+  Features:
+  - Family household creation/linking
+  - Sibling relationship tracking
+  - Family discount calculation
+  - Shared parent/guardian information
+  - Multi-child enrollment processing
+  - Family enrollment status dashboard
+
+  Location: src/main/resources/fxml/SiblingEnrollmentLinking.fxml
+  Controller: com.heronix.ui.controller.SiblingEnrollmentLinkingController
+-->
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.SiblingEnrollmentLinkingController"
+            styleClass="content-pane"
+            prefWidth="1100" prefHeight="750">
+
+    <top>
+        <VBox styleClass="header-section" spacing="15">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+
+            <!-- Page Title -->
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="Sibling Enrollment Linking &amp; Family Management" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="familyIdField" editable="false" promptText="Family ID" prefWidth="150"/>
+                <Label fx:id="familyStatusLabel" text="NEW FAMILY" styleClass="status-label"/>
+            </HBox>
+
+            <!-- Quick Stats -->
+            <HBox alignment="CENTER_LEFT" spacing="20" styleClass="stats-bar">
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="Total Children" styleClass="stat-label"/>
+                    <Label fx:id="totalChildrenLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                <Separator orientation="VERTICAL"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="Enrolled" styleClass="stat-label"/>
+                    <Label fx:id="enrolledCountLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                <Separator orientation="VERTICAL"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="Pending" styleClass="stat-label"/>
+                    <Label fx:id="pendingCountLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                <Separator orientation="VERTICAL"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="Family Discount" styleClass="stat-label"/>
+                    <Label fx:id="familyDiscountLabel" text="\$0.00" styleClass="stat-value"/>
+                </VBox>
+            </HBox>
+
+            <!-- Action Buttons -->
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+                <Button text="Search Existing Family" onAction="#handleSearchFamily" styleClass="button-info"/>
+                <Button text="Create New Family" onAction="#handleCreateFamily" styleClass="button-primary"/>
+                <Button text="Add Sibling" onAction="#handleAddSibling" fx:id="addSiblingButton" styleClass="button-success"/>
+                <Button text="Save Family" onAction="#handleSave" fx:id="saveButton" styleClass="button-primary"/>
+                <Button text="Apply Discounts" onAction="#handleApplyDiscounts" fx:id="applyDiscountsButton" styleClass="button-success"/>
+                <Button text="Close" onAction="#handleClose" styleClass="button-cancel"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- ========== SECTION 1: FAMILY/HOUSEHOLD INFORMATION ========== -->
+                <TitledPane text="1. Family/Household Information" expanded="true" collapsible="false">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+
+                        <!-- Row 0: Family Search -->
+                        <Label text="Search Existing Family:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label"/>
+                        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3">
+                            <TextField fx:id="familySearchField" promptText="Enter parent name, phone, or student name" prefWidth="350"/>
+                            <Button text="Search" onAction="#handleSearchFamily" styleClass="button-primary"/>
+                            <Label text="- OR -" styleClass="form-label"/>
+                            <Button text="Create New Family Household" onAction="#handleCreateFamily" styleClass="button-success"/>
+                        </HBox>
+
+                        <!-- Row 1: Family Name -->
+                        <Label text="Family Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label-required"/>
+                        <TextField fx:id="familyNameField" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                   promptText="Usually parent last name (e.g., Smith Family)" prefWidth="300"/>
+
+                        <Label text="Household Type:" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="form-label"/>
+                        <ComboBox fx:id="householdTypeComboBox" GridPane.columnIndex="3" GridPane.rowIndex="1"
+                                  promptText="Select Type" prefWidth="200"/>
+
+                        <!-- Row 2: Primary Address -->
+                        <Label text="Primary Residential Address:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label-required"/>
+                        <TextArea fx:id="primaryAddressArea" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3"
+                                  prefRowCount="2" promptText="Family residential address"/>
+
+                        <!-- Row 3: Primary Contact -->
+                        <Label text="Primary Parent/Guardian:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="form-label-required"/>
+                        <TextField fx:id="primaryParentField" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.columnSpan="3"
+                                   promptText="Primary parent/guardian name"/>
+
+                        <!-- Row 4: Contact Info -->
+                        <Label text="Primary Phone:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="form-label-required"/>
+                        <TextField fx:id="primaryPhoneField" GridPane.columnIndex="1" GridPane.rowIndex="4" promptText="Primary contact phone"/>
+
+                        <Label text="Primary Email:" GridPane.columnIndex="2" GridPane.rowIndex="4" styleClass="form-label-required"/>
+                        <TextField fx:id="primaryEmailField" GridPane.columnIndex="3" GridPane.rowIndex="4" promptText="Primary contact email"/>
+
+                        <!-- Row 5: Family Status -->
+                        <Label text="Family Notes:" GridPane.columnIndex="0" GridPane.rowIndex="5" styleClass="form-label"/>
+                        <TextArea fx:id="familyNotesArea" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.columnSpan="3"
+                                  prefRowCount="2" promptText="Any special notes about the family (custody arrangements, etc.)"/>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 2: CHILDREN/SIBLINGS IN FAMILY ========== -->
+                <TitledPane text="2. Children in Family (Siblings)" expanded="true" collapsible="false">
+                    <VBox spacing="15">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+
+                        <!-- Instructions -->
+                        <HBox spacing="10" styleClass="info-box">
+                            <Label text="ℹ" styleClass="info-icon"/>
+                            <VBox spacing="5">
+                                <Label text="Add all children in the household to link them as siblings." styleClass="info-text" wrapText="true"/>
+                                <Label text="• Existing students will be linked to this family" styleClass="info-text" wrapText="true"/>
+                                <Label text="• New enrollment applications can be created for non-enrolled children" styleClass="info-text" wrapText="true"/>
+                                <Label text="• Family discounts will be automatically calculated based on number of enrolled children" styleClass="info-text" wrapText="true"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Sibling Table -->
+                        <TableView fx:id="siblingsTable" prefHeight="300">
+                            <columns>
+                                <TableColumn text="#" prefWidth="40"/>
+                                <TableColumn text="Student ID" prefWidth="100"/>
+                                <TableColumn text="First Name" prefWidth="120"/>
+                                <TableColumn text="Last Name" prefWidth="120"/>
+                                <TableColumn text="Date of Birth" prefWidth="100"/>
+                                <TableColumn text="Grade Level" prefWidth="100"/>
+                                <TableColumn text="Enrollment Status" prefWidth="120"/>
+                                <TableColumn text="Relationship" prefWidth="120"/>
+                                <TableColumn text="Actions" prefWidth="150"/>
+                            </columns>
+                        </TableView>
+
+                        <!-- Sibling Management Buttons -->
+                        <HBox spacing="10">
+                            <Button text="+ Add Existing Student" onAction="#handleAddExistingStudent" styleClass="button-primary"/>
+                            <Button text="+ Add New Child (Create Enrollment)" onAction="#handleAddNewChild" styleClass="button-success"/>
+                            <Button text="Remove Selected" onAction="#handleRemoveSibling" styleClass="button-danger"/>
+                            <Separator orientation="VERTICAL"/>
+                            <Button text="Set Primary Student" onAction="#handleSetPrimaryStudent" styleClass="button-secondary"/>
+                            <Button text="View Student Details" onAction="#handleViewStudentDetails" styleClass="button-info"/>
+                        </HBox>
+                    </VBox>
+                </TitledPane>
+
+                <!-- ========== SECTION 3: SHARED PARENT/GUARDIAN INFORMATION ========== -->
+                <TitledPane text="3. Shared Parent/Guardian Information" expanded="true">
+                    <VBox spacing="15">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+
+                        <Label text="These parent/guardian contacts will be shared across all children in the family."
+                               styleClass="help-text" wrapText="true"/>
+
+                        <!-- Parent 1 -->
+                        <VBox spacing="10" styleClass="parent-box">
+                            <Label text="Parent/Guardian 1 (Primary)" styleClass="section-subtitle"/>
+                            <GridPane hgap="15" vgap="10">
+                                <Label text="Full Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label-required"/>
+                                <TextField fx:id="parent1NameField" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="250"/>
+
+                                <Label text="Relationship:" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="form-label"/>
+                                <ComboBox fx:id="parent1RelationshipComboBox" GridPane.columnIndex="3" GridPane.rowIndex="0" prefWidth="150"/>
+
+                                <Label text="Phone:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label-required"/>
+                                <TextField fx:id="parent1PhoneField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                <Label text="Email:" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="form-label-required"/>
+                                <TextField fx:id="parent1EmailField" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                                <Label text="Work Phone:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label"/>
+                                <TextField fx:id="parent1WorkPhoneField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                                <Label text="Employer:" GridPane.columnIndex="2" GridPane.rowIndex="2" styleClass="form-label"/>
+                                <TextField fx:id="parent1EmployerField" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+
+                                <CheckBox text="Lives in household" fx:id="parent1LivesInHouseholdCheckbox"
+                                          GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2"/>
+                                <CheckBox text="Custodial parent for all children" fx:id="parent1CustodialCheckbox"
+                                          GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.columnSpan="2"/>
+                            </GridPane>
+                        </VBox>
+
+                        <!-- Parent 2 -->
+                        <VBox spacing="10" styleClass="parent-box">
+                            <Label text="Parent/Guardian 2 (Optional)" styleClass="section-subtitle"/>
+                            <GridPane hgap="15" vgap="10">
+                                <Label text="Full Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label"/>
+                                <TextField fx:id="parent2NameField" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="250"/>
+
+                                <Label text="Relationship:" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="form-label"/>
+                                <ComboBox fx:id="parent2RelationshipComboBox" GridPane.columnIndex="3" GridPane.rowIndex="0" prefWidth="150"/>
+
+                                <Label text="Phone:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label"/>
+                                <TextField fx:id="parent2PhoneField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                <Label text="Email:" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="form-label"/>
+                                <TextField fx:id="parent2EmailField" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                                <Label text="Work Phone:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label"/>
+                                <TextField fx:id="parent2WorkPhoneField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                                <Label text="Employer:" GridPane.columnIndex="2" GridPane.rowIndex="2" styleClass="form-label"/>
+                                <TextField fx:id="parent2EmployerField" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+
+                                <CheckBox text="Lives in household" fx:id="parent2LivesInHouseholdCheckbox"
+                                          GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2"/>
+                                <CheckBox text="Custodial parent for all children" fx:id="parent2CustodialCheckbox"
+                                          GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.columnSpan="2"/>
+                            </GridPane>
+                        </VBox>
+
+                        <!-- Emergency Contacts (Shared) -->
+                        <VBox spacing="10" styleClass="emergency-box">
+                            <Label text="Shared Emergency Contacts" styleClass="section-subtitle"/>
+                            <Label text="These contacts will be added to all children's emergency contact lists."
+                                   styleClass="help-text" wrapText="true"/>
+
+                            <GridPane hgap="15" vgap="10">
+                                <Label text="Emergency Contact 1:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label-required"/>
+                                <TextField fx:id="emergency1NameField" GridPane.columnIndex="1" GridPane.rowIndex="0" promptText="Name" prefWidth="200"/>
+                                <TextField fx:id="emergency1PhoneField" GridPane.columnIndex="2" GridPane.rowIndex="0" promptText="Phone" prefWidth="150"/>
+                                <TextField fx:id="emergency1RelationField" GridPane.columnIndex="3" GridPane.rowIndex="0" promptText="Relationship" prefWidth="150"/>
+
+                                <Label text="Emergency Contact 2:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label"/>
+                                <TextField fx:id="emergency2NameField" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Name" prefWidth="200"/>
+                                <TextField fx:id="emergency2PhoneField" GridPane.columnIndex="2" GridPane.rowIndex="1" promptText="Phone" prefWidth="150"/>
+                                <TextField fx:id="emergency2RelationField" GridPane.columnIndex="3" GridPane.rowIndex="1" promptText="Relationship" prefWidth="150"/>
+                            </GridPane>
+                        </VBox>
+                    </VBox>
+                </TitledPane>
+
+                <!-- ========== SECTION 4: FAMILY DISCOUNT CONFIGURATION ========== -->
+                <TitledPane text="4. Family Discount &amp; Fee Calculation" expanded="true">
+                    <VBox spacing="15">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+
+                        <!-- Discount Summary -->
+                        <GridPane hgap="20" vgap="12" styleClass="discount-grid">
+                            <Label text="Discount Type:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label"/>
+                            <ComboBox fx:id="discountTypeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="250"/>
+
+                            <Label text="Number of Enrolled Children:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label"/>
+                            <Label fx:id="enrolledChildrenCountLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="form-value"/>
+
+                            <Label text="Base Discount Percentage:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label"/>
+                            <Label fx:id="baseDiscountPercentLabel" text="0%" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="form-value"/>
+
+                            <Label text="Sibling Discount Per Child:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="form-label"/>
+                            <Label fx:id="siblingDiscountLabel" text="\$0.00" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="form-value"/>
+
+                            <Label text="Total Family Discount:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="form-label-bold"/>
+                            <Label fx:id="totalFamilyDiscountLabel" text="\$0.00" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="form-value-large"/>
+                        </GridPane>
+
+                        <Separator/>
+
+                        <!-- Fee Breakdown Table -->
+                        <VBox spacing="10">
+                            <Label text="Fee Breakdown by Child:" styleClass="section-subtitle"/>
+                            <TableView fx:id="feeBreakdownTable" prefHeight="200">
+                                <columns>
+                                    <TableColumn text="Student Name" prefWidth="180"/>
+                                    <TableColumn text="Grade" prefWidth="80"/>
+                                    <TableColumn text="Base Fees" prefWidth="100"/>
+                                    <TableColumn text="Sibling Discount" prefWidth="120"/>
+                                    <TableColumn text="Other Discounts" prefWidth="120"/>
+                                    <TableColumn text="Total After Discount" prefWidth="140"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+
+                        <!-- Discount Options -->
+                        <HBox spacing="15" styleClass="info-box">
+                            <VBox spacing="5">
+                                <Label text="Discount Rules:" styleClass="form-label-bold"/>
+                                <CheckBox text="Apply 10% discount for 2nd child" fx:id="discount2ndChildCheckbox" selected="true"/>
+                                <CheckBox text="Apply 20% discount for 3rd+ children" fx:id="discount3rdPlusCheckbox" selected="true"/>
+                                <CheckBox text="Apply early bird discount (if applicable)" fx:id="earlyBirdDiscountCheckbox"/>
+                                <CheckBox text="Waive technology fees for 3rd+ children" fx:id="waiveTechFees3rdPlusCheckbox"/>
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="10" alignment="CENTER_RIGHT">
+                            <Button text="Recalculate Discounts" onAction="#handleRecalculateDiscounts" styleClass="button-primary"/>
+                            <Button text="Apply to All Children" onAction="#handleApplyDiscounts" styleClass="button-success"/>
+                        </HBox>
+                    </VBox>
+                </TitledPane>
+
+                <!-- ========== SECTION 5: CUSTODY & SPECIAL ARRANGEMENTS ========== -->
+                <TitledPane text="5. Custody Arrangements &amp; Special Notes" expanded="false">
+                    <VBox spacing="15">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+
+                        <GridPane hgap="15" vgap="12">
+                            <Label text="Custody Arrangement:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label"/>
+                            <ComboBox fx:id="custodyArrangementComboBox" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3"
+                                      promptText="Select custody type" prefWidth="300"/>
+
+                            <Label text="Court Order on File:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label"/>
+                            <CheckBox text="Yes, custody paperwork on file" fx:id="custodyPapersCheckbox"
+                                      GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3"/>
+
+                            <Label text="Pickup Restrictions:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label"/>
+                            <TextArea fx:id="pickupRestrictionsArea" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3"
+                                      prefRowCount="2" promptText="List any pickup restrictions or requirements"/>
+
+                            <Label text="Special Family Notes:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="form-label"/>
+                            <TextArea fx:id="specialFamilyNotesArea" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.columnSpan="3"
+                                      prefRowCount="3" promptText="Any special notes regarding custody, visitation, or family circumstances"/>
+                        </GridPane>
+                    </VBox>
+                </TitledPane>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="status-bar" spacing="20" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+            <Label text="Last Saved:" styleClass="status-text"/>
+            <Label fx:id="lastSavedLabel" text="Not saved" styleClass="status-value"/>
+            <Separator orientation="VERTICAL"/>
+            <Label text="Created By:" styleClass="status-text"/>
+            <Label fx:id="createdByLabel" text="N/A" styleClass="status-value"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="* Required fields" styleClass="required-indicator"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

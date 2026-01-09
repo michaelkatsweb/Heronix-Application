@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.ModuleLauncherController"
+            styleClass="module-launcher-root">
+
+    <!-- Header -->
+    <top>
+        <VBox styleClass="launcher-header">
+            <padding>
+                <Insets top="30" right="40" bottom="20" left="40"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="HERONIX" styleClass="launcher-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="searchField" promptText="Search modules... (Ctrl+K)"
+                          styleClass="launcher-search" prefWidth="300"/>
+                <Button fx:id="userButton" styleClass="user-button" mnemonicParsing="false"/>
+                <Button text="⚙" styleClass="icon-button" onAction="#handleSettings"/>
+            </HBox>
+
+            <Label text="Welcome back! Select a module to get started."
+                   styleClass="launcher-subtitle">
+                <padding>
+                    <Insets top="10"/>
+                </padding>
+            </Label>
+        </VBox>
+    </top>
+
+    <!-- Module Tiles -->
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="launcher-scroll">
+            <VBox spacing="30" styleClass="launcher-content">
+                <padding>
+                    <Insets top="20" right="40" bottom="40" left="40"/>
+                </padding>
+
+                <!-- Core Academic Modules -->
+                <VBox spacing="15">
+                    <Label text="Core Academic Systems" styleClass="section-title"/>
+                    <GridPane hgap="20" vgap="20" fx:id="coreModulesGrid">
+                        <!-- Row 1 -->
+                        <VBox styleClass="module-tile, tile-blue" onMouseClicked="#handleEnrollment"
+                              GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="📋" styleClass="tile-icon"/>
+                            <Label text="Enrollment" styleClass="tile-title"/>
+                            <Label text="Student registration, transfers, pre-enrollment"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-green" onMouseClicked="#handleStudentManagement"
+                              GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="👥" styleClass="tile-icon"/>
+                            <Label text="Student Management" styleClass="tile-title"/>
+                            <Label text="Demographics, contacts, medical, accommodations"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-purple" onMouseClicked="#handleAcademics"
+                              GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="📚" styleClass="tile-icon"/>
+                            <Label text="Academics" styleClass="tile-title"/>
+                            <Label text="Courses, scheduling, grading, transcripts"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-orange" onMouseClicked="#handleAttendance"
+                              GridPane.columnIndex="3" GridPane.rowIndex="0">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="✓" styleClass="tile-icon"/>
+                            <Label text="Attendance" styleClass="tile-title"/>
+                            <Label text="Daily tracking, period attendance, reports"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <!-- Row 2 -->
+                        <VBox styleClass="module-tile, tile-red" onMouseClicked="#handleDiscipline"
+                              GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="⚠" styleClass="tile-icon"/>
+                            <Label text="Discipline" styleClass="tile-title"/>
+                            <Label text="Incidents, referrals, consequences, tracking"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-teal" onMouseClicked="#handleSpecialPrograms"
+                              GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="🎓" styleClass="tile-icon"/>
+                            <Label text="Special Programs" styleClass="tile-title"/>
+                            <Label text="SPED, IEP, 504 Plans, ELL, Gifted &amp; Talented"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-pink" onMouseClicked="#handleHealthCounseling"
+                              GridPane.columnIndex="2" GridPane.rowIndex="1">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="💊" styleClass="tile-icon"/>
+                            <Label text="Health &amp;Counseling" styleClass="tile-title"/>
+                            <Label text="Health office, counseling, crisis management"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-indigo" onMouseClicked="#handleStaffManagement"
+                              GridPane.columnIndex="3" GridPane.rowIndex="1">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="👔" styleClass="tile-icon"/>
+                            <Label text="Staff Management" styleClass="tile-title"/>
+                            <Label text="Teachers, substitutes, paras, co-teachers"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Operations &amp;Support -->
+                <VBox spacing="15">
+                    <Label text="Operations &amp;Support" styleClass="section-title"/>
+                    <GridPane hgap="20" vgap="20" fx:id="operationsModulesGrid">
+                        <VBox styleClass="module-tile, tile-cyan" onMouseClicked="#handleOperations"
+                              GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="💰" styleClass="tile-icon"/>
+                            <Label text="Operations" styleClass="tile-title"/>
+                            <Label text="Fees, food service, transportation, facilities"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-lime" onMouseClicked="#handleActivities"
+                              GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="⚽" styleClass="tile-icon"/>
+                            <Label text="Activities" styleClass="tile-title"/>
+                            <Label text="Athletics, clubs, events, calendar"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-amber" onMouseClicked="#handleCommunication"
+                              GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="📧" styleClass="tile-icon"/>
+                            <Label text="Communication" styleClass="tile-title"/>
+                            <Label text="Parent portal, messaging, notifications"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-violet" onMouseClicked="#handleReportsAnalytics"
+                              GridPane.columnIndex="3" GridPane.rowIndex="0">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="📊" styleClass="tile-icon"/>
+                            <Label text="Reports &amp;Analytics" styleClass="tile-title"/>
+                            <Label text="Dashboards, forecasting, predictive analytics"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Administration -->
+                <VBox spacing="15">
+                    <Label text="System Administration" styleClass="section-title"/>
+                    <GridPane hgap="20" vgap="20" fx:id="adminModulesGrid">
+                        <VBox styleClass="module-tile, tile-gray" onMouseClicked="#handleSystemAdmin"
+                              GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="⚙" styleClass="tile-icon"/>
+                            <Label text="System Settings" styleClass="tile-title"/>
+                            <Label text="Configuration, users, roles, integrations"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-slate" onMouseClicked="#handleDataTools"
+                              GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="🔧" styleClass="tile-icon"/>
+                            <Label text="Data Tools" styleClass="tile-title"/>
+                            <Label text="Import, export, database management, backup"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-brown" onMouseClicked="#handleAuditSecurity"
+                              GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="🔒" styleClass="tile-icon"/>
+                            <Label text="Audit &amp;Security" styleClass="tile-title"/>
+                            <Label text="Audit logs, security settings, compliance"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Quick Stats at Bottom -->
+                <HBox spacing="20" alignment="CENTER" styleClass="quick-stats">
+                    <VBox alignment="CENTER" styleClass="stat-card-mini">
+                        <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+                        <Label fx:id="studentCountLabel" text="1,245" styleClass="stat-mini-value"/>
+                        <Label text="Students" styleClass="stat-mini-label"/>
+                    </VBox>
+                    <VBox alignment="CENTER" styleClass="stat-card-mini">
+                        <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+                        <Label fx:id="teacherCountLabel" text="89" styleClass="stat-mini-value"/>
+                        <Label text="Teachers" styleClass="stat-mini-label"/>
+                    </VBox>
+                    <VBox alignment="CENTER" styleClass="stat-card-mini">
+                        <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+                        <Label fx:id="courseCountLabel" text="156" styleClass="stat-mini-value"/>
+                        <Label text="Courses" styleClass="stat-mini-label"/>
+                    </VBox>
+                    <VBox alignment="CENTER" styleClass="stat-card-mini">
+                        <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+                        <Label fx:id="scheduleCountLabel" text="24" styleClass="stat-mini-value"/>
+                        <Label text="Active Schedules" styleClass="stat-mini-label"/>
+                    </VBox>
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

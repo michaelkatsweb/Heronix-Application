@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.CafeteriaMealManagementController"
+            stylesheets="@../css/application.css"
+            prefWidth="1500" prefHeight="900">
+
+    <top>
+        <VBox spacing="15" style="-fx-background-color: linear-gradient(to right, #8bc34a, #689f38); -fx-padding: 20;">
+            <Label text="Cafeteria & Meal Management" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <HBox spacing="15">
+                <VBox spacing="3" HBox.hgrow="ALWAYS" style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
+                    <Label text="Meals Served Today" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <Label fx:id="mealsServedLabel" text="842" style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+                <VBox spacing="3" HBox.hgrow="ALWAYS" style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
+                    <Label text="Free/Reduced Eligible" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <Label fx:id="freeReducedLabel" text="312" style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+                <VBox spacing="3" HBox.hgrow="ALWAYS" style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
+                    <Label text="Revenue Today" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <Label fx:id="revenueLabel" text="$2,142" style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+            <Tab text="Menu Planning">
+                <VBox spacing="10" style="-fx-padding: 15;">
+                    <TableView fx:id="menuTableView" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="dateColumn" text="Date" prefWidth="100"/>
+                            <TableColumn fx:id="breakfastColumn" text="Breakfast" prefWidth="200"/>
+                            <TableColumn fx:id="lunchColumn" text="Lunch" prefWidth="200"/>
+                            <TableColumn fx:id="nutritionColumn" text="Nutrition Info" prefWidth="150"/>
+                        </columns>
+                    </TableView>
+                    <Button text="Create Menu" onAction="#handleCreateMenu" style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"/>
+                </VBox>
+            </Tab>
+            <Tab text="Student Accounts">
+                <VBox spacing="10" style="-fx-padding: 15;">
+                    <TableView fx:id="accountsTableView" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="studentNameColumn" text="Student" prefWidth="150"/>
+                            <TableColumn fx:id="balanceColumn" text="Balance" prefWidth="100"/>
+                            <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+            <Tab text="Reports">
+                <VBox spacing="15" style="-fx-padding: 20;">
+                    <Button text="Meal Count Report" onAction="#handleMealCountReport" maxWidth="300"/>
+                    <Button text="Financial Report" onAction="#handleFinancialReport" maxWidth="300"/>
+                    <Button text="Allergy Report" onAction="#handleAllergyReport" maxWidth="300"/>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" style="-fx-background-color: #fafafa; -fx-padding: 10;">
+            <Label fx:id="statusLabel" text="Ready"/>
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.heronix.controller.StudentAccommodationsFormController"
+      spacing="10" styleClass="root-container">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-section">
+        <Label text="Student Accommodations &amp; Support" styleClass="form-title">
+            <font>
+                <Font name="System Bold" size="24"/>
+            </font>
+        </Label>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnRefresh" text="Refresh" onAction="#handleRefresh" styleClass="btn-secondary"/>
+        <Button fx:id="btnNewAccommodation" text="+ New Accommodation" onAction="#handleNewAccommodation" styleClass="btn-primary"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Search and Filter Section -->
+    <VBox spacing="8" styleClass="filter-section">
+        <Label text="Search &amp; Filter" styleClass="section-header">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Label>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Student:"/>
+            <TextField fx:id="txtSearchStudent" promptText="Search by student name..." prefWidth="200"/>
+
+            <Label text="Type:"/>
+            <ComboBox fx:id="cmbAccommodationType" promptText="All Types" prefWidth="180"/>
+
+            <Label text="Status:"/>
+            <ComboBox fx:id="cmbStatus" promptText="All Statuses" prefWidth="150"/>
+
+            <Label text="Coordinator:"/>
+            <ComboBox fx:id="cmbCoordinator" promptText="All Coordinators" prefWidth="180"/>
+
+            <Button text="Search" onAction="#handleSearch" styleClass="btn-primary"/>
+            <Button text="Clear" onAction="#handleClearSearch" styleClass="btn-secondary"/>
+        </HBox>
+
+        <!-- Quick Filters -->
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <Label text="Quick Filters:"/>
+            <ToggleButton fx:id="toggle504Plans" text="504 Plans" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="toggleIEPs" text="IEPs" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="toggleELL" text="ELL" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="toggleGifted" text="Gifted" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="toggleAtRisk" text="At-Risk" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="toggleOverdueReviews" text="Overdue Reviews" onAction="#handleQuickFilter" styleClass="toggle-filter-warning"/>
+            <ToggleButton fx:id="toggleExpiringSoon" text="Expiring Soon" onAction="#handleQuickFilter" styleClass="toggle-filter-alert"/>
+        </HBox>
+    </VBox>
+
+    <!-- Main Content - Split Pane -->
+    <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
+
+        <!-- Left: Accommodations List -->
+        <VBox spacing="5">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Accommodations List" styleClass="section-header">
+                    <font>
+                        <Font name="System Bold" size="14"/>
+                    </font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblRecordCount" text="0 records" style="-fx-text-fill: #666;"/>
+            </HBox>
+
+            <TableView fx:id="tblAccommodations" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colStudentName" text="Student" prefWidth="150"/>
+                    <TableColumn fx:id="colType" text="Type" prefWidth="120"/>
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="100"/>
+                    <TableColumn fx:id="colStartDate" text="Start Date" prefWidth="100"/>
+                    <TableColumn fx:id="colEndDate" text="End Date" prefWidth="100"/>
+                    <TableColumn fx:id="colNextReview" text="Next Review" prefWidth="100"/>
+                    <TableColumn fx:id="colCoordinator" text="Coordinator" prefWidth="150"/>
+                </columns>
+            </TableView>
+
+            <!-- Action Buttons -->
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button fx:id="btnView" text="View Details" onAction="#handleViewDetails" disable="true" styleClass="btn-secondary"/>
+                <Button fx:id="btnEdit" text="Edit" onAction="#handleEdit" disable="true" styleClass="btn-secondary"/>
+                <Button fx:id="btnActivate" text="Activate" onAction="#handleActivate" disable="true" styleClass="btn-primary"/>
+                <Button fx:id="btnDeactivate" text="Deactivate" onAction="#handleDeactivate" disable="true" styleClass="btn-secondary"/>
+                <Button fx:id="btnDelete" text="Delete" onAction="#handleDelete" disable="true" styleClass="btn-danger"/>
+            </HBox>
+        </VBox>
+
+        <!-- Right: Details Panel -->
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox fx:id="detailsPanel" spacing="15" styleClass="details-panel">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                    <!-- Basic Information -->
+                    <VBox spacing="8" styleClass="info-section">
+                        <Label text="Basic Information" styleClass="section-header" style="-fx-background-color: #E3F2FD; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="30"/>
+                                <ColumnConstraints percentWidth="70"/>
+                            </columnConstraints>
+
+                            <Label text="Student:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="cmbStudent" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="300"/>
+
+                            <Label text="Type:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="cmbType" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="300"/>
+
+                            <Label text="Status:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="cmbDetailStatus" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="300"/>
+
+                            <Label text="Start Date:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="dpStartDate" GridPane.rowIndex="3" GridPane.columnIndex="1" prefWidth="200"/>
+
+                            <Label text="End Date:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="dpEndDate" GridPane.rowIndex="4" GridPane.columnIndex="1" prefWidth="200"/>
+
+                            <Label text="Coordinator:" GridPane.rowIndex="5" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="cmbDetailCoordinator" GridPane.rowIndex="5" GridPane.columnIndex="1" prefWidth="300"/>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- 504 Plan Details -->
+                    <VBox fx:id="section504Plan" spacing="8" styleClass="info-section">
+                        <Label text="504 Plan Details" styleClass="section-header" style="-fx-background-color: #E8F5E9; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <CheckBox fx:id="chkHas504Plan" text="Has 504 Plan"/>
+
+                        <Label text="504 Accommodations:"/>
+                        <TextArea fx:id="txt504Accommodations" promptText="Enter 504 plan accommodations..." prefRowCount="4"/>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+
+                            <VBox spacing="5" GridPane.rowIndex="0" GridPane.columnIndex="0">
+                                <Label text="504 Plan Date:"/>
+                                <DatePicker fx:id="dp504PlanDate" prefWidth="200"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                                <Label text="504 Review Date:"/>
+                                <DatePicker fx:id="dp504ReviewDate" prefWidth="200"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- IEP Details -->
+                    <VBox fx:id="sectionIEP" spacing="8" styleClass="info-section">
+                        <Label text="IEP (Individualized Education Program) Details" styleClass="section-header" style="-fx-background-color: #FFF3E0; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <CheckBox fx:id="chkHasIEP" text="Has IEP"/>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="30"/>
+                                <ColumnConstraints percentWidth="70"/>
+                            </columnConstraints>
+
+                            <Label text="IEP Placement:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="cmbIEPPlacement" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="300"/>
+
+                            <Label text="Primary Disability:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtPrimaryDisability" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="300"/>
+
+                            <Label text="IEP Start Date:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="dpIEPStartDate" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="200"/>
+
+                            <Label text="IEP Review Date:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="dpIEPReviewDate" GridPane.rowIndex="3" GridPane.columnIndex="1" prefWidth="200"/>
+
+                            <Label text="Case Manager:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtCaseManager" GridPane.rowIndex="4" GridPane.columnIndex="1" prefWidth="300"/>
+                        </GridPane>
+
+                        <Label text="IEP Accommodations:"/>
+                        <TextArea fx:id="txtIEPAccommodations" promptText="Enter IEP accommodations..." prefRowCount="4"/>
+                    </VBox>
+
+                    <!-- ELL/ESL Details -->
+                    <VBox fx:id="sectionELL" spacing="8" styleClass="info-section">
+                        <Label text="ELL/ESL (English Language Learner) Details" styleClass="section-header" style="-fx-background-color: #F3E5F5; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <CheckBox fx:id="chkIsELL" text="Is ELL Student"/>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="30"/>
+                                <ColumnConstraints percentWidth="70"/>
+                            </columnConstraints>
+
+                            <Label text="Proficiency Level:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="cmbELLProficiency" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="300"/>
+
+                            <Label text="Home Language:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtHomeLanguage" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="300"/>
+
+                            <Label text="ELL Entry Date:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="dpELLEntryDate" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="200"/>
+
+                            <Label text="ELL Exit Date:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="dpELLExitDate" GridPane.rowIndex="3" GridPane.columnIndex="1" prefWidth="200"/>
+                        </GridPane>
+
+                        <Label text="ELL Services:"/>
+                        <TextArea fx:id="txtELLServices" promptText="Enter ELL services provided..." prefRowCount="3"/>
+                    </VBox>
+
+                    <!-- Other Designations -->
+                    <VBox spacing="8" styleClass="info-section">
+                        <Label text="Other Designations &amp; Services" styleClass="section-header" style="-fx-background-color: #E1F5FE; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <FlowPane hgap="15" vgap="10">
+                            <CheckBox fx:id="chkGifted" text="Gifted &amp; Talented"/>
+                            <CheckBox fx:id="chkAtRisk" text="At-Risk"/>
+                            <CheckBox fx:id="chkTitleI" text="Title I"/>
+                            <CheckBox fx:id="chkHomeless" text="Homeless (McKinney-Vento)"/>
+                            <CheckBox fx:id="chkFosterCare" text="Foster Care"/>
+                            <CheckBox fx:id="chkMilitaryFamily" text="Military Family"/>
+                        </FlowPane>
+                    </VBox>
+
+                    <!-- Lunch & Transportation -->
+                    <VBox spacing="8" styleClass="info-section">
+                        <Label text="Lunch &amp; Transportation" styleClass="section-header" style="-fx-background-color: #FFF9C4; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="30"/>
+                                <ColumnConstraints percentWidth="70"/>
+                            </columnConstraints>
+
+                            <Label text="Lunch Status:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="cmbLunchStatus" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="300"/>
+
+                            <Label text="Special Transportation:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <CheckBox fx:id="chkSpecialTransportation" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <Label text="Bus Number:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtBusNumber" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="150"/>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Accessibility -->
+                    <VBox spacing="8" styleClass="info-section">
+                        <Label text="Accessibility &amp; Technology" styleClass="section-header" style="-fx-background-color: #FCE4EC; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <CheckBox fx:id="chkAssistiveTechnology" text="Requires Assistive Technology"/>
+                        <TextArea fx:id="txtAssistiveTechnology" promptText="List assistive technology devices..." prefRowCount="2"/>
+
+                        <CheckBox fx:id="chkAccessibilityAccommodations" text="Requires Accessibility Accommodations"/>
+                        <TextArea fx:id="txtAccessibilityAccommodations" promptText="Describe accessibility accommodations..." prefRowCount="2"/>
+                    </VBox>
+
+                    <!-- Review & Notes -->
+                    <VBox spacing="8" styleClass="info-section">
+                        <Label text="Review &amp; Notes" styleClass="section-header" style="-fx-background-color: #F5F5F5; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="30"/>
+                                <ColumnConstraints percentWidth="70"/>
+                            </columnConstraints>
+
+                            <Label text="Last Review Date:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="dpLastReviewDate" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="200"/>
+
+                            <Label text="Next Review Date:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="dpNextReviewDate" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="200"/>
+                        </GridPane>
+
+                        <Label text="Coordinator Notes:"/>
+                        <TextArea fx:id="txtCoordinatorNotes" promptText="Enter coordinator notes..." prefRowCount="4"/>
+
+                        <Label text="Administrative Notes:"/>
+                        <TextArea fx:id="txtAdministrativeNotes" promptText="Enter administrative notes..." prefRowCount="4"/>
+                    </VBox>
+
+                    <!-- Action Buttons -->
+                    <HBox spacing="10" alignment="CENTER">
+                        <Button fx:id="btnSave" text="Save" onAction="#handleSave" styleClass="btn-primary" prefWidth="100"/>
+                        <Button fx:id="btnCancel" text="Cancel" onAction="#handleCancel" styleClass="btn-secondary" prefWidth="100"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnScheduleReview" text="Schedule Review" onAction="#handleScheduleReview" styleClass="btn-secondary"/>
+                    </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </SplitPane>
+
+    <Separator/>
+
+    <!-- Status Bar -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="status-bar">
+        <Label fx:id="lblStatusMessage" text="Ready" styleClass="status-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="lblUser" text="User: Admin" styleClass="status-label"/>
+    </HBox>
+
+</VBox>

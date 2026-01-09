@@ -1,0 +1,11 @@
+Staff_ID,LastName,FirstName,Role,School_ID,Email,Hire_Date
+T200,Adams,Mark,Teacher,0101,mark.adams@chs.edu,2018-08-01
+T201,Baker,Linda,Teacher,0101,linda.baker@chs.edu,2019-08-01
+T202,Clark,Robert,Teacher,0201,robert.clark@wms.edu,2017-08-01
+T203,Evans,Susan,Teacher,0301,susan.evans@ems.edu,2020-08-01
+A300,Foster,James,Administrator,0101,james.foster@chs.edu,2016-01-15
+A301,Gray,Karen,Administrator,0201,karen.gray@wms.edu,2015-01-15
+T204,Hall,Patricia,Teacher,0301,patricia.hall@ems.edu,2021-08-01
+C400,Irwin,Charles,Counselor,0101,charles.irwin@chs.edu,2014-09-01
+C401,Johnson,Angela,Counselor,0201,angela.johnson@wms.edu,2018-09-01
+T205,King,Steven,Teacher,0301,steven.king@ems.edu,2019-08-01

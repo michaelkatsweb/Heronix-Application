@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.heronix.controller.ParentGuardianManagementFormController"
+      spacing="10" styleClass="root-container">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-section">
+        <Label text="Parent/Guardian Management" styleClass="form-title">
+            <font>
+                <Font name="System Bold" size="24"/>
+            </font>
+        </Label>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnRefresh" text="Refresh" onAction="#handleRefresh" styleClass="btn-secondary"/>
+        <Button fx:id="btnNew" text="+ New Parent" onAction="#handleNew" styleClass="btn-primary"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Search and Filter Section -->
+    <VBox spacing="8" styleClass="filter-section">
+        <Label text="Search and Filter" styleClass="section-header">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Label>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Search Name:"/>
+            <TextField fx:id="txtSearchName" promptText="Enter parent/guardian name" prefWidth="200"/>
+
+            <Label text="Student:"/>
+            <ComboBox fx:id="cmbStudentFilter" promptText="All Students" prefWidth="200" editable="true"/>
+
+            <Label text="Relationship:"/>
+            <ComboBox fx:id="cmbRelationshipFilter" promptText="All Relationships" prefWidth="150"/>
+
+            <Button fx:id="btnSearch" text="Search" onAction="#handleSearch" styleClass="btn-primary"/>
+            <Button fx:id="btnClearFilters" text="Clear Filters" onAction="#handleClearFilters" styleClass="btn-secondary"/>
+        </HBox>
+
+        <!-- Quick Filter Toggles -->
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <Label text="Quick Filters:"/>
+            <ToggleButton fx:id="togglePrimaryCustodian" text="Primary Custodian" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="toggleCustodial" text="Custodial" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="togglePickupAuth" text="Pickup Authorized" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="toggleHasPortalAccess" text="Has Portal Access" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="toggleMissingInfo" text="Missing Info" onAction="#handleQuickFilter" styleClass="toggle-filter-warning"/>
+        </HBox>
+    </VBox>
+
+    <Separator/>
+
+    <!-- Main Content Area - Split Pane with Three Sections -->
+    <SplitPane dividerPositions="0.30, 0.70" VBox.vgrow="ALWAYS">
+
+        <!-- Left Side: Parents List -->
+        <VBox spacing="5">
+            <Label text="Parents/Guardians" styleClass="section-header">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+
+            <TableView fx:id="tblParents" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colName" text="Name" prefWidth="150"/>
+                    <TableColumn fx:id="colRelationship" text="Relationship" prefWidth="100"/>
+                    <TableColumn fx:id="colPhone" text="Phone" prefWidth="120"/>
+                    <TableColumn fx:id="colEmail" text="Email" prefWidth="180"/>
+                    <TableColumn fx:id="colStudents" text="Students" prefWidth="80"/>
+                </columns>
+                <placeholder>
+                    <Label text="No parents/guardians found"/>
+                </placeholder>
+            </TableView>
+
+            <HBox spacing="5" alignment="CENTER_LEFT">
+                <Button fx:id="btnView" text="View" onAction="#handleView" styleClass="btn-secondary" disable="true"/>
+                <Button fx:id="btnEdit" text="Edit" onAction="#handleEdit" styleClass="btn-primary" disable="true"/>
+                <Button fx:id="btnDelete" text="Delete" onAction="#handleDelete" styleClass="btn-danger" disable="true"/>
+            </HBox>
+        </VBox>
+
+        <!-- Middle: Parent Details -->
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox spacing="15" styleClass="details-panel">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <!-- Basic Information Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Basic Information" styleClass="section-header" style="-fx-background-color: #E3F2FD; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="*First Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtFirstName" promptText="First name" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Middle Name:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtMiddleName" promptText="Middle name" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="*Last Name:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtLastName" promptText="Last name" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Preferred Name:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtPreferredName" promptText="Preferred name" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                        <Label text="*Relationship:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbRelationship" promptText="Select Relationship" GridPane.rowIndex="4" GridPane.columnIndex="1" maxWidth="Infinity"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Contact Information Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Contact Information" styleClass="section-header" style="-fx-background-color: #E8F5E9; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="*Cell Phone:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtCellPhone" promptText="(555) 123-4567" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Home Phone:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtHomePhone" promptText="(555) 123-4567" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Work Phone:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtWorkPhone" promptText="(555) 123-4567" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="*Email:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtEmail" promptText="email@example.com" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                        <Label text="Preferred Contact:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbPreferredContact" promptText="Select Method" GridPane.rowIndex="4" GridPane.columnIndex="1" maxWidth="Infinity"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Address Information Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Address Information" styleClass="section-header" style="-fx-background-color: #FFF3E0; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Lives with Student:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkLivesWithStudent" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Street Address:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtStreetAddress" promptText="123 Main Street" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="City:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtCity" promptText="City" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="State:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbState" promptText="Select State" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="Infinity" editable="true"/>
+
+                        <Label text="ZIP Code:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtZipCode" promptText="12345" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Employment Information Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Employment Information" styleClass="section-header" style="-fx-background-color: #F3E5F5; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Employer:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtEmployer" promptText="Company name" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Occupation:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtOccupation" promptText="Job title" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Work Address:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtWorkAddress" promptText="Work address" GridPane.rowIndex="2" GridPane.columnIndex="1" prefRowCount="2" wrapText="true"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Custodial & Permissions Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Custodial Status &amp; Permissions" styleClass="section-header" style="-fx-background-color: #FFEBEE; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50" halignment="LEFT"/>
+                            <ColumnConstraints percentWidth="50" halignment="LEFT"/>
+                        </columnConstraints>
+
+                        <CheckBox fx:id="chkPrimaryCustodian" text="Primary Custodian" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkHasLegalCustody" text="Has Legal Custody" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <CheckBox fx:id="chkCanPickUpStudent" text="Can Pick Up Student" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkAuthorizedForEmergency" text="Authorized for Emergency" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <CheckBox fx:id="chkCanMakeDecisions" text="Can Make Educational Decisions" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkReceivesReportCards" text="Receives Report Cards" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <CheckBox fx:id="chkReceivesEmails" text="Receives School Emails" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkReceivesAlerts" text="Receives Emergency Alerts" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Custody Documentation:"/>
+                        <TextField fx:id="txtCustodyDocumentation" promptText="Reference to custody documents" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnUploadDocument" text="Upload..." onAction="#handleUploadDocument" styleClass="btn-secondary"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Portal Access Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Parent Portal Access" styleClass="section-header" style="-fx-background-color: #E1F5FE; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Portal Access:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkHasPortalAccess" text="Enabled" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Username:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtPortalUsername" promptText="Portal username" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Last Login:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Label fx:id="lblLastLogin" text="Never" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Account Status:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Label fx:id="lblPortalStatus" text="Inactive" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button fx:id="btnCreatePortalAccount" text="Create Portal Account" onAction="#handleCreatePortalAccount" styleClass="btn-primary"/>
+                        <Button fx:id="btnResetPassword" text="Reset Password" onAction="#handleResetPassword" styleClass="btn-secondary" disable="true"/>
+                        <Button fx:id="btnSendInvitation" text="Send Invitation Email" onAction="#handleSendInvitation" styleClass="btn-secondary" disable="true"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Communication Preferences Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Communication Preferences" styleClass="section-header" style="-fx-background-color: #F5F5F5; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Preferred Language:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbPreferredLanguage" promptText="Select Language" GridPane.rowIndex="0" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Text Notifications:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkTextNotifications" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Email Notifications:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkEmailNotifications" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Additional Notes:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtNotes" promptText="Additional notes about parent/guardian" GridPane.rowIndex="3" GridPane.columnIndex="1" prefRowCount="3" wrapText="true"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Action Buttons -->
+                <HBox spacing="10" alignment="CENTER">
+                    <Button fx:id="btnSave" text="Save" onAction="#handleSave" styleClass="btn-primary" prefWidth="100"/>
+                    <Button fx:id="btnCancel" text="Cancel" onAction="#handleCancel" styleClass="btn-secondary" prefWidth="100"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+
+        <!-- Right Side: Student Relationships -->
+        <VBox spacing="5">
+            <Label text="Student Relationships" styleClass="section-header">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+
+            <ListView fx:id="lstStudents" VBox.vgrow="ALWAYS">
+                <placeholder>
+                    <Label text="No students linked"/>
+                </placeholder>
+            </ListView>
+
+            <VBox spacing="5">
+                <Label text="Link to Student" style="-fx-font-weight: bold;"/>
+
+                <HBox spacing="5" alignment="CENTER_LEFT">
+                    <ComboBox fx:id="cmbLinkStudent" promptText="Select Student" prefWidth="200" editable="true" HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnLinkStudent" text="Link" onAction="#handleLinkStudent" styleClass="btn-primary"/>
+                </HBox>
+
+                <GridPane hgap="10" vgap="5">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50" halignment="LEFT"/>
+                        <ColumnConstraints percentWidth="50" halignment="LEFT"/>
+                    </columnConstraints>
+
+                    <CheckBox fx:id="chkLinkPrimary" text="Primary Contact" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <CheckBox fx:id="chkLinkCustodial" text="Custodial" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <CheckBox fx:id="chkLinkPickup" text="Can Pickup" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <CheckBox fx:id="chkLinkEmergency" text="Emergency Contact" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                </GridPane>
+
+                <Button fx:id="btnUnlinkStudent" text="Unlink Selected" onAction="#handleUnlinkStudent" styleClass="btn-danger" disable="true"/>
+            </VBox>
+
+            <Separator/>
+
+            <VBox spacing="5">
+                <Label text="Siblings" style="-fx-font-weight: bold;"/>
+                <ListView fx:id="lstSiblings" prefHeight="100">
+                    <placeholder>
+                        <Label text="No siblings found"/>
+                    </placeholder>
+                </ListView>
+            </VBox>
+        </VBox>
+    </SplitPane>
+
+    <Separator/>
+
+    <!-- Status Bar -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="status-bar">
+        <Label text="User:"/>
+        <Label fx:id="lblCurrentUser" text="System User" styleClass="status-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Total Parents:"/>
+        <Label fx:id="lblTotalParents" text="0" styleClass="status-label"/>
+        <Separator orientation="VERTICAL"/>
+        <Label text="Missing Info:"/>
+        <Label fx:id="lblMissingInfoCount" text="0" styleClass="status-label-warning"/>
+    </HBox>
+</VBox>

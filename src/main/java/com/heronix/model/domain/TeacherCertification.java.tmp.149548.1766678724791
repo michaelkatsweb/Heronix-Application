@@ -1,0 +1,323 @@
+package com.heronix.model.domain;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Teacher Certification Entity
+ *
+ * Tracks teaching certificates, licenses, endorsements, and renewals.
+ * Manages certification expiration, renewal tracking, and out-of-field teaching.
+ *
+ * @author Heronix SIS Team
+ * @version 1.0.0
+ * @since December 25, 2025
+ */
+@Entity
+@Table(name = "teacher_certifications", indexes = {
+    @Index(name = "idx_cert_teacher", columnList = "teacher_id"),
+    @Index(name = "idx_cert_expiration", columnList = "expiration_date"),
+    @Index(name = "idx_cert_status", columnList = "status"),
+    @Index(name = "idx_cert_type", columnList = "certificate_type")
+})
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class TeacherCertification {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /**
+     * Teacher who holds this certification
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "teacher_id", nullable = false)
+    private Teacher teacher;
+
+    /**
+     * Certificate number/ID from state licensing authority
+     */
+    @Column(name = "certificate_number", nullable = false, unique = true)
+    private String certificateNumber;
+
+    /**
+     * Type of certificate
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "certificate_type", nullable = false)
+    private CertificateType certificateType;
+
+    /**
+     * Certificate title/name
+     */
+    @Column(name = "certificate_title", nullable = false)
+    private String certificateTitle;
+
+    /**
+     * Issuing state or authority
+     */
+    @Column(name = "issuing_authority")
+    private String issuingAuthority;
+
+    /**
+     * Issue date
+     */
+    @Column(name = "issue_date", nullable = false)
+    private LocalDate issueDate;
+
+    /**
+     * Expiration date
+     */
+    @Column(name = "expiration_date", nullable = false)
+    private LocalDate expirationDate;
+
+    /**
+     * Current status
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    @Builder.Default
+    private CertificationStatus status = CertificationStatus.ACTIVE;
+
+    /**
+     * Grade levels covered by this certification
+     */
+    @ElementCollection
+    @CollectionTable(name = "certification_grade_levels", joinColumns = @JoinColumn(name = "certification_id"))
+    @Column(name = "grade_level")
+    private List<String> gradeLevels = new ArrayList<>();
+
+    /**
+     * Subject areas covered
+     */
+    @ElementCollection
+    @CollectionTable(name = "certification_subjects", joinColumns = @JoinColumn(name = "certification_id"))
+    @Column(name = "subject")
+    private List<String> subjects = new ArrayList<>();
+
+    /**
+     * Endorsements (ESOL, reading, gifted, ESE, etc.)
+     */
+    @ElementCollection
+    @CollectionTable(name = "certification_endorsements", joinColumns = @JoinColumn(name = "certification_id"))
+    @Column(name = "endorsement")
+    private List<String> endorsements = new ArrayList<>();
+
+    /**
+     * Highly Qualified Teacher (HQT) status
+     */
+    @Column(name = "highly_qualified")
+    @Builder.Default
+    private Boolean highlyQualified = false;
+
+    /**
+     * HQT status verification date
+     */
+    @Column(name = "hqt_verification_date")
+    private LocalDate hqtVerificationDate;
+
+    /**
+     * Renewal required?
+     */
+    @Column(name = "renewal_required")
+    @Builder.Default
+    private Boolean renewalRequired = true;
+
+    /**
+     * Renewal reminder sent?
+     */
+    @Column(name = "renewal_reminder_sent")
+    @Builder.Default
+    private Boolean renewalReminderSent = false;
+
+    /**
+     * Date renewal reminder was sent
+     */
+    @Column(name = "renewal_reminder_date")
+    private LocalDate renewalReminderDate;
+
+    /**
+     * Renewal in progress?
+     */
+    @Column(name = "renewal_in_progress")
+    @Builder.Default
+    private Boolean renewalInProgress = false;
+
+    /**
+     * Renewal application date
+     */
+    @Column(name = "renewal_application_date")
+    private LocalDate renewalApplicationDate;
+
+    /**
+     * Renewal approval date
+     */
+    @Column(name = "renewal_approval_date")
+    private LocalDate renewalApprovalDate;
+
+    /**
+     * Renewal denial date
+     */
+    @Column(name = "renewal_denial_date")
+    private LocalDate renewalDenialDate;
+
+    /**
+     * Renewal denial reason
+     */
+    @Column(name = "renewal_denial_reason", columnDefinition = "TEXT")
+    private String renewalDenialReason;
+
+    /**
+     * New expiration date after renewal
+     */
+    @Column(name = "renewed_expiration_date")
+    private LocalDate renewedExpirationDate;
+
+    /**
+     * Out-of-field teaching flag
+     * True if teacher is teaching subjects not covered by this certification
+     */
+    @Column(name = "out_of_field_teaching")
+    @Builder.Default
+    private Boolean outOfFieldTeaching = false;
+
+    /**
+     * Out-of-field subjects being taught
+     */
+    @ElementCollection
+    @CollectionTable(name = "certification_out_of_field", joinColumns = @JoinColumn(name = "certification_id"))
+    @Column(name = "subject")
+    private List<String> outOfFieldSubjects = new ArrayList<>();
+
+    /**
+     * Document path (scanned certificate)
+     */
+    @Column(name = "document_path")
+    private String documentPath;
+
+    /**
+     * Verification notes
+     */
+    @Column(name = "verification_notes", columnDefinition = "TEXT")
+    private String verificationNotes;
+
+    /**
+     * Created timestamp
+     */
+    @Column(name = "created_at", nullable = false)
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    /**
+     * Updated timestamp
+     */
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // ========================================================================
+    // ENUMS
+    // ========================================================================
+
+    public enum CertificateType {
+        PROFESSIONAL,          // Full professional certification
+        TEMPORARY,             // Temporary/provisional certification
+        EMERGENCY,             // Emergency certification
+        SUBSTITUTE,            // Substitute teaching certificate
+        ADMINISTRATIVE,        // Principal/admin certification
+        SPECIALIZED,           // Specialized subject certification
+        NATIONAL_BOARD,        // National Board Certification
+        OUT_OF_STATE,          // Out-of-state certificate (pending reciprocity)
+        EXPIRED,               // Expired certificate (historical record)
+        OTHER                  // Other certification type
+    }
+
+    public enum CertificationStatus {
+        ACTIVE,                // Currently valid
+        EXPIRING_SOON,         // Expires within 90 days
+        EXPIRED,               // Past expiration date
+        SUSPENDED,             // Suspended by authority
+        REVOKED,               // Revoked by authority
+        PENDING_RENEWAL,       // Renewal application submitted
+        RENEWED,               // Successfully renewed
+        DENIED,                // Renewal denied
+        INACTIVE              // No longer in use
+    }
+
+    // ========================================================================
+    // HELPER METHODS
+    // ========================================================================
+
+    @Transient
+    public boolean isExpired() {
+        return status == CertificationStatus.EXPIRED ||
+               (expirationDate != null && expirationDate.isBefore(LocalDate.now()));
+    }
+
+    @Transient
+    public boolean isExpiringSoon() {
+        if (expirationDate == null) return false;
+        LocalDate soon = LocalDate.now().plusDays(90);
+        return expirationDate.isBefore(soon) && expirationDate.isAfter(LocalDate.now());
+    }
+
+    @Transient
+    public boolean isActive() {
+        return status == CertificationStatus.ACTIVE && !isExpired();
+    }
+
+    @Transient
+    public int getDaysUntilExpiration() {
+        if (expirationDate == null) return 0;
+        LocalDate today = LocalDate.now();
+        if (today.isAfter(expirationDate)) return 0;
+        return (int) (expirationDate.toEpochDay() - today.toEpochDay());
+    }
+
+    @Transient
+    public boolean needsRenewalReminder() {
+        return renewalRequired &&
+               !renewalReminderSent &&
+               isExpiringSoon() &&
+               !renewalInProgress;
+    }
+
+    @Transient
+    public String getFullTitle() {
+        return certificateTitle + " (" + certificateType + ")";
+    }
+
+    // ========================================================================
+    // JPA LIFECYCLE CALLBACKS
+    // ========================================================================
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+
+        // Auto-update status based on expiration
+        if (isExpired() && status == CertificationStatus.ACTIVE) {
+            status = CertificationStatus.EXPIRED;
+        } else if (isExpiringSoon() && status == CertificationStatus.ACTIVE) {
+            status = CertificationStatus.EXPIRING_SOON;
+        }
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        onUpdate(); // Apply status logic on creation too
+    }
+}

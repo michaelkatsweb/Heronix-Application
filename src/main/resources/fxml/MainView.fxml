@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+Main Application Menu Bar
+Location: src/main/resources/fxml/MainView.fxml
+Reorganized menu structure based on 32 service categories
+-->
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1">
+
+    <MenuBar>
+        <!-- ========== FILE MENU ========== -->
+        <Menu text="File">
+            <MenuItem text="New School Year" onAction="#handleNewSchoolYear"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Import Data" onAction="#handleImportData"/>
+            <MenuItem text="Export Data" onAction="#handleExportData"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Database Backup" onAction="#handleDatabaseBackup"/>
+            <MenuItem text="Database Restore" onAction="#handleDatabaseRestore"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Exit" onAction="#handleExit"/>
+        </Menu>
+
+        <!-- ========== ENROLLMENT MENU ========== -->
+        <Menu text="Enrollment">
+            <MenuItem text="Student Enrollment & Registration" onAction="#handleStudentEnrollment"/>
+            <MenuItem text="Transfer Students" onAction="#handleTransferStudents"/>
+            <MenuItem text="Enrollment Verification" onAction="#handleEnrollmentVerification"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Online Enrollment Portal" onAction="#handleOnlineEnrollment"/>
+            <MenuItem text="Withdrawal Processing" onAction="#handleWithdrawal"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Enrollment Reports" onAction="#handleEnrollmentReports"/>
+        </Menu>
+
+        <!-- ========== STUDENTS MENU ========== -->
+        <Menu text="Students">
+            <MenuItem text="Student Demographics" onAction="#handleStudentDemographics"/>
+            <MenuItem text="Parent/Guardian Management" onAction="#handleParentGuardian"/>
+            <MenuItem text="Emergency Contacts" onAction="#handleEmergencyContacts"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Medical Information" onAction="#handleMedicalInfo"/>
+            <MenuItem text="Student Accommodations" onAction="#handleAccommodations"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Student Groups & Categories" onAction="#handleStudentGroups"/>
+            <MenuItem text="Student Search" onAction="#handleStudentSearch"/>
+        </Menu>
+
+        <!-- ========== ACADEMICS MENU ========== -->
+        <Menu text="Academics">
+            <Menu text="Course Management">
+                <MenuItem text="Course Catalog" onAction="#handleCourseCatalog"/>
+                <MenuItem text="Course Sections" onAction="#handleCourseSections"/>
+                <MenuItem text="Section Enrollment" onAction="#handleSectionEnrollment"/>
+            </Menu>
+            <Menu text="Student Scheduling">
+                <MenuItem text="Course Requests" onAction="#handleCourseRequests"/>
+                <MenuItem text="Schedule Generation" onAction="#handleScheduleGeneration"/>
+                <MenuItem text="Schedule Changes" onAction="#handleScheduleChanges"/>
+                <MenuItem text="View Student Schedules" onAction="#handleStudentScheduleViewer"/>
+            </Menu>
+            <SeparatorMenuItem/>
+            <Menu text="Grading & Assessment">
+                <MenuItem text="Grade Entry" onAction="#handleGradeEntry"/>
+                <MenuItem text="Gradebook" onAction="#handleGradebook"/>
+                <MenuItem text="Assignment Management" onAction="#handleAssignments"/>
+                <MenuItem text="Rubrics" onAction="#handleRubrics"/>
+            </Menu>
+            <Menu text="Report Cards & Progress">
+                <MenuItem text="Report Cards" onAction="#handleReportCards"/>
+                <MenuItem text="Progress Reports" onAction="#handleProgressReports"/>
+                <MenuItem text="GPA & Class Rank" onAction="#handleGPAClassRank"/>
+            </Menu>
+            <SeparatorMenuItem/>
+            <MenuItem text="Transcript Management" onAction="#handleTranscripts"/>
+            <MenuItem text="Standardized Testing" onAction="#handleStandardizedTesting"/>
+            <MenuItem text="Graduation Requirements" onAction="#handleGraduationRequirements"/>
+        </Menu>
+
+        <!-- ========== ATTENDANCE MENU ========== -->
+        <Menu text="Attendance">
+            <MenuItem text="Daily Attendance" onAction="#handleDailyAttendance"/>
+            <MenuItem text="Period Attendance" onAction="#handlePeriodAttendance"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Attendance Tracking & Monitoring" onAction="#handleAttendanceTracking"/>
+            <MenuItem text="Chronic Absenteeism" onAction="#handleChronicAbsenteeism"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Attendance Reports" onAction="#handleAttendanceReporting"/>
+            <MenuItem text="ADA/ADM Reports" onAction="#handleADAReports"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Truancy Management" onAction="#handleTruancyIntervention"/>
+            <MenuItem text="Attendance Notifications" onAction="#handleAttendanceNotifications"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Hall Pass Management" onAction="#handleHallPassManagement"/>
+        </Menu>
+
+        <!-- ========== DISCIPLINE MENU ========== -->
+        <Menu text="Discipline">
+            <MenuItem text="Incident Management" onAction="#handleIncidentManagement"/>
+            <MenuItem text="Disciplinary Referrals" onAction="#handleReferrals"/>
+            <MenuItem text="Consequence Management" onAction="#handleConsequences"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Suspension & Expulsion" onAction="#handleSuspensionExpulsion"/>
+            <MenuItem text="In-School Suspension (ISS)" onAction="#handleISS"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Behavior Tracking" onAction="#handleBehaviorTracking"/>
+            <MenuItem text="Restorative Practices" onAction="#handleRestorativePractices"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Discipline Reports" onAction="#handleDisciplineReports"/>
+        </Menu>
+
+        <!-- ========== SPECIAL PROGRAMS MENU ========== -->
+        <Menu text="Special Programs">
+            <Menu text="Special Education">
+                <MenuItem text="IEP Management" onAction="#handleIEPManagement"/>
+                <MenuItem text="504 Plan Management" onAction="#handle504Plans"/>
+                <MenuItem text="RTI (Response to Intervention)" onAction="#handleRTI"/>
+                <MenuItem text="Special Ed Services" onAction="#handleSpecialEdServices"/>
+                <MenuItem text="SPED Compliance & Reporting" onAction="#handleSPEDCompliance"/>
+                <MenuItem text="SPED Scheduling" onAction="#handleSPEDScheduling"/>
+            </Menu>
+            <MenuItem text="ELL/ESL Services" onAction="#handleELLServices"/>
+            <MenuItem text="Gifted & Talented" onAction="#handleGiftedTalented"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Title I Programs" onAction="#handleTitleI"/>
+            <MenuItem text="McKinney-Vento (Homeless)" onAction="#handleMcKinneyVento"/>
+        </Menu>
+
+        <!-- ========== HEALTH & COUNSELING MENU ========== -->
+        <Menu text="Health & Counseling">
+            <Menu text="Health Services">
+                <MenuItem text="Health Office Management" onAction="#handleHealthOffice"/>
+                <MenuItem text="Immunization Management" onAction="#handleImmunizations"/>
+                <MenuItem text="Medication Management" onAction="#handleMedications"/>
+                <MenuItem text="Health Screenings" onAction="#handleHealthScreenings"/>
+                <MenuItem text="Health Plans & Protocols" onAction="#handleHealthPlans"/>
+                <MenuItem text="Health Reports" onAction="#handleHealthReports"/>
+            </Menu>
+            <Menu text="Counseling Services">
+                <MenuItem text="Student Counseling" onAction="#handleStudentCounseling"/>
+                <MenuItem text="Academic Counseling" onAction="#handleAcademicCounseling"/>
+                <MenuItem text="College & Career Planning" onAction="#handleCollegePlanning"/>
+                <MenuItem text="Social Services" onAction="#handleSocialServices"/>
+                <MenuItem text="Crisis Intervention" onAction="#handleCrisisIntervention"/>
+            </Menu>
+        </Menu>
+
+        <!-- ========== STAFF MENU ========== -->
+        <Menu text="Staff">
+            <MenuItem text="Teacher & Staff Records" onAction="#showTeachersTab"/>
+            <MenuItem text="Co-Teacher Staff" onAction="#showCoTeacherStaffTab"/>
+            <MenuItem text="Paraprofessional Staff" onAction="#showParaprofessionalStaffTab"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Certifications & Licensing" onAction="#handleCertifications"/>
+            <MenuItem text="Professional Development" onAction="#handleProfessionalDevelopment"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Teacher Schedules" onAction="#handleTeacherSchedules"/>
+            <MenuItem text="Teacher Evaluations" onAction="#handleTeacherEvaluations"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Substitute Management" onAction="#handleSubstituteManagement"/>
+            <MenuItem text="Staff Directory" onAction="#handleStaffDirectory"/>
+        </Menu>
+
+        <!-- ========== OPERATIONS MENU ========== -->
+        <Menu text="Operations">
+            <Menu text="Fee Management">
+                <MenuItem text="Fee Catalog" onAction="#handleFeeCatalog"/>
+                <MenuItem text="Fee Assignment" onAction="#handleFeeAssignment"/>
+                <MenuItem text="Payment Processing" onAction="#handlePaymentProcessing"/>
+                <MenuItem text="Fee Reports" onAction="#handleFeeReports"/>
+            </Menu>
+            <Menu text="Food Services">
+                <MenuItem text="Lunch Account Management" onAction="#handleLunchAccounts"/>
+                <MenuItem text="Meal Tracking" onAction="#handleMealTracking"/>
+                <MenuItem text="Cafeteria POS" onAction="#handleCafeteriaPOS"/>
+                <MenuItem text="Food Service Reports" onAction="#handleFoodServiceReports"/>
+                <MenuItem text="Lunch Periods" onAction="#handleLunchPeriods"/>
+            </Menu>
+            <Menu text="Transportation">
+                <MenuItem text="Student Transportation" onAction="#handleStudentTransportation"/>
+                <MenuItem text="Bus Management" onAction="#handleBusManagement"/>
+                <MenuItem text="Route Planning" onAction="#handleRoutePlanning"/>
+                <MenuItem text="Transportation Reports" onAction="#handleTransportationReports"/>
+            </Menu>
+            <Menu text="Facilities & Rooms">
+                <MenuItem text="Room Inventory" onAction="#showRoomsTab"/>
+                <MenuItem text="Room Scheduling" onAction="#handleRoomScheduling"/>
+                <MenuItem text="Room Utilization" onAction="#handleRoomUtilization"/>
+                <MenuItem text="Event Room Reservations" onAction="#handleRoomReservations"/>
+            </Menu>
+            <MenuItem text="Library Services" onAction="#handleLibraryServices"/>
+        </Menu>
+
+        <!-- ========== ACTIVITIES MENU ========== -->
+        <Menu text="Activities">
+            <Menu text="Athletics & Sports">
+                <MenuItem text="Athletic Eligibility" onAction="#handleAthleticEligibility"/>
+                <MenuItem text="Sports Management" onAction="#handleSportsManagement"/>
+                <MenuItem text="Team Rosters" onAction="#handleTeamRosters"/>
+                <MenuItem text="Game Schedules" onAction="#handleGameSchedules"/>
+                <MenuItem text="Athletic Equipment" onAction="#handleAthleticEquipment"/>
+                <MenuItem text="Injury Tracking" onAction="#handleInjuryTracking"/>
+            </Menu>
+            <Menu text="Clubs & Activities">
+                <MenuItem text="Club Management" onAction="#handleClubManagement"/>
+                <MenuItem text="Club Rosters" onAction="#handleClubRosters"/>
+                <MenuItem text="Activity Participation" onAction="#handleActivityParticipation"/>
+                <MenuItem text="Field Trip Planning" onAction="#handleFieldTrips"/>
+            </Menu>
+            <SeparatorMenuItem/>
+            <MenuItem text="Events & Calendar" onAction="#handleEventsCalendar"/>
+            <MenuItem text="School Calendar" onAction="#handleSchoolCalendar"/>
+            <MenuItem text="Special Event Blocks" onAction="#handleSpecialEventBlocks"/>
+        </Menu>
+
+        <!-- ========== COMMUNICATION MENU ========== -->
+        <Menu text="Communication">
+            <Menu text="Parent Portal">
+                <MenuItem text="Parent Account Management" onAction="#handleParentAccounts"/>
+                <MenuItem text="Parent Portal Settings" onAction="#handleParentPortalSettings"/>
+            </Menu>
+            <Menu text="Student Portal">
+                <MenuItem text="Student Access Management" onAction="#handleStudentAccess"/>
+                <MenuItem text="Student Portal Settings" onAction="#handleStudentPortalSettings"/>
+            </Menu>
+            <SeparatorMenuItem/>
+            <MenuItem text="Announcements" onAction="#handleAnnouncements"/>
+            <MenuItem text="Mass Communication" onAction="#handleMassCommunication"/>
+            <MenuItem text="Messaging Center" onAction="#handleMessaging"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Notification Center" onAction="#handleNotificationCenter"/>
+            <MenuItem text="Emergency Alerts" onAction="#handleEmergencyAlerts"/>
+        </Menu>
+
+        <!-- ========== REPORTS MENU ========== -->
+        <Menu text="Reports">
+            <Menu text="Standard Reports">
+                <MenuItem text="Enrollment Reports" onAction="#handleStandardEnrollmentReports"/>
+                <MenuItem text="Attendance Reports" onAction="#handleStandardAttendanceReports"/>
+                <MenuItem text="Grade Reports" onAction="#handleStandardGradeReports"/>
+                <MenuItem text="Discipline Reports" onAction="#handleStandardDisciplineReports"/>
+                <MenuItem text="Special Ed Reports" onAction="#handleStandardSPEDReports"/>
+            </Menu>
+            <MenuItem text="Analytics Dashboards" onAction="#handleAnalyticsDashboards"/>
+            <MenuItem text="Custom Report Builder" onAction="#handleCustomReports"/>
+            <SeparatorMenuItem/>
+            <Menu text="State & Federal Reporting">
+                <MenuItem text="State Reporting" onAction="#handleStateReporting"/>
+                <MenuItem text="Federal Reporting" onAction="#handleFederalReporting"/>
+                <MenuItem text="CRDC (Civil Rights Data)" onAction="#handleCRDC"/>
+                <MenuItem text="SIS Export" onAction="#handleSISExport"/>
+            </Menu>
+            <SeparatorMenuItem/>
+            <MenuItem text="Report Scheduling" onAction="#handleReportScheduling"/>
+        </Menu>
+
+        <!-- ========== SYSTEM MENU ========== -->
+        <Menu text="System">
+            <Menu text="Data Management">
+                <MenuItem text="Data Import Wizard" onAction="#handleDataImport"/>
+                <MenuItem text="Data Export Wizard" onAction="#handleDataExport"/>
+                <MenuItem text="Bulk Operations" onAction="#handleBulkOperations"/>
+                <MenuItem text="Data Validation" onAction="#handleDataValidation"/>
+            </Menu>
+            <Menu text="Integrations">
+                <MenuItem text="LMS Integration" onAction="#handleLMSIntegration"/>
+                <MenuItem text="Assessment Integration" onAction="#handleAssessmentIntegration"/>
+                <MenuItem text="Communication Integration" onAction="#handleCommIntegration"/>
+                <MenuItem text="Payment Gateway" onAction="#handlePaymentGateway"/>
+                <MenuItem text="API Management" onAction="#handleAPIManagement"/>
+            </Menu>
+            <SeparatorMenuItem/>
+            <Menu text="User Management">
+                <MenuItem text="User Accounts" onAction="#handleUserAccounts"/>
+                <MenuItem text="Role Management" onAction="#handleRoleManagement"/>
+                <MenuItem text="Permissions" onAction="#handlePermissions"/>
+                <MenuItem text="Security Settings" onAction="#handleSecuritySettings"/>
+            </Menu>
+            <MenuItem text="System Configuration" onAction="#handleSystemConfiguration"/>
+            <MenuItem text="Settings" onAction="#handleSettings"/>
+            <SeparatorMenuItem/>
+            <Menu text="Audit & Monitoring">
+                <MenuItem text="Audit Logs" onAction="#handleAuditLogs"/>
+                <MenuItem text="System Monitoring" onAction="#handleSystemMonitoring"/>
+                <MenuItem text="Database Health" onAction="#handleDatabaseHealth"/>
+            </Menu>
+            <SeparatorMenuItem/>
+            <MenuItem text="Enrollment Forecasting" onAction="#handleEnrollmentForecasting"/>
+            <MenuItem text="Conflict Detection" onAction="#handleCheckConflicts"/>
+            <MenuItem text="Database Cleanup" onAction="#handleDatabaseCleanup"/>
+        </Menu>
+
+        <!-- ========== HELP MENU ========== -->
+        <Menu text="Help">
+            <MenuItem text="User Guide" onAction="#handleUserGuide"/>
+            <MenuItem text="Documentation" onAction="#handleDocumentation"/>
+            <MenuItem text="Video Tutorials" onAction="#handleVideoTutorials"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Technical Support" onAction="#handleTechnicalSupport"/>
+            <MenuItem text="Submit Feedback" onAction="#handleSubmitFeedback"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="About Heronix-SIS" onAction="#handleAbout"/>
+            <MenuItem text="System Information" onAction="#handleSystemInfo"/>
+        </Menu>
+    </MenuBar>
+
+    <!-- ========== TOOLBAR (Quick Access) ========== -->
+    <ToolBar styleClass="main-toolbar">
+        <Button text="Dashboard" onAction="#handleDashboard" styleClass="toolbar-button">
+            <graphic>
+                <Label text="📊" style="-fx-font-size: 16;"/>
+            </graphic>
+        </Button>
+
+        <Separator orientation="VERTICAL"/>
+
+        <Button text="Students" onAction="#handleStudentSearch" styleClass="toolbar-button">
+            <graphic>
+                <Label text="👨‍🎓" style="-fx-font-size: 16;"/>
+            </graphic>
+        </Button>
+
+        <Button text="Enrollment" onAction="#handleStudentEnrollment" styleClass="toolbar-button">
+            <graphic>
+                <Label text="📝" style="-fx-font-size: 16;"/>
+            </graphic>
+        </Button>
+
+        <Button text="Attendance" onAction="#handleDailyAttendance" styleClass="toolbar-button">
+            <graphic>
+                <Label text="✅" style="-fx-font-size: 16;"/>
+            </graphic>
+        </Button>
+
+        <Separator orientation="VERTICAL"/>
+
+        <Button text="Schedules" onAction="#handleScheduleGeneration" styleClass="toolbar-button,primary-button">
+            <graphic>
+                <Label text="📅" style="-fx-font-size: 16;"/>
+            </graphic>
+        </Button>
+
+        <Button text="Grading" onAction="#handleGradebook" styleClass="toolbar-button">
+            <graphic>
+                <Label text="📖" style="-fx-font-size: 16;"/>
+            </graphic>
+        </Button>
+
+        <Separator orientation="VERTICAL"/>
+
+        <Button text="Reports" onAction="#handleAnalyticsDashboards" styleClass="toolbar-button">
+            <graphic>
+                <Label text="📊" style="-fx-font-size: 16;"/>
+            </graphic>
+        </Button>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button text="Notifications" onAction="#handleNotificationCenter" styleClass="toolbar-button">
+            <graphic>
+                <Label text="🔔" style="-fx-font-size: 16;"/>
+            </graphic>
+        </Button>
+
+        <Button text="Help" onAction="#handleUserGuide" styleClass="toolbar-button">
+            <graphic>
+                <Label text="❓" style="-fx-font-size: 16;"/>
+            </graphic>
+        </Button>
+    </ToolBar>
+</VBox>

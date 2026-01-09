@@ -1,0 +1,316 @@
+/*
+ * ═══════════════════════════════════════════════════════════════════════
+ * MODULE LAUNCHER - Modern Tile-Based Navigation
+ * Heronix School Information System
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
+/* Root Container */
+.module-launcher-root {
+    -fx-background-color: #F5F7FA;
+}
+
+/* Header Section */
+.launcher-header {
+    -fx-background-color: linear-gradient(to bottom, #FFFFFF, #F8F9FA);
+    -fx-border-color: #E1E4E8;
+    -fx-border-width: 0 0 1 0;
+}
+
+.launcher-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0078D4;
+    -fx-font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+.launcher-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6C757D;
+    -fx-font-weight: 400;
+}
+
+/* Search Field */
+.launcher-search {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8;
+    -fx-border-color: #CED4DA;
+    -fx-border-radius: 8;
+    -fx-border-width: 1.5;
+    -fx-padding: 10 15;
+    -fx-font-size: 13px;
+    -fx-pref-height: 40;
+}
+
+.launcher-search:focused {
+    -fx-border-color: #0078D4;
+    -fx-background-color: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 120, 212, 0.2), 8, 0, 0, 2);
+}
+
+/* User Button */
+.user-button {
+    -fx-background-color: #0078D4;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: 700;
+    -fx-background-radius: 20;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-max-width: 40;
+    -fx-max-height: 40;
+    -fx-font-size: 14px;
+}
+
+.user-button:hover {
+    -fx-background-color: #005A9E;
+    -fx-cursor: hand;
+}
+
+/* Icon Button */
+.icon-button {
+    -fx-background-color: #F8F9FA;
+    -fx-text-fill: #495057;
+    -fx-font-size: 18px;
+    -fx-background-radius: 8;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-border-color: #DEE2E6;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+}
+
+.icon-button:hover {
+    -fx-background-color: #E9ECEF;
+    -fx-border-color: #0078D4;
+    -fx-cursor: hand;
+}
+
+/* Scroll Pane */
+.launcher-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.launcher-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.launcher-scroll .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.launcher-scroll .scroll-bar:vertical .track {
+    -fx-background-color: #F5F7FA;
+}
+
+.launcher-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #CED4DA;
+    -fx-background-radius: 4;
+}
+
+.launcher-scroll .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #ADB5BD;
+}
+
+/* Content Container */
+.launcher-content {
+    -fx-background-color: transparent;
+}
+
+/* Section Titles */
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #212529;
+    -fx-padding: 0 0 5 0;
+}
+
+/* Module Tiles */
+.module-tile {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12;
+    -fx-border-color: #E1E4E8;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 12;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 8, 0, 0, 2);
+    -fx-min-width: 220;
+    -fx-min-height: 160;
+    -fx-pref-width: 220;
+    -fx-pref-height: 160;
+    -fx-spacing: 10;
+    -fx-alignment: TOP_LEFT;
+}
+
+.module-tile:hover {
+    -fx-background-color: #FFFFFF;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(0, 120, 212, 0.15), 12, 0, 0, 4);
+    -fx-translate-y: -3;
+}
+
+/* Tile Color Variants */
+.tile-blue { -fx-border-color: #0078D4; }
+.tile-blue:hover { -fx-border-color: #0078D4; -fx-effect: dropshadow(gaussian, rgba(0, 120, 212, 0.3), 12, 0, 0, 4); }
+
+.tile-green { -fx-border-color: #10B981; }
+.tile-green:hover { -fx-border-color: #10B981; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.3), 12, 0, 0, 4); }
+
+.tile-purple { -fx-border-color: #8B5CF6; }
+.tile-purple:hover { -fx-border-color: #8B5CF6; -fx-effect: dropshadow(gaussian, rgba(139, 92, 246, 0.3), 12, 0, 0, 4); }
+
+.tile-orange { -fx-border-color: #F59E0B; }
+.tile-orange:hover { -fx-border-color: #F59E0B; -fx-effect: dropshadow(gaussian, rgba(245, 158, 11, 0.3), 12, 0, 0, 4); }
+
+.tile-red { -fx-border-color: #EF4444; }
+.tile-red:hover { -fx-border-color: #EF4444; -fx-effect: dropshadow(gaussian, rgba(239, 68, 68, 0.3), 12, 0, 0, 4); }
+
+.tile-teal { -fx-border-color: #14B8A6; }
+.tile-teal:hover { -fx-border-color: #14B8A6; -fx-effect: dropshadow(gaussian, rgba(20, 184, 166, 0.3), 12, 0, 0, 4); }
+
+.tile-pink { -fx-border-color: #EC4899; }
+.tile-pink:hover { -fx-border-color: #EC4899; -fx-effect: dropshadow(gaussian, rgba(236, 72, 153, 0.3), 12, 0, 0, 4); }
+
+.tile-indigo { -fx-border-color: #6366F1; }
+.tile-indigo:hover { -fx-border-color: #6366F1; -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.3), 12, 0, 0, 4); }
+
+.tile-cyan { -fx-border-color: #06B6D4; }
+.tile-cyan:hover { -fx-border-color: #06B6D4; -fx-effect: dropshadow(gaussian, rgba(6, 182, 212, 0.3), 12, 0, 0, 4); }
+
+.tile-lime { -fx-border-color: #84CC16; }
+.tile-lime:hover { -fx-border-color: #84CC16; -fx-effect: dropshadow(gaussian, rgba(132, 204, 22, 0.3), 12, 0, 0, 4); }
+
+.tile-amber { -fx-border-color: #F59E0B; }
+.tile-amber:hover { -fx-border-color: #F59E0B; -fx-effect: dropshadow(gaussian, rgba(245, 158, 11, 0.3), 12, 0, 0, 4); }
+
+.tile-violet { -fx-border-color: #7C3AED; }
+.tile-violet:hover { -fx-border-color: #7C3AED; -fx-effect: dropshadow(gaussian, rgba(124, 58, 237, 0.3), 12, 0, 0, 4); }
+
+.tile-gray { -fx-border-color: #6B7280; }
+.tile-gray:hover { -fx-border-color: #6B7280; -fx-effect: dropshadow(gaussian, rgba(107, 114, 128, 0.3), 12, 0, 0, 4); }
+
+.tile-slate { -fx-border-color: #475569; }
+.tile-slate:hover { -fx-border-color: #475569; -fx-effect: dropshadow(gaussian, rgba(71, 85, 105, 0.3), 12, 0, 0, 4); }
+
+.tile-brown { -fx-border-color: #A16207; }
+.tile-brown:hover { -fx-border-color: #A16207; -fx-effect: dropshadow(gaussian, rgba(161, 98, 7, 0.3), 12, 0, 0, 4); }
+
+/* Tile Content */
+.tile-icon {
+    -fx-font-size: 42px;
+    -fx-padding: 0 0 8 0;
+}
+
+.tile-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #212529;
+    -fx-padding: 0 0 5 0;
+}
+
+.tile-description {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6C757D;
+    -fx-line-spacing: 2;
+    -fx-wrap-text: true;
+}
+
+/* Quick Stats */
+.quick-stats {
+    -fx-padding: 20 0 0 0;
+}
+
+.stat-card-mini {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-border-color: #E1E4E8;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.04), 6, 0, 0, 2);
+    -fx-min-width: 140;
+}
+
+.stat-card-mini:hover {
+    -fx-border-color: #0078D4;
+    -fx-effect: dropshadow(gaussian, rgba(0, 120, 212, 0.1), 8, 0, 0, 3);
+}
+
+.stat-mini-value {
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0078D4;
+    -fx-padding: 0 0 5 0;
+}
+
+.stat-mini-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6C757D;
+    -fx-font-weight: 500;
+}
+
+/* Responsive Grid */
+.grid-pane {
+    -fx-hgap: 20;
+    -fx-vgap: 20;
+}
+
+/* Animation Transitions */
+.module-tile {
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+/* Accessibility - Focus States */
+.module-tile:focused {
+    -fx-border-width: 2.5;
+    -fx-border-color: #0078D4;
+    -fx-effect: dropshadow(gaussian, rgba(0, 120, 212, 0.4), 12, 0, 0, 4);
+}
+
+/* Dark Mode Support (optional) */
+.dark-mode .module-launcher-root {
+    -fx-background-color: #1A1D23;
+}
+
+.dark-mode .launcher-header {
+    -fx-background-color: linear-gradient(to bottom, #24272E, #1A1D23);
+    -fx-border-color: #2D3139;
+}
+
+.dark-mode .launcher-title {
+    -fx-text-fill: #58A6FF;
+}
+
+.dark-mode .launcher-subtitle {
+    -fx-text-fill: #8B949E;
+}
+
+.dark-mode .module-tile {
+    -fx-background-color: #24272E;
+    -fx-border-color: #30363D;
+}
+
+.dark-mode .module-tile:hover {
+    -fx-background-color: #2D3139;
+    -fx-border-color: #58A6FF;
+}
+
+.dark-mode .tile-title {
+    -fx-text-fill: #E6EDF3;
+}
+
+.dark-mode .tile-description {
+    -fx-text-fill: #8B949E;
+}
+
+.dark-mode .stat-card-mini {
+    -fx-background-color: #24272E;
+    -fx-border-color: #30363D;
+}
+
+.dark-mode .stat-mini-value {
+    -fx-text-fill: #58A6FF;
+}
+
+.dark-mode .stat-mini-label {
+    -fx-text-fill: #8B949E;
+}

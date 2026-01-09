@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.GradeBookManagementController"
+            stylesheets="@../css/application.css"
+            prefWidth="1500" prefHeight="900">
+
+    <!-- Top: Header -->
+    <top>
+        <VBox spacing="15" style="-fx-background-color: #4caf50; -fx-padding: 20;">
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Grade Book Management"
+                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label text="Manage assignments, assessments, and student grades with real-time GPA calculation"
+                           style="-fx-font-size: 13px; -fx-text-fill: white;"/>
+                </VBox>
+
+                <!-- Course Selection -->
+                <VBox spacing="5" alignment="CENTER_RIGHT">
+                    <Label text="Current Course" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <ComboBox fx:id="courseSelectionComboBox" promptText="Select course..." prefWidth="250"/>
+                </VBox>
+            </HBox>
+
+            <!-- Quick Stats -->
+            <HBox spacing="15">
+                <VBox spacing="3" style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 10; -fx-border-radius: 5;">
+                    <Label text="Students" style="-fx-text-fill: white; -fx-font-size: 10px;"/>
+                    <Label fx:id="studentCountLabel" text="0" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="3" style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 10; -fx-border-radius: 5;">
+                    <Label text="Assignments" style="-fx-text-fill: white; -fx-font-size: 10px;"/>
+                    <Label fx:id="assignmentCountLabel" text="0" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="3" style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 10; -fx-border-radius: 5;">
+                    <Label text="Class Average" style="-fx-text-fill: white; -fx-font-size: 10px;"/>
+                    <Label fx:id="classAverageLabel" text="0%" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="3" style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 10; -fx-border-radius: 5;">
+                    <Label text="Ungraded" style="-fx-text-fill: white; -fx-font-size: 10px;"/>
+                    <Label fx:id="ungradedCountLabel" text="0" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Main Content -->
+    <center>
+        <SplitPane dividerPositions="0.25" style="-fx-background-color: #f5f5f5;">
+
+            <!-- Left: Assignments/Categories -->
+            <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white;">
+                <Label text="Assignments &amp; Categories" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                <!-- Category Weights -->
+                <VBox spacing="10" style="-fx-background-color: #e8f5e9; -fx-padding: 15; -fx-border-color: #4caf50; -fx-border-width: 2;">
+                    <Label text="Grade Categories" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="60"/>
+                            <ColumnConstraints percentWidth="40"/>
+                        </columnConstraints>
+
+                        <Label text="Tests/Exams:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="testsWeightField" text="40" prefWidth="60" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Quizzes:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="quizzesWeightField" text="25" prefWidth="60" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Homework:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="homeworkWeightField" text="20" prefWidth="60" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="Participation:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <TextField fx:id="participationWeightField" text="15" prefWidth="60" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                    </GridPane>
+
+                    <Label fx:id="totalWeightLabel" text="Total: 100%" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+                    <Button text="Save Weights" onAction="#handleSaveWeights" style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 6; -fx-cursor: hand;" maxWidth="Infinity"/>
+                </VBox>
+
+                <!-- Assignment List -->
+                <VBox spacing="10" VBox.vgrow="ALWAYS">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Assignments" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="+ New" onAction="#handleNewAssignment" style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-size: 11px; -fx-padding: 5 10; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <ListView fx:id="assignmentListView" VBox.vgrow="ALWAYS"/>
+                </VBox>
+
+                <!-- Quick Actions -->
+                <VBox spacing="8">
+                    <Button text="Import Grades from CSV" onAction="#handleImportGrades" style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;" maxWidth="Infinity"/>
+                    <Button text="Export Grade Book" onAction="#handleExportGradeBook" style="-fx-background-color: #607d8b; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;" maxWidth="Infinity"/>
+                </VBox>
+            </VBox>
+
+            <!-- Center: Grade Sheet -->
+            <BorderPane style="-fx-background-color: white;">
+                <top>
+                    <VBox spacing="10" style="-fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="Student Grades" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+                            <!-- View Options -->
+                            <ToggleButton fx:id="gridViewToggle" text="Grid View" selected="true"/>
+                            <ToggleButton fx:id="listViewToggle" text="List View"/>
+
+                            <!-- Tools -->
+                            <Button text="Calculate All" onAction="#handleCalculateAll" style="-fx-background-color: #9c27b0; -fx-text-fill: white; -fx-padding: 6 12; -fx-cursor: hand;"/>
+                            <Button text="Post Grades" onAction="#handlePostGrades" style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 6 12; -fx-cursor: hand;"/>
+                        </HBox>
+
+                        <!-- Filters -->
+                        <HBox spacing="10">
+                            <ComboBox fx:id="categoryFilterComboBox" promptText="All Categories" prefWidth="150"/>
+                            <ComboBox fx:id="statusFilterComboBox" promptText="All Status" prefWidth="150"/>
+                            <TextField fx:id="studentSearchField" promptText="Search students..." prefWidth="200"/>
+                            <CheckBox fx:id="showMissingOnlyCheckBox" text="Missing Only"/>
+                        </HBox>
+                    </VBox>
+                </top>
+
+                <center>
+                    <ScrollPane fitToWidth="true" fitToHeight="true">
+                        <TableView fx:id="gradeSheetTableView" style="-fx-padding: 10;">
+                            <columns>
+                                <TableColumn fx:id="studentNameColumn" text="Student Name" prefWidth="180" sortable="true"/>
+                                <TableColumn fx:id="studentIdColumn" text="ID" prefWidth="80"/>
+                                <!-- Assignment columns will be added dynamically -->
+                                <TableColumn fx:id="currentGradeColumn" text="Current Grade" prefWidth="100"/>
+                                <TableColumn fx:id="letterGradeColumn" text="Letter" prefWidth="60"/>
+                            </columns>
+                        </TableView>
+                    </ScrollPane>
+                </center>
+
+                <bottom>
+                    <VBox spacing="10" style="-fx-padding: 15; -fx-background-color: #fafafa; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+                        <HBox spacing="15">
+                            <Label text="Grade Distribution:" style="-fx-font-weight: bold;"/>
+                            <Label fx:id="gradeDistributionLabel" text="A: 0 | B: 0 | C: 0 | D: 0 | F: 0" style="-fx-font-size: 11px;"/>
+                        </HBox>
+
+                        <ProgressBar fx:id="gradingProgressBar" prefWidth="Infinity" progress="0"/>
+                        <Label fx:id="gradingProgressLabel" text="0% graded" style="-fx-font-size: 10px; -fx-text-fill: #757575;"/>
+                    </VBox>
+                </bottom>
+            </BorderPane>
+
+        </SplitPane>
+    </center>
+
+    <!-- Bottom: Status Bar -->
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-background-color: #fafafa; -fx-padding: 10; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <Label fx:id="statusLabel" text="Ready" style="-fx-font-size: 11px;"/>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="lastSavedLabel" text="Unsaved changes" style="-fx-font-size: 11px; -fx-text-fill: #f44336;"/>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="selectedAssignmentLabel" text="No assignment selected" style="-fx-font-size: 11px; -fx-text-fill: #757575;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Save All" onAction="#handleSaveAll" style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 6 15; -fx-cursor: hand;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

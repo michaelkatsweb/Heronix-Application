@@ -1,0 +1,11 @@
+Event ID,Event Name,Description,Date,Time,Location,Participants,Type,Active
+E001,Staff Meeting,Monthly staff meeting to discuss academic planning,2025-10-15,15:00,Room 504,Teachers and Administrators,Meeting,true
+E002,IEP Review,Individualized Education Program review for special needs students,2025-10-16,10:00,Room SPED1,Special Education Team,Meeting,true
+E003,Fire Drill,Scheduled fire safety drill for all students and staff,2025-10-18,09:30,Entire Campus,All Students and Staff,Drill,true
+E004,Parent-Teacher Conference,Quarterly meeting for parents and teachers,2025-10-20,17:00,Main Building Hall,Teachers and Parents,Conference,true
+E005,School Assembly,Monthly assembly with student recognition awards,2025-10-22,08:30,Auditorium,All Students,Assembly,true
+E006,Science Fair,Annual science fair showcasing student projects,2025-11-01,09:00,Gym1,Students and Judges,Competition,true
+E007,Report Card Distribution,End of term report card handout,2025-11-05,14:00,Classrooms,Teachers and Students,Academic,true
+E008,Thanksgiving Break,School closed for Thanksgiving holiday,2025-11-25,00:00,Campus Closed,All,Holiday,true
+E009,Winter Concert,Annual choir and band performance,2025-12-10,18:00,Auditorium,Music Department,Performance,true
+E010,Professional Development Day,Teacher training and development day,2025-12-15,08:00,Library,All Teachers,Workshop,true

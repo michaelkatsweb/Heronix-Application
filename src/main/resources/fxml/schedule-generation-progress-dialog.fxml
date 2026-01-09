@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<DialogPane xmlns="http://javafx.com/javafx/21"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.heronix.ui.controller.ScheduleGenerationProgressController"
+    stylesheets="@../css/modern-theme.css"
+    prefWidth="600" prefHeight="450">
+
+    <headerText>Schedule Generation in Progress</headerText>
+
+    <content>
+        <VBox spacing="20" styleClass="dialog-content">
+            <padding><Insets top="20" right="25" bottom="20" left="25" /></padding>
+
+            <!-- GENERATION INFO -->
+            <VBox spacing="8">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Schedule:" style="-fx-font-weight: bold; -fx-min-width: 120;" />
+                    <Label fx:id="scheduleNameLabel" text="Loading..." style="-fx-text-fill: #34495e;" />
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Mode:" style="-fx-font-weight: bold; -fx-min-width: 120;" />
+                    <Label fx:id="generationModeLabel" text="Loading..." style="-fx-text-fill: #34495e;" />
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Job ID:" style="-fx-font-weight: bold; -fx-min-width: 120;" />
+                    <Label fx:id="jobIdLabel" text="N/A" style="-fx-text-fill: #7f8c8d; -fx-font-family: monospace;" />
+                </HBox>
+            </VBox>
+
+            <Separator />
+
+            <!-- PROGRESS STATUS -->
+            <VBox spacing="12">
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <Label fx:id="statusIcon" text="⏳" style="-fx-font-size: 32px;" />
+                    <VBox spacing="5">
+                        <Label fx:id="statusLabel" text="Starting schedule generation..."
+                            style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                        <Label fx:id="statusMessage" text="Please wait while we optimize your schedule..."
+                            style="-fx-text-fill: #7f8c8d; -fx-font-size: 13px;" wrapText="true" maxWidth="450" />
+                    </VBox>
+                </HBox>
+
+                <!-- PROGRESS BAR -->
+                <VBox spacing="5">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Progress:" style="-fx-font-weight: bold;" />
+                        <Label fx:id="progressPercentLabel" text="0%" style="-fx-text-fill: #2980b9; -fx-font-weight: bold;" />
+                    </HBox>
+                    <ProgressBar fx:id="progressBar" progress="0" prefWidth="550" prefHeight="20"
+                        style="-fx-accent: #3498db;" />
+                </VBox>
+
+                <!-- TIME ELAPSED -->
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Time Elapsed:" style="-fx-font-weight: bold; -fx-min-width: 120;" />
+                    <Label fx:id="timeElapsedLabel" text="0 seconds" style="-fx-text-fill: #34495e;" />
+                </HBox>
+            </VBox>
+
+            <Separator />
+
+            <!-- OPTIMIZATION METRICS (visible when job is running) -->
+            <VBox fx:id="metricsBox" spacing="10" visible="false" managed="false"
+                style="-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-padding: 15;">
+
+                <Label text="Current Optimization Metrics:" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+
+                <GridPane hgap="20" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints prefWidth="150" />
+                        <ColumnConstraints prefWidth="100" />
+                        <ColumnConstraints prefWidth="150" />
+                        <ColumnConstraints prefWidth="100" />
+                    </columnConstraints>
+
+                    <!-- Row 1 -->
+                    <Label text="Hard Score:" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                        style="-fx-text-fill: #34495e;" />
+                    <Label fx:id="hardScoreLabel" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                        style="-fx-font-weight: bold; -fx-text-fill: #e74c3c;" />
+
+                    <Label text="Soft Score:" GridPane.columnIndex="2" GridPane.rowIndex="0"
+                        style="-fx-text-fill: #34495e;" />
+                    <Label fx:id="softScoreLabel" text="N/A" GridPane.columnIndex="3" GridPane.rowIndex="0"
+                        style="-fx-font-weight: bold; -fx-text-fill: #2980b9;" />
+
+                    <!-- Row 2 -->
+                    <Label text="Conflicts:" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                        style="-fx-text-fill: #34495e;" />
+                    <Label fx:id="conflictsLabel" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                        style="-fx-font-weight: bold; -fx-text-fill: #e67e22;" />
+
+                    <Label text="Quality:" GridPane.columnIndex="2" GridPane.rowIndex="1"
+                        style="-fx-text-fill: #34495e;" />
+                    <Label fx:id="qualityLabel" text="N/A" GridPane.columnIndex="3" GridPane.rowIndex="1"
+                        style="-fx-font-weight: bold; -fx-text-fill: #27ae60;" />
+                </GridPane>
+
+                <Text text="Note: Scores update in real-time during optimization"
+                    wrappingWidth="520" style="-fx-fill: #95a5a6; -fx-font-size: 11px; -fx-font-style: italic;" />
+            </VBox>
+
+            <!-- RESULT SUMMARY (visible when complete) -->
+            <VBox fx:id="resultBox" spacing="10" visible="false" managed="false"
+                style="-fx-background-color: #d4edda; -fx-background-radius: 5; -fx-padding: 15;">
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="✅" style="-fx-font-size: 24px;" />
+                    <Label text="Schedule Generation Complete!" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #155724;" />
+                </HBox>
+
+                <GridPane hgap="15" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints prefWidth="180" />
+                        <ColumnConstraints prefWidth="120" />
+                    </columnConstraints>
+
+                    <Label text="Sections Created:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <Label fx:id="sectionsCreatedLabel" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                        style="-fx-font-weight: bold;" />
+
+                    <Label text="Students Scheduled:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <Label fx:id="studentsScheduledLabel" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                        style="-fx-font-weight: bold;" />
+
+                    <Label text="Final Hard Score:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                    <Label fx:id="finalHardScoreLabel" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                        style="-fx-font-weight: bold; -fx-text-fill: #e74c3c;" />
+
+                    <Label text="Final Soft Score:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                    <Label fx:id="finalSoftScoreLabel" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="3"
+                        style="-fx-font-weight: bold; -fx-text-fill: #2980b9;" />
+                </GridPane>
+            </VBox>
+
+            <!-- ERROR MESSAGE (visible if failed) -->
+            <VBox fx:id="errorBox" spacing="10" visible="false" managed="false"
+                style="-fx-background-color: #f8d7da; -fx-background-radius: 5; -fx-padding: 15;">
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="❌" style="-fx-font-size: 24px;" />
+                    <Label text="Generation Failed" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #721c24;" />
+                </HBox>
+
+                <Text fx:id="errorMessageText" wrappingWidth="520"
+                    style="-fx-fill: #721c24; -fx-font-size: 13px;" />
+            </VBox>
+
+        </VBox>
+    </content>
+
+    <buttonTypes>
+        <ButtonType fx:id="cancelButtonType" text="Cancel" buttonData="CANCEL_CLOSE" />
+        <ButtonType fx:id="closeButtonType" text="Close" buttonData="OK_DONE" />
+    </buttonTypes>
+
+</DialogPane>

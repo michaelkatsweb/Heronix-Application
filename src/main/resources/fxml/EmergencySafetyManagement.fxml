@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.EmergencySafetyManagementController"
+            prefWidth="1500" prefHeight="900">
+    <top>
+        <VBox spacing="10" style="-fx-background-color: #f44336; -fx-padding: 20;">
+            <Label text="Emergency & Safety Management" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        </VBox>
+    </top>
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+            <Tab text="Emergency Contacts">
+                <TableView fx:id="contactsTableView" style="-fx-padding: 15;">
+                    <columns>
+                        <TableColumn text="Student" prefWidth="150"/>
+                        <TableColumn text="Contact Name" prefWidth="150"/>
+                        <TableColumn text="Phone" prefWidth="120"/>
+                    </columns>
+                </TableView>
+            </Tab>
+            <Tab text="Drills & Procedures">
+                <VBox spacing="10" style="-fx-padding: 15;">
+                    <Button text="Record Fire Drill" onAction="#handleFireDrill"/>
+                    <Button text="Record Lockdown Drill" onAction="#handleLockdownDrill"/>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>

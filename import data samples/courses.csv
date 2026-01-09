@@ -1,0 +1,41 @@
+Course Code,Course Name,Subject,Description,Level,Max Students,Sessions Per Week,Duration,Schedule Type,Priority,Active,Requires Lab
+MATH101,Algebra I,Mathematics,Introduction to algebraic concepts,HIGH_SCHOOL,30,5,50,TRADITIONAL,High,True,False
+MATH102,Geometry,Mathematics,Plane and solid geometry,HIGH_SCHOOL,28,5,50,TRADITIONAL,High,True,False
+MATH201,Algebra II,Mathematics,Advanced algebra and trigonometry,HIGH_SCHOOL,25,5,50,TRADITIONAL,High,True,False
+MATH301,Pre-Calculus,Mathematics,Preparation for calculus,HIGH_SCHOOL,24,5,50,TRADITIONAL,High,True,False
+MATH401,AP Calculus,Mathematics,Advanced Placement calculus,HIGH_SCHOOL,20,5,50,TRADITIONAL,High,True,False
+SCI101,Biology,Science,Introduction to life sciences,HIGH_SCHOOL,28,5,50,TRADITIONAL,High,True,True
+SCI102,Chemistry,Science,Introduction to chemical principles,HIGH_SCHOOL,24,5,50,TRADITIONAL,High,True,True
+SCI201,Physics,Science,Mechanics and electricity,HIGH_SCHOOL,24,5,50,TRADITIONAL,High,True,True
+SCI301,AP Biology,Science,Advanced Placement biology,HIGH_SCHOOL,20,5,50,TRADITIONAL,High,True,True
+SCI302,AP Chemistry,Science,Advanced Placement chemistry,HIGH_SCHOOL,18,5,50,TRADITIONAL,High,True,True
+ENG101,English 9,English,Literature and composition,HIGH_SCHOOL,30,5,50,TRADITIONAL,High,True,False
+ENG102,English 10,English,World literature and writing,HIGH_SCHOOL,30,5,50,TRADITIONAL,High,True,False
+ENG201,English 11,English,American literature,HIGH_SCHOOL,28,5,50,TRADITIONAL,High,True,False
+ENG301,AP English,English,Advanced Placement literature,HIGH_SCHOOL,22,5,50,TRADITIONAL,High,True,False
+ENG302,Creative Writing,English,Fiction and poetry writing,HIGH_SCHOOL,20,3,50,TRADITIONAL,Medium,True,False
+HIST101,World History,Social Studies,Ancient to modern civilizations,HIGH_SCHOOL,32,5,50,TRADITIONAL,Medium,True,False
+HIST201,US History,Social Studies,American history survey,HIGH_SCHOOL,32,5,50,TRADITIONAL,High,True,False
+HIST301,AP US History,Social Studies,Advanced Placement US history,HIGH_SCHOOL,25,5,50,TRADITIONAL,High,True,False
+GOV101,Government,Social Studies,American government and civics,HIGH_SCHOOL,30,3,50,TRADITIONAL,Medium,True,False
+ECON101,Economics,Social Studies,Micro and macroeconomics,HIGH_SCHOOL,30,3,50,TRADITIONAL,Medium,True,False
+SPAN101,Spanish I,Foreign Language,Introduction to Spanish,HIGH_SCHOOL,25,5,50,TRADITIONAL,Medium,True,False
+SPAN201,Spanish II,Foreign Language,Intermediate Spanish,HIGH_SCHOOL,24,5,50,TRADITIONAL,Medium,True,False
+SPAN301,Spanish III,Foreign Language,Advanced Spanish,HIGH_SCHOOL,20,5,50,TRADITIONAL,Medium,True,False
+FREN101,French I,Foreign Language,Introduction to French,HIGH_SCHOOL,22,5,50,TRADITIONAL,Medium,True,False
+FREN201,French II,Foreign Language,Intermediate French,HIGH_SCHOOL,20,5,50,TRADITIONAL,Medium,True,False
+PE101,Physical Education,Physical Education,Fitness and sports,HIGH_SCHOOL,35,5,50,TRADITIONAL,Low,True,False
+PE201,Advanced PE,Physical Education,Advanced athletics,HIGH_SCHOOL,30,5,50,TRADITIONAL,Low,True,False
+ART101,Art I,Art,Drawing and painting basics,HIGH_SCHOOL,20,3,50,TRADITIONAL,Low,True,False
+ART201,Art II,Art,Advanced studio art,HIGH_SCHOOL,18,3,50,TRADITIONAL,Low,True,False
+MUS101,Band,Music,Concert and marching band,HIGH_SCHOOL,40,5,50,TRADITIONAL,Low,True,False
+MUS201,Choir,Music,Vocal music ensemble,HIGH_SCHOOL,35,5,50,TRADITIONAL,Low,True,False
+CS101,Intro to Programming,Computer Science,Python programming basics,HIGH_SCHOOL,24,5,50,TRADITIONAL,High,True,True
+CS201,AP Computer Science,Computer Science,Java programming AP,HIGH_SCHOOL,20,5,50,TRADITIONAL,High,True,True
+CS301,Web Development,Computer Science,HTML CSS JavaScript,HIGH_SCHOOL,22,3,50,TRADITIONAL,Medium,True,True
+SPED101,Special Education Math,Special Education,Individualized math instruction,HIGH_SCHOOL,12,5,50,TRADITIONAL,High,True,False
+SPED102,Special Education English,Special Education,Individualized English instruction,HIGH_SCHOOL,12,5,50,TRADITIONAL,High,True,False
+CTE101,Automotive Technology,Career Technical Ed,Auto mechanics basics,HIGH_SCHOOL,16,5,90,BLOCK,Medium,True,True
+CTE201,Welding,Career Technical Ed,Welding techniques,HIGH_SCHOOL,14,5,90,BLOCK,Medium,True,True
+CTE301,Culinary Arts,Career Technical Ed,Food preparation and safety,HIGH_SCHOOL,18,5,90,BLOCK,Medium,True,True
+HEALTH101,Health Education,Health,Personal health and wellness,HIGH_SCHOOL,30,3,50,TRADITIONAL,Medium,True,False

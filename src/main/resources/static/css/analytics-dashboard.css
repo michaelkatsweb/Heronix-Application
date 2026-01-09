@@ -1,0 +1,353 @@
+/**
+ * Attendance Analytics Dashboard Styles
+ *
+ * Custom CSS for the attendance analytics dashboard UI.
+ *
+ * Features:
+ * - Responsive card layouts
+ * - Color-coded statistics
+ * - Chart containers
+ * - Trend indicators
+ * - Mobile-friendly design
+ *
+ * @author Heronix Development Team
+ * @version 1.0
+ * @since Phase 60 - Report Dashboard UI Integration
+ */
+
+/* Global Styles */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Statistics Cards */
+.stat-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card .card-body {
+    padding: 1.5rem;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.75rem;
+}
+
+.stat-icon.bg-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.stat-icon.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.stat-icon.bg-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+}
+
+.stat-icon.bg-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+}
+
+.trend-indicator {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.trend-indicator.up {
+    color: #28a745;
+}
+
+.trend-indicator.down {
+    color: #dc3545;
+}
+
+/* Chart Cards */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.card-title i {
+    margin-right: 0.5rem;
+    color: #667eea;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Trend Box */
+.trend-box {
+    text-align: center;
+    padding: 1rem;
+}
+
+.trend-direction h2 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.trend-direction .badge {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+}
+
+.trend-stats {
+    margin-top: 1.5rem;
+    text-align: left;
+}
+
+.trend-stats h4 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.trend-stats p {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* Insights List */
+.insights-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.insights-list li {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background-color: #f8f9fa;
+    border-left: 4px solid #667eea;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.insights-list li i {
+    margin-right: 0.5rem;
+}
+
+/* Top Absentees Table */
+#absenteesTable {
+    margin-bottom: 0;
+}
+
+#absenteesTable thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    color: #6c757d;
+}
+
+#absenteesTable tbody td {
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+#absenteesTable .badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.6rem;
+}
+
+/* Date Range Alert */
+.alert-info {
+    background-color: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    color: #004085;
+    border-radius: 8px;
+}
+
+/* Chart Containers */
+canvas {
+    max-height: 400px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+
+    .stat-card .card-body {
+        padding: 1rem;
+    }
+
+    .card-header {
+        padding: 1rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .trend-direction h2 {
+        font-size: 2.5rem;
+    }
+
+    canvas {
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 576px) {
+    h1.h2 {
+        font-size: 1.5rem;
+    }
+
+    .stat-card h3 {
+        font-size: 1.75rem;
+    }
+
+    .trend-stats h4 {
+        font-size: 1.25rem;
+    }
+
+    #absenteesTable {
+        font-size: 0.85rem;
+    }
+
+    #absenteesTable thead th {
+        font-size: 0.75rem;
+        padding: 0.5rem;
+    }
+
+    #absenteesTable tbody td {
+        padding: 0.5rem;
+    }
+}
+
+/* Loading State */
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Utility Classes */
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Modal Customization */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    border-bottom: 1px solid #e9ecef;
+    padding: 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 1.5rem;
+}
+
+/* Button Enhancements */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #65408b 100%);
+}
+
+/* Badge Customization */
+.badge {
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5568d3;
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.TranscriptManagementController" prefWidth="1500" prefHeight="900">
+    <top>
+        <VBox spacing="10" style="-fx-background-color: #673ab7; -fx-padding: 20;">
+            <Label text="Transcript Management" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        </VBox>
+    </top>
+    <center>
+        <VBox spacing="10" style="-fx-padding: 15;">
+            <HBox spacing="10">
+                <TextField fx:id="studentSearchField" promptText="Search student..."/>
+                <Button text="Generate Transcript" onAction="#handleGenerateTranscript"/>
+            </HBox>
+            <TableView fx:id="transcriptTableView" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Year" prefWidth="80"/>
+                    <TableColumn text="Course" prefWidth="200"/>
+                    <TableColumn text="Grade" prefWidth="80"/>
+                    <TableColumn text="Credits" prefWidth="80"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>

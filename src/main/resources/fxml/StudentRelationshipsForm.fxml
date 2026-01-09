@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.heronix.controller.StudentRelationshipsFormController"
+      spacing="10" styleClass="root-container">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-section">
+        <Label text="Student Relationships & Family Groups" styleClass="form-title">
+            <font>
+                <Font name="System Bold" size="24"/>
+            </font>
+        </Label>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnRefresh" text="Refresh" onAction="#handleRefresh" styleClass="btn-secondary"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Search and Filter Section -->
+    <VBox spacing="8" styleClass="filter-section">
+        <Label text="Search Student" styleClass="section-header">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Label>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Search:"/>
+            <TextField fx:id="txtSearch" promptText="Enter student name or ID" prefWidth="250"/>
+
+            <Label text="Family Group:"/>
+            <ComboBox fx:id="cmbFamilyFilter" promptText="All Families" prefWidth="200" editable="true"/>
+
+            <Button fx:id="btnSearch" text="Search" onAction="#handleSearch" styleClass="btn-primary"/>
+            <Button fx:id="btnClearFilters" text="Clear" onAction="#handleClearFilters" styleClass="btn-secondary"/>
+        </HBox>
+
+        <!-- Quick Actions -->
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <Label text="Quick Actions:"/>
+            <Button fx:id="btnAutoDetectSiblings" text="Auto-Detect Siblings" onAction="#handleAutoDetectSiblings" styleClass="btn-secondary"/>
+            <Button fx:id="btnCreateFamilyGroup" text="Create Family Group" onAction="#handleCreateFamilyGroup" styleClass="btn-primary"/>
+        </HBox>
+    </VBox>
+
+    <Separator/>
+
+    <!-- Main Content Area - Split Pane with Three Sections -->
+    <SplitPane dividerPositions="0.25, 0.50" VBox.vgrow="ALWAYS">
+
+        <!-- Left Side: Student List -->
+        <VBox spacing="5">
+            <Label text="Students" styleClass="section-header">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+
+            <TableView fx:id="tblStudents" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colName" text="Name" prefWidth="150"/>
+                    <TableColumn fx:id="colGrade" text="Grade" prefWidth="60"/>
+                    <TableColumn fx:id="colSiblings" text="Siblings" prefWidth="60"/>
+                </columns>
+                <placeholder>
+                    <Label text="No students found"/>
+                </placeholder>
+            </TableView>
+        </VBox>
+
+        <!-- Middle: Relationship Details -->
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox spacing="15" styleClass="details-panel">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <!-- Selected Student Info -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Selected Student" styleClass="section-header" style="-fx-background-color: #E3F2FD; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Student ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <Label fx:id="lblStudentId" text="-" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Name:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Label fx:id="lblStudentName" text="-" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Grade:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Label fx:id="lblGrade" text="-" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Family Group:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Label fx:id="lblFamilyGroup" text="-" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Siblings Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Siblings" styleClass="section-header" style="-fx-background-color: #E8F5E9; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <ListView fx:id="lstSiblings" prefHeight="150">
+                        <placeholder>
+                            <Label text="No siblings found"/>
+                        </placeholder>
+                    </ListView>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Add Sibling:"/>
+                        <ComboBox fx:id="cmbAddSibling" promptText="Select Student" prefWidth="200" editable="true" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnAddSibling" text="Add" onAction="#handleAddSibling" styleClass="btn-primary"/>
+                    </HBox>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Relationship Type:"/>
+                        <ComboBox fx:id="cmbRelationshipType" promptText="Select Type" prefWidth="150"/>
+                    </HBox>
+
+                    <Button fx:id="btnRemoveSibling" text="Remove Selected Sibling" onAction="#handleRemoveSibling" styleClass="btn-danger" disable="true"/>
+                </VBox>
+
+                <!-- Family Group Information Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Family Group Information" styleClass="section-header" style="-fx-background-color: #FFF3E0; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Family Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtFamilyName" promptText="e.g., Smith Family" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Primary Contact:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbPrimaryContact" promptText="Select Parent" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Household Address:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtHouseholdAddress" promptText="Primary household address" GridPane.rowIndex="2" GridPane.columnIndex="1" prefRowCount="2" wrapText="true"/>
+
+                        <Label text="Family Notes:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtFamilyNotes" promptText="Notes about family group" GridPane.rowIndex="3" GridPane.columnIndex="1" prefRowCount="3" wrapText="true"/>
+                    </GridPane>
+
+                    <HBox spacing="10" alignment="CENTER">
+                        <Button fx:id="btnSaveFamilyGroup" text="Save Family Group" onAction="#handleSaveFamilyGroup" styleClass="btn-primary"/>
+                        <Button fx:id="btnDeleteFamilyGroup" text="Delete Family Group" onAction="#handleDeleteFamilyGroup" styleClass="btn-danger"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Household Management Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Household Management" styleClass="section-header" style="-fx-background-color: #F3E5F5; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Lives Together:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkLivesTogether" text="All siblings live in same household" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Shared Custody:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkSharedCustody" text="Shared custody arrangement" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Custody Schedule:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtCustodySchedule" promptText="e.g., Week on/week off, alternating weekends" GridPane.rowIndex="2" GridPane.columnIndex="1" prefRowCount="2" wrapText="true"/>
+
+                        <Label text="Billing Family:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkBillingFamily" text="Single billing for all siblings" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                        <Label text="Combined Reporting:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkCombinedReporting" text="Send combined progress reports" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Carpool Coordination Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Carpool Coordination" styleClass="section-header" style="-fx-background-color: #E1F5FE; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="In Carpool:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkInCarpool" text="Participates in carpool" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Carpool Group:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtCarpoolGroup" promptText="Carpool group name" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Pickup Time:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtPickupTime" promptText="e.g., 3:00 PM" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Dropoff Time:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtDropoffTime" promptText="e.g., 7:30 AM" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                        <Label text="Carpool Contacts:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtCarpoolContacts" promptText="Other carpool participants and contact info" GridPane.rowIndex="4" GridPane.columnIndex="1" prefRowCount="3" wrapText="true"/>
+
+                        <Label text="Carpool Notes:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtCarpoolNotes" promptText="Special instructions or notes" GridPane.rowIndex="5" GridPane.columnIndex="1" prefRowCount="2" wrapText="true"/>
+                    </GridPane>
+
+                    <HBox spacing="10" alignment="CENTER">
+                        <Button fx:id="btnSaveCarpool" text="Save Carpool Info" onAction="#handleSaveCarpool" styleClass="btn-primary"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+
+        <!-- Right Side: Family Members List -->
+        <VBox spacing="5">
+            <Label text="Family Members in This Group" styleClass="section-header">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+
+            <ListView fx:id="lstFamilyMembers" VBox.vgrow="ALWAYS">
+                <placeholder>
+                    <Label text="No family group selected"/>
+                </placeholder>
+            </ListView>
+
+            <Separator/>
+
+            <VBox spacing="5">
+                <Label text="Shared Parents/Guardians" style="-fx-font-weight: bold;"/>
+                <ListView fx:id="lstSharedParents" prefHeight="150">
+                    <placeholder>
+                        <Label text="No shared parents found"/>
+                    </placeholder>
+                </ListView>
+            </VBox>
+
+            <Separator/>
+
+            <VBox spacing="5">
+                <Label text="Quick Stats" style="-fx-font-weight: bold;"/>
+
+                <GridPane hgap="10" vgap="5">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="60" halignment="RIGHT"/>
+                        <ColumnConstraints percentWidth="40" halignment="LEFT"/>
+                    </columnConstraints>
+
+                    <Label text="Total Siblings:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblTotalSiblings" text="0" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Same Household:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblSameHousehold" text="0" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="In Carpool:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblInCarpool" text="0" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                    <Label text="Shared Parents:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblSharedParents" text="0" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                </GridPane>
+            </VBox>
+        </VBox>
+    </SplitPane>
+
+    <Separator/>
+
+    <!-- Status Bar -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="status-bar">
+        <Label text="User:"/>
+        <Label fx:id="lblCurrentUser" text="System User" styleClass="status-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Total Students:"/>
+        <Label fx:id="lblTotalStudents" text="0" styleClass="status-label"/>
+        <Separator orientation="VERTICAL"/>
+        <Label text="Family Groups:"/>
+        <Label fx:id="lblFamilyGroups" text="0" styleClass="status-label"/>
+    </HBox>
+</VBox>

@@ -1,0 +1,73 @@
+Course Code,Course Name,Subject,Duration Minutes,Sessions Per Week,Max Students
+ENG-101-1,English 9 (Sec 1),English,50,5,30
+ENG-101-2,English 9 (Sec 2),English,50,5,30
+ENG-101-3,English 9 (Sec 3),English,50,5,30
+ENG-201-1,English 10 (Sec 1),English,50,5,30
+ENG-201-2,English 10 (Sec 2),English,50,5,30
+ENG-301-1,English 11 (Sec 1),English,50,5,30
+ENG-301-2,English 11 (Sec 2),English,50,5,30
+ENG-401-1,English 12 (Sec 1),English,50,5,30
+ENG-401-2,English 12 (Sec 2),English,50,5,30
+MAT-101-1,Algebra I (Sec 1),Mathematics,50,5,30
+MAT-101-2,Algebra I (Sec 2),Mathematics,50,5,30
+MAT-101-3,Algebra I (Sec 3),Mathematics,50,5,30
+MAT-201-1,Geometry (Sec 1),Mathematics,50,5,30
+MAT-201-2,Geometry (Sec 2),Mathematics,50,5,30
+MAT-301-1,Algebra II (Sec 1),Mathematics,50,5,30
+MAT-301-2,Algebra II (Sec 2),Mathematics,50,5,30
+MAT-401-1,Pre-Calculus (Sec 1),Mathematics,50,5,30
+MAT-402-1,AP Calculus (Sec 1),Mathematics,50,5,25
+SCI-101-1,Physical Science (Sec 1),Science,50,5,30
+SCI-101-2,Physical Science (Sec 2),Science,50,5,30
+SCI-201-1,Biology (Sec 1),Science,50,5,30
+SCI-201-2,Biology (Sec 2),Science,50,5,30
+SCI-201-3,Biology (Sec 3),Science,50,5,30
+SCI-301-1,Chemistry (Sec 1),Science,50,5,25
+SCI-301-2,Chemistry (Sec 2),Science,50,5,25
+SCI-401-1,Physics (Sec 1),Science,50,5,25
+SCI-402-1,AP Biology (Sec 1),Science,50,5,25
+HIS-101-1,World History (Sec 1),History,50,5,30
+HIS-101-2,World History (Sec 2),History,50,5,30
+HIS-101-3,World History (Sec 3),History,50,5,30
+HIS-201-1,US History (Sec 1),History,50,5,30
+HIS-201-2,US History (Sec 2),History,50,5,30
+HIS-301-1,Government (Sec 1),History,50,5,30
+HIS-301-2,Government (Sec 2),History,50,5,30
+HIS-401-1,Economics (Sec 1),History,50,5,30
+HIS-402-1,AP US History (Sec 1),History,50,5,25
+FLG-101-1,Spanish I (Sec 1),Foreign Language,50,5,30
+FLG-101-2,Spanish I (Sec 2),Foreign Language,50,5,30
+FLG-201-1,Spanish II (Sec 1),Foreign Language,50,5,30
+FLG-201-2,Spanish II (Sec 2),Foreign Language,50,5,30
+FLG-301-1,Spanish III (Sec 1),Foreign Language,50,5,25
+FLG-302-1,French I (Sec 1),Foreign Language,50,5,30
+FLG-303-1,French II (Sec 1),Foreign Language,50,5,25
+PE-101-1,PE 9 (Sec 1),PE,50,5,35
+PE-101-2,PE 9 (Sec 2),PE,50,5,35
+PE-101-3,PE 9 (Sec 3),PE,50,5,35
+PE-201-1,PE 10 (Sec 1),PE,50,5,35
+PE-201-2,PE 10 (Sec 2),PE,50,5,35
+PE-301-1,PE 11 (Sec 1),PE,50,5,35
+PE-401-1,PE 12 (Sec 1),PE,50,5,35
+PE-501-1,Weight Training (Sec 1),PE,50,5,25
+PE-502-1,Team Sports (Sec 1),PE,50,5,30
+ART-101-1,Art I (Sec 1),Art,50,5,25
+ART-101-2,Art I (Sec 2),Art,50,5,25
+ART-201-1,Art II (Sec 1),Art,50,5,25
+ART-301-1,Advanced Art (Sec 1),Art,50,5,20
+ART-302-1,Digital Media (Sec 1),Art,50,5,25
+ART-303-1,Photography (Sec 1),Art,50,5,20
+MUS-101-1,Music Theory I (Sec 1),Music,50,5,30
+MUS-101-2,Music Theory I (Sec 2),Music,50,5,30
+MUS-201-1,Band (Sec 1),Music,50,5,40
+MUS-202-1,Chorus (Sec 1),Music,50,5,40
+MUS-203-1,Orchestra (Sec 1),Music,50,5,35
+MUS-301-1,Advanced Band (Sec 1),Music,50,5,35
+MUS-302-1,Jazz Ensemble (Sec 1),Music,50,5,25
+ELC-101-1,Computer Science I (Sec 1),Electives,50,5,25
+ELC-102-1,Web Design (Sec 1),Electives,50,5,25
+ELC-201-1,Business Math (Sec 1),Electives,50,5,30
+ELC-202-1,Creative Writing (Sec 1),Electives,50,5,25
+ELC-203-1,Psychology (Sec 1),Electives,50,5,30
+ELC-204-1,Environmental Science (Sec 1),Electives,50,5,25
+ELC-205-1,Health (Sec 1),Electives,50,5,30

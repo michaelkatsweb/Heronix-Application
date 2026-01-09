@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.HealthOfficeDashboardController"
+            styleClass="content-pane">
+
+    <top>
+        <VBox styleClass="header-section">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="Health Office Dashboard" styleClass="page-title"/>
+            <Label text="Nurse office management, student visits, health screenings, and immunization tracking"
+                   styleClass="page-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.75">
+            <!-- Main Dashboard Area -->
+            <ScrollPane fitToWidth="true" styleClass="form-scroll-pane">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- Action Buttons -->
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Button fx:id="newVisitButton" text="+ New Nurse Visit"
+                                onAction="#handleNewVisit" styleClass="primary-button"/>
+                        <Button fx:id="healthScreeningButton" text="Health Screening"
+                                onAction="#handleHealthScreening"/>
+                        <Button fx:id="medicationButton" text="Medication Log"
+                                onAction="#handleMedication"/>
+                        <Button fx:id="immunizationButton" text="Immunization Tracking"
+                                onAction="#handleImmunization"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="refreshButton" text="Refresh" onAction="#handleRefresh"/>
+                    </HBox>
+
+                    <!-- Statistics Cards -->
+                    <VBox spacing="15">
+                        <Label text="Today's Statistics" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        <GridPane hgap="15" vgap="15">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="16.66"/>
+                                <ColumnConstraints percentWidth="16.66"/>
+                                <ColumnConstraints percentWidth="16.66"/>
+                                <ColumnConstraints percentWidth="16.66"/>
+                                <ColumnConstraints percentWidth="16.66"/>
+                                <ColumnConstraints percentWidth="16.67"/>
+                            </columnConstraints>
+
+                            <!-- Active Visits -->
+                            <VBox spacing="10" styleClass="stat-card"
+                                  style="-fx-background-color: #fff3e0;"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Active Visits" styleClass="stat-label"/>
+                                <Label fx:id="activeVisitsLabel" text="0"
+                                       styleClass="stat-value" style="-fx-text-fill: #f57c00;"/>
+                                <Label text="In Office Now" styleClass="stat-sublabel"/>
+                            </VBox>
+
+                            <!-- Today's Total Visits -->
+                            <VBox spacing="10" styleClass="stat-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="Today's Visits" styleClass="stat-label"/>
+                                <Label fx:id="todayVisitsLabel" text="0" styleClass="stat-value"/>
+                                <Label fx:id="todayChangeLabel" text="--" styleClass="stat-sublabel"/>
+                            </VBox>
+
+                            <!-- Sent Home -->
+                            <VBox spacing="10" styleClass="stat-card"
+                                  style="-fx-background-color: #ffebee;"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="0">
+                                <Label text="Sent Home" styleClass="stat-label"/>
+                                <Label fx:id="sentHomeLabel" text="0"
+                                       styleClass="stat-value" style="-fx-text-fill: #d32f2f;"/>
+                                <Label text="Today" styleClass="stat-sublabel"/>
+                            </VBox>
+
+                            <!-- Parent Notifications Pending -->
+                            <VBox spacing="10" styleClass="stat-card"
+                                  style="-fx-background-color: #fff9c4;"
+                                  GridPane.columnIndex="3" GridPane.rowIndex="0">
+                                <Label text="Pending Notifications" styleClass="stat-label"/>
+                                <Label fx:id="pendingNotificationsLabel" text="0"
+                                       styleClass="stat-value" style="-fx-text-fill: #f57f17;"/>
+                                <Label text="Parents to Contact" styleClass="stat-sublabel"/>
+                            </VBox>
+
+                            <!-- Screenings Due -->
+                            <VBox spacing="10" styleClass="stat-card" GridPane.columnIndex="4" GridPane.rowIndex="0">
+                                <Label text="Screenings Due" styleClass="stat-label"/>
+                                <Label fx:id="screeningsDueLabel" text="0" styleClass="stat-value"/>
+                                <Label text="Vision/Hearing" styleClass="stat-sublabel"/>
+                            </VBox>
+
+                            <!-- High Risk Students -->
+                            <VBox spacing="10" styleClass="stat-card"
+                                  style="-fx-background-color: #fce4ec;"
+                                  GridPane.columnIndex="5" GridPane.rowIndex="0">
+                                <Label text="High Risk" styleClass="stat-label"/>
+                                <Label fx:id="highRiskLabel" text="0"
+                                       styleClass="stat-value" style="-fx-text-fill: #c2185b;"/>
+                                <Label text="Medical Conditions" styleClass="stat-sublabel"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Filters -->
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Date Range:"/>
+                        <DatePicker fx:id="startDatePicker" promptText="Start Date"/>
+                        <Label text="to"/>
+                        <DatePicker fx:id="endDatePicker" promptText="End Date"/>
+
+                        <Label text="Visit Reason:"/>
+                        <ComboBox fx:id="reasonFilterComboBox" promptText="All Reasons" prefWidth="150"/>
+
+                        <Label text="Disposition:"/>
+                        <ComboBox fx:id="dispositionFilterComboBox" promptText="All Dispositions" prefWidth="150"/>
+
+                        <Button text="Apply Filters" onAction="#handleApplyFilters" styleClass="primary-button"/>
+                        <Button text="Clear" onAction="#handleClearFilters"/>
+                    </HBox>
+
+                    <!-- Charts -->
+                    <GridPane hgap="20" vgap="20">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <!-- Visit Reasons Pie Chart -->
+                        <VBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Visit Reasons Distribution"
+                                   style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <PieChart fx:id="visitReasonsPieChart" legendVisible="true" prefHeight="250"/>
+                        </VBox>
+
+                        <!-- Dispositions Pie Chart -->
+                        <VBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Visit Dispositions"
+                                   style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <PieChart fx:id="dispositionsPieChart" legendVisible="true" prefHeight="250"/>
+                        </VBox>
+
+                        <!-- 30-Day Trend -->
+                        <VBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                            <Label text="30-Day Visit Trend"
+                                   style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <BarChart fx:id="trendChart" prefHeight="200" legendVisible="false">
+                                <xAxis>
+                                    <CategoryAxis label="Date"/>
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="Number of Visits" minorTickVisible="false"/>
+                                </yAxis>
+                            </BarChart>
+                        </VBox>
+                    </GridPane>
+
+                    <!-- Nurse Visits Table -->
+                    <VBox spacing="10">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="Nurse Visits Log"
+                                   style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="searchField" promptText="Search by student name..."
+                                       prefWidth="250"/>
+                        </HBox>
+
+                        <TableView fx:id="visitsTable" prefHeight="400">
+                            <columns>
+                                <TableColumn fx:id="visitDateColumn" text="Date" prefWidth="100"/>
+                                <TableColumn fx:id="visitTimeColumn" text="Time" prefWidth="80"/>
+                                <TableColumn fx:id="studentNameColumn" text="Student" prefWidth="180"/>
+                                <TableColumn fx:id="gradeColumn" text="Grade" prefWidth="60"/>
+                                <TableColumn fx:id="reasonColumn" text="Reason" prefWidth="130"/>
+                                <TableColumn fx:id="chiefComplaintColumn" text="Chief Complaint" prefWidth="200"/>
+                                <TableColumn fx:id="temperatureColumn" text="Temp" prefWidth="70"/>
+                                <TableColumn fx:id="dispositionColumn" text="Disposition" prefWidth="130"/>
+                                <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+                                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
+                            </columns>
+                            <placeholder>
+                                <Label text="No nurse visits to display"/>
+                            </placeholder>
+                        </TableView>
+
+                        <HBox alignment="CENTER_RIGHT" spacing="10">
+                            <Label fx:id="totalRecordsLabel" text="Total: 0 visits"/>
+                        </HBox>
+                    </VBox>
+
+                </VBox>
+            </ScrollPane>
+
+            <!-- Right Sidebar - Alerts and Quick Info -->
+            <ScrollPane fitToWidth="true" styleClass="sidebar-scroll">
+                <VBox spacing="20" style="-fx-padding: 15;">
+
+                    <!-- Active Students in Office -->
+                    <VBox spacing="10" styleClass="sidebar-section">
+                        <Label text="Currently in Office"
+                               style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                        <ListView fx:id="activeStudentsList" prefHeight="150">
+                            <placeholder>
+                                <Label text="No students in office"/>
+                            </placeholder>
+                        </ListView>
+                    </VBox>
+
+                    <!-- Pending Parent Notifications -->
+                    <VBox spacing="10" styleClass="sidebar-section"
+                          style="-fx-background-color: #fff9c4; -fx-padding: 10;">
+                        <Label text="⚠ Pending Notifications"
+                               style="-fx-font-weight: bold; -fx-text-fill: #f57f17;"/>
+                        <ListView fx:id="pendingNotificationsList" prefHeight="120">
+                            <placeholder>
+                                <Label text="No pending notifications"/>
+                            </placeholder>
+                        </ListView>
+                    </VBox>
+
+                    <!-- Frequent Visitors -->
+                    <VBox spacing="10" styleClass="sidebar-section">
+                        <Label text="Frequent Visitors (Last 30 Days)"
+                               style="-fx-font-weight: bold;"/>
+                        <ListView fx:id="frequentVisitorsList" prefHeight="150">
+                            <placeholder>
+                                <Label text="No frequent visitors"/>
+                            </placeholder>
+                        </ListView>
+                    </VBox>
+
+                    <!-- High-Risk Students -->
+                    <VBox spacing="10" styleClass="sidebar-section"
+                          style="-fx-background-color: #fce4ec; -fx-padding: 10;">
+                        <Label text="🩺 High-Risk Students"
+                               style="-fx-font-weight: bold; -fx-text-fill: #c2185b;"/>
+                        <ListView fx:id="highRiskStudentsList" prefHeight="150">
+                            <placeholder>
+                                <Label text="No high-risk students"/>
+                            </placeholder>
+                        </ListView>
+                    </VBox>
+
+                    <!-- Screenings Due -->
+                    <VBox spacing="10" styleClass="sidebar-section">
+                        <Label text="Screenings Due"
+                               style="-fx-font-weight: bold;"/>
+                        <VBox spacing="5">
+                            <Label fx:id="visionScreeningsDueLabel" text="Vision: 0 students"/>
+                            <Label fx:id="hearingScreeningsDueLabel" text="Hearing: 0 students"/>
+                        </VBox>
+                    </VBox>
+
+                    <!-- Quick Actions -->
+                    <VBox spacing="10" styleClass="sidebar-section">
+                        <Label text="Quick Actions" style="-fx-font-weight: bold;"/>
+                        <VBox spacing="5">
+                            <Button text="Export Daily Report" onAction="#handleExportDaily"
+                                    maxWidth="Infinity"/>
+                            <Button text="Check Out All Students" onAction="#handleCheckOutAll"
+                                    maxWidth="Infinity"/>
+                            <Button text="View Health Records" onAction="#handleViewHealthRecords"
+                                    maxWidth="Infinity"/>
+                        </VBox>
+                    </VBox>
+
+                </VBox>
+            </ScrollPane>
+        </SplitPane>
+    </center>
+
+</BorderPane>

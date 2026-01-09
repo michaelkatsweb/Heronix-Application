@@ -1,0 +1,53 @@
+Category,Program/Course Name,Course Code,Level,Description
+Core,English 1,1001310,Regular,"Foundational English course emphasizing grammar, composition, and literature analysis."
+Core,English 2,1001340,Regular,"Continued study of literature, writing, and critical analysis."
+Core,English 3,1001370,Regular,American literature and advanced writing practice.
+Core,English 4,1001400,Regular,British literature and composition with emphasis on college readiness.
+Core,Algebra 1,1200310,Regular,"Introduction to algebraic expressions, equations, and functions."
+Core,Geometry,1206310,Regular,"Properties of geometric figures, proofs, and spatial reasoning."
+Core,Algebra 2,1200330,Regular,Advanced algebraic concepts including polynomials and rational expressions.
+Core,Pre-Calculus,1202340,Honors,Preparation for calculus through trigonometric and analytic geometry studies.
+Core,Biology 1,2000310,Regular,"Study of living organisms, cellular processes, genetics, and ecology."
+Core,Chemistry 1,2003340,Regular,"Study of chemical reactions, atomic structure, and laboratory safety."
+Core,Physics 1,2003380,Regular,"Principles of mechanics, motion, and energy."
+Core,Environmental Science,2001340,Regular,Ecological systems and human-environment interactions.
+Core,World History,2109310,Regular,Survey of ancient to modern civilizations.
+Core,U.S. History,2100310,Regular,Study of American history from colonization to modern era.
+Core,American Government,2106310,Regular,Foundations and functions of U.S. government.
+Core,Economics,2102335,Regular,Principles of microeconomics and macroeconomics.
+Core,Physical Education,1501300,Regular,"Fitness, sportsmanship, and lifelong physical health."
+Career & Technical Education,Digital Design 1,8201210,Regular,Introduction to web design and multimedia presentation tools.
+Career & Technical Education,Digital Design 2,8201220,Honors,Advanced digital design including web interactivity and animations.
+Career & Technical Education,Digital Design 3,8201230,Honors,Advanced design production and portfolio development.
+Career & Technical Education,Digital Design 4,8201230,Honors,Capstone project and professional design presentation.
+Career & Technical Education,Digital Video Technology 1,8201410,Honors,"Introduction to video production, lighting, and camera techniques."
+Career & Technical Education,Digital Video Technology 2,8201420,Honors,Advanced editing and production management.
+Career & Technical Education,Digital Video Technology 3,8201430,Honors,Professional-level production projects and leadership.
+Career & Technical Education,Principles of Teaching - Intro to Teaching Profession,8909010,Regular,Foundations of educational theory and practice.
+Career & Technical Education,Human Growth & Development,8909020,Regular,Study of child and adolescent development for educators.
+Career & Technical Education,Foundations of Curriculum & Instruction,8208130,Honors,"Lesson planning, classroom management, and technology integration."
+Career & Technical Education,Principles of Teaching Internship,8909040,Regular,Practical teaching experience under supervision.
+Career & Technical Education,Game & Simulation Foundations,8208110,Regular,Introduction to game design and simulation principles.
+Career & Technical Education,Game & Simulation Design,8208120,Regular,"Design methodologies, storyboarding, and gameplay logic."
+Career & Technical Education,Game & Simulation Graphic Artist,8208130,Regular,2D and 3D animation and visual asset creation.
+Career & Technical Education,Principles of Entrepreneurship,8812110,Regular,Introduction to entrepreneurship and startup concepts.
+Career & Technical Education,Business Management and Law,8812120,Honors,Advanced business administration and legal practices.
+Career & Technical Education,Business Ownership,8812000,Honors,Managing business operations and marketing strategies.
+Advanced Placement,AP Biology,2000340,AP,College-level biology emphasizing lab work and inquiry.
+Advanced Placement,AP Chemistry,2003370,AP,College-level chemistry with advanced lab applications.
+Advanced Placement,AP Physics 1,2003421,AP,Mechanics and motion at college level.
+Advanced Placement,AP Environmental Science,2001380,AP,Human impact and sustainability studies.
+Advanced Placement,AP English Language & Composition,1001420,AP,Rhetorical analysis and argumentation.
+Advanced Placement,AP English Literature & Composition,1001430,AP,"Analysis of fiction, poetry, and drama."
+Advanced Placement,AP U.S. History,2100330,AP,Comprehensive study of American history with document-based analysis.
+Advanced Placement,AP World History,2109420,AP,Global civilizations and comparative history.
+Advanced Placement,AP U.S. Government & Politics,2106420,AP,Study of American political institutions and behavior.
+Advanced Placement,AP Psychology,2107350,AP,Scientific study of human behavior and mental processes.
+Advanced Placement,AP Calculus AB,1202310,AP,"Limits, derivatives, and integrals of functions."
+Advanced Placement,AP Calculus BC,1202320,AP,"Advanced integration, series, and parametric equations."
+Advanced Placement,AP Statistics,1210320,AP,"Data collection, probability, and inference."
+Advanced Placement,AP Computer Science Principles,0200335,AP,"Introduction to computing, data, and programming."
+Advanced Placement,AP Computer Science A,0200320,AP,Object-oriented programming and algorithm design.
+Advanced Placement,AP Seminar,1700500,AP,Research and communication-based Capstone course.
+Advanced Placement,AP Research,1700510,AP,Capstone independent research project.
+Advanced Placement,AP Art & Design (2D),0109350,AP,Studio-based portfolio in 2D art design.

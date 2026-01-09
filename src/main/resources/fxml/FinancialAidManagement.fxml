@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.FinancialAidManagementController" prefWidth="1500" prefHeight="900">
+    <top>
+        <VBox spacing="10" style="-fx-background-color: #00796b; -fx-padding: 20;">
+            <Label text="Financial Aid Management" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <HBox spacing="30" style="-fx-padding: 10 0 0 0;">
+                <VBox spacing="5">
+                    <Label text="Total Applications" style="-fx-text-fill: #b2dfdb; -fx-font-size: 12px;"/>
+                    <Label fx:id="totalApplicationsLabel" text="245" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                </VBox>
+                <VBox spacing="5">
+                    <Label text="Approved" style="-fx-text-fill: #b2dfdb; -fx-font-size: 12px;"/>
+                    <Label fx:id="approvedLabel" text="187" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                </VBox>
+                <VBox spacing="5">
+                    <Label text="Pending Review" style="-fx-text-fill: #b2dfdb; -fx-font-size: 12px;"/>
+                    <Label fx:id="pendingLabel" text="42" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                </VBox>
+                <VBox spacing="5">
+                    <Label text="Total Aid Awarded" style="-fx-text-fill: #b2dfdb; -fx-font-size: 12px;"/>
+                    <Label fx:id="totalAidLabel" text="$842,350" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE" style="-fx-padding: 15;">
+            <!-- Applications Tab -->
+            <Tab text="Applications">
+                <VBox spacing="10" style="-fx-padding: 10;">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <TextField fx:id="applicationSearchField" promptText="Search by student name or ID..." prefWidth="300"/>
+                        <Button text="Search" onAction="#handleSearchApplications"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <ComboBox fx:id="statusFilterCombo" promptText="Filter by status" prefWidth="150"/>
+                        <Button text="New Application" onAction="#handleNewApplication" style="-fx-background-color: #00796b; -fx-text-fill: white;"/>
+                    </HBox>
+
+                    <TableView fx:id="applicationsTableView" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn text="Application ID" prefWidth="120" fx:id="appIdColumn"/>
+                            <TableColumn text="Student Name" prefWidth="180" fx:id="studentNameColumn"/>
+                            <TableColumn text="Student ID" prefWidth="100" fx:id="studentIdColumn"/>
+                            <TableColumn text="Application Date" prefWidth="120" fx:id="appDateColumn"/>
+                            <TableColumn text="Aid Type" prefWidth="150" fx:id="aidTypeColumn"/>
+                            <TableColumn text="Amount Requested" prefWidth="130" fx:id="amountRequestedColumn"/>
+                            <TableColumn text="Amount Approved" prefWidth="130" fx:id="amountApprovedColumn"/>
+                            <TableColumn text="Status" prefWidth="120" fx:id="statusColumn"/>
+                            <TableColumn text="Actions" prefWidth="150" fx:id="actionsColumn"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- Aid Programs Tab -->
+            <Tab text="Aid Programs">
+                <VBox spacing="10" style="-fx-padding: 10;">
+                    <HBox spacing="10">
+                        <Button text="Create Program" onAction="#handleCreateProgram" style="-fx-background-color: #00796b; -fx-text-fill: white;"/>
+                        <Button text="Edit Program" onAction="#handleEditProgram"/>
+                        <Button text="Deactivate Program" onAction="#handleDeactivateProgram"/>
+                    </HBox>
+
+                    <TableView fx:id="programsTableView" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn text="Program Name" prefWidth="250" fx:id="programNameColumn"/>
+                            <TableColumn text="Type" prefWidth="150" fx:id="programTypeColumn"/>
+                            <TableColumn text="Max Award" prefWidth="120" fx:id="maxAwardColumn"/>
+                            <TableColumn text="Budget" prefWidth="150" fx:id="budgetColumn"/>
+                            <TableColumn text="Awarded YTD" prefWidth="150" fx:id="awardedYtdColumn"/>
+                            <TableColumn text="Remaining" prefWidth="150" fx:id="remainingColumn"/>
+                            <TableColumn text="Recipients" prefWidth="100" fx:id="recipientsColumn"/>
+                            <TableColumn text="Status" prefWidth="100" fx:id="programStatusColumn"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- Disbursements Tab -->
+            <Tab text="Disbursements">
+                <VBox spacing="10" style="-fx-padding: 10;">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Academic Year:"/>
+                        <ComboBox fx:id="academicYearCombo" prefWidth="150"/>
+                        <Label text="Semester:"/>
+                        <ComboBox fx:id="semesterCombo" prefWidth="150"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Process Disbursements" onAction="#handleProcessDisbursements" style="-fx-background-color: #00796b; -fx-text-fill: white;"/>
+                    </HBox>
+
+                    <TableView fx:id="disbursementsTableView" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn text="Student Name" prefWidth="180" fx:id="disbStudentColumn"/>
+                            <TableColumn text="Student ID" prefWidth="100" fx:id="disbStudentIdColumn"/>
+                            <TableColumn text="Program" prefWidth="200" fx:id="disbProgramColumn"/>
+                            <TableColumn text="Amount" prefWidth="120" fx:id="disbAmountColumn"/>
+                            <TableColumn text="Disbursement Date" prefWidth="130" fx:id="disbDateColumn"/>
+                            <TableColumn text="Method" prefWidth="120" fx:id="disbMethodColumn"/>
+                            <TableColumn text="Status" prefWidth="120" fx:id="disbStatusColumn"/>
+                            <TableColumn text="Reference #" prefWidth="150" fx:id="referenceColumn"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- Reports & Analytics Tab -->
+            <Tab text="Reports & Analytics">
+                <SplitPane dividerPositions="0.5" orientation="VERTICAL" style="-fx-padding: 10;">
+                    <VBox spacing="10">
+                        <Label text="Aid Distribution by Type" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        <PieChart fx:id="aidDistributionChart" VBox.vgrow="ALWAYS"/>
+                    </VBox>
+
+                    <VBox spacing="10">
+                        <HBox spacing="20" alignment="CENTER_LEFT">
+                            <VBox spacing="5" style="-fx-padding: 15; -fx-background-color: #e0f2f1; -fx-border-color: #00796b; -fx-border-width: 2;">
+                                <Label text="FAFSA Completion Rate" style="-fx-font-size: 12px; -fx-text-fill: #00796b;"/>
+                                <Label fx:id="fafsaRateLabel" text="78.5%" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                            </VBox>
+                            <VBox spacing="5" style="-fx-padding: 15; -fx-background-color: #fff3e0; -fx-border-color: #f57c00; -fx-border-width: 2;">
+                                <Label text="Average Award" style="-fx-font-size: 12px; -fx-text-fill: #f57c00;"/>
+                                <Label fx:id="avgAwardLabel" text="$4,506" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                            </VBox>
+                            <VBox spacing="5" style="-fx-padding: 15; -fx-background-color: #f3e5f5; -fx-border-color: #7b1fa2; -fx-border-width: 2;">
+                                <Label text="Renewal Rate" style="-fx-font-size: 12px; -fx-text-fill: #7b1fa2;"/>
+                                <Label fx:id="renewalRateLabel" text="92.3%" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                            </VBox>
+                            <VBox spacing="5" style="-fx-padding: 15; -fx-background-color: #e8f5e9; -fx-border-color: #388e3c; -fx-border-width: 2;">
+                                <Label text="Need Met %" style="-fx-font-size: 12px; -fx-text-fill: #388e3c;"/>
+                                <Label fx:id="needMetLabel" text="85.2%" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="10" style="-fx-padding-top: 20;">
+                            <Button text="Generate FAFSA Report" onAction="#handleFafsaReport"/>
+                            <Button text="Aid Summary Report" onAction="#handleAidSummaryReport"/>
+                            <Button text="Compliance Report" onAction="#handleComplianceReport"/>
+                            <Button text="Export All Data" onAction="#handleExportData"/>
+                        </HBox>
+                    </VBox>
+                </SplitPane>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>

@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.AttendanceConfigurationController"
+            stylesheets="@../css/application.css"
+            prefWidth="1200" prefHeight="900">
+
+    <!-- Top: Header -->
+    <top>
+        <VBox spacing="15" style="-fx-background-color: #1976d2; -fx-padding: 20;">
+            <Label text="Attendance Configuration"
+                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Configure attendance rules, thresholds, notification settings, and automated interventions"
+                   style="-fx-font-size: 13px; -fx-text-fill: white;"/>
+        </VBox>
+    </top>
+
+    <!-- Center: Main Content -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: #f5f5f5;">
+            <VBox spacing="25" style="-fx-padding: 25;">
+
+                <!-- General Settings -->
+                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                    <Label text="General Attendance Settings" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="40"/>
+                            <ColumnConstraints percentWidth="60"/>
+                        </columnConstraints>
+
+                        <Label text="School Year:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="schoolYearField" promptText="e.g., 2024-2025" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Total Instructional Days:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="totalInstructionalDaysField" promptText="e.g., 180" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Attendance Tracking Method:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <ComboBox fx:id="trackingMethodComboBox" promptText="Select method..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="Enable Remote/Virtual Attendance:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <CheckBox fx:id="enableRemoteAttendanceCheckBox" text="Allow remote attendance tracking" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="Require Parent Notification:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <CheckBox fx:id="requireParentNotificationCheckBox" text="Automatically notify parents of absences" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Absence Thresholds & Alerts -->
+                <VBox spacing="15" style="-fx-background-color: #fff9c4; -fx-padding: 20; -fx-border-color: #fff176; -fx-border-width: 2;">
+                    <Label text="⚠ Absence Thresholds &amp; Automated Alerts" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #f57f17;"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="40"/>
+                            <ColumnConstraints percentWidth="30"/>
+                            <ColumnConstraints percentWidth="30"/>
+                        </columnConstraints>
+
+                        <Label text="" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <Label text="Threshold (Days)" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <Label text="Enable Alert" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+
+                        <Label text="Early Warning Threshold:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="earlyWarningThresholdField" promptText="e.g., 3" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <CheckBox fx:id="earlyWarningAlertCheckBox" text="Send alert" selected="true" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+
+                        <Label text="Intervention Required:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="interventionThresholdField" promptText="e.g., 5" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <CheckBox fx:id="interventionAlertCheckBox" text="Send alert" selected="true" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+
+                        <Label text="Chronic Absenteeism (10%):" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <TextField fx:id="chronicAbsenteeismThresholdField" promptText="e.g., 18 (10%)" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <CheckBox fx:id="chronicAbsenteeismAlertCheckBox" text="Send alert" selected="true" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+
+                        <Label text="Severe Chronic (20%):" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <TextField fx:id="severeChronicThresholdField" promptText="e.g., 36 (20%)" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                        <CheckBox fx:id="severeChronicAlertCheckBox" text="Send alert" selected="true" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
+
+                        <Label text="Truancy Threshold:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                        <TextField fx:id="truancyThresholdField" promptText="e.g., 10 unexcused" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                        <CheckBox fx:id="truancyAlertCheckBox" text="Send alert" selected="true" GridPane.columnIndex="2" GridPane.rowIndex="5"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Tardy Settings -->
+                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                    <Label text="Tardy Settings" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="40"/>
+                            <ColumnConstraints percentWidth="60"/>
+                        </columnConstraints>
+
+                        <Label text="Grace Period (Minutes):" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="tardyGracePeriodField" promptText="e.g., 5 minutes" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Tardy Becomes Absent After:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="tardyBecomesAbsentField" promptText="e.g., 30 minutes" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Excessive Tardy Threshold:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="excessiveTardyThresholdField" promptText="Number of tardies" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="Tardy Consequence Action:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <ComboBox fx:id="tardyConsequenceComboBox" promptText="Select action..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="Count 3 Tardies as 1 Absence:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <CheckBox fx:id="tardiesCountAsAbsenceCheckBox" text="Enable conversion rule" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Notification Settings -->
+                <VBox spacing="15" style="-fx-background-color: #e3f2fd; -fx-padding: 20; -fx-border-color: #90caf9; -fx-border-width: 2;">
+                    <Label text="Notification Settings" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0d47a1;"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="40"/>
+                            <ColumnConstraints percentWidth="60"/>
+                        </columnConstraints>
+
+                        <Label text="Daily Absence Notification:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="dailyAbsenceNotificationCheckBox" text="Send daily notifications for absences" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Notification Time:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="notificationTimeField" promptText="HH:MM (24-hour format)" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Notification Method:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <CheckBox fx:id="notifyByEmailCheckBox" text="Email" selected="true"/>
+                            <CheckBox fx:id="notifyBySmsCheckBox" text="SMS/Text Message"/>
+                            <CheckBox fx:id="notifyByPhoneCheckBox" text="Automated Phone Call"/>
+                            <CheckBox fx:id="notifyByPortalCheckBox" text="Parent Portal Alert" selected="true"/>
+                        </VBox>
+
+                        <Label text="Weekly Summary Report:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <CheckBox fx:id="weeklySummaryCheckBox" text="Send weekly attendance summary to parents" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="Summary Day:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <ComboBox fx:id="summaryDayComboBox" promptText="Select day..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Automated Interventions -->
+                <VBox spacing="15" style="-fx-background-color: #ffebee; -fx-padding: 20; -fx-border-color: #ef9a9a; -fx-border-width: 2;">
+                    <Label text="Automated Interventions" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="40"/>
+                            <ColumnConstraints percentWidth="60"/>
+                        </columnConstraints>
+
+                        <Label text="Auto-Create Counselor Referral:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="autoCreateCounselorReferralCheckBox" text="At intervention threshold" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Auto-Create Attendance Plan:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <CheckBox fx:id="autoCreateAttendancePlanCheckBox" text="At chronic absenteeism threshold" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Auto-Assign Case Manager:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <CheckBox fx:id="autoAssignCaseManagerCheckBox" text="Assign staff for severe cases" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="Auto-Schedule Parent Meeting:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <CheckBox fx:id="autoScheduleParentMeetingCheckBox" text="Request meeting at intervention threshold" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="Auto-Generate Reports:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <CheckBox fx:id="autoGenerateReportsCheckBox" text="Weekly attendance reports for administration" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Excuse/Documentation Requirements -->
+                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                    <Label text="Excuse &amp; Documentation Requirements" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="40"/>
+                            <ColumnConstraints percentWidth="60"/>
+                        </columnConstraints>
+
+                        <Label text="Require Documentation After:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="documentationRequiredField" promptText="Days (e.g., 3 consecutive days)" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Doctor's Note Required:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <CheckBox fx:id="doctorsNoteRequiredCheckBox" text="For extended medical absences" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Excuse Submission Deadline:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="excuseDeadlineField" promptText="Days (e.g., 3 school days)" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="Allow Retroactive Excuses:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <CheckBox fx:id="allowRetroactiveCheckBox" text="Allow excusing past absences" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="Auto-Excuse School Activities:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <CheckBox fx:id="autoExcuseSchoolActivitiesCheckBox" text="Field trips, sports, etc." selected="true" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- State Reporting Requirements -->
+                <VBox spacing="15" style="-fx-background-color: #fff3e0; -fx-padding: 20; -fx-border-color: #ffcc80; -fx-border-width: 2;">
+                    <Label text="State Reporting Requirements" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="40"/>
+                            <ColumnConstraints percentWidth="60"/>
+                        </columnConstraints>
+
+                        <Label text="State Reporting Format:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <ComboBox fx:id="stateReportingFormatComboBox" promptText="Select format..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Report Chronic Absenteeism:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <CheckBox fx:id="reportChronicAbsenteeismCheckBox" text="Include in state reports" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Truancy Reporting Threshold:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="truancyReportingThresholdField" promptText="Days for mandatory reporting" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="Auto-Submit State Reports:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <CheckBox fx:id="autoSubmitStateReportsCheckBox" text="Automatically submit to state system" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Additional Settings -->
+                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                    <Label text="Additional Settings" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="40"/>
+                            <ColumnConstraints percentWidth="60"/>
+                        </columnConstraints>
+
+                        <Label text="Perfect Attendance Threshold:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="perfectAttendanceField" promptText="e.g., 0 absences, max 2 tardies" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Award Perfect Attendance:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <CheckBox fx:id="awardPerfectAttendanceCheckBox" text="Track for awards/recognition" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Allow Student Check-In/Out:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <CheckBox fx:id="allowStudentCheckInCheckBox" text="Enable student kiosk/portal check-in" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="Attendance Affects Grades:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <CheckBox fx:id="attendanceAffectsGradesCheckBox" text="Link attendance to grading policy" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="Notes:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <TextArea fx:id="configurationNotesArea" promptText="Additional configuration notes" wrapText="true" prefRowCount="3" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                    </GridPane>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Bottom: Action Buttons -->
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <Button fx:id="saveButton" text="Save Configuration" onAction="#handleSave"
+                    style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30; -fx-cursor: hand;"/>
+            <Button fx:id="resetButton" text="Reset to Defaults" onAction="#handleReset"
+                    style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30; -fx-cursor: hand;"/>
+            <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"
+                    style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30; -fx-cursor: hand;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

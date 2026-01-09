@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+Enrollment Verification Form
+Location: src/main/resources/fxml/EnrollmentVerificationForm.fxml
+
+Handles enrollment verification requests for students.
+
+@author Heronix Educational Systems LLC
+@version 1.0.0
+@since 2025-12-24
+-->
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.EnrollmentVerificationFormController"
+            styleClass="content-pane">
+
+    <!-- Top: Header -->
+    <top>
+        <VBox styleClass="header-section" spacing="10">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="Enrollment Verification Request" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Verification #:"/>
+                <TextField fx:id="verificationNumberField" editable="false" prefWidth="150" styleClass="readonly-field"/>
+                <Label text="Status:"/>
+                <Label fx:id="statusLabel" text="DRAFT" styleClass="status-label"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button text="Verify Enrollment" onAction="#verifyEnrollment" styleClass="action-button"/>
+                <Button text="Generate Document" onAction="#generateDocument" styleClass="success-button"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Save" onAction="#save" styleClass="primary-button"/>
+                <Button text="Cancel" onAction="#cancel" styleClass="secondary-button"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Form -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="form-scroll-pane">
+            <VBox spacing="20" styleClass="form-container">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- Student Selection -->
+                <VBox spacing="10" styleClass="form-section">
+                    <Label text="Student Information" styleClass="section-title"/>
+                    <Separator/>
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="75"/>
+                        </columnConstraints>
+
+                        <Label text="Student:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="field-label required"/>
+                        <HBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <TextField fx:id="studentSearchField" promptText="Search by name or ID" HBox.hgrow="ALWAYS"/>
+                            <Button text="Search" onAction="#searchStudent"/>
+                        </HBox>
+
+                        <Label text="Student Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="field-label"/>
+                        <Label fx:id="studentNameLabel" text="No student selected" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Current Grade:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="field-label"/>
+                        <TextField fx:id="currentGradeField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="readonly-field"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Requester Information -->
+                <VBox spacing="10" styleClass="form-section">
+                    <Label text="Requester Information" styleClass="section-title"/>
+                    <Separator/>
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="75"/>
+                        </columnConstraints>
+
+                        <Label text="Requester Type:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="field-label required"/>
+                        <ComboBox fx:id="requesterType" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="300"/>
+
+                        <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="field-label required"/>
+                        <TextField fx:id="requesterName" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Organization:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="field-label"/>
+                        <TextField fx:id="requesterOrganization" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="field-label"/>
+                        <TextField fx:id="requesterEmail" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="Phone:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="field-label"/>
+                        <TextField fx:id="requesterPhone" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Purpose -->
+                <VBox spacing="10" styleClass="form-section">
+                    <Label text="Verification Purpose" styleClass="section-title"/>
+                    <Separator/>
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="75"/>
+                        </columnConstraints>
+
+                        <Label text="Purpose:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="field-label required"/>
+                        <ComboBox fx:id="purpose" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="300"/>
+
+                        <Label text="Details:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="field-label" GridPane.valignment="TOP"/>
+                        <TextArea fx:id="purposeDetails" GridPane.columnIndex="1" GridPane.rowIndex="1" prefRowCount="3"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Delivery Method -->
+                <VBox spacing="10" styleClass="form-section">
+                    <Label text="Delivery Information" styleClass="section-title"/>
+                    <Separator/>
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="75"/>
+                        </columnConstraints>
+
+                        <Label text="Delivery Method:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="field-label"/>
+                        <ComboBox fx:id="deliveryMethod" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="200"/>
+
+                        <Label text="Delivery Email:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="field-label"/>
+                        <TextField fx:id="deliveryEmail" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

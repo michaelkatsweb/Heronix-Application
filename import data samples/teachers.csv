@@ -1,0 +1,21 @@
+Name,Employee ID,Email,Phone,Department,Max Hours Per Week,Max Consecutive Hours,Priority,Active
+Sarah Johnson,T001,sjohnson@school.edu,555-0101,Mathematics,40,4,High,True
+Michael Chen,T002,mchen@school.edu,555-0102,Mathematics,40,4,High,True
+Emily Rodriguez,T003,erodriguez@school.edu,555-0103,Science,38,3,High,True
+David Thompson,T004,dthompson@school.edu,555-0104,Science,40,4,Medium,True
+Jennifer Martinez,T005,jmartinez@school.edu,555-0105,English,35,3,High,True
+Robert Wilson,T006,rwilson@school.edu,555-0106,English,40,4,Medium,True
+Lisa Anderson,T007,landerson@school.edu,555-0107,Social Studies,38,4,Medium,True
+James Taylor,T008,jtaylor@school.edu,555-0108,Social Studies,40,3,Medium,True
+Maria Garcia,T009,mgarcia@school.edu,555-0109,Foreign Language,35,3,Low,True
+Christopher Lee,T010,clee@school.edu,555-0110,Foreign Language,38,4,Medium,True
+Amanda White,T011,awhite@school.edu,555-0111,Physical Education,40,5,Low,True
+Daniel Harris,T012,dharris@school.edu,555-0112,Physical Education,40,5,Low,True
+Susan Clark,T013,sclark@school.edu,555-0113,Art,30,3,Low,True
+Kevin Brown,T014,kbrown@school.edu,555-0114,Music,32,3,Low,True
+Patricia Davis,T015,pdavis@school.edu,555-0115,Computer Science,40,4,High,True
+William Miller,T016,wmiller@school.edu,555-0116,Special Education,38,3,High,True
+Elizabeth Moore,T017,emoore@school.edu,555-0117,Special Education,35,3,High,True
+Thomas Jackson,T018,tjackson@school.edu,555-0118,Mathematics,40,4,Medium,True
+Barbara Martin,T019,bmartin@school.edu,555-0119,Science,38,4,Medium,True
+Richard Thompson,T020,rthompson@school.edu,555-0120,Career Technical Ed,40,4,Medium,True

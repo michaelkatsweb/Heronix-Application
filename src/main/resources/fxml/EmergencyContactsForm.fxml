@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.heronix.controller.EmergencyContactsFormController"
+      spacing="15" styleClass="root-container">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-section">
+        <Label text="Emergency Contacts Management" styleClass="form-title">
+            <font>
+                <Font name="System Bold" size="24"/>
+            </font>
+        </Label>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnRefresh" text="Refresh" onAction="#handleRefresh" styleClass="btn-secondary"/>
+        <Button fx:id="btnNewContact" text="+ New Contact" onAction="#handleNewContact" styleClass="btn-primary"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Search Section -->
+    <VBox spacing="10" styleClass="filter-section">
+        <Label text="Search &amp; Filter" styleClass="section-header">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Label>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Student:"/>
+            <ComboBox fx:id="cmbStudent" promptText="Select student..." prefWidth="250"/>
+
+            <Label text="Relationship:"/>
+            <TextField fx:id="txtSearchRelationship" promptText="e.g., Parent, Grandparent..." prefWidth="150"/>
+
+            <Button text="Search" onAction="#handleSearch" styleClass="btn-primary"/>
+            <Button text="Clear" onAction="#handleClearSearch" styleClass="btn-secondary"/>
+        </HBox>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Quick Filters:"/>
+            <ToggleButton fx:id="toggleUnverified" text="Unverified" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="toggleMissingPhone" text="Missing Phone" onAction="#handleQuickFilter" styleClass="toggle-filter-warning"/>
+            <ToggleButton fx:id="toggleIncomplete" text="Incomplete" onAction="#handleQuickFilter" styleClass="toggle-filter-alert"/>
+        </HBox>
+    </VBox>
+
+    <!-- Main Content - Split Pane -->
+    <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
+
+        <!-- Left: Contacts List -->
+        <VBox spacing="5">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Emergency Contacts List" styleClass="section-header">
+                    <font>
+                        <Font name="System Bold" size="14"/>
+                    </font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblRecordCount" text="0 contacts" style="-fx-text-fill: #666;"/>
+            </HBox>
+
+            <TableView fx:id="tblContacts" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colStudent" text="Student" prefWidth="120"/>
+                    <TableColumn fx:id="colName" text="Contact Name" prefWidth="150"/>
+                    <TableColumn fx:id="colRelationship" text="Relationship" prefWidth="100"/>
+                    <TableColumn fx:id="colPriority" text="Priority" prefWidth="60"/>
+                    <TableColumn fx:id="colPhone" text="Phone" prefWidth="120"/>
+                    <TableColumn fx:id="colAuthorized" text="Pickup Auth" prefWidth="80"/>
+                    <TableColumn fx:id="colVerified" text="Verified" prefWidth="70"/>
+                </columns>
+            </TableView>
+
+            <!-- Action Buttons -->
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button fx:id="btnEdit" text="Edit" onAction="#handleEdit" disable="true" styleClass="btn-secondary"/>
+                <Button fx:id="btnMovePriorityUp" text="↑ Move Up" onAction="#handleMovePriorityUp" disable="true" styleClass="btn-secondary"/>
+                <Button fx:id="btnMovePriorityDown" text="↓ Move Down" onAction="#handleMovePriorityDown" disable="true" styleClass="btn-secondary"/>
+                <Button fx:id="btnVerify" text="Verify" onAction="#handleVerify" disable="true" styleClass="btn-primary"/>
+                <Button fx:id="btnDelete" text="Delete" onAction="#handleDelete" disable="true" styleClass="btn-danger"/>
+            </HBox>
+        </VBox>
+
+        <!-- Right: Contact Details -->
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox fx:id="detailsPanel" spacing="15" styleClass="details-panel">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                    <!-- Basic Information -->
+                    <VBox spacing="8" styleClass="info-section">
+                        <Label text="Basic Information" styleClass="section-header" style="-fx-background-color: #E3F2FD; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="30"/>
+                                <ColumnConstraints percentWidth="70"/>
+                            </columnConstraints>
+
+                            <Label text="Student:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="cmbDetailStudent" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="300"/>
+
+                            <Label text="First Name:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <TextField fx:id="txtFirstName" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="250"/>
+
+                            <Label text="Last Name:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <TextField fx:id="txtLastName" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="250"/>
+
+                            <Label text="Relationship:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <TextField fx:id="txtRelationship" GridPane.rowIndex="3" GridPane.columnIndex="1"
+                                       promptText="e.g., Mother, Father, Grandmother..." prefWidth="250"/>
+
+                            <Label text="Priority Order:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Spinner fx:id="spnPriority" GridPane.rowIndex="4" GridPane.columnIndex="1"
+                                     min="1" max="10" initialValue="1" prefWidth="100"/>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Contact Information -->
+                    <VBox spacing="8" styleClass="info-section">
+                        <Label text="Contact Information" styleClass="section-header" style="-fx-background-color: #E8F5E9; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="30"/>
+                                <ColumnConstraints percentWidth="70"/>
+                            </columnConstraints>
+
+                            <Label text="Primary Phone:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtPrimaryPhone" GridPane.rowIndex="0" GridPane.columnIndex="1"
+                                       promptText="(555) 123-4567" prefWidth="200"/>
+
+                            <Label text="Secondary Phone:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtSecondaryPhone" GridPane.rowIndex="1" GridPane.columnIndex="1"
+                                       promptText="(555) 123-4567" prefWidth="200"/>
+
+                            <Label text="Work Phone:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtWorkPhone" GridPane.rowIndex="2" GridPane.columnIndex="1"
+                                       promptText="(555) 123-4567" prefWidth="200"/>
+
+                            <Label text="Email:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtEmail" GridPane.rowIndex="3" GridPane.columnIndex="1"
+                                       promptText="contact@example.com" prefWidth="300"/>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Address -->
+                    <VBox spacing="8" styleClass="info-section">
+                        <Label text="Address" styleClass="section-header" style="-fx-background-color: #FFF3E0; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="30"/>
+                                <ColumnConstraints percentWidth="70"/>
+                            </columnConstraints>
+
+                            <Label text="Street Address:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtAddress" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="350"/>
+
+                            <Label text="City:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtCity" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="200"/>
+
+                            <Label text="State:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtState" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="100"/>
+
+                            <Label text="ZIP Code:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtZipCode" GridPane.rowIndex="3" GridPane.columnIndex="1" prefWidth="100"/>
+                        </GridPane>
+
+                        <CheckBox fx:id="chkLivesWithStudent" text="Lives with Student"/>
+                    </VBox>
+
+                    <!-- Authorization -->
+                    <VBox spacing="8" styleClass="info-section">
+                        <Label text="Authorization Levels" styleClass="section-header" style="-fx-background-color: #F3E5F5; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <FlowPane hgap="20" vgap="10">
+                            <CheckBox fx:id="chkAuthorizedPickup" text="Authorized for Pickup"/>
+                            <CheckBox fx:id="chkAuthorizedMedical" text="Medical Authorization"/>
+                            <CheckBox fx:id="chkAuthorizedFinancial" text="Financial Authorization"/>
+                        </FlowPane>
+
+                        <Label text="Authorization Notes:"/>
+                        <TextArea fx:id="txtAuthorizationNotes" promptText="Special instructions or restrictions..." prefRowCount="2"/>
+                    </VBox>
+
+                    <!-- Verification -->
+                    <VBox spacing="8" styleClass="info-section">
+                        <Label text="Verification &amp; Status" styleClass="section-header" style="-fx-background-color: #E1F5FE; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="30"/>
+                                <ColumnConstraints percentWidth="70"/>
+                            </columnConstraints>
+
+                            <Label text="Verified:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <CheckBox fx:id="chkVerified" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label text="Verification Date:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="dpVerificationDate" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="200"/>
+
+                            <Label text="Active:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <CheckBox fx:id="chkActive" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Notes -->
+                    <VBox spacing="8" styleClass="info-section">
+                        <Label text="Additional Notes" styleClass="section-header" style="-fx-background-color: #F5F5F5; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+
+                        <Label text="Contact Notes:"/>
+                        <TextArea fx:id="txtNotes" promptText="Additional information about this contact..." prefRowCount="3"/>
+
+                        <Label text="Emergency Instructions:"/>
+                        <TextArea fx:id="txtEmergencyInstructions" promptText="Special instructions for emergencies..." prefRowCount="2"/>
+                    </VBox>
+
+                    <!-- Action Buttons -->
+                    <HBox spacing="10" alignment="CENTER">
+                        <Button fx:id="btnSave" text="Save" onAction="#handleSave" styleClass="btn-primary" prefWidth="100"/>
+                        <Button fx:id="btnCancel" text="Cancel" onAction="#handleCancel" styleClass="btn-secondary" prefWidth="100"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnCopyToSiblings" text="Copy to Siblings" onAction="#handleCopyToSiblings" styleClass="btn-secondary"/>
+                    </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </SplitPane>
+
+    <Separator/>
+
+    <!-- Status Bar -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="status-bar">
+        <Label fx:id="lblStatusMessage" text="Ready" styleClass="status-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="lblUser" text="User: Admin" styleClass="status-label"/>
+    </HBox>
+
+</VBox>

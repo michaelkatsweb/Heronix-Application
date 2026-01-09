@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.ELLServicesAccommodationsController"
+            stylesheets="@../css/application.css"
+            prefWidth="1400" prefHeight="900">
+
+    <!-- Top: Header -->
+    <top>
+        <VBox spacing="15" style="-fx-background-color: #1976d2; -fx-padding: 20;">
+            <Label text="ELL Services &amp; Accommodations Management"
+                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Document service delivery, track accommodations, and ensure implementation fidelity"
+                   style="-fx-font-size: 13px; -fx-text-fill: white;"/>
+        </VBox>
+    </top>
+
+    <!-- Center: Main Content -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: #f5f5f5;">
+            <VBox spacing="25" style="-fx-padding: 25;">
+
+                <!-- Tab Pane for Services vs Accommodations -->
+                <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE">
+
+                    <!-- Services Tab -->
+                    <Tab text="ELL Service Delivery">
+                        <ScrollPane fitToWidth="true">
+                            <VBox spacing="25" style="-fx-padding: 25;">
+
+                                <!-- Student & Service Information -->
+                                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                                    <Label text="Student &amp; Service Information" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                        </columnConstraints>
+
+                                        <Label text="ELL Student:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <ComboBox fx:id="serviceStudentComboBox" promptText="Select Student..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                        <Label text="Grade:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                        <TextField fx:id="serviceGradeField" editable="false" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                                        <Label text="Service Date:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <DatePicker fx:id="serviceDatePicker" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                        <Label text="Service Type:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                                        <ComboBox fx:id="serviceTypeComboBox" promptText="Select Type..." maxWidth="Infinity" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                                        <Label text="Delivery Model:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <ComboBox fx:id="deliveryModelComboBox" promptText="Select Model..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                                        <Label text="Duration (Minutes):" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                                        <TextField fx:id="durationMinutesField" promptText="Minutes" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+
+                                        <Label text="Service Provider:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                        <ComboBox fx:id="serviceProviderComboBox" promptText="Select Teacher..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                                        <Label text="Focus Area:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                                        <ComboBox fx:id="focusAreaComboBox" promptText="Select Focus..." maxWidth="Infinity" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+                                    </GridPane>
+                                </VBox>
+
+                                <!-- Lesson Details -->
+                                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                                    <Label text="Lesson Details" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="75"/>
+                                        </columnConstraints>
+
+                                        <Label text="Lesson Topic:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <TextField fx:id="lessonTopicField" promptText="Topic of the lesson" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                        <Label text="Objectives:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <TextArea fx:id="objectivesArea" promptText="Lesson objectives and learning goals" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                        <Label text="Activities:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <TextArea fx:id="activitiesArea" promptText="Activities and instructional strategies used" wrapText="true" prefRowCount="3" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                                        <Label text="Materials Used:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                        <TextArea fx:id="materialsUsedArea" promptText="Books, worksheets, resources, etc." wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                                    </GridPane>
+                                </VBox>
+
+                                <!-- Attendance & Participation -->
+                                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                                    <Label text="Attendance &amp; Participation" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                        </columnConstraints>
+
+                                        <Label text="Service Status:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <ComboBox fx:id="serviceStatusComboBox" promptText="Select Status..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                        <Label text="Student Attended:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                        <CheckBox fx:id="studentAttendedCheckBox" text="Yes, student attended" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                                        <Label text="Absence Reason:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <TextField fx:id="absenceReasonField" promptText="Reason if absent" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1"/>
+
+                                        <Label text="Participation Level:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <ComboBox fx:id="participationLevelComboBox" promptText="Select Level..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                                        <Label text="Class Size:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                                        <TextField fx:id="classSizeField" promptText="Number of students" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+
+                                        <Label text="Location:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                        <TextField fx:id="serviceLocationField" promptText="Room, building, etc." GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                                        <Label text="Group Composition:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                                        <TextField fx:id="groupCompositionField" promptText="Mixed levels, same level, etc." GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+                                    </GridPane>
+                                </VBox>
+
+                                <!-- Progress Notes -->
+                                <VBox spacing="15" style="-fx-background-color: #e8f5e9; -fx-padding: 20; -fx-border-color: #c8e6c9; -fx-border-width: 2;">
+                                    <Label text="Progress &amp; Observations" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="75"/>
+                                        </columnConstraints>
+
+                                        <Label text="Progress Notes:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <TextArea fx:id="progressNotesArea" promptText="Student's progress and performance during the session" wrapText="true" prefRowCount="3" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                        <Label text="Skills Demonstrated:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <TextArea fx:id="skillsDemonstratedArea" promptText="Skills the student successfully demonstrated" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                        <Label text="Areas for Improvement:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <TextArea fx:id="areasForImprovementArea" promptText="Skills or areas that need additional support" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                                    </GridPane>
+                                </VBox>
+
+                                <!-- Assessment & Standards -->
+                                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                                    <Label text="Assessment &amp; Standards" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="75"/>
+                                        </columnConstraints>
+
+                                        <Label text="Standards Addressed:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <TextArea fx:id="standardsAddressedArea" promptText="ELP standards or other standards addressed" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                        <Label text="Assessment:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <CheckBox fx:id="assessmentAdministeredCheckBox" text="Assessment Administered During Session" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                        <Label text="Assessment Results:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <TextArea fx:id="assessmentResultsArea" promptText="Assessment results and observations" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                                    </GridPane>
+                                </VBox>
+
+                                <!-- Technology & Resources -->
+                                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                                    <Label text="Technology &amp; Resources" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="75"/>
+                                        </columnConstraints>
+
+                                        <Label text="Technology Used:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <CheckBox fx:id="technologyUsedCheckBox" text="Technology was used during this session" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                        <Label text="Technology Details:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <TextField fx:id="technologyDetailsField" promptText="Software, apps, devices used" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                    </GridPane>
+                                </VBox>
+
+                                <!-- Follow-up & Homework -->
+                                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                                    <Label text="Follow-up &amp; Homework" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="75"/>
+                                        </columnConstraints>
+
+                                        <Label text="Homework:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <CheckBox fx:id="homeworkAssignedCheckBox" text="Homework Assigned" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                        <Label text="Homework Description:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <TextField fx:id="homeworkDescriptionField" promptText="Description of homework assignment" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                        <Label text="Follow-up Needed:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <CheckBox fx:id="followUpNeededCheckBox" text="Follow-up required" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                                        <Label text="Follow-up Notes:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                        <TextArea fx:id="followUpNotesArea" promptText="Actions needed, areas to revisit, etc." wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                                    </GridPane>
+                                </VBox>
+
+                                <!-- Title III Compliance -->
+                                <VBox spacing="15" style="-fx-background-color: #fff9c4; -fx-padding: 20; -fx-border-color: #fff176; -fx-border-width: 2;">
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="📊 Title III Compliance" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #f57f17;"/>
+                                    </HBox>
+                                    <Label text="Title III of ESSA requires documentation of services provided to English Language Learners." wrapText="true" style="-fx-font-size: 12px;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="50"/>
+                                            <ColumnConstraints percentWidth="50"/>
+                                        </columnConstraints>
+
+                                        <CheckBox fx:id="titleIIIFundedCheckBox" text="Service is Title III Funded" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <CheckBox fx:id="reportedForComplianceCheckBox" text="Service Reported for Compliance" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                                    </GridPane>
+                                </VBox>
+
+                            </VBox>
+                        </ScrollPane>
+                    </Tab>
+
+                    <!-- Accommodations Tab -->
+                    <Tab text="ELL Accommodations">
+                        <ScrollPane fitToWidth="true">
+                            <VBox spacing="25" style="-fx-padding: 25;">
+
+                                <!-- Student & Accommodation Information -->
+                                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                                    <Label text="Student &amp; Accommodation Information" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                        </columnConstraints>
+
+                                        <Label text="ELL Student:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <ComboBox fx:id="accommodationStudentComboBox" promptText="Select Student..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                        <Label text="Grade:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                        <TextField fx:id="accommodationGradeField" editable="false" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                                        <Label text="Category:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <ComboBox fx:id="accommodationCategoryComboBox" promptText="Select Category..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                        <Label text="Status:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                                        <CheckBox fx:id="accommodationActiveCheckBox" text="Active" selected="true" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                                        <Label text="Description:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <TextArea fx:id="accommodationDescriptionArea" promptText="Detailed description of the accommodation" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2"/>
+
+                                        <Label text="Implementation:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                        <TextArea fx:id="implementationInstructionsArea" promptText="Step-by-step instructions for implementing this accommodation" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3"/>
+                                    </GridPane>
+                                </VBox>
+
+                                <!-- Applicability -->
+                                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                                    <Label text="Applicability" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="75"/>
+                                        </columnConstraints>
+
+                                        <Label text="Class Applicability:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <CheckBox fx:id="appliesToAllClassesCheckBox" text="Applies to All Classes" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                        <Label text="Applicable Subjects:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <TextField fx:id="applicableSubjectsField" promptText="Comma-separated list (e.g., Math, Science, ELA)" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                        <Label text="Applicable Classes:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <TextField fx:id="applicableClassesField" promptText="Comma-separated list of class names" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                                        <Label text="Frequency:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                        <TextField fx:id="frequencyField" promptText="Daily, weekly, as needed, etc." GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                                        <Label text="Responsible Party:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                                        <TextField fx:id="responsiblePartyField" promptText="Person(s) responsible for implementation" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                                    </GridPane>
+                                </VBox>
+
+                                <!-- Testing Accommodations -->
+                                <VBox spacing="15" style="-fx-background-color: #fff3e0; -fx-padding: 20; -fx-border-color: #ffe0b2; -fx-border-width: 2;">
+                                    <Label text="Testing Accommodations" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                        </columnConstraints>
+
+                                        <Label text="Classroom Tests:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <CheckBox fx:id="appliesToClassroomTestsCheckBox" text="Applies to Classroom Tests" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                        <Label text="State Tests:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                        <CheckBox fx:id="appliesToStateTestsCheckBox" text="Applies to State Tests" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                                        <Label text="State Approved:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <CheckBox fx:id="stateTestingApprovedCheckBox" text="State Testing Approved" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                        <Label text="Approval Date:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                                        <DatePicker fx:id="stateTestingApprovalDatePicker" maxWidth="Infinity" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                                        <Label text="Testing Notes:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <TextArea fx:id="testingNotesArea" promptText="Special notes about testing accommodations" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2"/>
+                                    </GridPane>
+                                </VBox>
+
+                                <!-- Implementation Timeline -->
+                                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                                    <Label text="Implementation Timeline" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                        </columnConstraints>
+
+                                        <Label text="Effective Date:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <DatePicker fx:id="effectiveDatePicker" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                        <Label text="End Date:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                        <DatePicker fx:id="endDatePicker" maxWidth="Infinity" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                                    </GridPane>
+                                </VBox>
+
+                                <!-- Teacher Training & Distribution -->
+                                <VBox spacing="15" style="-fx-background-color: #e3f2fd; -fx-padding: 20; -fx-border-color: #bbdefb; -fx-border-width: 2;">
+                                    <Label text="Teacher Training &amp; Distribution" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1565c0;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                        </columnConstraints>
+
+                                        <Label text="Training Required:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <CheckBox fx:id="requiresTeacherTrainingCheckBox" text="Requires Teacher Training" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                        <Label text="Training Completed:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                        <CheckBox fx:id="trainingCompletedCheckBox" text="Training Completed" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                                        <Label text="Training Date:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <DatePicker fx:id="trainingDatePicker" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                        <Label text="Distributed to Teachers:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                                        <CheckBox fx:id="distributedToTeachersCheckBox" text="Distributed" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                                        <Label text="Distribution Date:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <DatePicker fx:id="distributionDatePicker" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                                        <Label text="Teachers Notified:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                                        <TextField fx:id="teachersNotifiedField" promptText="Comma-separated list of teacher names" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                                    </GridPane>
+                                </VBox>
+
+                                <!-- Implementation Monitoring -->
+                                <VBox spacing="15" style="-fx-background-color: #f3e5f5; -fx-padding: 20; -fx-border-color: #e1bee7; -fx-border-width: 2;">
+                                    <Label text="Implementation Monitoring" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #6a1b9a;"/>
+
+                                    <GridPane hgap="15" vgap="15">
+                                        <columnConstraints>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                            <ColumnConstraints percentWidth="25"/>
+                                        </columnConstraints>
+
+                                        <Label text="Last Monitored:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <DatePicker fx:id="lastMonitoredDatePicker" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                        <Label text="Effectiveness (1-5):" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                        <TextField fx:id="effectivenessRatingField" promptText="1-5 rating" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                                        <Label text="Fidelity (1-5):" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <TextField fx:id="implementationFidelityField" promptText="1-5 rating" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                        <Label text="Monitoring Notes:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <TextArea fx:id="monitoringNotesArea" promptText="Observations about implementation" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2"/>
+
+                                        <Label text="Concerns:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                        <TextArea fx:id="concernsArea" promptText="Any concerns about effectiveness or implementation" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3"/>
+                                    </GridPane>
+                                </VBox>
+
+                            </VBox>
+                        </ScrollPane>
+                    </Tab>
+
+                </TabPane>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Bottom: Action Buttons -->
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <Button fx:id="saveButton" text="Save" onAction="#handleSave"
+                    style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30; -fx-cursor: hand;"/>
+            <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"
+                    style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30; -fx-cursor: hand;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.ReportCardGenerationController"
+            stylesheets="@../css/application.css"
+            prefWidth="1600" prefHeight="950">
+
+    <!-- Top: Header -->
+    <top>
+        <VBox spacing="15" style="-fx-background-color: #673ab7; -fx-padding: 20;">
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Report Card Generation"
+                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label text="Generate, customize, and distribute student report cards for any grading period"
+                           style="-fx-font-size: 13px; -fx-text-fill: white;"/>
+                </VBox>
+
+                <!-- Quick Actions -->
+                <VBox spacing="8" alignment="CENTER_RIGHT">
+                    <Button text="Generate All" onAction="#handleGenerateAll"
+                            style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 8 20; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                    <Button text="Email to Parents" onAction="#handleEmailToParents"
+                            style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-padding: 8 20; -fx-cursor: hand;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Grading Period Selection -->
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Label text="Grading Period:" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                <ComboBox fx:id="gradingPeriodComboBox" promptText="Select period..." prefWidth="200"/>
+
+                <Label text="Academic Year:" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                <ComboBox fx:id="academicYearComboBox" promptText="Select year..." prefWidth="150"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <VBox spacing="3" style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 8; -fx-border-radius: 5;">
+                    <Label text="Generated" style="-fx-text-fill: white; -fx-font-size: 10px;"/>
+                    <Label fx:id="generatedCountLabel" text="0 / 0"
+                           style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Main Content -->
+    <center>
+        <SplitPane dividerPositions="0.22, 0.62" style="-fx-background-color: #f5f5f5;">
+
+            <!-- Left: Student List & Filters -->
+            <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white;">
+                <Label text="Students" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                <!-- Filters -->
+                <VBox spacing="10">
+                    <TextField fx:id="studentSearchField" promptText="Search students..."
+                               style="-fx-padding: 8;"/>
+
+                    <ComboBox fx:id="gradeFilterComboBox" promptText="All Grades" prefWidth="Infinity"/>
+                    <ComboBox fx:id="statusFilterComboBox" promptText="All Status" prefWidth="Infinity"/>
+
+                    <CheckBox fx:id="showGeneratedOnlyCheckBox" text="Show generated only"/>
+                    <CheckBox fx:id="showNotGeneratedOnlyCheckBox" text="Show not generated only"/>
+                </VBox>
+
+                <Separator/>
+
+                <!-- Student List -->
+                <VBox spacing="8" VBox.vgrow="ALWAYS">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Select Students" style="-fx-font-weight: bold;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="All" onAction="#handleSelectAll"
+                                style="-fx-font-size: 10px; -fx-padding: 4 8; -fx-cursor: hand;"/>
+                        <Button text="None" onAction="#handleSelectNone"
+                                style="-fx-font-size: 10px; -fx-padding: 4 8; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <ListView fx:id="studentListView" VBox.vgrow="ALWAYS">
+                        <placeholder>
+                            <Label text="No students found" style="-fx-text-fill: #9e9e9e;"/>
+                        </placeholder>
+                    </ListView>
+                </VBox>
+
+                <!-- Bulk Actions -->
+                <VBox spacing="8">
+                    <Label text="Bulk Actions" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+                    <Button text="Generate Selected" onAction="#handleGenerateSelected"
+                            style="-fx-background-color: #673ab7; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"
+                            maxWidth="Infinity"/>
+                    <Button text="Export Selected (PDF)" onAction="#handleExportSelected"
+                            style="-fx-background-color: #ff5722; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"
+                            maxWidth="Infinity"/>
+                    <Button text="Print Selected" onAction="#handlePrintSelected"
+                            style="-fx-background-color: #607d8b; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"
+                            maxWidth="Infinity"/>
+                </VBox>
+            </VBox>
+
+            <!-- Center: Report Card Preview -->
+            <BorderPane style="-fx-background-color: white;">
+                <top>
+                    <VBox spacing="10" style="-fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="Report Card Preview" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+                            <Label fx:id="previewStudentLabel" text="No student selected"
+                                   style="-fx-font-size: 12px; -fx-text-fill: #757575;"/>
+                        </HBox>
+
+                        <!-- Preview Toolbar -->
+                        <HBox spacing="10">
+                            <Button text="⟲ Refresh" onAction="#handleRefreshPreview"
+                                    style="-fx-padding: 6 12; -fx-cursor: hand;"/>
+                            <Button text="🖨 Print" onAction="#handlePrintCurrent"
+                                    style="-fx-padding: 6 12; -fx-cursor: hand;"/>
+                            <Button text="📄 Export PDF" onAction="#handleExportCurrent"
+                                    style="-fx-padding: 6 12; -fx-cursor: hand;"/>
+                            <Button text="✉ Email" onAction="#handleEmailCurrent"
+                                    style="-fx-padding: 6 12; -fx-cursor: hand;"/>
+
+                            <Separator orientation="VERTICAL"/>
+
+                            <Label text="Zoom:" style="-fx-font-weight: bold;"/>
+                            <Slider fx:id="zoomSlider" min="0.5" max="2.0" value="1.0"
+                                    prefWidth="150" showTickMarks="true" showTickLabels="false"/>
+                            <Label fx:id="zoomLabel" text="100%" style="-fx-font-size: 12px;"/>
+                        </HBox>
+                    </VBox>
+                </top>
+
+                <center>
+                    <StackPane style="-fx-background-color: #e0e0e0; -fx-padding: 20;">
+                        <ScrollPane fitToWidth="true" fitToHeight="true"
+                                    style="-fx-background-color: #e0e0e0;">
+                            <VBox fx:id="previewContainer" alignment="TOP_CENTER" spacing="20">
+                                <WebView fx:id="reportCardWebView" prefWidth="850" prefHeight="1100"/>
+                            </VBox>
+                        </ScrollPane>
+                    </StackPane>
+                </center>
+
+                <bottom>
+                    <HBox spacing="15" alignment="CENTER_LEFT"
+                          style="-fx-padding: 10; -fx-background-color: #fafafa; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+                        <Label text="Page:" style="-fx-font-weight: bold;"/>
+                        <Label fx:id="pageInfoLabel" text="1 of 1" style="-fx-font-size: 12px;"/>
+
+                        <Separator orientation="VERTICAL"/>
+
+                        <Label fx:id="previewStatusLabel" text="Ready" style="-fx-font-size: 11px;"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Button text="← Previous Student" onAction="#handlePreviousStudent"
+                                style="-fx-padding: 6 12; -fx-cursor: hand;"/>
+                        <Button text="Next Student →" onAction="#handleNextStudent"
+                                style="-fx-padding: 6 12; -fx-cursor: hand;"/>
+                    </HBox>
+                </bottom>
+            </BorderPane>
+
+            <!-- Right: Template & Settings -->
+            <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white;">
+                <Label text="Template & Settings" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                <!-- Template Selection -->
+                <VBox spacing="10" style="-fx-background-color: #f3e5f5; -fx-padding: 15; -fx-border-color: #673ab7; -fx-border-width: 2;">
+                    <Label text="Report Card Template" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a148c;"/>
+
+                    <ComboBox fx:id="templateComboBox" prefWidth="Infinity">
+                        <items>
+                            <String fx:value="Standard Elementary"/>
+                            <String fx:value="Standard Middle School"/>
+                            <String fx:value="Standard High School"/>
+                            <String fx:value="Detailed with Comments"/>
+                            <String fx:value="Progress Report"/>
+                            <String fx:value="Interim Report"/>
+                        </items>
+                    </ComboBox>
+
+                    <Button text="Customize Template" onAction="#handleCustomizeTemplate"
+                            style="-fx-background-color: #673ab7; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"
+                            maxWidth="Infinity"/>
+                </VBox>
+
+                <!-- Display Options -->
+                <VBox spacing="10" style="-fx-background-color: #e8f5e9; -fx-padding: 15;">
+                    <Label text="Display Options" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+
+                    <CheckBox fx:id="showGPACheckBox" text="Show GPA" selected="true"/>
+                    <CheckBox fx:id="showClassRankCheckBox" text="Show Class Rank" selected="false"/>
+                    <CheckBox fx:id="showAttendanceCheckBox" text="Show Attendance Summary" selected="true"/>
+                    <CheckBox fx:id="showBehaviorCheckBox" text="Show Behavior Notes" selected="true"/>
+                    <CheckBox fx:id="showTeacherCommentsCheckBox" text="Show Teacher Comments" selected="true"/>
+                    <CheckBox fx:id="showGradeDistributionCheckBox" text="Show Grade Distribution" selected="false"/>
+                    <CheckBox fx:id="showSchoolLogoCheckBox" text="Include School Logo" selected="true"/>
+                    <CheckBox fx:id="showSignaturesCheckBox" text="Include Signature Lines" selected="true"/>
+                </VBox>
+
+                <!-- Grade Display Format -->
+                <VBox spacing="10" style="-fx-background-color: #fff3e0; -fx-padding: 15;">
+                    <Label text="Grade Format" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+
+                    <RadioButton fx:id="letterGradeRadio" text="Letter Grades (A-F)" selected="true"/>
+                    <RadioButton fx:id="percentageGradeRadio" text="Percentage (0-100%)"/>
+                    <RadioButton fx:id="bothGradeRadio" text="Both (A / 95%)"/>
+                    <RadioButton fx:id="standardsBasedRadio" text="Standards-Based (1-4)"/>
+                </VBox>
+
+                <!-- Comments & Notes -->
+                <VBox spacing="10" VBox.vgrow="ALWAYS">
+                    <Label text="Principal's Message" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                    <TextArea fx:id="principalMessageArea"
+                              promptText="Optional message from principal to appear on all report cards..."
+                              wrapText="true" prefRowCount="4"/>
+                </VBox>
+
+                <!-- Generation Settings -->
+                <VBox spacing="8">
+                    <Label text="Generation Settings" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Language:"/>
+                        <ComboBox fx:id="languageComboBox" prefWidth="120">
+                            <items>
+                                <String fx:value="English"/>
+                                <String fx:value="Spanish"/>
+                                <String fx:value="French"/>
+                                <String fx:value="Mandarin"/>
+                            </items>
+                        </ComboBox>
+                    </HBox>
+
+                    <CheckBox fx:id="autoSaveCheckBox" text="Auto-save generated reports" selected="true"/>
+                    <CheckBox fx:id="watermarkCheckBox" text="Add 'DRAFT' watermark" selected="false"/>
+                </VBox>
+
+                <!-- Action Buttons -->
+                <VBox spacing="8">
+                    <Button text="Apply Settings" onAction="#handleApplySettings"
+                            style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 10; -fx-font-weight: bold; -fx-cursor: hand;"
+                            maxWidth="Infinity"/>
+                    <Button text="Reset to Defaults" onAction="#handleResetSettings"
+                            style="-fx-background-color: #9e9e9e; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"
+                            maxWidth="Infinity"/>
+                </VBox>
+            </VBox>
+
+        </SplitPane>
+    </center>
+
+    <!-- Bottom: Status Bar -->
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_LEFT"
+              style="-fx-background-color: #fafafa; -fx-padding: 10; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <Label fx:id="statusLabel" text="Ready to generate report cards" style="-fx-font-size: 11px;"/>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="processingLabel" text="Idle" style="-fx-font-size: 11px; -fx-text-fill: #757575;"/>
+            <Separator orientation="VERTICAL"/>
+            <ProgressBar fx:id="generationProgressBar" prefWidth="250" progress="0" visible="false"/>
+            <Label fx:id="progressLabel" text="" style="-fx-font-size: 11px;" visible="false"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="Help & Templates" onAction="#handleShowHelp"
+                    style="-fx-padding: 6 12; -fx-cursor: hand;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

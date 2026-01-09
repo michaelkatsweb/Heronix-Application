@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.BehaviorIncidentFormController"
+            styleClass="content-pane">
+
+    <top>
+        <VBox styleClass="header-section">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="Behavior Incident Report" styleClass="page-title"/>
+            <Label text="Document and track student behavior incidents" styleClass="page-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="form-scroll-pane">
+            <VBox spacing="20" styleClass="form-container">
+                <padding>
+                    <Insets top="20" right="40" bottom="20" left="40"/>
+                </padding>
+
+                <!-- Incident Information Section -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Incident Information" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <!-- Row 0 -->
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Student *" styleClass="field-label"/>
+                            <ComboBox fx:id="studentComboBox" promptText="Select Student" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Incident Date *" styleClass="field-label"/>
+                            <DatePicker fx:id="incidentDatePicker" promptText="Select Date" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Label text="Incident Time *" styleClass="field-label"/>
+                            <TextField fx:id="incidentTimeField" promptText="HH:MM"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                            <Label text="Reporting Staff *" styleClass="field-label"/>
+                            <ComboBox fx:id="reportingStaffComboBox" promptText="Select Staff" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <!-- Row 1 -->
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <Label text="Location *" styleClass="field-label"/>
+                            <ComboBox fx:id="locationComboBox" promptText="Select Location" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="Classroom"/>
+                                        <String fx:value="Hallway"/>
+                                        <String fx:value="Cafeteria"/>
+                                        <String fx:value="Gymnasium"/>
+                                        <String fx:value="Playground"/>
+                                        <String fx:value="Library"/>
+                                        <String fx:value="Restroom"/>
+                                        <String fx:value="Bus"/>
+                                        <String fx:value="Office"/>
+                                        <String fx:value="Other"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <Label text="Severity *" styleClass="field-label"/>
+                            <ComboBox fx:id="severityComboBox" promptText="Select Severity" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="MINOR"/>
+                                        <String fx:value="MODERATE"/>
+                                        <String fx:value="MAJOR"/>
+                                        <String fx:value="SEVERE"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                            <Label text="Behavior Type *" styleClass="field-label"/>
+                            <ComboBox fx:id="behaviorTypeComboBox" promptText="Select Behavior Type" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="Disruptive Behavior"/>
+                                        <String fx:value="Defiance/Disrespect"/>
+                                        <String fx:value="Physical Aggression"/>
+                                        <String fx:value="Verbal Aggression"/>
+                                        <String fx:value="Bullying"/>
+                                        <String fx:value="Inappropriate Language"/>
+                                        <String fx:value="Cheating/Academic Dishonesty"/>
+                                        <String fx:value="Tardy/Truancy"/>
+                                        <String fx:value="Technology Violation"/>
+                                        <String fx:value="Dress Code Violation"/>
+                                        <String fx:value="Property Damage"/>
+                                        <String fx:value="Theft"/>
+                                        <String fx:value="Other"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Incident Description -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Incident Details" styleClass="section-header"/>
+
+                    <VBox spacing="5">
+                        <Label text="Description of Incident *" styleClass="field-label"/>
+                        <TextArea fx:id="descriptionTextArea" promptText="Provide detailed description of what occurred..."
+                                  wrapText="true" prefRowCount="5"/>
+                        <Text text="Describe what happened, who was involved, and any relevant context"
+                              styleClass="help-text" wrappingWidth="700"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Action Taken" styleClass="field-label"/>
+                        <TextArea fx:id="actionTakenTextArea" promptText="Describe immediate actions taken..."
+                                  wrapText="true" prefRowCount="3"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Other Students Involved -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Other Students Involved" styleClass="section-header"/>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <ComboBox fx:id="otherStudentsComboBox" promptText="Add Student" prefWidth="300"/>
+                        <Button fx:id="addStudentButton" text="Add Student" onAction="#handleAddStudent"/>
+                    </HBox>
+
+                    <ListView fx:id="involvedStudentsListView" prefHeight="100"/>
+                </VBox>
+
+                <!-- Witnesses -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Witnesses" styleClass="section-header"/>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <ComboBox fx:id="witnessComboBox" promptText="Add Witness (Staff/Student)" prefWidth="300"/>
+                        <Button fx:id="addWitnessButton" text="Add Witness" onAction="#handleAddWitness"/>
+                    </HBox>
+
+                    <ListView fx:id="witnessesListView" prefHeight="100"/>
+                </VBox>
+
+                <!-- Follow-up Actions -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Follow-up and Resolution" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="34"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <CheckBox fx:id="parentContactedCheckBox" text="Parent/Guardian Contacted"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Contact Date" styleClass="field-label"/>
+                            <DatePicker fx:id="parentContactDatePicker" disable="true"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Label text="Contact Method" styleClass="field-label"/>
+                            <ComboBox fx:id="contactMethodComboBox" promptText="Method" disable="true">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="Phone"/>
+                                        <String fx:value="Email"/>
+                                        <String fx:value="In Person"/>
+                                        <String fx:value="Letter"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+                    </GridPane>
+
+                    <VBox spacing="5">
+                        <CheckBox fx:id="administrativeReferralCheckBox" text="Administrative Referral Required"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Additional Notes" styleClass="field-label"/>
+                        <TextArea fx:id="notesTextArea" promptText="Additional information, follow-up actions needed..."
+                                  wrapText="true" prefRowCount="3"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Attachments -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Attachments" styleClass="section-header"/>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button fx:id="attachFileButton" text="Attach File" onAction="#handleAttachFile"/>
+                        <Label fx:id="attachmentCountLabel" text="0 files attached" styleClass="help-text"/>
+                    </HBox>
+
+                    <ListView fx:id="attachmentsListView" prefHeight="80"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="button-bar">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Button fx:id="saveButton" text="Save Incident Report" onAction="#handleSave" styleClass="primary-button"/>
+            <Button fx:id="saveDraftButton" text="Save as Draft" onAction="#handleSaveDraft"/>
+            <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.CounselingDashboardController"
+            styleClass="content-pane">
+
+    <top>
+        <VBox styleClass="header-section">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Counseling Services Dashboard" styleClass="page-title"/>
+                    <Label text="Case management and referral tracking" styleClass="page-subtitle"/>
+                </VBox>
+                <Button fx:id="newReferralButton" text="+ New Referral" onAction="#handleNewReferral"
+                        styleClass="primary-button"/>
+                <Button fx:id="newSessionButton" text="+ New Session" onAction="#handleNewSession"/>
+                <Button fx:id="refreshButton" text="Refresh" onAction="#handleRefresh"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.75" styleClass="main-split-pane">
+            <!-- Main Content Area -->
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- Statistics Cards -->
+                <GridPane hgap="15" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="16.66"/>
+                        <ColumnConstraints percentWidth="16.66"/>
+                        <ColumnConstraints percentWidth="16.66"/>
+                        <ColumnConstraints percentWidth="16.66"/>
+                        <ColumnConstraints percentWidth="16.66"/>
+                        <ColumnConstraints percentWidth="16.70"/>
+                    </columnConstraints>
+
+                    <VBox spacing="10" styleClass="stat-card" GridPane.columnIndex="0">
+                        <Label text="Total Referrals" styleClass="stat-label"/>
+                        <Label fx:id="totalReferralsLabel" text="0" styleClass="stat-value"/>
+                        <Label fx:id="totalReferralsChangeLabel" text="—" styleClass="stat-change"/>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="stat-card" GridPane.columnIndex="1">
+                        <Label text="Pending" styleClass="stat-label"/>
+                        <Label fx:id="pendingReferralsLabel" text="0" styleClass="stat-value"/>
+                        <Label text="Awaiting Review" styleClass="stat-label"/>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="stat-card" style="-fx-background-color: #ffebee;" GridPane.columnIndex="2">
+                        <Label text="High Risk" styleClass="stat-label" style="-fx-text-fill: #d32f2f;"/>
+                        <Label fx:id="highRiskLabel" text="0" styleClass="stat-value" style="-fx-text-fill: #d32f2f;"/>
+                        <Label text="Urgent Attention" styleClass="stat-label"/>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="stat-card" GridPane.columnIndex="3">
+                        <Label text="Active Cases" styleClass="stat-label"/>
+                        <Label fx:id="activeCasesLabel" text="0" styleClass="stat-value"/>
+                        <Label text="In Progress" styleClass="stat-label"/>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="stat-card" style="-fx-background-color: #fff3e0;" GridPane.columnIndex="4">
+                        <Label text="Overdue" styleClass="stat-label" style="-fx-text-fill: #f57c00;"/>
+                        <Label fx:id="overdueLabel" text="0" styleClass="stat-value" style="-fx-text-fill: #f57c00;"/>
+                        <Label text="Needs Follow-up" styleClass="stat-label"/>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="stat-card" GridPane.columnIndex="5">
+                        <Label text="Total Sessions" styleClass="stat-label"/>
+                        <Label fx:id="totalSessionsLabel" text="0" styleClass="stat-value"/>
+                        <Label fx:id="sessionsThisMonthLabel" text="— this month" styleClass="stat-label"/>
+                    </VBox>
+                </GridPane>
+
+                <!-- Filters -->
+                <HBox spacing="15" alignment="CENTER_LEFT" styleClass="filter-bar">
+                    <Label text="Filters:" styleClass="filter-label"/>
+
+                    <VBox spacing="3">
+                        <Label text="Date Range" styleClass="filter-label-small"/>
+                        <HBox spacing="5">
+                            <DatePicker fx:id="startDatePicker" promptText="Start Date"/>
+                            <Label text="to" alignment="CENTER"/>
+                            <DatePicker fx:id="endDatePicker" promptText="End Date"/>
+                        </HBox>
+                    </VBox>
+
+                    <VBox spacing="3">
+                        <Label text="Urgency Level" styleClass="filter-label-small"/>
+                        <ComboBox fx:id="urgencyFilterComboBox" promptText="All Urgency Levels">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="ALL"/>
+                                    <String fx:value="EMERGENCY"/>
+                                    <String fx:value="URGENT"/>
+                                    <String fx:value="MODERATE"/>
+                                    <String fx:value="ROUTINE"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                    </VBox>
+
+                    <VBox spacing="3">
+                        <Label text="Status" styleClass="filter-label-small"/>
+                        <ComboBox fx:id="statusFilterComboBox" promptText="All Statuses">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="ALL"/>
+                                    <String fx:value="PENDING"/>
+                                    <String fx:value="IN_PROGRESS"/>
+                                    <String fx:value="COMPLETED"/>
+                                    <String fx:value="REFERRED_OUT"/>
+                                    <String fx:value="DECLINED"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                    </VBox>
+
+                    <VBox spacing="3">
+                        <Label text="Counselor" styleClass="filter-label-small"/>
+                        <ComboBox fx:id="counselorFilterComboBox" promptText="All Counselors"/>
+                    </VBox>
+
+                    <VBox spacing="3">
+                        <Label text="Referral Type" styleClass="filter-label-small"/>
+                        <ComboBox fx:id="typeFilterComboBox" promptText="All Types">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="ALL"/>
+                                    <String fx:value="INDIVIDUAL_COUNSELING"/>
+                                    <String fx:value="GROUP_COUNSELING"/>
+                                    <String fx:value="CRISIS_INTERVENTION"/>
+                                    <String fx:value="FAMILY_THERAPY"/>
+                                    <String fx:value="EXTERNAL_THERAPIST"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                    </VBox>
+
+                    <Button text="Apply" onAction="#handleApplyFilters" styleClass="primary-button"/>
+                    <Button text="Clear" onAction="#handleClearFilters"/>
+                </HBox>
+
+                <!-- Charts Section -->
+                <GridPane hgap="15" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="33.33"/>
+                        <ColumnConstraints percentWidth="33.33"/>
+                        <ColumnConstraints percentWidth="33.34"/>
+                    </columnConstraints>
+
+                    <VBox spacing="10" styleClass="chart-container" GridPane.columnIndex="0">
+                        <Label text="Referrals by Urgency Level" styleClass="chart-title"/>
+                        <PieChart fx:id="urgencyPieChart" legendVisible="true" legendSide="BOTTOM"
+                                  prefHeight="200" maxHeight="200"/>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="chart-container" GridPane.columnIndex="1">
+                        <Label text="Referrals by Primary Concern" styleClass="chart-title"/>
+                        <PieChart fx:id="concernPieChart" legendVisible="true" legendSide="BOTTOM"
+                                  prefHeight="200" maxHeight="200"/>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="chart-container" GridPane.columnIndex="2">
+                        <Label text="Counselor Workload Distribution" styleClass="chart-title"/>
+                        <PieChart fx:id="workloadPieChart" legendVisible="true" legendSide="BOTTOM"
+                                  prefHeight="200" maxHeight="200"/>
+                    </VBox>
+                </GridPane>
+
+                <!-- 30-Day Trend Chart -->
+                <VBox spacing="10" styleClass="chart-container">
+                    <Label text="30-Day Referral Trend" styleClass="chart-title"/>
+                    <BarChart fx:id="trendChart" prefHeight="250">
+                        <xAxis>
+                            <CategoryAxis label="Date"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Number of Referrals" minorTickVisible="false"/>
+                        </yAxis>
+                    </BarChart>
+                </VBox>
+
+                <!-- Referrals Table -->
+                <VBox spacing="10" styleClass="table-container" VBox.vgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Counseling Referrals" styleClass="section-header"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="searchField" promptText="Search by student name..."
+                                   prefWidth="250"/>
+                        <Button text="Export" onAction="#handleExport"/>
+                    </HBox>
+
+                    <TableView fx:id="referralsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="dateColumn" text="Date" prefWidth="100"/>
+                            <TableColumn fx:id="studentColumn" text="Student" prefWidth="150"/>
+                            <TableColumn fx:id="gradeColumn" text="Grade" prefWidth="70"/>
+                            <TableColumn fx:id="urgencyColumn" text="Urgency" prefWidth="100"/>
+                            <TableColumn fx:id="concernColumn" text="Primary Concern" prefWidth="150"/>
+                            <TableColumn fx:id="typeColumn" text="Referral Type" prefWidth="150"/>
+                            <TableColumn fx:id="counselorColumn" text="Assigned Counselor" prefWidth="150"/>
+                            <TableColumn fx:id="statusColumn" text="Status" prefWidth="120"/>
+                            <TableColumn fx:id="riskColumn" text="Risk" prefWidth="80"/>
+                            <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No counseling referrals found"/>
+                        </placeholder>
+                    </TableView>
+
+                    <!-- Pagination -->
+                    <HBox alignment="CENTER" spacing="10">
+                        <Button fx:id="previousPageButton" text="Previous" onAction="#handlePreviousPage"/>
+                        <Label fx:id="pageInfoLabel" text="Page 1 of 1"/>
+                        <Button fx:id="nextPageButton" text="Next" onAction="#handleNextPage"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label text="Items per page:"/>
+                        <ComboBox fx:id="itemsPerPageComboBox" value="25">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="10"/>
+                                    <String fx:value="25"/>
+                                    <String fx:value="50"/>
+                                    <String fx:value="100"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <!-- Right Sidebar -->
+            <VBox spacing="15" style="-fx-background-color: #f5f5f5; -fx-padding: 20;">
+                <Label text="Quick Actions" styleClass="section-header"/>
+
+                <!-- Overdue Referrals -->
+                <VBox spacing="10" styleClass="sidebar-section">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Overdue Referrals" styleClass="sidebar-header"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="overdueCountLabel" text="0"
+                               style="-fx-text-fill: #f57c00; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <ListView fx:id="overdueListView" prefHeight="150" styleClass="compact-list"/>
+                </VBox>
+
+                <!-- High-Risk Cases -->
+                <VBox spacing="10" styleClass="sidebar-section">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="High-Risk Active Cases" styleClass="sidebar-header"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="highRiskCountLabel" text="0"
+                               style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <ListView fx:id="highRiskListView" prefHeight="150" styleClass="compact-list"/>
+                </VBox>
+
+                <!-- Crisis Interventions -->
+                <VBox spacing="10" styleClass="sidebar-section">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Crisis Interventions (30d)" styleClass="sidebar-header"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="crisisCountLabel" text="0"
+                               style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <ListView fx:id="crisisListView" prefHeight="100" styleClass="compact-list"/>
+                </VBox>
+
+                <!-- Top Concerns -->
+                <VBox spacing="10" styleClass="sidebar-section">
+                    <Label text="Top Concerns This Month" styleClass="sidebar-header"/>
+                    <ListView fx:id="topConcernsListView" prefHeight="120" styleClass="compact-list"/>
+                </VBox>
+
+                <!-- Pending Actions -->
+                <VBox spacing="10" styleClass="sidebar-section">
+                    <Label text="Pending Actions" styleClass="sidebar-header"/>
+                    <VBox spacing="5">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="Needs Initial Contact:" styleClass="sidebar-label"/>
+                            <Label fx:id="needsContactLabel" text="0" styleClass="sidebar-value"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="Awaiting Assessment:" styleClass="sidebar-label"/>
+                            <Label fx:id="awaitingAssessmentLabel" text="0" styleClass="sidebar-value"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="Parent Consent Needed:" styleClass="sidebar-label"/>
+                            <Label fx:id="needsConsentLabel" text="0" styleClass="sidebar-value"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="Safety Plans Due:" styleClass="sidebar-label"/>
+                            <Label fx:id="safetyPlansDueLabel" text="0" styleClass="sidebar-value"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+            </VBox>
+        </SplitPane>
+    </center>
+
+</BorderPane>

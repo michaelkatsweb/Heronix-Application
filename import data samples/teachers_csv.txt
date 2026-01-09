@@ -1,0 +1,41 @@
+Name,Email,Department,Employee ID,Max Hours Per Week,Max Consecutive Hours
+Sarah Johnson,sarah.johnson@hernandoschools.org,English,T10001,40,6
+Michael Chen,michael.chen@hernandoschools.org,English,T10002,40,6
+Emily Rodriguez,emily.rodriguez@hernandoschools.org,English,T10003,40,6
+David Thompson,david.thompson@hernandoschools.org,Mathematics,T10004,40,6
+Lisa Anderson,lisa.anderson@hernandoschools.org,Mathematics,T10005,40,6
+Robert Martinez,robert.martinez@hernandoschools.org,Mathematics,T10006,40,6
+Jennifer Wilson,jennifer.wilson@hernandoschools.org,Science,T10007,40,6
+James Taylor,james.taylor@hernandoschools.org,Science,T10008,40,6
+Maria Garcia,maria.garcia@hernandoschools.org,Science,T10009,40,6
+William Brown,william.brown@hernandoschools.org,History,T10010,40,6
+Patricia Davis,patricia.davis@hernandoschools.org,History,T10011,40,6
+Christopher Lee,christopher.lee@hernandoschools.org,History,T10012,40,6
+Jessica Moore,jessica.moore@hernandoschools.org,Foreign Language,T10013,40,6
+Daniel White,daniel.white@hernandoschools.org,Foreign Language,T10014,40,6
+Amanda Harris,amanda.harris@hernandoschools.org,PE,T10015,40,6
+Matthew Clark,matthew.clark@hernandoschools.org,PE,T10016,40,6
+Ashley Lewis,ashley.lewis@hernandoschools.org,Art,T10017,40,6
+Joshua Walker,joshua.walker@hernandoschools.org,Art,T10018,40,6
+Nicole Hall,nicole.hall@hernandoschools.org,Music,T10019,40,6
+Ryan Allen,ryan.allen@hernandoschools.org,Music,T10020,40,6
+Stephanie Young,stephanie.young@hernandoschools.org,English,T10021,40,6
+Brandon King,brandon.king@hernandoschools.org,Mathematics,T10022,40,6
+Michelle Wright,michelle.wright@hernandoschools.org,Science,T10023,40,6
+Kevin Scott,kevin.scott@hernandoschools.org,History,T10024,40,6
+Laura Green,laura.green@hernandoschools.org,Foreign Language,T10025,40,6
+Jason Adams,jason.adams@hernandoschools.org,PE,T10026,40,6
+Rachel Baker,rachel.baker@hernandoschools.org,Art,T10027,40,6
+Eric Nelson,eric.nelson@hernandoschools.org,Music,T10028,40,6
+Megan Carter,megan.carter@hernandoschools.org,English,T10029,40,6
+Steven Mitchell,steven.mitchell@hernandoschools.org,Mathematics,T10030,40,6
+Thomas Anderson,thomas.anderson@hernandoschools.org,English,T10031,40,6
+Rebecca Martinez,rebecca.martinez@hernandoschools.org,Science,T10032,40,6
+Andrew Thompson,andrew.thompson@hernandoschools.org,Mathematics,T10033,40,6
+Jennifer Garcia,jennifer.garcia@hernandoschools.org,History,T10034,40,6
+Robert Wilson,robert.wilson@hernandoschools.org,Foreign Language,T10035,40,6
+Mary Johnson,mary.johnson@hernandoschools.org,PE,T10036,40,6
+Charles Brown,charles.brown@hernandoschools.org,Art,T10037,40,6
+Linda Davis,linda.davis@hernandoschools.org,Music,T10038,40,6
+Donald Miller,donald.miller@hernandoschools.org,Electives,T10039,40,6
+Barbara Moore,barbara.moore@hernandoschools.org,Electives,T10040,40,6

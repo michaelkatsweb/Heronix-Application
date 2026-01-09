@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<!--
+  Report Generation Dialog FXML
+
+  Provides UI for generating attendance reports with various options:
+  - Report type selection (Daily, Summary, Chronic Absenteeism)
+  - Format selection (Excel, PDF)
+  - Date range picker
+  - Parameter configuration
+  - Progress indicator
+
+  Features:
+  - Modern card-based layout
+  - Validation for required fields
+  - Real-time parameter updates
+  - Progress feedback during generation
+  - Download location selection
+
+  @author Heronix Development Team
+  @version 1.0
+  @since Phase 51 - Frontend Integration
+-->
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.heronix.ui.controller.ReportGenerationDialogController"
+      spacing="15" styleClass="dialog-root"
+      stylesheets="@../css/report-dialog.css"
+      prefWidth="600" prefHeight="500">
+
+    <!-- Header -->
+    <VBox styleClass="dialog-header">
+        <Text text="Generate Attendance Report" styleClass="dialog-title"/>
+        <Text text="Select report type, format, and parameters" styleClass="dialog-subtitle"/>
+    </VBox>
+
+    <!-- Report Type Selection -->
+    <VBox spacing="8" styleClass="section">
+        <Label text="Report Type" styleClass="section-label"/>
+        <ComboBox fx:id="reportTypeComboBox" promptText="Select report type..." prefWidth="Infinity">
+            <items>
+                <javafx.collections.FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Daily Attendance"/>
+                    <String fx:value="Student Summary"/>
+                    <String fx:value="Chronic Absenteeism"/>
+                </javafx.collections.FXCollections>
+            </items>
+        </ComboBox>
+        <Text fx:id="reportTypeDescription" styleClass="help-text" wrappingWidth="550"/>
+    </VBox>
+
+    <!-- Format Selection -->
+    <VBox spacing="8" styleClass="section">
+        <Label text="Report Format" styleClass="section-label"/>
+        <HBox spacing="15">
+            <ToggleGroup fx:id="formatToggleGroup"/>
+            <RadioButton fx:id="excelRadio" text="Excel (.xlsx)" toggleGroup="$formatToggleGroup" selected="true">
+                <graphic>
+                    <HBox spacing="5" alignment="CENTER_LEFT">
+                        <Text text="📊" styleClass="format-icon"/>
+                        <VBox>
+                            <Text text="Excel" styleClass="format-title"/>
+                            <Text text="Spreadsheet format with formulas" styleClass="format-subtitle"/>
+                        </VBox>
+                    </HBox>
+                </graphic>
+            </RadioButton>
+            <RadioButton fx:id="pdfRadio" text="PDF" toggleGroup="$formatToggleGroup">
+                <graphic>
+                    <HBox spacing="5" alignment="CENTER_LEFT">
+                        <Text text="📄" styleClass="format-icon"/>
+                        <VBox>
+                            <Text text="PDF" styleClass="format-title"/>
+                            <Text text="Print-ready document" styleClass="format-subtitle"/>
+                        </VBox>
+                    </HBox>
+                </graphic>
+            </RadioButton>
+        </HBox>
+    </VBox>
+
+    <!-- Date Range Selection -->
+    <VBox spacing="8" styleClass="section">
+        <Label text="Date Range" styleClass="section-label"/>
+        <GridPane hgap="15" vgap="8">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="50"/>
+                <ColumnConstraints percentWidth="50"/>
+            </columnConstraints>
+
+            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <Label text="Start Date" styleClass="field-label"/>
+                <DatePicker fx:id="startDatePicker" promptText="Select start date..." prefWidth="Infinity"/>
+            </VBox>
+
+            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <Label text="End Date" styleClass="field-label"/>
+                <DatePicker fx:id="endDatePicker" promptText="Select end date..." prefWidth="Infinity"/>
+            </VBox>
+
+            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                <HBox spacing="8">
+                    <Button text="Today" onAction="#setToday" styleClass="preset-button"/>
+                    <Button text="Yesterday" onAction="#setYesterday" styleClass="preset-button"/>
+                    <Button text="Last 7 Days" onAction="#setLast7Days" styleClass="preset-button"/>
+                    <Button text="Last 30 Days" onAction="#setLast30Days" styleClass="preset-button"/>
+                    <Button text="This Month" onAction="#setThisMonth" styleClass="preset-button"/>
+                </HBox>
+            </VBox>
+        </GridPane>
+    </VBox>
+
+    <!-- Additional Parameters (conditionally visible) -->
+    <VBox fx:id="parametersSection" spacing="8" styleClass="section" visible="false" managed="false">
+        <Label text="Additional Parameters" styleClass="section-label"/>
+
+        <!-- Chronic Absenteeism Threshold -->
+        <HBox spacing="10" alignment="CENTER_LEFT" fx:id="thresholdBox" visible="false" managed="false">
+            <Label text="Absenteeism Threshold:" styleClass="field-label"/>
+            <Spinner fx:id="thresholdSpinner" prefWidth="100" editable="true">
+                <valueFactory>
+                    <SpinnerValueFactory.DoubleSpinnerValueFactory min="1.0" max="50.0" initialValue="10.0" amountToStepBy="1.0"/>
+                </valueFactory>
+            </Spinner>
+            <Label text="%" styleClass="field-label"/>
+            <Text text="Students with absence rate above this threshold will be included" styleClass="help-text"/>
+        </HBox>
+    </VBox>
+
+    <!-- Progress Indicator -->
+    <VBox fx:id="progressSection" spacing="8" styleClass="progress-section" visible="false" managed="false">
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <ProgressIndicator fx:id="progressIndicator" prefWidth="30" prefHeight="30"/>
+            <VBox spacing="3">
+                <Label fx:id="progressLabel" text="Generating report..." styleClass="progress-label"/>
+                <Text fx:id="progressDetail" text="Please wait..." styleClass="progress-detail"/>
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <!-- Validation Messages -->
+    <VBox fx:id="validationSection" spacing="5" styleClass="validation-section" visible="false" managed="false">
+        <HBox spacing="8" alignment="CENTER_LEFT" styleClass="validation-error">
+            <Text text="⚠️" styleClass="validation-icon"/>
+            <Label fx:id="validationMessage" styleClass="validation-text" wrapText="true" maxWidth="Infinity"/>
+        </HBox>
+    </VBox>
+
+    <!-- Spacer -->
+    <Region VBox.vgrow="ALWAYS"/>
+
+    <!-- Action Buttons -->
+    <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="button-bar">
+        <Button text="Cancel" onAction="#handleCancel" styleClass="button-secondary" prefWidth="100"/>
+        <Button text="Generate Report" onAction="#handleGenerate" styleClass="button-primary" prefWidth="150" fx:id="generateButton" defaultButton="true"/>
+    </HBox>
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+</VBox>

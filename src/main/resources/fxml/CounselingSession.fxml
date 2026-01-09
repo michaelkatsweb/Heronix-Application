@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.CounselingSessionController"
+            styleClass="content-pane">
+
+    <top>
+        <VBox styleClass="header-section">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="Counseling Session Documentation" styleClass="page-title"/>
+            <Label text="Record individual counseling session notes and progress" styleClass="page-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="form-scroll-pane">
+            <VBox spacing="20" styleClass="form-container">
+                <padding>
+                    <Insets top="20" right="40" bottom="20" left="40"/>
+                </padding>
+
+                <!-- Session Information -->\n                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Session Information" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Student *" styleClass="field-label"/>
+                            <ComboBox fx:id="studentComboBox" promptText="Select Student" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Grade" styleClass="field-label"/>
+                            <TextField fx:id="gradeField" editable="false"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Label text="Session Date *" styleClass="field-label"/>
+                            <DatePicker fx:id="sessionDatePicker" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                            <Label text="Duration (minutes)" styleClass="field-label"/>
+                            <TextField fx:id="durationField" promptText="30"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <Label text="Counselor *" styleClass="field-label"/>
+                            <ComboBox fx:id="counselorComboBox" promptText="Select Counselor" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <Label text="Session Type *" styleClass="field-label"/>
+                            <ComboBox fx:id="sessionTypeComboBox" promptText="Select Type" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="INDIVIDUAL"/>
+                                        <String fx:value="GROUP"/>
+                                        <String fx:value="FAMILY"/>
+                                        <String fx:value="CRISIS"/>
+                                        <String fx:value="CHECK_IN"/>
+                                        <String fx:value="INTAKE"/>
+                                        <String fx:value="FOLLOW_UP"/>
+                                        <String fx:value="TERMINATION"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                            <Label text="Session Number" styleClass="field-label"/>
+                            <TextField fx:id="sessionNumberField" promptText="Auto-calculated" editable="false"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                            <Label text="Related Referral" styleClass="field-label"/>
+                            <ComboBox fx:id="referralComboBox" promptText="Optional" maxWidth="Infinity"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Session Focus -->\n                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Session Focus" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Primary Focus *" styleClass="field-label"/>
+                            <ComboBox fx:id="primaryFocusComboBox" promptText="Select Primary Focus" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="ACADEMIC_SUPPORT"/>
+                                        <String fx:value="CAREER_PLANNING"/>
+                                        <String fx:value="COLLEGE_READINESS"/>
+                                        <String fx:value="ANXIETY_STRESS"/>
+                                        <String fx:value="DEPRESSION"/>
+                                        <String fx:value="GRIEF_LOSS"/>
+                                        <String fx:value="TRAUMA"/>
+                                        <String fx:value="SELF_HARM"/>
+                                        <String fx:value="SUICIDE_PREVENTION"/>
+                                        <String fx:value="ANGER_MANAGEMENT"/>
+                                        <String fx:value="CONFLICT_RESOLUTION"/>
+                                        <String fx:value="SOCIAL_SKILLS"/>
+                                        <String fx:value="PEER_RELATIONSHIPS"/>
+                                        <String fx:value="FAMILY_ISSUES"/>
+                                        <String fx:value="BULLYING"/>
+                                        <String fx:value="SELF_ESTEEM"/>
+                                        <String fx:value="COPING_SKILLS"/>
+                                        <String fx:value="BEHAVIOR_INTERVENTION"/>
+                                        <String fx:value="CRISIS_MANAGEMENT"/>
+                                        <String fx:value="OTHER"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Secondary Focus" styleClass="field-label"/>
+                            <TextField fx:id="secondaryFocusField" promptText="Optional secondary focus areas"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Session Notes -->\n                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Session Documentation *" styleClass="section-header"/>
+
+                    <VBox spacing="5">
+                        <Label text="Presenting Concern / Reason for Session" styleClass="field-label"/>
+                        <TextArea fx:id="presentingConcernTextArea"
+                                  promptText="What brought the student to counseling today? Current issues or concerns..."
+                                  wrapText="true" prefRowCount="3"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Session Summary / Progress Notes *" styleClass="field-label"/>
+                        <TextArea fx:id="sessionNotesTextArea"
+                                  promptText="Document what was discussed, interventions used, student's participation and response, insights gained..."
+                                  wrapText="true" prefRowCount="6"/>
+                        <Text text="Include: Topics discussed, interventions/techniques used, student participation/response, progress toward goals"
+                              styleClass="help-text" wrappingWidth="800"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Interventions & Techniques Used" styleClass="field-label"/>
+                        <TextArea fx:id="interventionsTextArea"
+                                  promptText="CBT, mindfulness, solution-focused, motivational interviewing, behavioral strategies, etc."
+                                  wrapText="true" prefRowCount="3"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Student Progress & Observations -->\n                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Student Progress & Observations" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Mood / Affect Observed" styleClass="field-label"/>
+                            <ComboBox fx:id="moodComboBox" promptText="Select Mood" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="POSITIVE"/>
+                                        <String fx:value="NEUTRAL"/>
+                                        <String fx:value="ANXIOUS"/>
+                                        <String fx:value="DEPRESSED"/>
+                                        <String fx:value="ANGRY"/>
+                                        <String fx:value="WITHDRAWN"/>
+                                        <String fx:value="AGITATED"/>
+                                        <String fx:value="TEARFUL"/>
+                                        <String fx:value="FLAT"/>
+                                        <String fx:value="VARIABLE"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Engagement Level" styleClass="field-label"/>
+                            <ComboBox fx:id="engagementComboBox" promptText="Select Level" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="HIGHLY_ENGAGED"/>
+                                        <String fx:value="ENGAGED"/>
+                                        <String fx:value="SOMEWHAT_ENGAGED"/>
+                                        <String fx:value="MINIMALLY_ENGAGED"/>
+                                        <String fx:value="RESISTANT"/>
+                                        <String fx:value="UNRESPONSIVE"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                            <Label text="Progress Toward Goals" styleClass="field-label"/>
+                            <TextArea fx:id="progressTextArea"
+                                      promptText="Progress on specific treatment goals, improvements noted, setbacks encountered..."
+                                      wrapText="true" prefRowCount="3"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                            <Label text="Behavioral Observations" styleClass="field-label"/>
+                            <TextArea fx:id="observationsTextArea"
+                                      promptText="Body language, appearance, speech patterns, any concerning behaviors..."
+                                      wrapText="true" prefRowCount="3"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Risk Assessment -->\n                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Risk Assessment" styleClass="section-header" style="-fx-text-fill: #d32f2f;"/>
+
+                    <GridPane hgap="20" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="34"/>
+                        </columnConstraints>
+
+                        <CheckBox fx:id="suicidalIdeationCheckBox" text="Suicidal Ideation Expressed"
+                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="selfHarmRiskCheckBox" text="Self-Harm Risk"
+                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="harmToOthersCheckBox" text="Harm to Others Risk"
+                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+
+                        <CheckBox fx:id="substanceUseCheckBox" text="Substance Use Disclosed"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <CheckBox fx:id="abuseDisclosedCheckBox" text="Abuse Disclosed (Mandated Reporting)"
+                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <CheckBox fx:id="safetyPlanReviewedCheckBox" text="Safety Plan Reviewed/Updated"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                    </GridPane>
+
+                    <VBox spacing="5" fx:id="riskDetailsBox" visible="false" managed="false">
+                        <Label text="Risk Details & Actions Taken *" styleClass="field-label"
+                               style="-fx-text-fill: #d32f2f;"/>
+                        <TextArea fx:id="riskDetailsTextArea"
+                                  promptText="REQUIRED: Document specific risk factors, level of risk, immediate safety interventions, notifications made, follow-up plan..."
+                                  wrapText="true" prefRowCount="4"
+                                  style="-fx-border-color: #d32f2f; -fx-border-width: 2;"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Goals & Action Steps -->\n                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Goals & Next Steps" styleClass="section-header"/>
+
+                    <VBox spacing="5">
+                        <Label text="Goals Addressed This Session" styleClass="field-label"/>
+                        <TextArea fx:id="goalsAddressedTextArea"
+                                  promptText="Which treatment goals were worked on during this session..."
+                                  wrapText="true" prefRowCount="3"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Homework / Action Steps Assigned" styleClass="field-label"/>
+                        <TextArea fx:id="homeworkTextArea"
+                                  promptText="Tasks, exercises, or strategies for student to practice before next session..."
+                                  wrapText="true" prefRowCount="3"/>
+                    </VBox>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Follow-Up Date" styleClass="field-label"/>
+                            <DatePicker fx:id="followUpDatePicker"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Follow-Up Notes" styleClass="field-label"/>
+                            <TextField fx:id="followUpNotesField" promptText="Next session focus, reminders..."/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Referrals & Collaboration -->\n                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Referrals & Collaboration" styleClass="section-header"/>
+
+                    <GridPane hgap="20" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="34"/>
+                        </columnConstraints>
+
+                        <CheckBox fx:id="externalReferralMadeCheckBox" text="External Referral Made"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="parentContactedCheckBox" text="Parent/Guardian Contacted"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="teacherConsultationCheckBox" text="Teacher Consultation"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+
+                        <CheckBox fx:id="adminNotifiedCheckBox" text="Administration Notified"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <CheckBox fx:id="crisisTeamInvolvedCheckBox" text="Crisis Team Involved"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <CheckBox fx:id="emergencyContactCheckBox" text="Emergency Contact Made"
+                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                    </GridPane>
+
+                    <VBox spacing="5">
+                        <Label text="Collaboration Details" styleClass="field-label"/>
+                        <TextArea fx:id="collaborationTextArea"
+                                  promptText="Details of referrals made, parent contact summary, teacher consultation notes, emergency contacts..."
+                                  wrapText="true" prefRowCount="3"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Counselor Reflections -->\n                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Counselor Reflections (Optional)" styleClass="section-header"/>
+
+                    <VBox spacing="5">
+                        <Label text="Clinical Impressions" styleClass="field-label"/>
+                        <TextArea fx:id="clinicalImpressionsTextArea"
+                                  promptText="Professional observations, assessment of student's functioning, treatment effectiveness..."
+                                  wrapText="true" prefRowCount="3"/>
+                        <Text text="Private notes for clinical use - not shared in student portal"
+                              styleClass="help-text" wrappingWidth="800"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Plan for Next Session" styleClass="field-label"/>
+                        <TextArea fx:id="nextSessionPlanTextArea"
+                                  promptText="Topics to address, interventions to try, areas to explore..."
+                                  wrapText="true" prefRowCount="3"/>
+                    </VBox>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="button-bar">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label fx:id="riskIndicator" text="" style="-fx-font-weight: bold; -fx-text-fill: #d32f2f;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="saveButton" text="Save Session" onAction="#handleSave" styleClass="primary-button"/>
+            <Button fx:id="saveDraftButton" text="Save Draft" onAction="#handleSaveDraft"/>
+            <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

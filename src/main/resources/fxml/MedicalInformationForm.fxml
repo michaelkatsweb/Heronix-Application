@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.heronix.controller.MedicalInformationFormController"
+      spacing="10" styleClass="root-container">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-section">
+        <Label text="Student Medical Information" styleClass="form-title">
+            <font>
+                <Font name="System Bold" size="24"/>
+            </font>
+        </Label>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnRefresh" text="Refresh" onAction="#handleRefresh" styleClass="btn-secondary"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Search and Filter Section -->
+    <VBox spacing="8" styleClass="filter-section">
+        <Label text="Search and Filter" styleClass="section-header">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Label>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Student:"/>
+            <ComboBox fx:id="cmbStudentFilter" promptText="All Students" prefWidth="200" editable="true"/>
+
+            <Label text="Status:"/>
+            <ComboBox fx:id="cmbStatusFilter" promptText="All Statuses" prefWidth="150"/>
+
+            <Button fx:id="btnSearch" text="Search" onAction="#handleSearch" styleClass="btn-primary"/>
+            <Button fx:id="btnClearFilters" text="Clear Filters" onAction="#handleClearFilters" styleClass="btn-secondary"/>
+        </HBox>
+
+        <!-- Quick Filter Toggles -->
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <Label text="Quick Filters:"/>
+            <ToggleButton fx:id="toggleHasAllergies" text="Has Allergies" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="toggleHasConditions" text="Has Conditions" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="toggleHasMedications" text="Has Medications" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="toggleHasAlerts" text="Has Alerts" onAction="#handleQuickFilter" styleClass="toggle-filter"/>
+            <ToggleButton fx:id="toggleOverdueReview" text="Overdue Review" onAction="#handleQuickFilter" styleClass="toggle-filter-alert"/>
+            <ToggleButton fx:id="toggleIncomplete" text="Incomplete" onAction="#handleQuickFilter" styleClass="toggle-filter-warning"/>
+        </HBox>
+    </VBox>
+
+    <Separator/>
+
+    <!-- Main Content Area - Split Pane -->
+    <SplitPane dividerPositions="0.35" VBox.vgrow="ALWAYS">
+
+        <!-- Left Side: Medical Records List -->
+        <VBox spacing="5">
+            <Label text="Medical Records" styleClass="section-header">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+
+            <TableView fx:id="tblMedicalRecords" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colStudent" text="Student" prefWidth="150"/>
+                    <TableColumn fx:id="colAllergies" text="Allergies" prefWidth="80"/>
+                    <TableColumn fx:id="colConditions" text="Conditions" prefWidth="80"/>
+                    <TableColumn fx:id="colMedications" text="Meds" prefWidth="60"/>
+                    <TableColumn fx:id="colAlerts" text="Alerts" prefWidth="60"/>
+                    <TableColumn fx:id="colLastReview" text="Last Review" prefWidth="100"/>
+                </columns>
+                <placeholder>
+                    <Label text="No medical records found"/>
+                </placeholder>
+            </TableView>
+
+            <HBox spacing="5" alignment="CENTER_LEFT">
+                <Button fx:id="btnView" text="View" onAction="#handleView" styleClass="btn-secondary" disable="true"/>
+                <Button fx:id="btnEdit" text="Edit" onAction="#handleEdit" styleClass="btn-primary" disable="true"/>
+                <Button fx:id="btnDelete" text="Delete" onAction="#handleDelete" styleClass="btn-danger" disable="true"/>
+            </HBox>
+        </VBox>
+
+        <!-- Right Side: Medical Record Details -->
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox spacing="15" styleClass="details-panel">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <!-- Basic Information Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Basic Information" styleClass="section-header" style="-fx-background-color: #E3F2FD; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Student:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbStudent" promptText="Select Student" GridPane.rowIndex="0" GridPane.columnIndex="1" maxWidth="Infinity" editable="true"/>
+
+                        <Label text="Blood Type:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbBloodType" promptText="Select Blood Type" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Immunization Status:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbImmunizationStatus" promptText="Select Status" GridPane.rowIndex="2" GridPane.columnIndex="1" maxWidth="Infinity"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Allergies Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Allergies" styleClass="section-header" style="-fx-background-color: #FFEBEE; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Has Allergies:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkHasAllergies" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Food Allergies:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtFoodAllergies" promptText="List food allergies (e.g., peanuts, shellfish, dairy)" GridPane.rowIndex="1" GridPane.columnIndex="1" prefRowCount="2" wrapText="true"/>
+
+                        <Label text="Medication Allergies:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtMedicationAllergies" promptText="List medication allergies (e.g., penicillin, sulfa)" GridPane.rowIndex="2" GridPane.columnIndex="1" prefRowCount="2" wrapText="true"/>
+
+                        <Label text="Environmental Allergies:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtEnvironmentalAllergies" promptText="List environmental allergies (e.g., pollen, bee stings)" GridPane.rowIndex="3" GridPane.columnIndex="1" prefRowCount="2" wrapText="true"/>
+
+                        <Label text="Allergy Severity:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbAllergySeverity" promptText="Select Severity" GridPane.rowIndex="4" GridPane.columnIndex="1" maxWidth="Infinity"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Chronic Conditions Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Chronic Conditions" styleClass="section-header" style="-fx-background-color: #FFF3E0; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Has Chronic Conditions:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkHasChronicConditions" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Chronic Conditions:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtChronicConditions" promptText="List chronic conditions (e.g., asthma, diabetes, epilepsy)" GridPane.rowIndex="1" GridPane.columnIndex="1" prefRowCount="3" wrapText="true"/>
+
+                        <Label text="Condition Severity:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbConditionSeverity" promptText="Select Severity" GridPane.rowIndex="2" GridPane.columnIndex="1" maxWidth="Infinity"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Current Medications Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Current Medications" styleClass="section-header" style="-fx-background-color: #F3E5F5; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Taking Medications:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkTakingMedications" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Current Medications:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtCurrentMedications" promptText="List medications with dosage and schedule" GridPane.rowIndex="1" GridPane.columnIndex="1" prefRowCount="3" wrapText="true"/>
+
+                        <Label text="Self-Administered:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkSelfAdministered" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Requires Nurse:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkRequiresNurse" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Medical Alerts Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Medical Alerts" styleClass="section-header" style="-fx-background-color: #FFCDD2; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Has Medical Alerts:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkHasMedicalAlerts" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Medical Alerts:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtMedicalAlerts" promptText="Critical medical alerts (e.g., EpiPen required, seizure protocol)" GridPane.rowIndex="1" GridPane.columnIndex="1" prefRowCount="3" wrapText="true"/>
+
+                        <Label text="Has EpiPen:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkHasEpiPen" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Has Inhaler:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkHasInhaler" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Physician Information Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Physician Information" styleClass="section-header" style="-fx-background-color: #E8F5E9; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Physician Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtPhysicianName" promptText="Dr. John Smith" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Physician Phone:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtPhysicianPhone" promptText="(555) 123-4567" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Physician Address:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtPhysicianAddress" promptText="Office address" GridPane.rowIndex="2" GridPane.columnIndex="1" prefRowCount="2" wrapText="true"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Insurance Information Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Insurance Information" styleClass="section-header" style="-fx-background-color: #E1F5FE; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Insurance Provider:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtInsuranceProvider" promptText="Blue Cross, Aetna, etc." GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Policy Number:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtInsurancePolicyNumber" promptText="Policy #" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Group Number:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtInsuranceGroupNumber" promptText="Group #" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Health Screenings & Compliance Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Health Screenings &amp; Compliance" styleClass="section-header" style="-fx-background-color: #FFF9C4; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Last Physical Date:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="dpLastPhysicalDate" promptText="MM/DD/YYYY" GridPane.rowIndex="0" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Physical Required By:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="dpPhysicalRequiredDate" promptText="MM/DD/YYYY" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Immunizations Complete:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkImmunizationsComplete" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Athletic Clearance:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkAthleticClearance" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                        <Label text="Athletic Clearance Date:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="dpAthleticClearanceDate" promptText="MM/DD/YYYY" GridPane.rowIndex="4" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Concussion Protocol:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkConcussionProtocol" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Emergency Authorization Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Emergency Authorization" styleClass="section-header" style="-fx-background-color: #FCE4EC; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Emergency Treatment:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkEmergencyTreatmentAuthorized" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Authorization Date:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="dpEmergencyAuthorizationDate" promptText="MM/DD/YYYY" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Hospital Preference:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtPreferredHospital" promptText="Preferred hospital/medical center" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Review and Notes Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Review and Notes" styleClass="section-header" style="-fx-background-color: #F5F5F5; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Last Review Date:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="dpLastReviewDate" promptText="MM/DD/YYYY" GridPane.rowIndex="0" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Next Review Date:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="dpNextReviewDate" promptText="MM/DD/YYYY" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Verified:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="chkVerified" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Verification Date:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="dpVerificationDate" promptText="MM/DD/YYYY" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Additional Notes:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="txtNotes" promptText="Additional medical information or notes" GridPane.rowIndex="4" GridPane.columnIndex="1" prefRowCount="4" wrapText="true"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Action Buttons -->
+                <HBox spacing="10" alignment="CENTER">
+                    <Button fx:id="btnSave" text="Save" onAction="#handleSave" styleClass="btn-primary" prefWidth="100"/>
+                    <Button fx:id="btnCancel" text="Cancel" onAction="#handleCancel" styleClass="btn-secondary" prefWidth="100"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnScheduleReview" text="Schedule Review" onAction="#handleScheduleReview" styleClass="btn-secondary"/>
+                    <Button fx:id="btnPrint" text="Print Medical Form" onAction="#handlePrint" styleClass="btn-secondary"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </SplitPane>
+
+    <Separator/>
+
+    <!-- Status Bar -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="status-bar">
+        <Label text="User:"/>
+        <Label fx:id="lblCurrentUser" text="System User" styleClass="status-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Total Records:"/>
+        <Label fx:id="lblTotalRecords" text="0" styleClass="status-label"/>
+        <Separator orientation="VERTICAL"/>
+        <Label text="Incomplete:"/>
+        <Label fx:id="lblIncompleteCount" text="0" styleClass="status-label-warning"/>
+    </HBox>
+</VBox>

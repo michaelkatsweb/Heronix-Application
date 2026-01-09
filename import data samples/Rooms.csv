@@ -1,0 +1,43 @@
+Room Number,Building,Floor,Type,Capacity,Equipment,Has Computers,Has Projector,Has Smartboard,Wheelchair Accessible
+101,Main Building,1,CLASSROOM,30,Standard desks,False,True,True,True
+102,Main Building,1,CLASSROOM,30,Standard desks,False,True,True,True
+103,Main Building,1,CLASSROOM,28,Standard desks,False,True,False,True
+104,Main Building,1,CLASSROOM,32,Standard desks,False,True,True,True
+105,Main Building,1,CLASSROOM,30,Standard desks,False,True,True,True
+106,Main Building,1,LAB,24,Science equipment,False,True,True,True
+107,Main Building,1,LAB,24,Science equipment,False,True,True,True
+108,Main Building,1,LAB,20,Chemistry lab,False,True,False,True
+201,Main Building,2,CLASSROOM,30,Standard desks,False,True,True,False
+202,Main Building,2,CLASSROOM,28,Standard desks,False,True,True,False
+203,Main Building,2,CLASSROOM,30,Standard desks,False,True,True,False
+204,Main Building,2,CLASSROOM,32,Standard desks,False,True,False,False
+205,Main Building,2,CLASSROOM,28,Standard desks,False,True,True,False
+206,Main Building,2,LAB,24,Physics lab,False,True,True,False
+207,Main Building,2,LAB,22,Biology lab,False,True,True,False
+208,Main Building,2,CLASSROOM,30,Standard desks,False,True,True,False
+301,Main Building,3,CLASSROOM,30,Standard desks,False,True,True,False
+302,Main Building,3,CLASSROOM,28,Standard desks,False,True,False,False
+303,Main Building,3,CLASSROOM,30,Standard desks,False,True,True,False
+304,Main Building,3,CLASSROOM,32,Standard desks,False,True,True,False
+305,Main Building,3,CLASSROOM,25,Standard desks,False,True,True,False
+306,Main Building,3,CLASSROOM,28,Standard desks,False,True,True,False
+307,Main Building,3,CLASSROOM,30,Standard desks,False,True,False,False
+308,Main Building,3,CLASSROOM,30,Standard desks,False,True,True,False
+A101,Arts Building,1,CLASSROOM,20,Art supplies,False,True,False,True
+A102,Arts Building,1,CLASSROOM,18,Art studio,False,False,False,True
+A103,Arts Building,1,CLASSROOM,40,Music room,False,True,True,True
+A104,Arts Building,1,CLASSROOM,35,Band room,False,True,False,True
+GYM1,Gym Building,1,GYM,100,Sports equipment,False,False,False,True
+GYM2,Gym Building,1,GYM,80,Weight room,False,False,False,True
+L101,Library,1,LIBRARY,40,Research materials,True,True,True,True
+L102,Library,1,LIBRARY,30,Computer lab,True,True,True,True
+C101,CTE Building,1,LAB,16,Auto shop,False,False,False,True
+C102,CTE Building,1,LAB,14,Welding lab,False,False,False,True
+C103,CTE Building,1,LAB,18,Culinary kitchen,False,False,False,True
+CS101,Computer Lab,1,LAB,24,30 computers,True,True,True,True
+CS102,Computer Lab,1,LAB,20,25 computers,True,True,True,True
+CS103,Computer Lab,2,LAB,22,28 computers,True,True,True,False
+SPED1,Special Ed,1,CLASSROOM,12,Adaptive equipment,True,True,True,True
+SPED2,Special Ed,1,CLASSROOM,10,Sensory room,True,True,True,True
+CAF1,Cafeteria,1,CAFETERIA,300,Tables and chairs,False,False,False,True
+AUD1,Auditorium,1,AUDITORIUM,500,Stage and sound,False,True,False,True

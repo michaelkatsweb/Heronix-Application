@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.heronix.ui.controller.AnalyticsDashboardController"
+      spacing="20" styleClass="dashboard-root"
+      stylesheets="@../css/analytics-dashboard.css">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header Section -->
+    <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-section">
+        <Label text="Attendance Analytics Dashboard" styleClass="dashboard-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <ProgressIndicator fx:id="loadingIndicator" visible="false" managed="false"
+                          maxWidth="30" maxHeight="30"/>
+        <Button fx:id="refreshButton" text="Refresh" onAction="#handleRefresh" styleClass="refresh-button"/>
+    </HBox>
+
+    <!-- Error Label -->
+    <Label fx:id="errorLabel" styleClass="error-label" visible="false" managed="false" wrapText="true"/>
+
+    <!-- Date Range Filter Section -->
+    <HBox alignment="CENTER_LEFT" spacing="15" styleClass="filter-section">
+        <Label text="Date Range:" styleClass="filter-label"/>
+        <DatePicker fx:id="startDatePicker" onAction="#handleDateRangeChange" promptText="Start Date"/>
+        <Label text="to"/>
+        <DatePicker fx:id="endDatePicker" onAction="#handleDateRangeChange" promptText="End Date"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Label text="Group By:" styleClass="filter-label"/>
+        <ComboBox fx:id="groupByComboBox" onAction="#handleRefresh" prefWidth="120"/>
+    </HBox>
+
+    <!-- Main Dashboard Content -->
+    <VBox fx:id="dashboardContent" spacing="20" VBox.vgrow="ALWAYS">
+
+        <!-- Metric Cards Section -->
+        <GridPane hgap="15" vgap="15" styleClass="metrics-grid">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="25" minWidth="150"/>
+                <ColumnConstraints percentWidth="25" minWidth="150"/>
+                <ColumnConstraints percentWidth="25" minWidth="150"/>
+                <ColumnConstraints percentWidth="25" minWidth="150"/>
+            </columnConstraints>
+
+            <!-- Total Students Card -->
+            <VBox styleClass="metric-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                <Label text="Total Students" styleClass="metric-label"/>
+                <Label fx:id="totalStudentsLabel" text="0" styleClass="metric-value metric-primary"/>
+            </VBox>
+
+            <!-- Present Count Card -->
+            <VBox styleClass="metric-card metric-success" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                <Label text="Present" styleClass="metric-label"/>
+                <Label fx:id="presentCountLabel" text="0" styleClass="metric-value"/>
+            </VBox>
+
+            <!-- Absent Count Card -->
+            <VBox styleClass="metric-card metric-danger" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                <Label text="Absent" styleClass="metric-label"/>
+                <Label fx:id="absentCountLabel" text="0" styleClass="metric-value"/>
+            </VBox>
+
+            <!-- Tardy Count Card -->
+            <VBox styleClass="metric-card metric-warning" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                <Label text="Tardy" styleClass="metric-label"/>
+                <Label fx:id="tardyCountLabel" text="0" styleClass="metric-value"/>
+            </VBox>
+
+            <!-- Excused Count Card -->
+            <VBox styleClass="metric-card metric-info" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                <Label text="Excused" styleClass="metric-label"/>
+                <Label fx:id="excusedCountLabel" text="0" styleClass="metric-value"/>
+            </VBox>
+
+            <!-- Attendance Rate Card -->
+            <VBox styleClass="metric-card metric-primary" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                <Label text="Attendance Rate" styleClass="metric-label"/>
+                <Label fx:id="attendanceRateLabel" text="0.0%" styleClass="metric-value"/>
+            </VBox>
+
+            <!-- ADA Card -->
+            <VBox styleClass="metric-card" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                <Label text="ADA (Avg Daily Attendance)" styleClass="metric-label"/>
+                <Label fx:id="adaLabel" text="0.00" styleClass="metric-value"/>
+            </VBox>
+
+            <!-- ADM Card -->
+            <VBox styleClass="metric-card" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                <Label text="ADM (Avg Daily Membership)" styleClass="metric-label"/>
+                <Label fx:id="admLabel" text="0.00" styleClass="metric-value"/>
+            </VBox>
+
+            <!-- Chronic Absenteeism Card -->
+            <VBox styleClass="metric-card metric-danger" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                <Label text="Chronic Absenteeism (At Risk Students)" styleClass="metric-label"/>
+                <Label fx:id="chronicAbsenteeismLabel" text="0" styleClass="metric-value"/>
+            </VBox>
+        </GridPane>
+
+        <!-- Charts Section -->
+        <GridPane hgap="15" vgap="15" VBox.vgrow="ALWAYS">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="50" minWidth="300"/>
+                <ColumnConstraints percentWidth="50" minWidth="300"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="300" prefHeight="350"/>
+            </rowConstraints>
+
+            <!-- Attendance Trend Chart -->
+            <VBox styleClass="chart-container" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                <Label text="Attendance Trend Over Time" styleClass="chart-title"/>
+                <LineChart fx:id="attendanceTrendChart" VBox.vgrow="ALWAYS" legendVisible="true"
+                          animated="true" createSymbols="true">
+                    <xAxis>
+                        <CategoryAxis side="BOTTOM" label="Date"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT" label="Attendance Rate (%)" autoRanging="false"
+                                   lowerBound="0" upperBound="100" tickUnit="10"/>
+                    </yAxis>
+                </LineChart>
+            </VBox>
+
+            <!-- Status Breakdown Chart -->
+            <VBox styleClass="chart-container" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                <Label text="Attendance Status Breakdown" styleClass="chart-title"/>
+                <BarChart fx:id="statusBreakdownChart" VBox.vgrow="ALWAYS" legendVisible="true"
+                         animated="true" barGap="5" categoryGap="20">
+                    <xAxis>
+                        <CategoryAxis side="BOTTOM" label="Status"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT" label="Count" autoRanging="true"/>
+                    </yAxis>
+                </BarChart>
+            </VBox>
+        </GridPane>
+
+    </VBox>
+
+</VBox>

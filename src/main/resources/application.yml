@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: Heronix Scheduling System
+
+# OptaPlanner Configuration
+optaplanner:
+  solver:
+    termination:
+      spent-limit: 30s # Allow 30 seconds for solving
+      unimproved-spent-limit: 10s
+    environment-mode: FAST_ASSERT # Enable detailed error messages
+  solver-manager:
+    parallel-solver-count: AUTO
+
+# Heronix-SchedulerV2 Integration Configuration
+heronix:
+  scheduler:
+    # Enable/disable SchedulerV2 integration
+    enabled: true
+
+    # SchedulerV2 REST API URL
+    # Change this if SchedulerV2 is running on a different machine or port
+    api-url: http://localhost:8080
+
+    # Timeout for schedule generation (seconds)
+    # This should be longer than the optimization time to allow for data transfer
+    timeout-seconds: 300
+
+    # Default optimization time for AI scheduling (seconds)
+    default-optimization-time: 120
+
+    # Poll interval for checking job status (seconds)
+    poll-interval: 5
+
+    # Auto-sync mode (automatically sync data changes to SchedulerV2)
+    # Set to false for manual sync only
+    auto-sync: false

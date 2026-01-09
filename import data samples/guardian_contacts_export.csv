@@ -1,0 +1,11 @@
+Guardian_ID,Student_Number,LastName,FirstName,Relationship,Phone,Email
+G5001,10001,Smith,Anna,Mother,555-1234,anna.smith@home.com
+G5002,10001,Smith,John Sr.,Father,555-1235,john.smith@home.com
+G5003,10002,Johnson,Rachel,Mother,555-2345,rachel.johnson@home.com
+G5004,10003,Williams,Laura,Mother,555-3456,laura.williams@home.com
+G5005,10004,Jones,David,Father,555-4567,david.jones@home.com
+G5006,10005,Brown,Nancy,Mother,555-5678,nancy.brown@home.com
+G5007,10006,Davis,Robert,Father,555-6789,robert.davis@home.com
+G5008,10007,Miller,Alice,Mother,555-7890,alice.miller@home.com
+G5009,10008,Wilson,George,Father,555-8901,george.wilson@home.com
+G5010,10009,Moore,Diane,Mother,555-9012,diane.moore@home.com

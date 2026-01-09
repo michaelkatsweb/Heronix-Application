@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.SocialWorkCaseManagementController"
+            styleClass="content-pane">
+
+    <top>
+        <VBox styleClass="header-section">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="Social Work Case Management" styleClass="page-title"/>
+            <Label text="Comprehensive case tracking for social work interventions and family support" styleClass="page-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="form-scroll-pane">
+            <VBox spacing="20" styleClass="form-container">
+                <padding>
+                    <Insets top="20" right="40" bottom="20" left="40"/>
+                </padding>
+
+                <!-- Case Information -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Case Information" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Student *" styleClass="field-label"/>
+                            <ComboBox fx:id="studentComboBox" promptText="Select Student" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Grade" styleClass="field-label"/>
+                            <TextField fx:id="gradeField" editable="false"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Label text="Case Opened Date *" styleClass="field-label"/>
+                            <DatePicker fx:id="caseOpenedDatePicker" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                            <Label text="Assigned Social Worker *" styleClass="field-label"/>
+                            <ComboBox fx:id="socialWorkerComboBox" promptText="Select Social Worker" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <Label text="Case Type *" styleClass="field-label"/>
+                            <ComboBox fx:id="caseTypeComboBox" promptText="Select Type" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="FAMILY_SUPPORT"/>
+                                        <String fx:value="HOUSING_INSTABILITY"/>
+                                        <String fx:value="FOOD_INSECURITY"/>
+                                        <String fx:value="MEDICAL_NEEDS"/>
+                                        <String fx:value="MENTAL_HEALTH"/>
+                                        <String fx:value="SUBSTANCE_ABUSE"/>
+                                        <String fx:value="CHILD_WELFARE"/>
+                                        <String fx:value="ATTENDANCE"/>
+                                        <String fx:value="BEHAVIORAL"/>
+                                        <String fx:value="ACADEMIC_BARRIERS"/>
+                                        <String fx:value="IMMIGRATION"/>
+                                        <String fx:value="FINANCIAL_HARDSHIP"/>
+                                        <String fx:value="DOMESTIC_VIOLENCE"/>
+                                        <String fx:value="FOSTER_CARE"/>
+                                        <String fx:value="HOMELESSNESS"/>
+                                        <String fx:value="OTHER"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <Label text="Priority Level *" styleClass="field-label"/>
+                            <ComboBox fx:id="priorityComboBox" promptText="Select Priority" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="CRITICAL"/>
+                                        <String fx:value="HIGH"/>
+                                        <String fx:value="MODERATE"/>
+                                        <String fx:value="LOW"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                            <Label text="Case Status *" styleClass="field-label"/>
+                            <ComboBox fx:id="statusComboBox" promptText="Select Status" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="ACTIVE"/>
+                                        <String fx:value="PENDING"/>
+                                        <String fx:value="ON_HOLD"/>
+                                        <String fx:value="CLOSED_SUCCESSFUL"/>
+                                        <String fx:value="CLOSED_UNSUCCESSFUL"/>
+                                        <String fx:value="REFERRED_OUT"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                            <Label text="Referral Source" styleClass="field-label"/>
+                            <ComboBox fx:id="referralSourceComboBox" promptText="Select Source" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="TEACHER"/>
+                                        <String fx:value="COUNSELOR"/>
+                                        <String fx:value="ADMINISTRATOR"/>
+                                        <String fx:value="PARENT"/>
+                                        <String fx:value="SELF"/>
+                                        <String fx:value="COURT"/>
+                                        <String fx:value="CPS"/>
+                                        <String fx:value="COMMUNITY_AGENCY"/>
+                                        <String fx:value="OTHER"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Case Description -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Case Description & Background" styleClass="section-header"/>
+
+                    <VBox spacing="5">
+                        <Label text="Presenting Issues *" styleClass="field-label"/>
+                        <TextArea fx:id="presentingIssuesTextArea"
+                                  promptText="Describe the primary concerns, issues, or needs that led to opening this case..."
+                                  wrapText="true" prefRowCount="4"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Family Background & Context" styleClass="field-label"/>
+                        <TextArea fx:id="familyBackgroundTextArea"
+                                  promptText="Family structure, living situation, relevant history, cultural considerations..."
+                                  wrapText="true" prefRowCount="4"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Student Strengths & Protective Factors" styleClass="field-label"/>
+                        <TextArea fx:id="strengthsTextArea"
+                                  promptText="Student and family strengths, support systems, resources, positive relationships..."
+                                  wrapText="true" prefRowCount="3"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Family & Household Information -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Family & Household Information" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="34"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Primary Guardian Name" styleClass="field-label"/>
+                            <TextField fx:id="primaryGuardianField" promptText="Full name"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Guardian Phone" styleClass="field-label"/>
+                            <TextField fx:id="guardianPhoneField" promptText="Phone number"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Label text="Household Size" styleClass="field-label"/>
+                            <TextField fx:id="householdSizeField" promptText="Number of people"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <Label text="Living Situation" styleClass="field-label"/>
+                            <ComboBox fx:id="livingSituationComboBox" promptText="Select" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="STABLE_HOUSING"/>
+                                        <String fx:value="TEMPORARY_HOUSING"/>
+                                        <String fx:value="DOUBLED_UP"/>
+                                        <String fx:value="SHELTER"/>
+                                        <String fx:value="HOTEL_MOTEL"/>
+                                        <String fx:value="UNSHELTERED"/>
+                                        <String fx:value="FOSTER_CARE"/>
+                                        <String fx:value="GROUP_HOME"/>
+                                        <String fx:value="OTHER"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                            <Label text="Address" styleClass="field-label"/>
+                            <TextField fx:id="addressField" promptText="Current address (if applicable)"/>
+                        </VBox>
+                    </GridPane>
+
+                    <VBox spacing="5">
+                        <Label text="Household Notes" styleClass="field-label"/>
+                        <TextArea fx:id="householdNotesTextArea"
+                                  promptText="Additional household information, family dynamics, concerns..."
+                                  wrapText="true" prefRowCount="2"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Needs Assessment -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Needs Assessment" styleClass="section-header"/>
+
+                    <GridPane hgap="20" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="34"/>
+                        </columnConstraints>
+
+                        <CheckBox fx:id="foodAssistanceCheckBox" text="Food Assistance Needed"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="housingAssistanceCheckBox" text="Housing Assistance Needed"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="financialAssistanceCheckBox" text="Financial Assistance Needed"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+
+                        <CheckBox fx:id="medicalServicesCheckBox" text="Medical Services Needed"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <CheckBox fx:id="mentalHealthServicesCheckBox" text="Mental Health Services"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <CheckBox fx:id="substanceAbuseServicesCheckBox" text="Substance Abuse Services"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+
+                        <CheckBox fx:id="clothingAssistanceCheckBox" text="Clothing Assistance"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <CheckBox fx:id="transportationAssistanceCheckBox" text="Transportation Assistance"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <CheckBox fx:id="childCareCheckBox" text="Childcare Assistance"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+
+                        <CheckBox fx:id="legalServicesCheckBox" text="Legal Services Needed"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <CheckBox fx:id="parentingSupport CheckBox" text="Parenting Support"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <CheckBox fx:id="immigrationServicesCheckBox" text="Immigration Services"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                    </GridPane>
+
+                    <VBox spacing="5">
+                        <Label text="Detailed Needs Assessment" styleClass="field-label"/>
+                        <TextArea fx:id="needsAssessmentTextArea"
+                                  promptText="Detailed assessment of family needs, barriers to success, immediate and long-term needs..."
+                                  wrapText="true" prefRowCount="4"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Services & Interventions -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Services & Interventions Provided" styleClass="section-header"/>
+
+                    <VBox spacing="5">
+                        <Label text="Services Provided" styleClass="field-label"/>
+                        <TextArea fx:id="servicesProvidedTextArea"
+                                  promptText="List all services, referrals, resources provided (with dates and outcomes)..."
+                                  wrapText="true" prefRowCount="5"/>
+                    </VBox>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="External Agencies Involved" styleClass="field-label"/>
+                            <TextArea fx:id="externalAgenciesTextArea"
+                                      promptText="CPS, DHS, community organizations, medical providers..."
+                                      wrapText="true" prefRowCount="3"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="School Personnel Collaborating" styleClass="field-label"/>
+                            <TextArea fx:id="schoolPersonnelTextArea"
+                                      promptText="Teachers, counselors, administrators involved..."
+                                      wrapText="true" prefRowCount="3"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Goals & Action Plan -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Goals & Action Plan" styleClass="section-header"/>
+
+                    <VBox spacing="5">
+                        <Label text="Case Goals *" styleClass="field-label"/>
+                        <TextArea fx:id="caseGoalsTextArea"
+                                  promptText="Specific, measurable goals for this case (e.g., 'Secure stable housing by end of quarter', 'Student attendance improves to 95%')..."
+                                  wrapText="true" prefRowCount="4"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Action Plan & Next Steps" styleClass="field-label"/>
+                        <TextArea fx:id="actionPlanTextArea"
+                                  promptText="Detailed action steps, responsibilities, timelines for achieving goals..."
+                                  wrapText="true" prefRowCount="4"/>
+                    </VBox>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Next Contact Date" styleClass="field-label"/>
+                            <DatePicker fx:id="nextContactDatePicker"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Review Date" styleClass="field-label"/>
+                            <DatePicker fx:id="reviewDatePicker"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Progress & Outcomes -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Progress & Outcomes" styleClass="section-header"/>
+
+                    <VBox spacing="5">
+                        <Label text="Progress Notes" styleClass="field-label"/>
+                        <TextArea fx:id="progressNotesTextArea"
+                                  promptText="Document progress toward goals, changes in circumstances, barriers encountered, successes achieved..."
+                                  wrapText="true" prefRowCount="5"/>
+                    </VBox>
+
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Overall Progress" styleClass="field-label"/>
+                            <ComboBox fx:id="overallProgressComboBox" promptText="Select" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="EXCELLENT"/>
+                                        <String fx:value="GOOD"/>
+                                        <String fx:value="FAIR"/>
+                                        <String fx:value="POOR"/>
+                                        <String fx:value="NO_PROGRESS"/>
+                                        <String fx:value="SITUATION_WORSENED"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Family Engagement Level" styleClass="field-label"/>
+                            <ComboBox fx:id="engagementComboBox" promptText="Select" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="HIGHLY_ENGAGED"/>
+                                        <String fx:value="ENGAGED"/>
+                                        <String fx:value="MODERATELY_ENGAGED"/>
+                                        <String fx:value="MINIMALLY_ENGAGED"/>
+                                        <String fx:value="NON_RESPONSIVE"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Case Closure (if applicable) -->
+                <VBox spacing="15" styleClass="form-section" fx:id="closureSection" visible="false" managed="false">
+                    <Label text="Case Closure Information" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="34"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Case Closed Date" styleClass="field-label"/>
+                            <DatePicker fx:id="caseClosedDatePicker"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Closure Reason" styleClass="field-label"/>
+                            <ComboBox fx:id="closureReasonComboBox" promptText="Select Reason" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="GOALS_ACHIEVED"/>
+                                        <String fx:value="SERVICES_NO_LONGER_NEEDED"/>
+                                        <String fx:value="FAMILY_RELOCATED"/>
+                                        <String fx:value="STUDENT_TRANSFERRED"/>
+                                        <String fx:value="REFERRED_TO_OTHER_AGENCY"/>
+                                        <String fx:value="FAMILY_DECLINED_SERVICES"/>
+                                        <String fx:value="NON_RESPONSIVE"/>
+                                        <String fx:value="OTHER"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <CheckBox fx:id="followUpRecommendedCheckBox" text="Follow-up Recommended"/>
+                        </VBox>
+                    </GridPane>
+
+                    <VBox spacing="5">
+                        <Label text="Closure Summary" styleClass="field-label"/>
+                        <TextArea fx:id="closureSummaryTextArea"
+                                  promptText="Summarize case outcomes, services provided, goals achieved, recommendations for future support..."
+                                  wrapText="true" prefRowCount="4"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Contact Log -->
+                <VBox spacing="15" styleClass="form-section">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Contact Log" styleClass="section-header"/>
+                        <Button fx:id="addContactButton" text="+ Add Contact" onAction="#handleAddContact"/>
+                    </HBox>
+                    <TableView fx:id="contactLogTable" prefHeight="200">
+                        <columns>
+                            <TableColumn fx:id="contactDateColumn" text="Date" prefWidth="100"/>
+                            <TableColumn fx:id="contactTypeColumn" text="Type" prefWidth="120"/>
+                            <TableColumn fx:id="contactWithColumn" text="Contact With" prefWidth="150"/>
+                            <TableColumn fx:id="contactPurposeColumn" text="Purpose" prefWidth="200"/>
+                            <TableColumn fx:id="contactNotesColumn" text="Notes" prefWidth="300"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No contact log entries"/>
+                        </placeholder>
+                    </TableView>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="button-bar">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label fx:id="statusIndicator" text=""/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="saveButton" text="Save Case" onAction="#handleSave" styleClass="primary-button"/>
+            <Button fx:id="saveDraftButton" text="Save Draft" onAction="#handleSaveDraft"/>
+            <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

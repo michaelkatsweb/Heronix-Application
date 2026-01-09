@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<DialogPane xmlns="http://javafx.com/javafx/21"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.heronix.ui.controller.SchedulePrintDialogController"
+    stylesheets="@../css/modern-theme.css"
+    prefWidth="650" prefHeight="550">
+
+    <headerText>Print Student Schedules</headerText>
+
+    <content>
+        <VBox spacing="15" styleClass="dialog-content">
+            <padding><Insets top="15" right="20" bottom="15" left="20" /></padding>
+
+            <!-- SCHEDULE SELECTION -->
+            <VBox spacing="8">
+                <Label text="Select Schedule:" styleClass="section-header" />
+                <ComboBox fx:id="scheduleComboBox" prefWidth="400" promptText="Choose schedule to print..." />
+                <Text fx:id="scheduleInfoText" wrappingWidth="600"
+                    style="-fx-fill: #7f8c8d; -fx-font-size: 12px;" />
+            </VBox>
+
+            <Separator />
+
+            <!-- PRINT SCOPE SELECTION -->
+            <VBox spacing="12">
+                <Label text="Print Scope:" styleClass="section-header" />
+
+                <!-- ALL STUDENTS -->
+                <RadioButton fx:id="allStudentsRadio" text="All Students"
+                    styleClass="mode-radio" selected="true">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="scopeToggleGroup" />
+                    </toggleGroup>
+                    <VBox.margin><Insets top="5" /></VBox.margin>
+                </RadioButton>
+                <VBox fx:id="allStudentsInfo" spacing="5"
+                    style="-fx-background-color: #e8f4f8; -fx-background-radius: 5; -fx-padding: 10;">
+                    <Label text="Print schedules for all students in this schedule"
+                        style="-fx-font-size: 13px; -fx-text-fill: #34495e;" wrapText="true" />
+                    <Label fx:id="totalStudentsLabel" text="Total students: Loading..."
+                        style="-fx-text-fill: #2980b9; -fx-font-weight: bold;" />
+                </VBox>
+
+                <Separator />
+
+                <!-- BY GRADE LEVEL -->
+                <RadioButton fx:id="byGradeLevelRadio" text="By Grade Level"
+                    styleClass="mode-radio" toggleGroup="$scopeToggleGroup">
+                    <VBox.margin><Insets top="5" /></VBox.margin>
+                </RadioButton>
+                <VBox fx:id="byGradeLevelInfo" spacing="5"
+                    style="-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-padding: 10;">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Select Grade:" prefWidth="100" />
+                        <ComboBox fx:id="gradeLevelComboBox" prefWidth="200" promptText="Choose grade level..." editable="false" />
+                    </HBox>
+                    <Label fx:id="gradeStudentsLabel" text="Students in selected grade: 0"
+                        style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+                </VBox>
+
+                <Separator />
+
+                <!-- INDIVIDUAL STUDENTS -->
+                <RadioButton fx:id="individualStudentsRadio" text="Individual Students"
+                    styleClass="mode-radio" toggleGroup="$scopeToggleGroup">
+                    <VBox.margin><Insets top="5" /></VBox.margin>
+                </RadioButton>
+                <VBox fx:id="individualStudentsInfo" spacing="5"
+                    style="-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-padding: 10;">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Search Student:" prefWidth="100" />
+                        <TextField fx:id="studentSearchField" promptText="Search by name or ID..." prefWidth="300" />
+                        <Button fx:id="addStudentButton" text="Add" styleClass="primary-button" />
+                    </HBox>
+                    <VBox spacing="5">
+                        <Label text="Selected Students:" style="-fx-font-weight: bold;" />
+                        <ListView fx:id="selectedStudentsList" prefHeight="100" />
+                        <Button fx:id="removeStudentButton" text="Remove Selected" styleClass="secondary-button" />
+                    </VBox>
+                </VBox>
+            </VBox>
+
+            <Separator />
+
+            <!-- PRINT OPTIONS -->
+            <VBox spacing="10">
+                <Label text="Print Options:" styleClass="section-header" />
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Output Format:" prefWidth="120" />
+                    <ComboBox fx:id="outputFormatComboBox" prefWidth="200" />
+                </HBox>
+
+                <CheckBox fx:id="includePhotoCheckbox" text="Include student photo" selected="false" />
+                <CheckBox fx:id="includeRoomNumbersCheckbox" text="Include room numbers" selected="true" />
+                <CheckBox fx:id="includeTeacherNamesCheckbox" text="Include teacher names" selected="true" />
+                <CheckBox fx:id="includeNotesCheckbox" text="Include schedule notes" selected="false" />
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Print Layout:" prefWidth="120" />
+                    <ComboBox fx:id="layoutComboBox" prefWidth="200" />
+                </HBox>
+            </VBox>
+
+            <Separator />
+
+            <!-- DISTRIBUTION OPTIONS -->
+            <VBox spacing="10">
+                <Label text="Distribution:" styleClass="section-header" />
+
+                <CheckBox fx:id="emailToParentsCheckbox" text="Email PDF to parents" selected="false" />
+                <CheckBox fx:id="emailToStudentsCheckbox" text="Email PDF to students" selected="false" />
+                <CheckBox fx:id="saveToPortalCheckbox" text="Make available in parent/student portal" selected="true" />
+
+                <Text text="Note: Schedules will be saved to the server. You can download them or send to printer after generation."
+                    wrappingWidth="600" style="-fx-fill: #95a5a6; -fx-font-size: 11px; -fx-font-style: italic;" />
+            </VBox>
+
+            <!-- PROGRESS INDICATOR (hidden initially) -->
+            <VBox fx:id="progressBox" spacing="10" visible="false" managed="false"
+                style="-fx-background-color: #fff3cd; -fx-background-radius: 5; -fx-padding: 15;">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label fx:id="progressIcon" text="⏳" style="-fx-font-size: 24px;" />
+                    <VBox spacing="3">
+                        <Label fx:id="progressLabel" text="Generating schedules..."
+                            style="-fx-font-weight: bold; -fx-text-fill: #856404;" />
+                        <Label fx:id="progressMessage" text="Please wait..."
+                            style="-fx-text-fill: #856404; -fx-font-size: 12px;" />
+                    </VBox>
+                </HBox>
+                <ProgressBar fx:id="progressBar" progress="0" prefWidth="580" prefHeight="15" />
+            </VBox>
+
+        </VBox>
+    </content>
+
+    <buttonTypes>
+        <ButtonType fx:constant="CANCEL" />
+        <ButtonType fx:id="printButtonType" text="Generate Schedules" buttonData="OK_DONE" />
+    </buttonTypes>
+
+</DialogPane>

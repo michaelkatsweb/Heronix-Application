@@ -1,0 +1,575 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------< com.heronix:heronix-scheduler >--------------------
+[INFO] Building Heronix Scheduling System 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] 6 problems were encountered while building the effective model for org.openjfx:javafx-controls:jar:21 during dependency collection step for project (use -X to see details)
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ heronix-scheduler ---
+[INFO] Deleting H:\Heronix\Heronix-SIS\target
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (prepare-agent) @ heronix-scheduler ---
+[INFO] argLine set to -javaagent:C:\\Users\\Gamer\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.11\\org.jacoco.agent-0.8.11-runtime.jar=destfile=H:\\Heronix\\Heronix-SIS\\target\\jacoco.exec
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ heronix-scheduler ---
+[INFO] Copying 222 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ heronix-scheduler ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 949 source files with javac [debug release 21] to target\classes
+[INFO] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[INFO] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/ScheduleSlot.java: Some input files use or override a deprecated API.
+[INFO] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/ScheduleSlot.java: Recompile with -Xlint:deprecation for details.
+[INFO] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/TeacherDialogController.java: Some input files use unchecked or unsafe operations.
+[INFO] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/TeacherDialogController.java: Recompile with -Xlint:unchecked for details.
+[INFO] Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/TeacherCertification.java:[99,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/TeacherCertification.java:[107,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/TeacherCertification.java:[115,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/TeacherCertification.java:[201,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/ScheduleChangeRequest.java:[113,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/ScheduleChangeRequest.java:[126,27] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/ScheduleChangeRequest.java:[133,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/BellSchedule.java:[90,20] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/BellSchedule.java:[100,29] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/BellSchedule.java:[115,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/BellSchedule.java:[121,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/SchoolCalendar.java:[87,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/SchoolCalendar.java:[99,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/SchoolCalendar.java:[375,25] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/SchoolCalendar.java:[381,25] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/CourseSequence.java:[154,20] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/TeacherEvaluation.java:[297,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/TeacherEvaluation.java:[325,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/QrAttendanceLog.java:[113,32] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/QrAttendanceLog.java:[139,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/HallPassSession.java:[137,27] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/HallPassSession.java:[149,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/HallPassSession.java:[155,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/HallPassSession.java:[161,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/StudentGroup.java:[290,27] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/PeriodTimer.java:[87,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/PeriodTimer.java:[94,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/PeriodTimer.java:[102,20] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/PeriodTimer.java:[109,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/CourseSequenceStep.java:[98,20] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/controller/TeacherSyncController.java:[35,8] deprecated item is not annotated with @Deprecated
+[INFO] 31 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/service/ELLManagementService.java:[342,36] cannot find symbol
+  symbol:   method findByEllStudent(com.heronix.model.domain.ELLStudent)
+  location: variable assessmentRepository of type com.heronix.repository.ELLAssessmentRepository
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[383,17] cannot find symbol
+  symbol:   method setBackgroundInformation(java.lang.String)
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[391,17] cannot find symbol
+  symbol:   method setMandatedReporting(boolean)
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[392,17] cannot find symbol
+  symbol:   method setRiskDetails(java.lang.String)
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[408,17] cannot find symbol
+  symbol:   method setParentNotes(java.lang.String)
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[411,17] cannot find symbol
+  symbol:   method setPreviousCounseling(boolean)
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[412,17] cannot find symbol
+  symbol:   method setExternalTherapy(boolean)
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[413,17] cannot find symbol
+  symbol:   method setCurrentMedication(boolean)
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[414,17] cannot find symbol
+  symbol:   method setHospitalizationHistory(boolean)
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[415,17] cannot find symbol
+  symbol:   method setHasIepOr504(boolean)
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[416,17] cannot find symbol
+  symbol:   method setHasBehaviorPlan(boolean)
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[417,17] cannot find symbol
+  symbol:   method setPreviousServicesDetails(java.lang.String)
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[435,49] cannot find symbol
+  symbol:   method getReferringStaff()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[446,48] cannot find symbol
+  symbol:   method getSecondaryConcerns()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[448,43] cannot find symbol
+  symbol:   method getStudentStrengths()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[450,49] cannot find symbol
+  symbol:   method isSuicideRiskIndicated()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[451,50] cannot find symbol
+  symbol:   method isHarmToOthersIndicated()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[452,53] cannot find symbol
+  symbol:   method isImmediateSafetyConcerns()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[453,56] cannot find symbol
+  symbol:   method isCrisisInterventionNeeded()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[454,48] cannot find symbol
+  symbol:   method isSafetyPlanCreated()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[455,55] cannot find symbol
+  symbol:   method isMandatedReporting()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[456,45] cannot find symbol
+  symbol:   method getRiskDetails()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[458,49] cannot find symbol
+  symbol:   method isParentContacted()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[460,51] cannot find symbol
+  symbol:   method isParentConsentObtained()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[461,51] cannot find symbol
+  symbol:   method isParentMeetingHeld()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[462,45] cannot find symbol
+  symbol:   method getParentNotes()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[464,56] cannot find symbol
+  symbol:   method isPreviousCounseling()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[465,53] cannot find symbol
+  symbol:   method isExternalTherapy()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[466,48] cannot find symbol
+  symbol:   method isCurrentMedication()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[467,53] cannot find symbol
+  symbol:   method isHospitalizationHistory()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[468,41] cannot find symbol
+  symbol:   method isHasIepOr504()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[469,41] cannot find symbol
+  symbol:   method isHasBehaviorPlan()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[470,50] cannot find symbol
+  symbol:   method getPreviousServicesDetails()
+  location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/SuspensionManagementController.java:[278,31] cannot find symbol
+  symbol:   method getTitle()
+  location: variable t of type com.heronix.model.domain.Teacher
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/SuspensionManagementController.java:[279,27] cannot find symbol
+  symbol:   method getTitle()
+  location: variable t of type com.heronix.model.domain.Teacher
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/SuspensionManagementController.java:[280,27] cannot find symbol
+  symbol:   method getTitle()
+  location: variable t of type com.heronix.model.domain.Teacher
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/SuspensionManagementController.java:[281,27] cannot find symbol
+  symbol:   method getTitle()
+  location: variable t of type com.heronix.model.domain.Teacher
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/SuspensionManagementController.java:[282,27] cannot find symbol
+  symbol:   method getTitle()
+  location: variable t of type com.heronix.model.domain.Teacher
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/SuspensionManagementController.java:[318,52] cannot find symbol
+  symbol:   method getCampusName()
+  location: class com.heronix.model.domain.Campus
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedAssessmentIdentificationController.java:[235,64] incompatible types: java.util.List<java.lang.String> cannot be converted to java.lang.String
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedAssessmentIdentificationController.java:[343,40] cannot find symbol
+  symbol:   method createAssessment(com.heronix.model.domain.GiftedAssessment)
+  location: variable giftedManagementService of type com.heronix.service.GiftedManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedAssessmentIdentificationController.java:[347,40] cannot find symbol
+  symbol:   method updateAssessment(com.heronix.model.domain.GiftedAssessment)
+  location: variable giftedManagementService of type com.heronix.service.GiftedManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/service/AttendanceService.java:[37,31] cannot find symbol
+  symbol:   method getDate()
+  location: variable a of type com.heronix.model.domain.AttendanceRecord
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/service/AttendanceService.java:[38,27] cannot find symbol
+  symbol:   method getDate()
+  location: variable a of type com.heronix.model.domain.AttendanceRecord
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/service/AttendanceService.java:[39,27] cannot find symbol
+  symbol:   method getDate()
+  location: variable a of type com.heronix.model.domain.AttendanceRecord
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[146,73] incompatible types: com.heronix.model.domain.BehaviorIncident.BehaviorType cannot be converted to java.lang.String
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[219,65] cannot find symbol
+  symbol:   method getDashboardStatistics(java.time.LocalDate,java.time.LocalDate)
+  location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[248,72] cannot find symbol
+  symbol:   method getIncidentsByBehaviorType(java.time.LocalDate,java.time.LocalDate)
+  location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[262,72] cannot find symbol
+  symbol:   method getIncidentsBySeverity(java.time.LocalDate,java.time.LocalDate)
+  location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[276,67] cannot find symbol
+  symbol:   method getIncidentTrends(java.time.LocalDate,java.time.LocalDate)
+  location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[295,71] cannot find symbol
+  symbol:   method getAllIncidents()
+  location: variable behaviorIncidentService of type com.heronix.service.BehaviorIncidentService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[305,70] cannot find symbol
+  symbol:   method getTopBehaviorTypes(java.time.LocalDate,java.time.LocalDate,int)
+  location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[319,68] cannot find symbol
+  symbol:   method getAtRiskStudents(int)
+  location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[333,72] cannot find symbol
+  symbol:   method getPendingActions()
+  location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[448,47] cannot find symbol
+  symbol:   method toLowerCase()
+  location: class com.heronix.model.domain.BehaviorIncident.BehaviorType
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[235,66] cannot find symbol
+  symbol:   method getDisplayName()
+  location: class com.heronix.model.domain.BehaviorIncident.BehaviorCategory
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[245,74] cannot find symbol
+  symbol:   method getDisplayName()
+  location: class com.heronix.model.domain.BehaviorIncident.IncidentLocation
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[426,72] cannot find symbol
+  symbol:   method getDisplayName()
+  location: variable mostCommon of type com.heronix.model.domain.BehaviorIncident.BehaviorCategory
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[490,60] cannot find symbol
+  symbol:   method getDisplayName()
+  location: variable mostCommon of type com.heronix.model.domain.BehaviorIncident.BehaviorCategory
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[533,56] cannot find symbol
+  symbol:   method getDisplayName()
+  location: variable category of type com.heronix.model.domain.BehaviorIncident.BehaviorCategory
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[593,55] cannot find symbol
+  symbol:   method getDisplayName()
+  location: class com.heronix.model.domain.BehaviorIncident.BehaviorCategory
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[604,71] cannot find symbol
+  symbol:   method getDisplayName()
+  location: class com.heronix.model.domain.BehaviorIncident.BehaviorCategory
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedStudentProfileController.java:[312,48] cannot find symbol
+  symbol:   method findAllStudents()
+  location: variable studentService of type com.heronix.service.StudentService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedStudentProfileController.java:[324,64] incompatible types: java.util.List<java.lang.String> cannot be converted to java.lang.String
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedStudentProfileController.java:[356,64] cannot find symbol
+  symbol:   method findByStudent(com.heronix.model.domain.Student)
+  location: variable giftedManagementService of type com.heronix.service.GiftedManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedStudentProfileController.java:[382,40] cannot find symbol
+  symbol:   method createGiftedStudent(com.heronix.model.domain.GiftedStudent)
+  location: variable giftedManagementService of type com.heronix.service.GiftedManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedStudentProfileController.java:[386,40] cannot find symbol
+  symbol:   method updateGiftedStudent(com.heronix.model.domain.GiftedStudent)
+  location: variable giftedManagementService of type com.heronix.service.GiftedManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[318,55] cannot find symbol
+  symbol:   method getReferralsByDateRange(java.time.LocalDate,java.time.LocalDate)
+  location: variable counselingManagementService of type com.heronix.service.CounselingManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[344,48] cannot find symbol
+  symbol:   method getReferralsByDateRange(java.time.LocalDate,java.time.LocalDate)
+  location: variable counselingManagementService of type com.heronix.service.CounselingManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[375,75] cannot find symbol
+  symbol:   method getOverdueReferrals()
+  location: variable counselingManagementService of type com.heronix.service.CounselingManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[379,58] cannot find symbol
+  symbol:   method getAllSessions()
+  location: variable counselingSessionService of type com.heronix.service.CounselingSessionService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[384,62] cannot find symbol
+  symbol:   method getSessionsByDateRange(java.time.LocalDate,java.time.LocalDate)
+  location: variable counselingSessionService of type com.heronix.service.CounselingSessionService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[472,84] cannot find symbol
+  symbol:   method getOverdueReferrals()
+  location: variable counselingManagementService of type com.heronix.service.CounselingManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[506,88] cannot find symbol
+  symbol:   variable CRISIS_INTERVENTION
+  location: class com.heronix.model.domain.CounselingReferral.ReferralType
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[548,35] cannot find symbol
+  symbol:   method getParentAware()
+  location: variable r of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[548,65] cannot find symbol
+  symbol:   method getParentAware()
+  location: variable r of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[549,35] cannot find symbol
+  symbol:   method getParentConsent()
+  location: variable r of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[549,68] cannot find symbol
+  symbol:   method getParentConsent()
+  location: variable r of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[554,35] cannot find symbol
+  symbol:   method getSafetyPlanRequired()
+  location: variable r of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[554,72] cannot find symbol
+  symbol:   method getSafetyPlanRequired()
+  location: variable r of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/MedicationAdministrationController.java:[238,52] cannot find symbol
+  symbol:   method findAll()
+  location: variable studentService of type com.heronix.service.StudentService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/MedicationAdministrationController.java:[260,106] incompatible types: java.lang.Long cannot be converted to com.heronix.model.domain.Student
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/MedicationAdministrationController.java:[313,63] cannot find symbol
+  symbol:   method recordAdministration(com.heronix.model.domain.MedicationAdministration)
+  location: variable medicationService of type com.heronix.service.MedicationService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/NurseVisitLogController.java:[249,52] cannot find symbol
+  symbol:   method findAll()
+  location: variable studentService of type com.heronix.service.StudentService
+[INFO] 84 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  45.675 s
+[INFO] Finished at: 2025-12-27T13:23:04-05:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project heronix-scheduler: Compilation failure: Compilation failure: 
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/service/ELLManagementService.java:[342,36] cannot find symbol
+[ERROR]   symbol:   method findByEllStudent(com.heronix.model.domain.ELLStudent)
+[ERROR]   location: variable assessmentRepository of type com.heronix.repository.ELLAssessmentRepository
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[383,17] cannot find symbol
+[ERROR]   symbol:   method setBackgroundInformation(java.lang.String)
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[391,17] cannot find symbol
+[ERROR]   symbol:   method setMandatedReporting(boolean)
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[392,17] cannot find symbol
+[ERROR]   symbol:   method setRiskDetails(java.lang.String)
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[408,17] cannot find symbol
+[ERROR]   symbol:   method setParentNotes(java.lang.String)
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[411,17] cannot find symbol
+[ERROR]   symbol:   method setPreviousCounseling(boolean)
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[412,17] cannot find symbol
+[ERROR]   symbol:   method setExternalTherapy(boolean)
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[413,17] cannot find symbol
+[ERROR]   symbol:   method setCurrentMedication(boolean)
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[414,17] cannot find symbol
+[ERROR]   symbol:   method setHospitalizationHistory(boolean)
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[415,17] cannot find symbol
+[ERROR]   symbol:   method setHasIepOr504(boolean)
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[416,17] cannot find symbol
+[ERROR]   symbol:   method setHasBehaviorPlan(boolean)
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[417,17] cannot find symbol
+[ERROR]   symbol:   method setPreviousServicesDetails(java.lang.String)
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[435,49] cannot find symbol
+[ERROR]   symbol:   method getReferringStaff()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[446,48] cannot find symbol
+[ERROR]   symbol:   method getSecondaryConcerns()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[448,43] cannot find symbol
+[ERROR]   symbol:   method getStudentStrengths()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[450,49] cannot find symbol
+[ERROR]   symbol:   method isSuicideRiskIndicated()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[451,50] cannot find symbol
+[ERROR]   symbol:   method isHarmToOthersIndicated()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[452,53] cannot find symbol
+[ERROR]   symbol:   method isImmediateSafetyConcerns()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[453,56] cannot find symbol
+[ERROR]   symbol:   method isCrisisInterventionNeeded()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[454,48] cannot find symbol
+[ERROR]   symbol:   method isSafetyPlanCreated()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[455,55] cannot find symbol
+[ERROR]   symbol:   method isMandatedReporting()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[456,45] cannot find symbol
+[ERROR]   symbol:   method getRiskDetails()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[458,49] cannot find symbol
+[ERROR]   symbol:   method isParentContacted()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[460,51] cannot find symbol
+[ERROR]   symbol:   method isParentConsentObtained()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[461,51] cannot find symbol
+[ERROR]   symbol:   method isParentMeetingHeld()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[462,45] cannot find symbol
+[ERROR]   symbol:   method getParentNotes()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[464,56] cannot find symbol
+[ERROR]   symbol:   method isPreviousCounseling()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[465,53] cannot find symbol
+[ERROR]   symbol:   method isExternalTherapy()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[466,48] cannot find symbol
+[ERROR]   symbol:   method isCurrentMedication()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[467,53] cannot find symbol
+[ERROR]   symbol:   method isHospitalizationHistory()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[468,41] cannot find symbol
+[ERROR]   symbol:   method isHasIepOr504()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[469,41] cannot find symbol
+[ERROR]   symbol:   method isHasBehaviorPlan()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingReferralFormController.java:[470,50] cannot find symbol
+[ERROR]   symbol:   method getPreviousServicesDetails()
+[ERROR]   location: variable referral of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/SuspensionManagementController.java:[278,31] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable t of type com.heronix.model.domain.Teacher
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/SuspensionManagementController.java:[279,27] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable t of type com.heronix.model.domain.Teacher
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/SuspensionManagementController.java:[280,27] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable t of type com.heronix.model.domain.Teacher
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/SuspensionManagementController.java:[281,27] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable t of type com.heronix.model.domain.Teacher
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/SuspensionManagementController.java:[282,27] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable t of type com.heronix.model.domain.Teacher
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/SuspensionManagementController.java:[318,52] cannot find symbol
+[ERROR]   symbol:   method getCampusName()
+[ERROR]   location: class com.heronix.model.domain.Campus
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedAssessmentIdentificationController.java:[235,64] incompatible types: java.util.List<java.lang.String> cannot be converted to java.lang.String
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedAssessmentIdentificationController.java:[343,40] cannot find symbol
+[ERROR]   symbol:   method createAssessment(com.heronix.model.domain.GiftedAssessment)
+[ERROR]   location: variable giftedManagementService of type com.heronix.service.GiftedManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedAssessmentIdentificationController.java:[347,40] cannot find symbol
+[ERROR]   symbol:   method updateAssessment(com.heronix.model.domain.GiftedAssessment)
+[ERROR]   location: variable giftedManagementService of type com.heronix.service.GiftedManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/service/AttendanceService.java:[37,31] cannot find symbol
+[ERROR]   symbol:   method getDate()
+[ERROR]   location: variable a of type com.heronix.model.domain.AttendanceRecord
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/service/AttendanceService.java:[38,27] cannot find symbol
+[ERROR]   symbol:   method getDate()
+[ERROR]   location: variable a of type com.heronix.model.domain.AttendanceRecord
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/service/AttendanceService.java:[39,27] cannot find symbol
+[ERROR]   symbol:   method getDate()
+[ERROR]   location: variable a of type com.heronix.model.domain.AttendanceRecord
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[146,73] incompatible types: com.heronix.model.domain.BehaviorIncident.BehaviorType cannot be converted to java.lang.String
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[219,65] cannot find symbol
+[ERROR]   symbol:   method getDashboardStatistics(java.time.LocalDate,java.time.LocalDate)
+[ERROR]   location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[248,72] cannot find symbol
+[ERROR]   symbol:   method getIncidentsByBehaviorType(java.time.LocalDate,java.time.LocalDate)
+[ERROR]   location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[262,72] cannot find symbol
+[ERROR]   symbol:   method getIncidentsBySeverity(java.time.LocalDate,java.time.LocalDate)
+[ERROR]   location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[276,67] cannot find symbol
+[ERROR]   symbol:   method getIncidentTrends(java.time.LocalDate,java.time.LocalDate)
+[ERROR]   location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[295,71] cannot find symbol
+[ERROR]   symbol:   method getAllIncidents()
+[ERROR]   location: variable behaviorIncidentService of type com.heronix.service.BehaviorIncidentService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[305,70] cannot find symbol
+[ERROR]   symbol:   method getTopBehaviorTypes(java.time.LocalDate,java.time.LocalDate,int)
+[ERROR]   location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[319,68] cannot find symbol
+[ERROR]   symbol:   method getAtRiskStudents(int)
+[ERROR]   location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[333,72] cannot find symbol
+[ERROR]   symbol:   method getPendingActions()
+[ERROR]   location: variable behaviorDashboardService of type com.heronix.service.BehaviorDashboardService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/BehaviorDashboardController.java:[448,47] cannot find symbol
+[ERROR]   symbol:   method toLowerCase()
+[ERROR]   location: class com.heronix.model.domain.BehaviorIncident.BehaviorType
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[235,66] cannot find symbol
+[ERROR]   symbol:   method getDisplayName()
+[ERROR]   location: class com.heronix.model.domain.BehaviorIncident.BehaviorCategory
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[245,74] cannot find symbol
+[ERROR]   symbol:   method getDisplayName()
+[ERROR]   location: class com.heronix.model.domain.BehaviorIncident.IncidentLocation
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[426,72] cannot find symbol
+[ERROR]   symbol:   method getDisplayName()
+[ERROR]   location: variable mostCommon of type com.heronix.model.domain.BehaviorIncident.BehaviorCategory
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[490,60] cannot find symbol
+[ERROR]   symbol:   method getDisplayName()
+[ERROR]   location: variable mostCommon of type com.heronix.model.domain.BehaviorIncident.BehaviorCategory
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[533,56] cannot find symbol
+[ERROR]   symbol:   method getDisplayName()
+[ERROR]   location: variable category of type com.heronix.model.domain.BehaviorIncident.BehaviorCategory
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[593,55] cannot find symbol
+[ERROR]   symbol:   method getDisplayName()
+[ERROR]   location: class com.heronix.model.domain.BehaviorIncident.BehaviorCategory
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/DisciplineReportsController.java:[604,71] cannot find symbol
+[ERROR]   symbol:   method getDisplayName()
+[ERROR]   location: class com.heronix.model.domain.BehaviorIncident.BehaviorCategory
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedStudentProfileController.java:[312,48] cannot find symbol
+[ERROR]   symbol:   method findAllStudents()
+[ERROR]   location: variable studentService of type com.heronix.service.StudentService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedStudentProfileController.java:[324,64] incompatible types: java.util.List<java.lang.String> cannot be converted to java.lang.String
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedStudentProfileController.java:[356,64] cannot find symbol
+[ERROR]   symbol:   method findByStudent(com.heronix.model.domain.Student)
+[ERROR]   location: variable giftedManagementService of type com.heronix.service.GiftedManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedStudentProfileController.java:[382,40] cannot find symbol
+[ERROR]   symbol:   method createGiftedStudent(com.heronix.model.domain.GiftedStudent)
+[ERROR]   location: variable giftedManagementService of type com.heronix.service.GiftedManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/GiftedStudentProfileController.java:[386,40] cannot find symbol
+[ERROR]   symbol:   method updateGiftedStudent(com.heronix.model.domain.GiftedStudent)
+[ERROR]   location: variable giftedManagementService of type com.heronix.service.GiftedManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[318,55] cannot find symbol
+[ERROR]   symbol:   method getReferralsByDateRange(java.time.LocalDate,java.time.LocalDate)
+[ERROR]   location: variable counselingManagementService of type com.heronix.service.CounselingManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[344,48] cannot find symbol
+[ERROR]   symbol:   method getReferralsByDateRange(java.time.LocalDate,java.time.LocalDate)
+[ERROR]   location: variable counselingManagementService of type com.heronix.service.CounselingManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[375,75] cannot find symbol
+[ERROR]   symbol:   method getOverdueReferrals()
+[ERROR]   location: variable counselingManagementService of type com.heronix.service.CounselingManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[379,58] cannot find symbol
+[ERROR]   symbol:   method getAllSessions()
+[ERROR]   location: variable counselingSessionService of type com.heronix.service.CounselingSessionService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[384,62] cannot find symbol
+[ERROR]   symbol:   method getSessionsByDateRange(java.time.LocalDate,java.time.LocalDate)
+[ERROR]   location: variable counselingSessionService of type com.heronix.service.CounselingSessionService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[472,84] cannot find symbol
+[ERROR]   symbol:   method getOverdueReferrals()
+[ERROR]   location: variable counselingManagementService of type com.heronix.service.CounselingManagementService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[506,88] cannot find symbol
+[ERROR]   symbol:   variable CRISIS_INTERVENTION
+[ERROR]   location: class com.heronix.model.domain.CounselingReferral.ReferralType
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[548,35] cannot find symbol
+[ERROR]   symbol:   method getParentAware()
+[ERROR]   location: variable r of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[548,65] cannot find symbol
+[ERROR]   symbol:   method getParentAware()
+[ERROR]   location: variable r of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[549,35] cannot find symbol
+[ERROR]   symbol:   method getParentConsent()
+[ERROR]   location: variable r of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[549,68] cannot find symbol
+[ERROR]   symbol:   method getParentConsent()
+[ERROR]   location: variable r of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[554,35] cannot find symbol
+[ERROR]   symbol:   method getSafetyPlanRequired()
+[ERROR]   location: variable r of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/CounselingDashboardController.java:[554,72] cannot find symbol
+[ERROR]   symbol:   method getSafetyPlanRequired()
+[ERROR]   location: variable r of type com.heronix.model.domain.CounselingReferral
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/MedicationAdministrationController.java:[238,52] cannot find symbol
+[ERROR]   symbol:   method findAll()
+[ERROR]   location: variable studentService of type com.heronix.service.StudentService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/MedicationAdministrationController.java:[260,106] incompatible types: java.lang.Long cannot be converted to com.heronix.model.domain.Student
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/MedicationAdministrationController.java:[313,63] cannot find symbol
+[ERROR]   symbol:   method recordAdministration(com.heronix.model.domain.MedicationAdministration)
+[ERROR]   location: variable medicationService of type com.heronix.service.MedicationService
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/NurseVisitLogController.java:[249,52] cannot find symbol
+[ERROR]   symbol:   method findAll()
+[ERROR]   location: variable studentService of type com.heronix.service.StudentService
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

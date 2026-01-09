@@ -1,0 +1,827 @@
+package com.heronix.controller.api;
+
+import com.heronix.model.domain.EmergencyContact;
+import com.heronix.service.EmergencyContactService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+/**
+ * REST API Controller for Emergency Contact Management
+ *
+ * Provides endpoints for managing student emergency contacts:
+ * - CRUD operations for emergency contacts
+ * - Priority management (reordering contacts)
+ * - Authorization management (pickup, medical, financial)
+ * - Contact verification and validation
+ * - Bulk operations and sibling sync
+ * - Search and filtering capabilities
+ *
+ * Features:
+ * - Priority ordering (1 = highest priority)
+ * - Multiple authorization types (pickup, medical, financial)
+ * - Contact verification workflow
+ * - Sibling contact synchronization
+ * - Validation and completeness checks
+ *
+ * @author Heronix SIS Team
+ * @version 1.0.0
+ * @since Phase 30 - December 29, 2025
+ */
+@RestController
+@RequestMapping("/api/emergency-contacts")
+@RequiredArgsConstructor
+public class EmergencyContactApiController {
+
+    private final EmergencyContactService emergencyContactService;
+
+    // ==================== CRUD Operations ====================
+
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> createContact(@RequestBody EmergencyContact contact) {
+        try {
+            EmergencyContact created = emergencyContactService.createContact(contact);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("contact", created);
+            response.put("message", "Emergency contact created successfully");
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Validation error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to create contact: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> getContactById(@PathVariable Long id) {
+        try {
+            Optional<EmergencyContact> contact = emergencyContactService.getContactById(id);
+
+            if (contact.isEmpty()) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("error", "Contact not found: " + id);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("contact", contact.get());
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to get contact: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/students/{studentId}")
+    public ResponseEntity<Map<String, Object>> getContactsForStudent(@PathVariable Long studentId) {
+        try {
+            List<EmergencyContact> contacts = emergencyContactService.getContactsByStudent(studentId);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("studentId", studentId);
+            response.put("contacts", contacts);
+            response.put("totalContacts", contacts.size());
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to get student contacts: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/students/{studentId}/active")
+    public ResponseEntity<Map<String, Object>> getActiveContactsForStudent(@PathVariable Long studentId) {
+        try {
+            List<EmergencyContact> contacts = emergencyContactService.getActiveContactsByStudent(studentId);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("studentId", studentId);
+            response.put("activeContacts", contacts);
+            response.put("count", contacts.size());
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to get active contacts: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> updateContact(
+            @PathVariable Long id,
+            @RequestBody EmergencyContact contact) {
+
+        try {
+            EmergencyContact updated = emergencyContactService.updateContact(id, contact);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("contact", updated);
+            response.put("message", "Contact updated successfully");
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found or validation error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to update contact: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> deleteContact(@PathVariable Long id) {
+        try {
+            emergencyContactService.deleteContact(id);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Contact deleted successfully");
+            response.put("note", "Remaining contacts have been reordered");
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (IllegalStateException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Cannot delete: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to delete contact: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // ==================== Activation/Deactivation ====================
+
+    @PostMapping("/{id}/deactivate")
+    public ResponseEntity<Map<String, Object>> deactivateContact(@PathVariable Long id) {
+        try {
+            EmergencyContact deactivated = emergencyContactService.deactivateContact(id);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("contact", deactivated);
+            response.put("message", "Contact deactivated (soft delete)");
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (IllegalStateException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Cannot deactivate: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to deactivate contact: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PostMapping("/{id}/reactivate")
+    public ResponseEntity<Map<String, Object>> reactivateContact(@PathVariable Long id) {
+        try {
+            EmergencyContact reactivated = emergencyContactService.reactivateContact(id);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("contact", reactivated);
+            response.put("message", "Contact reactivated successfully");
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to reactivate contact: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // ==================== Priority Management ====================
+
+    @PostMapping("/{id}/priority")
+    public ResponseEntity<Map<String, Object>> setPriority(
+            @PathVariable Long id,
+            @RequestBody Map<String, Integer> requestBody) {
+
+        try {
+            Integer newPriority = requestBody.get("priority");
+            if (newPriority == null) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("error", "Priority is required");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+
+            EmergencyContact updated = emergencyContactService.setPriority(id, newPriority);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("contact", updated);
+            response.put("message", "Priority updated to " + newPriority);
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found or validation error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to set priority: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PostMapping("/{id}/priority/up")
+    public ResponseEntity<Map<String, Object>> movePriorityUp(@PathVariable Long id) {
+        try {
+            EmergencyContact updated = emergencyContactService.movePriorityUp(id);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("contact", updated);
+            response.put("message", "Moved up to priority " + updated.getPriorityOrder());
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (IllegalStateException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to move priority: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PostMapping("/{id}/priority/down")
+    public ResponseEntity<Map<String, Object>> movePriorityDown(@PathVariable Long id) {
+        try {
+            EmergencyContact updated = emergencyContactService.movePriorityDown(id);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("contact", updated);
+            response.put("message", "Moved down to priority " + updated.getPriorityOrder());
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (IllegalStateException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to move priority: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PostMapping("/{id}/make-primary")
+    public ResponseEntity<Map<String, Object>> makePrimary(@PathVariable Long id) {
+        try {
+            EmergencyContact updated = emergencyContactService.makePrimary(id);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("contact", updated);
+            response.put("message", "Contact is now primary (priority 1)");
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to make primary: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // ==================== Authorization Management ====================
+
+    @PostMapping("/{id}/authorize-pickup")
+    public ResponseEntity<Map<String, Object>> setPickupAuthorization(
+            @PathVariable Long id,
+            @RequestBody Map<String, Boolean> requestBody) {
+
+        try {
+            Boolean authorized = requestBody.get("authorized");
+            if (authorized == null) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("error", "authorized field is required");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+
+            EmergencyContact updated = emergencyContactService.authorizePickup(id, authorized);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("contact", updated);
+            response.put("message", authorized ? "Pickup authorized" : "Pickup authorization removed");
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to set authorization: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PostMapping("/{id}/authorize-medical")
+    public ResponseEntity<Map<String, Object>> setMedicalAuthorization(
+            @PathVariable Long id,
+            @RequestBody Map<String, Boolean> requestBody) {
+
+        try {
+            Boolean authorized = requestBody.get("authorized");
+            if (authorized == null) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("error", "authorized field is required");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+
+            EmergencyContact updated = emergencyContactService.setMedicalAuthorization(id, authorized);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("contact", updated);
+            response.put("message", authorized ? "Medical authorization granted" : "Medical authorization removed");
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to set authorization: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PostMapping("/{id}/authorize-financial")
+    public ResponseEntity<Map<String, Object>> setFinancialAuthorization(
+            @PathVariable Long id,
+            @RequestBody Map<String, Boolean> requestBody) {
+
+        try {
+            Boolean authorized = requestBody.get("authorized");
+            if (authorized == null) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("error", "authorized field is required");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+
+            EmergencyContact updated = emergencyContactService.setFinancialAuthorization(id, authorized);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("contact", updated);
+            response.put("message", authorized ? "Financial authorization granted" : "Financial authorization removed");
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to set authorization: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/students/{studentId}/authorized-pickup")
+    public ResponseEntity<Map<String, Object>> getAuthorizedPickupContacts(@PathVariable Long studentId) {
+        try {
+            List<EmergencyContact> contacts = emergencyContactService.getAuthorizedPickupContacts(studentId);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("studentId", studentId);
+            response.put("authorizedContacts", contacts);
+            response.put("count", contacts.size());
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to get authorized contacts: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // ==================== Verification & Validation ====================
+
+    @PostMapping("/{id}/verify")
+    public ResponseEntity<Map<String, Object>> verifyContact(@PathVariable Long id) {
+        try {
+            EmergencyContact verified = emergencyContactService.verifyContact(id);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("contact", verified);
+            response.put("message", "Contact verified");
+            response.put("verifiedDate", verified.getVerificationDate());
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to verify contact: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/students/{studentId}/validation")
+    public ResponseEntity<Map<String, Object>> validateStudentContacts(
+            @PathVariable Long studentId,
+            @RequestParam(defaultValue = "2") int minimumRequired) {
+
+        try {
+            List<EmergencyContact> allContacts = emergencyContactService.getActiveContactsByStudent(studentId);
+            List<EmergencyContact> invalidContacts = emergencyContactService.getInvalidContacts(studentId);
+            boolean hasMinimum = emergencyContactService.hasMinimumContacts(studentId, minimumRequired);
+            String missingRequirements = emergencyContactService.getMissingContactRequirements(studentId, minimumRequired);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("studentId", studentId);
+            response.put("totalContacts", allContacts.size());
+            response.put("invalidContacts", invalidContacts.size());
+            response.put("hasMinimumContacts", hasMinimum);
+            response.put("minimumRequired", minimumRequired);
+            response.put("isValid", hasMinimum && invalidContacts.isEmpty());
+
+            if (missingRequirements != null) {
+                response.put("message", missingRequirements);
+            }
+
+            if (!invalidContacts.isEmpty()) {
+                response.put("invalidContactDetails", invalidContacts);
+            }
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to validate contacts: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // ==================== Bulk Operations ====================
+
+    @PostMapping("/students/{studentId}/bulk")
+    public ResponseEntity<Map<String, Object>> addMultipleContacts(
+            @PathVariable Long studentId,
+            @RequestBody List<EmergencyContact> contacts) {
+
+        try {
+            List<EmergencyContact> created = emergencyContactService.addMultipleContacts(studentId, contacts);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("studentId", studentId);
+            response.put("contacts", created);
+            response.put("count", created.size());
+            response.put("message", created.size() + " contacts added successfully");
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Validation error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to add contacts: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PostMapping("/{contactId}/copy-to-siblings")
+    public ResponseEntity<Map<String, Object>> copyContactToSiblings(@PathVariable Long contactId) {
+        try {
+            List<EmergencyContact> copiedContacts = emergencyContactService.copyContactToSiblings(contactId);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("sourceContactId", contactId);
+            response.put("copiedContacts", copiedContacts);
+            response.put("siblingsCount", copiedContacts.size());
+            response.put("message", "Contact copied to " + copiedContacts.size() + " sibling(s)");
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to copy to siblings: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PostMapping("/students/{sourceStudentId}/copy-to-student/{targetStudentId}")
+    public ResponseEntity<Map<String, Object>> copyContactsToSibling(
+            @PathVariable Long sourceStudentId,
+            @PathVariable Long targetStudentId) {
+
+        try {
+            List<EmergencyContact> copiedContacts = emergencyContactService.copyContactsToSibling(sourceStudentId, targetStudentId);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("sourceStudentId", sourceStudentId);
+            response.put("targetStudentId", targetStudentId);
+            response.put("copiedContacts", copiedContacts);
+            response.put("count", copiedContacts.size());
+            response.put("message", copiedContacts.size() + " contact(s) copied successfully");
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Not found: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to copy contacts: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // ==================== Dashboard & Queries ====================
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<Map<String, Object>> getDashboard() {
+        try {
+            List<EmergencyContact> allContacts = emergencyContactService.getAllContacts();
+            List<EmergencyContact> unverified = emergencyContactService.getUnverifiedContacts();
+            List<EmergencyContact> incomplete = emergencyContactService.getIncompleteContacts();
+            List<EmergencyContact> needingReverification = emergencyContactService.getContactsNeedingReverification(365);
+
+            Map<String, Object> dashboard = new HashMap<>();
+            dashboard.put("totalContacts", allContacts.size());
+            dashboard.put("unverifiedCount", unverified.size());
+            dashboard.put("incompleteCount", incomplete.size());
+            dashboard.put("needingReverificationCount", needingReverification.size());
+
+            dashboard.put("issues", Map.of(
+                "unverified", unverified.size() + " contacts need verification",
+                "incomplete", incomplete.size() + " contacts missing critical information",
+                "reverification", needingReverification.size() + " contacts not verified in over 1 year"
+            ));
+
+            return ResponseEntity.ok(dashboard);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to get dashboard: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Object>> searchContacts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String email) {
+
+        try {
+            List<EmergencyContact> results;
+
+            if (name != null) {
+                results = emergencyContactService.searchContactsByName(name);
+            } else if (phone != null) {
+                results = emergencyContactService.searchContactsByPhone(phone);
+            } else if (email != null) {
+                results = emergencyContactService.searchContactsByEmail(email);
+            } else {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("error", "At least one search parameter required: name, phone, or email");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("results", results);
+            response.put("count", results.size());
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Search failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // ==================== Reference Data ====================
+
+    @GetMapping("/reference/authorization-types")
+    public ResponseEntity<Map<String, Object>> getAuthorizationTypes() {
+        Map<String, Object> types = new HashMap<>();
+        types.put("authorizationTypes", List.of(
+            Map.of(
+                "type", "PICKUP",
+                "field", "authorizedToPickUp",
+                "description", "Authorized to pick up student from school",
+                "endpoint", "POST /{id}/authorize-pickup"
+            ),
+            Map.of(
+                "type", "MEDICAL",
+                "field", "authorizedForMedical",
+                "description", "Authorized to make medical decisions for student",
+                "endpoint", "POST /{id}/authorize-medical"
+            ),
+            Map.of(
+                "type", "FINANCIAL",
+                "field", "authorizedForFinancial",
+                "description", "Authorized for financial matters and fees",
+                "endpoint", "POST /{id}/authorize-financial"
+            )
+        ));
+
+        return ResponseEntity.ok(types);
+    }
+
+    // ==================== Metadata ====================
+
+    @GetMapping("/metadata")
+    public ResponseEntity<Map<String, Object>> getMetadata() {
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("apiVersion", "1.0.0");
+        metadata.put("phase", "Phase 30");
+        metadata.put("category", "Student Family Management");
+        metadata.put("description", "Comprehensive emergency contact management");
+
+        metadata.put("capabilities", List.of(
+            "CRUD operations for emergency contacts",
+            "Priority management with reordering",
+            "Multi-level authorization (pickup, medical, financial)",
+            "Contact verification workflow",
+            "Sibling synchronization",
+            "Validation and completeness checks",
+            "Bulk operations",
+            "Search and filtering"
+        ));
+
+        metadata.put("endpoints", Map.of(
+            "crud", List.of("POST /", "GET /{id}", "PUT /{id}", "DELETE /{id}"),
+            "priority", List.of("POST /{id}/priority", "POST /{id}/priority/up", "POST /{id}/priority/down"),
+            "authorization", List.of("POST /{id}/authorize-pickup", "POST /{id}/authorize-medical", "POST /{id}/authorize-financial"),
+            "verification", List.of("POST /{id}/verify", "GET /students/{id}/validation"),
+            "bulk", List.of("POST /students/{id}/bulk", "POST /{id}/copy-to-siblings")
+        ));
+
+        return ResponseEntity.ok(metadata);
+    }
+
+    @GetMapping("/help")
+    public ResponseEntity<Map<String, Object>> getHelp() {
+        Map<String, Object> help = new HashMap<>();
+        help.put("description", "Emergency Contact Management API");
+
+        help.put("commonWorkflows", Map.of(
+            "addContact", List.of(
+                "1. POST /api/emergency-contacts",
+                "2. Set authorization: POST /api/emergency-contacts/{id}/authorize-pickup",
+                "3. Verify contact: POST /api/emergency-contacts/{id}/verify"
+            ),
+            "reorderPriority", List.of(
+                "1. GET /api/emergency-contacts/students/{id}/active",
+                "2. POST /api/emergency-contacts/{id}/priority/up or /down",
+                "3. Or set specific priority: POST /api/emergency-contacts/{id}/priority"
+            ),
+            "siblingSync", List.of(
+                "1. Add contact to one student",
+                "2. POST /api/emergency-contacts/{contactId}/copy-to-siblings",
+                "3. Contact automatically copied to all siblings"
+            ),
+            "validation", List.of(
+                "1. GET /api/emergency-contacts/students/{id}/validation",
+                "2. Check for incomplete or missing contacts",
+                "3. Add contacts if needed to meet minimum requirements"
+            )
+        ));
+
+        help.put("endpoints", Map.of(
+            "create", "POST /api/emergency-contacts",
+            "getById", "GET /api/emergency-contacts/{id}",
+            "getForStudent", "GET /api/emergency-contacts/students/{id}",
+            "update", "PUT /api/emergency-contacts/{id}",
+            "delete", "DELETE /api/emergency-contacts/{id}",
+            "setPriority", "POST /api/emergency-contacts/{id}/priority",
+            "authorizePickup", "POST /api/emergency-contacts/{id}/authorize-pickup",
+            "verify", "POST /api/emergency-contacts/{id}/verify",
+            "copyToSiblings", "POST /api/emergency-contacts/{id}/copy-to-siblings"
+        ));
+
+        help.put("examples", Map.of(
+            "createContact", "curl -X POST http://localhost:8080/api/emergency-contacts -H 'Content-Type: application/json' -d '{\"student\":{\"id\":1},\"firstName\":\"John\",\"lastName\":\"Doe\",\"relationship\":\"Father\",\"primaryPhone\":\"555-1234\",\"priorityOrder\":1}'",
+            "movePriorityUp", "curl -X POST http://localhost:8080/api/emergency-contacts/5/priority/up",
+            "authorizePickup", "curl -X POST http://localhost:8080/api/emergency-contacts/5/authorize-pickup -H 'Content-Type: application/json' -d '{\"authorized\":true}'",
+            "validateContacts", "curl http://localhost:8080/api/emergency-contacts/students/1/validation?minimumRequired=2"
+        ));
+
+        help.put("notes", Map.of(
+            "priorityOrdering", "Priority 1 = highest (first to contact), lower numbers = higher priority",
+            "minimumContacts", "System prevents deleting the only active contact for a student",
+            "verification", "Contacts should be reverified annually",
+            "siblingDetection", "Sibling detection based on last name (simplified approach)",
+            "softDelete", "Use deactivate instead of delete to preserve contact history"
+        ));
+
+        return ResponseEntity.ok(help);
+    }
+}

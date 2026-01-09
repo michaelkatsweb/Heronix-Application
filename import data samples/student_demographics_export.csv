@@ -1,0 +1,11 @@
+Student_Number,LastFirst,Grade_Level,Gender,DOB,School_ID,Enrollment_Status,Street,City,Zip
+10001,Smith John,9,M,2008-05-12,0101,Active,123 Maple St,Brooksville,34601
+10002,Johnson Emily,8,F,2009-11-23,0101,Active,234 Oak Ave,Brooksville,34601
+10003,Williams Michael,10,M,2007-02-17,0201,Active,345 Pine Rd,Spring Hill,34606
+10004,Jones Olivia,7,F,2010-07-30,0301,Active,456 Cedar Blvd,Weeki Wachee,34607
+10005,Brown David,9,M,2008-09-09,0101,Active,567 Elm St,Brooksville,34601
+10006,Davis Emma,8,F,2009-03-21,0201,Active,678 Birch Ln,Spring Hill,34606
+10007,Miller Daniel,10,M,2007-12-05,0301,Active,789 Ash Dr,Weeki Wachee,34607
+10008,Wilson Ava,7,F,2010-01-14,0101,Active,890 Willow Way,Brooksville,34601
+10009,Moore Joshua,9,M,2008-04-28,0201,Active,901 Poplar St,Spring Hill,34606
+10010,Taylor Sophia,8,F,2009-08-15,0301,Active,012 Spruce Ct,Weeki Wachee,34607

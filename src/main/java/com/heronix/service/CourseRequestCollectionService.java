@@ -1,0 +1,447 @@
+package com.heronix.service;
+
+import com.heronix.dto.CourseDTO;
+import com.heronix.dto.CourseEnrollmentRequestDTO;
+import com.heronix.model.domain.Course;
+import com.heronix.model.domain.CourseEnrollmentRequest;
+import com.heronix.model.domain.Student;
+import com.heronix.model.domain.GradingPeriod;
+import com.heronix.model.domain.AcademicYear;
+import com.heronix.model.enums.EnrollmentRequestStatus;
+import com.heronix.repository.CourseRepository;
+import com.heronix.repository.CourseEnrollmentRequestRepository;
+import com.heronix.repository.StudentRepository;
+import com.heronix.repository.AcademicYearRepository;
+import com.heronix.repository.GradingPeriodRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Course Request Collection Service
+ * Manages student course request submission and retrieval
+ *
+ * @author Heronix SIS Team
+ * @version 1.0.0
+ * @since December 25, 2025
+ */
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class CourseRequestCollectionService {
+
+    private final CourseEnrollmentRequestRepository enrollmentRequestRepository;
+    private final StudentRepository studentRepository;
+    private final CourseRepository courseRepository;
+    private final AcademicYearRepository academicYearRepository;
+    private final GradingPeriodRepository gradingPeriodRepository;
+    private final PrerequisiteValidationService prerequisiteValidationService;
+    private final com.heronix.repository.StudentGradeRepository studentGradeRepository;
+
+    // ========================================================================
+    // COURSE REQUEST SUBMISSION
+    // ========================================================================
+
+    /**
+     * Submit course requests for a student
+     *
+     * @param studentId Student ID
+     * @param requests List of course request DTOs
+     * @param academicYear Academic year (e.g., "2025-2026")
+     * @return List of created enrollment request DTOs
+     * @throws IllegalArgumentException if validation fails
+     */
+    @Transactional
+    public List<CourseEnrollmentRequestDTO> submitCourseRequests(
+            Long studentId,
+            List<CourseEnrollmentRequestDTO> requests,
+            String academicYear) {
+
+        log.info("Student {} submitting {} course requests for {}", studentId, requests.size(), academicYear);
+
+        // Find student
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found: " + studentId));
+
+        // Find academic year
+        AcademicYear year = academicYearRepository.findByYearName(academicYear)
+                .orElse(null);
+
+        // Clear existing pending requests for this student and academic year
+        List<CourseEnrollmentRequest> existing = enrollmentRequestRepository.findByStudentId(studentId);
+        long clearedCount = existing.stream()
+                .filter(req -> req.getRequestStatus() == EnrollmentRequestStatus.PENDING)
+                .peek(enrollmentRequestRepository::delete)
+                .count();
+        log.info("Cleared {} existing pending requests", clearedCount);
+
+        // Create new requests
+        List<CourseEnrollmentRequest> createdRequests = new ArrayList<>();
+        int preferenceRank = 1;
+
+        for (CourseEnrollmentRequestDTO dto : requests) {
+            Course course = courseRepository.findById(dto.getCourseId())
+                    .orElseThrow(() -> new IllegalArgumentException("Course not found: " + dto.getCourseId()));
+
+            // Validate prerequisites
+            var prereqResult = prerequisiteValidationService.validatePrerequisites(student, course);
+            if (!prereqResult.isCanEnroll()) {
+                log.warn("Student {} does not meet prerequisites for course {}", studentId, course.getCourseCode());
+                throw new IllegalArgumentException(
+                    String.format("Student does not meet prerequisites for course: %s", course.getCourseName()));
+            }
+
+            // Create enrollment request
+            CourseEnrollmentRequest request = new CourseEnrollmentRequest();
+            request.setStudent(student);
+            request.setCourse(course);
+            request.setPreferenceRank(preferenceRank++);
+            request.setPriorityScore(dto.getPriorityScore() != null ? dto.getPriorityScore() : calculatePriorityScore(student, course));
+            request.setRequestStatus(EnrollmentRequestStatus.PENDING);
+            request.setCreatedAt(LocalDateTime.now());
+            request.setAcademicYearId(year != null ? year.getId() : null);
+            request.setAutoGenerated(false);
+
+            if (dto.getNotes() != null) {
+                request.setNotes(dto.getNotes());
+            }
+
+            CourseEnrollmentRequest saved = enrollmentRequestRepository.save(request);
+            createdRequests.add(saved);
+        }
+
+        log.info("Created {} course requests for student {}", createdRequests.size(), studentId);
+
+        return createdRequests.stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Add a single course request
+     *
+     * @param studentId Student ID
+     * @param courseId Course ID
+     * @param academicYear Academic year
+     * @return Created enrollment request DTO
+     */
+    @Transactional
+    public CourseEnrollmentRequestDTO addCourseRequest(Long studentId, Long courseId, String academicYear) {
+        log.info("Adding course request for student {} - course {}", studentId, courseId);
+
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found: " + studentId));
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Course not found: " + courseId));
+
+        // Validate prerequisites
+        var prereqResult = prerequisiteValidationService.validatePrerequisites(student, course);
+        if (!prereqResult.isCanEnroll()) {
+            throw new IllegalArgumentException(
+                String.format("Student does not meet prerequisites for course: %s", course.getCourseName()));
+        }
+
+        // Check for duplicate request
+        AcademicYear year = academicYearRepository.findByYearName(academicYear).orElse(null);
+        List<CourseEnrollmentRequest> existing = enrollmentRequestRepository.findByStudentId(studentId).stream()
+                .filter(req -> req.getCourse().getId().equals(courseId))
+                .collect(Collectors.toList());
+
+        if (!existing.isEmpty() && existing.stream()
+                .anyMatch(req -> req.getRequestStatus() == EnrollmentRequestStatus.PENDING)) {
+            throw new IllegalArgumentException("Student already has a pending request for this course");
+        }
+
+        // Determine preference rank (next available)
+        List<CourseEnrollmentRequest> allRequests = enrollmentRequestRepository.findByStudentId(studentId);
+        int nextRank = allRequests.stream()
+                .mapToInt(req -> req.getPreferenceRank() != null ? req.getPreferenceRank() : 0)
+                .max()
+                .orElse(0) + 1;
+
+        // Create request
+        CourseEnrollmentRequest request = new CourseEnrollmentRequest();
+        request.setStudent(student);
+        request.setCourse(course);
+        request.setPreferenceRank(nextRank);
+        request.setPriorityScore(calculatePriorityScore(student, course));
+        request.setRequestStatus(EnrollmentRequestStatus.PENDING);
+        request.setCreatedAt(LocalDateTime.now());
+        request.setAcademicYearId(year != null ? year.getId() : null);
+        request.setAutoGenerated(false);
+
+        CourseEnrollmentRequest saved = enrollmentRequestRepository.save(request);
+        log.info("Created course request ID: {}", saved.getId());
+
+        return toDTO(saved);
+    }
+
+    /**
+     * Remove a course request
+     *
+     * @param requestId Request ID
+     * @param studentId Student ID (for authorization)
+     */
+    @Transactional
+    public void removeCourseRequest(Long requestId, Long studentId) {
+        log.info("Removing course request {} for student {}", requestId, studentId);
+
+        CourseEnrollmentRequest request = enrollmentRequestRepository.findById(requestId)
+                .orElseThrow(() -> new IllegalArgumentException("Course request not found: " + requestId));
+
+        // Verify student owns this request
+        if (!request.getStudent().getId().equals(studentId)) {
+            throw new IllegalArgumentException("Student does not own this request");
+        }
+
+        // Only allow removal of pending requests
+        if (request.getRequestStatus() != EnrollmentRequestStatus.PENDING) {
+            throw new IllegalStateException("Only pending requests can be removed");
+        }
+
+        enrollmentRequestRepository.delete(request);
+        log.info("Removed course request ID: {}", requestId);
+    }
+
+    // ========================================================================
+    // QUERY OPERATIONS
+    // ========================================================================
+
+    /**
+     * Get available courses for a student
+     * (Courses student is eligible for based on grade level, prerequisites, etc.)
+     *
+     * @param studentId Student ID
+     * @return List of available course DTOs
+     */
+    @Transactional(readOnly = true)
+    public List<CourseDTO> getAvailableCoursesForStudent(Long studentId) {
+        log.debug("Getting available courses for student {}", studentId);
+
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found: " + studentId));
+
+        // Get all active courses
+        List<Course> allCourses = courseRepository.findByActiveTrue();
+
+        // Filter by grade level and prerequisites
+        List<Course> availableCourses = allCourses.stream()
+                .filter(course -> isStudentEligible(student, course))
+                .collect(Collectors.toList());
+
+        log.debug("Found {} available courses for student {}", availableCourses.size(), studentId);
+
+        return availableCourses.stream()
+                .map(this::toCourseDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get student's current course requests
+     *
+     * @param studentId Student ID
+     * @param academicYear Academic year
+     * @return List of course request DTOs
+     */
+    @Transactional(readOnly = true)
+    public List<CourseEnrollmentRequestDTO> getStudentCourseRequests(Long studentId, String academicYear) {
+        log.debug("Getting course requests for student {} - year {}", studentId, academicYear);
+
+        AcademicYear year = academicYearRepository.findByYearName(academicYear).orElse(null);
+
+        List<CourseEnrollmentRequest> requests = enrollmentRequestRepository.findByStudentId(studentId);
+
+        return requests.stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get course request summary for an academic year
+     * (Total requests, by status, by course, etc.)
+     *
+     * @param academicYear Academic year
+     * @return Summary statistics
+     */
+    @Transactional(readOnly = true)
+    public CourseRequestSummary getCourseRequestSummary(String academicYear) {
+        log.debug("Getting course request summary for year: {}", academicYear);
+
+        AcademicYear year = academicYearRepository.findByYearName(academicYear).orElse(null);
+
+        List<CourseEnrollmentRequest> allRequests = enrollmentRequestRepository.findAll();
+
+        long totalRequests = allRequests.size();
+        long pendingRequests = allRequests.stream()
+                .filter(req -> req.getRequestStatus() == EnrollmentRequestStatus.PENDING)
+                .count();
+        long approvedRequests = allRequests.stream()
+                .filter(req -> req.getRequestStatus() == EnrollmentRequestStatus.APPROVED)
+                .count();
+        long deniedRequests = allRequests.stream()
+                .filter(req -> req.getRequestStatus() == EnrollmentRequestStatus.DENIED)
+                .count();
+        long uniqueStudents = allRequests.stream()
+                .map(req -> req.getStudent().getId())
+                .distinct()
+                .count();
+
+        return CourseRequestSummary.builder()
+                .academicYear(academicYear)
+                .totalRequests(totalRequests)
+                .pendingRequests(pendingRequests)
+                .approvedRequests(approvedRequests)
+                .deniedRequests(deniedRequests)
+                .uniqueStudents(uniqueStudents)
+                .build();
+    }
+
+    // ========================================================================
+    // VALIDATION & HELPER METHODS
+    // ========================================================================
+
+    /**
+     * Check if student is eligible for a course
+     */
+    private boolean isStudentEligible(Student student, Course course) {
+        // Check grade level
+        if (course.getMinGradeLevel() != null && student.getGradeLevel() != null) {
+            try {
+                int studentGrade = Integer.parseInt(student.getGradeLevel());
+                if (studentGrade < course.getMinGradeLevel()) {
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                log.warn("Invalid grade level for student {}: {}", student.getId(), student.getGradeLevel());
+            }
+        }
+
+        if (course.getMaxGradeLevel() != null && student.getGradeLevel() != null) {
+            try {
+                int studentGrade = Integer.parseInt(student.getGradeLevel());
+                if (studentGrade > course.getMaxGradeLevel()) {
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                // Already logged above
+            }
+        }
+
+        // Check prerequisites
+        var result = prerequisiteValidationService.validatePrerequisites(student, course);
+        return result != null && result.isCanEnroll();
+    }
+
+    /**
+     * Calculate priority score for student/course combination
+     * Based on GPA, grade level, special needs, etc.
+     */
+    private Integer calculatePriorityScore(Student student, Course course) {
+        int score = 500; // Base score
+
+        // Senior priority (+100)
+        if ("12".equals(student.getGradeLevel())) {
+            score += 100;
+        }
+
+        // Junior priority (+50)
+        if ("11".equals(student.getGradeLevel())) {
+            score += 50;
+        }
+
+        // IEP/504 priority (+75)
+        if (Boolean.TRUE.equals(student.getHasIEP()) || Boolean.TRUE.equals(student.getHas504Plan())) {
+            score += 75;
+        }
+
+        // GPA bonus (if available) - calculated from student's grade history
+        // High GPA students get priority for advanced courses
+        try {
+            Double studentGPA = studentGradeRepository.calculateUnweightedGPA(student.getId());
+            if (studentGPA != null && studentGPA > 0) {
+                // Add up to 30 points based on GPA (3.0 = 0 points, 4.0 = 30 points)
+                if (studentGPA >= 3.0) {
+                    score += (int) ((studentGPA - 3.0) * 30);
+                }
+            }
+        } catch (Exception e) {
+            log.debug("Could not calculate GPA for student {}: {}", student.getId(), e.getMessage());
+            // Continue without GPA bonus
+        }
+
+        // Core course priority (+50)
+        if (Boolean.TRUE.equals(course.getIsCoreRequired())) {
+            score += 50;
+        }
+
+        return score;
+    }
+
+    /**
+     * Convert CourseEnrollmentRequest entity to DTO
+     */
+    private CourseEnrollmentRequestDTO toDTO(CourseEnrollmentRequest request) {
+        return CourseEnrollmentRequestDTO.builder()
+                .id(request.getId())
+                .studentId(request.getStudent().getId())
+                .studentName(request.getStudent().getFullName())
+                .courseId(request.getCourse().getId())
+                .courseName(request.getCourse().getCourseName())
+                .courseCode(request.getCourse().getCourseCode())
+                .preferenceRank(request.getPreferenceRank())
+                .priorityScore(request.getPriorityScore())
+                .requestStatus(request.getRequestStatus())
+                .createdAt(request.getCreatedAt())
+                .processedAt(request.getProcessedAt())
+                .statusReason(request.getStatusReason())
+                .isWaitlist(request.getIsWaitlist())
+                .waitlistPosition(request.getWaitlistPosition())
+                .notes(request.getNotes())
+                .build();
+    }
+
+    /**
+     * Convert Course entity to DTO
+     */
+    private CourseDTO toCourseDTO(Course course) {
+        return CourseDTO.builder()
+                .id(course.getId())
+                .courseCode(course.getCourseCode())
+                .courseName(course.getCourseName())
+                .subject(course.getSubject())
+                .credits(course.getCredits() != null ? BigDecimal.valueOf(course.getCredits()) : null)
+                .minGradeLevel(course.getMinGradeLevel())
+                .maxGradeLevel(course.getMaxGradeLevel())
+                .description(course.getDescription())
+                .isCoreRequired(course.getIsCoreRequired())
+                .active(course.isActive())
+                .build();
+    }
+
+    // ========================================================================
+    // INNER CLASSES
+    // ========================================================================
+
+    /**
+     * Course request summary statistics
+     */
+    @lombok.Builder
+    @lombok.Data
+    public static class CourseRequestSummary {
+        private String academicYear;
+        private long totalRequests;
+        private long pendingRequests;
+        private long approvedRequests;
+        private long deniedRequests;
+        private long uniqueStudents;
+    }
+}

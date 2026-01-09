@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<DialogPane xmlns="http://javafx.com/javafx/21"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.heronix.ui.controller.ScheduleGenerationDialogController"
+    stylesheets="@../css/modern-theme.css"
+    prefWidth="700" prefHeight="600">
+
+    <headerText>Generate Schedule</headerText>
+
+    <content>
+        <VBox spacing="15" styleClass="dialog-content">
+            <padding><Insets top="15" right="20" bottom="15" left="20" /></padding>
+
+            <!-- SCHEDULE SELECTION -->
+            <VBox spacing="8">
+                <Label text="Select Schedule:" styleClass="section-header" />
+                <ComboBox fx:id="scheduleComboBox" prefWidth="400" promptText="Choose schedule to generate..." />
+                <Text fx:id="scheduleInfoText" wrappingWidth="650"
+                    style="-fx-fill: #7f8c8d; -fx-font-size: 12px;" />
+            </VBox>
+
+            <Separator />
+
+            <!-- GENERATION MODE SELECTION -->
+            <VBox spacing="12">
+                <Label text="Choose Generation Mode:" styleClass="section-header" />
+
+                <!-- MANUAL MODE -->
+                <RadioButton fx:id="manualModeRadio" text="Manual Scheduling"
+                    styleClass="mode-radio">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="modeToggleGroup" />
+                    </toggleGroup>
+                    <VBox.margin><Insets top="5" /></VBox.margin>
+                </RadioButton>
+                <VBox fx:id="manualModeInfo" spacing="5"
+                    style="-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-padding: 10;">
+                    <Label text="Build schedule manually with drag-and-drop interface"
+                        style="-fx-font-size: 13px; -fx-text-fill: #34495e;" wrapText="true" />
+                    <HBox spacing="10">
+                        <Label text="✓ Full control over every assignment" style="-fx-text-fill: #27ae60;" />
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="✓ Best for small schools or custom schedules" style="-fx-text-fill: #27ae60;" />
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="⚠ Time-consuming for large schedules" style="-fx-text-fill: #e67e22;" />
+                    </HBox>
+                </VBox>
+
+                <Separator />
+
+                <!-- AI-ASSISTED MODE -->
+                <RadioButton fx:id="aiAssistedModeRadio" text="AI-Assisted Scheduling"
+                    styleClass="mode-radio" toggleGroup="$modeToggleGroup">
+                    <VBox.margin><Insets top="5" /></VBox.margin>
+                </RadioButton>
+                <VBox fx:id="aiAssistedModeInfo" spacing="5"
+                    style="-fx-background-color: #e8f4f8; -fx-background-radius: 5; -fx-padding: 10;">
+                    <Label text="AI generates initial schedule, then manual refinement allowed"
+                        style="-fx-font-size: 13px; -fx-text-fill: #34495e;" wrapText="true" />
+                    <HBox spacing="10">
+                        <Label text="✓ AI handles bulk assignments, you fine-tune" style="-fx-text-fill: #27ae60;" />
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="✓ Faster than manual, more control than full AI" style="-fx-text-fill: #27ae60;" />
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="⚠ Requires SchedulerV2 service running" style="-fx-text-fill: #e67e22;" />
+                    </HBox>
+                </VBox>
+
+                <Separator />
+
+                <!-- FULLY AUTOMATED MODE -->
+                <RadioButton fx:id="fullyAutomatedModeRadio" text="Fully Automated (AI)"
+                    styleClass="mode-radio" toggleGroup="$modeToggleGroup" selected="true">
+                    <VBox.margin><Insets top="5" /></VBox.margin>
+                </RadioButton>
+                <VBox fx:id="fullyAutomatedModeInfo" spacing="5"
+                    style="-fx-background-color: #e8f8f5; -fx-background-radius: 5; -fx-padding: 10;">
+                    <Label text="AI-powered OptaPlanner optimization (Recommended)"
+                        style="-fx-font-size: 13px; -fx-text-fill: #34495e; -fx-font-weight: bold;" wrapText="true" />
+                    <HBox spacing="10">
+                        <Label text="✓ Optimizes 50+ constraints automatically" style="-fx-text-fill: #27ae60;" />
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="✓ Minimizes conflicts and maximizes quality" style="-fx-text-fill: #27ae60;" />
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="✓ Handles complex multi-campus schedules" style="-fx-text-fill: #27ae60;" />
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="⚠ Requires SchedulerV2 service running" style="-fx-text-fill: #e67e22;" />
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <Separator />
+
+            <!-- OPTIMIZATION SETTINGS -->
+            <VBox spacing="10" fx:id="optimizationSettingsBox">
+                <Label text="Optimization Settings:" styleClass="section-header" />
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Optimization Time:" prefWidth="150" />
+                    <Slider fx:id="optimizationTimeSlider" min="30" max="600" value="120"
+                        prefWidth="300" showTickMarks="true" showTickLabels="true"
+                        majorTickUnit="120" minorTickCount="3" />
+                    <Label fx:id="optimizationTimeLabel" text="120 seconds"
+                        style="-fx-font-weight: bold; -fx-min-width: 100;" />
+                </HBox>
+
+                <CheckBox fx:id="waitForCompletionCheckbox" text="Wait for completion (blocks UI)"
+                    selected="false" />
+
+                <Text text="Note: Longer optimization time generally produces better schedules but takes more time."
+                    wrappingWidth="650" style="-fx-fill: #7f8c8d; -fx-font-size: 11px;" />
+            </VBox>
+
+            <Separator />
+
+            <!-- AI AVAILABILITY STATUS -->
+            <HBox fx:id="aiStatusBox" spacing="10" alignment="CENTER_LEFT"
+                style="-fx-background-color: #fff3cd; -fx-background-radius: 5; -fx-padding: 10;">
+                <Label fx:id="aiStatusIcon" text="●" style="-fx-font-size: 20; -fx-text-fill: #856404;" />
+                <VBox spacing="3">
+                    <Label fx:id="aiStatusLabel" text="Checking SchedulerV2 availability..."
+                        style="-fx-font-weight: bold; -fx-text-fill: #856404;" />
+                    <Label fx:id="aiStatusMessage" text="Please wait..."
+                        style="-fx-text-fill: #856404; -fx-font-size: 12px;" wrapText="true" />
+                </VBox>
+            </HBox>
+
+        </VBox>
+    </content>
+
+    <buttonTypes>
+        <ButtonType fx:constant="CANCEL" />
+        <ButtonType fx:id="generateButtonType" text="Generate Schedule" buttonData="OK_DONE" />
+    </buttonTypes>
+
+</DialogPane>

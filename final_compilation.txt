@@ -1,0 +1,109 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------< com.heronix:heronix-scheduler >--------------------
+[INFO] Building Heronix Scheduling System 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] 6 problems were encountered while building the effective model for org.openjfx:javafx-controls:jar:21 during dependency collection step for project (use -X to see details)
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ heronix-scheduler ---
+[INFO] Deleting H:\Heronix\Heronix-SIS\target
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (prepare-agent) @ heronix-scheduler ---
+[INFO] argLine set to -javaagent:C:\\Users\\Gamer\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.11\\org.jacoco.agent-0.8.11-runtime.jar=destfile=H:\\Heronix\\Heronix-SIS\\target\\jacoco.exec
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ heronix-scheduler ---
+[INFO] Copying 222 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ heronix-scheduler ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 949 source files with javac [debug release 21] to target\classes
+[INFO] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[INFO] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/ScheduleSlot.java: Some input files use or override a deprecated API.
+[INFO] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/ScheduleSlot.java: Recompile with -Xlint:deprecation for details.
+[INFO] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/TeacherDialogController.java: Some input files use unchecked or unsafe operations.
+[INFO] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/TeacherDialogController.java: Recompile with -Xlint:unchecked for details.
+[INFO] Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/ScheduleChangeRequest.java:[113,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/ScheduleChangeRequest.java:[126,27] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/ScheduleChangeRequest.java:[133,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/SchoolCalendar.java:[87,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/SchoolCalendar.java:[99,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/SchoolCalendar.java:[375,25] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/SchoolCalendar.java:[381,25] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/TeacherEvaluation.java:[297,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/TeacherEvaluation.java:[325,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/CourseSequenceStep.java:[98,20] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/TeacherCertification.java:[99,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/TeacherCertification.java:[107,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/TeacherCertification.java:[115,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/TeacherCertification.java:[201,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/HallPassSession.java:[137,27] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/HallPassSession.java:[149,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/HallPassSession.java:[155,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/HallPassSession.java:[161,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/BellSchedule.java:[90,20] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/BellSchedule.java:[100,29] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/BellSchedule.java:[115,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/BellSchedule.java:[121,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/CourseSequence.java:[154,20] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/PeriodTimer.java:[87,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/PeriodTimer.java:[94,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/PeriodTimer.java:[102,20] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/PeriodTimer.java:[109,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/QrAttendanceLog.java:[113,32] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/QrAttendanceLog.java:[139,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/model/domain/StudentGroup.java:[290,27] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/controller/TeacherSyncController.java:[35,8] deprecated item is not annotated with @Deprecated
+[INFO] 31 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/ScheduleGeneratorController.java:[610,24] the switch expression does not cover all possible input values
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/service/CounselingManagementService.java:[150,44] cannot find symbol
+  symbol:   method findByReferralDateBetween(java.time.LocalDate,java.time.LocalDate)
+  location: variable counselingReferralRepository of type com.heronix.repository.CounselingReferralRepository
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/service/CounselingManagementService.java:[158,44] cannot find symbol
+  symbol:   method findOverdueReferrals()
+  location: variable counselingReferralRepository of type com.heronix.repository.CounselingReferralRepository
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/MedicationAdministrationController.java:[260,106] incompatible types: java.lang.Long cannot be converted to com.heronix.model.domain.Student
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/MedicationAdministrationController.java:[313,63] cannot find symbol
+  symbol:   method recordAdministration(com.heronix.model.domain.MedicationAdministration)
+  location: variable medicationService of type com.heronix.service.MedicationService
+[INFO] 5 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  51.638 s
+[INFO] Finished at: 2025-12-27T13:43:05-05:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project heronix-scheduler: Compilation failure: Compilation failure: 
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/ScheduleGeneratorController.java:[610,24] the switch expression does not cover all possible input values
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/service/CounselingManagementService.java:[150,44] cannot find symbol
+[ERROR]   symbol:   method findByReferralDateBetween(java.time.LocalDate,java.time.LocalDate)
+[ERROR]   location: variable counselingReferralRepository of type com.heronix.repository.CounselingReferralRepository
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/service/CounselingManagementService.java:[158,44] cannot find symbol
+[ERROR]   symbol:   method findOverdueReferrals()
+[ERROR]   location: variable counselingReferralRepository of type com.heronix.repository.CounselingReferralRepository
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/MedicationAdministrationController.java:[260,106] incompatible types: java.lang.Long cannot be converted to com.heronix.model.domain.Student
+[ERROR] /H:/Heronix/Heronix-SIS/src/main/java/com/heronix/ui/controller/MedicationAdministrationController.java:[313,63] cannot find symbol
+[ERROR]   symbol:   method recordAdministration(com.heronix.model.domain.MedicationAdministration)
+[ERROR]   location: variable medicationService of type com.heronix.service.MedicationService
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<!--
+    Staging Review Dashboard
+
+    Admin interface for reviewing and importing data from external staging server
+
+    Features:
+    - View pending submissions from staging server
+    - Import student registrations
+    - Import parent updates
+    - Import teacher submissions
+    - View import statistics
+    - Check staging server health
+
+    Author: Heronix Development Team
+    Created: December 27, 2025
+-->
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.StagingReviewDashboardController"
+            prefHeight="800.0" prefWidth="1200.0"
+            styleClass="root">
+
+    <!-- Top: Header -->
+    <top>
+        <VBox styleClass="header-panel">
+            <padding><Insets top="20" right="30" bottom="20" left="30"/></padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="Staging Server Review Dashboard" styleClass="header-title">
+                    <font><Font name="System Bold" size="24"/></font>
+                </Label>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Health Status Indicator -->
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Label text="Staging Server:" styleClass="status-label"/>
+                    <Label fx:id="lblServerStatus" text="Not Connected" styleClass="status-disconnected">
+                        <font><Font name="System Bold" size="12"/></font>
+                    </Label>
+                    <Button fx:id="btnRefreshHealth" text="Check" onAction="#checkStagingServerHealth"
+                            styleClass="btn-secondary"/>
+                </HBox>
+            </HBox>
+
+            <Separator><VBox.margin><Insets top="15"/></VBox.margin></Separator>
+        </VBox>
+    </top>
+
+    <!-- Center: Main Content -->
+    <center>
+        <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+            <padding><Insets top="10" right="20" bottom="20" left="20"/></padding>
+
+            <!-- Tab 1: Pending Student Registrations -->
+            <Tab text="Student Registrations">
+                <VBox spacing="15">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <!-- Action Bar -->
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Pending Student Registrations" styleClass="section-title">
+                            <font><Font name="System Bold" size="16"/></font>
+                        </Label>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnRefreshStudents" text="Refresh" onAction="#refreshStudentRegistrations"
+                                styleClass="btn-secondary"/>
+                        <Button fx:id="btnImportStudents" text="Import All Approved" onAction="#importStudentRegistrations"
+                                styleClass="btn-primary"/>
+                    </HBox>
+
+                    <!-- Student Registrations Table -->
+                    <TableView fx:id="tblStudentRegistrations" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colStudentStagingId" text="Staging ID" prefWidth="80"/>
+                            <TableColumn fx:id="colStudentName" text="Student Name" prefWidth="200"/>
+                            <TableColumn fx:id="colStudentGrade" text="Grade" prefWidth="80"/>
+                            <TableColumn fx:id="colStudentSubmittedBy" text="Submitted By" prefWidth="150"/>
+                            <TableColumn fx:id="colStudentSubmittedAt" text="Submitted Date" prefWidth="150"/>
+                            <TableColumn fx:id="colStudentStatus" text="Status" prefWidth="100"/>
+                            <TableColumn fx:id="colStudentReviewedBy" text="Reviewed By" prefWidth="150"/>
+                            <TableColumn fx:id="colStudentActions" text="Actions" prefWidth="150"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No pending student registrations"/>
+                        </placeholder>
+                    </TableView>
+
+                    <!-- Status Bar -->
+                    <HBox spacing="20" alignment="CENTER_LEFT" styleClass="status-bar">
+                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                        <Label fx:id="lblStudentCount" text="0 pending registrations"/>
+                        <Label fx:id="lblLastStudentImport" text="Last import: Never"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 2: Parent Updates -->
+            <Tab text="Parent Updates">
+                <VBox spacing="15">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <!-- Action Bar -->
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Pending Parent/Guardian Updates" styleClass="section-title">
+                            <font><Font name="System Bold" size="16"/></font>
+                        </Label>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnRefreshParents" text="Refresh" onAction="#refreshParentUpdates"
+                                styleClass="btn-secondary"/>
+                        <Button fx:id="btnImportParents" text="Import All Approved" onAction="#importParentUpdates"
+                                styleClass="btn-primary"/>
+                    </HBox>
+
+                    <!-- Parent Updates Table -->
+                    <TableView fx:id="tblParentUpdates" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colParentStagingId" text="Staging ID" prefWidth="80"/>
+                            <TableColumn fx:id="colParentStudent" text="Student" prefWidth="200"/>
+                            <TableColumn fx:id="colParentUpdateType" text="Update Type" prefWidth="150"/>
+                            <TableColumn fx:id="colParentSubmittedBy" text="Submitted By" prefWidth="150"/>
+                            <TableColumn fx:id="colParentSubmittedAt" text="Submitted Date" prefWidth="150"/>
+                            <TableColumn fx:id="colParentStatus" text="Status" prefWidth="100"/>
+                            <TableColumn fx:id="colParentActions" text="Actions" prefWidth="150"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No pending parent updates"/>
+                        </placeholder>
+                    </TableView>
+
+                    <!-- Status Bar -->
+                    <HBox spacing="20" alignment="CENTER_LEFT" styleClass="status-bar">
+                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                        <Label fx:id="lblParentCount" text="0 pending updates"/>
+                        <Label fx:id="lblLastParentImport" text="Last import: Never"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 3: Teacher Submissions -->
+            <Tab text="Teacher Submissions">
+                <VBox spacing="15">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <!-- Action Bar -->
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Pending Teacher Submissions" styleClass="section-title">
+                            <font><Font name="System Bold" size="16"/></font>
+                        </Label>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnRefreshTeachers" text="Refresh" onAction="#refreshTeacherSubmissions"
+                                styleClass="btn-secondary"/>
+                        <Button fx:id="btnImportTeachers" text="Import All Approved" onAction="#importTeacherSubmissions"
+                                styleClass="btn-primary"/>
+                    </HBox>
+
+                    <!-- Teacher Submissions Table -->
+                    <TableView fx:id="tblTeacherSubmissions" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colTeacherStagingId" text="Staging ID" prefWidth="80"/>
+                            <TableColumn fx:id="colTeacherName" text="Teacher" prefWidth="150"/>
+                            <TableColumn fx:id="colTeacherSubmissionType" text="Submission Type" prefWidth="150"/>
+                            <TableColumn fx:id="colTeacherCourse" text="Course" prefWidth="150"/>
+                            <TableColumn fx:id="colTeacherSubmittedAt" text="Submitted Date" prefWidth="150"/>
+                            <TableColumn fx:id="colTeacherStatus" text="Status" prefWidth="100"/>
+                            <TableColumn fx:id="colTeacherActions" text="Actions" prefWidth="150"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No pending teacher submissions"/>
+                        </placeholder>
+                    </TableView>
+
+                    <!-- Status Bar -->
+                    <HBox spacing="20" alignment="CENTER_LEFT" styleClass="status-bar">
+                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                        <Label fx:id="lblTeacherCount" text="0 pending submissions"/>
+                        <Label fx:id="lblLastTeacherImport" text="Last import: Never"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 4: Import Statistics -->
+            <Tab text="Statistics">
+                <VBox spacing="20">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <Label text="Import Statistics" styleClass="section-title">
+                        <font><Font name="System Bold" size="18"/></font>
+                    </Label>
+
+                    <!-- Statistics Grid -->
+                    <GridPane hgap="30" vgap="20">
+                        <padding><Insets top="20"/></padding>
+
+                        <!-- Today's Imports -->
+                        <VBox spacing="5" styleClass="stat-box" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                            <Label text="Today" styleClass="stat-label"/>
+                            <Label fx:id="lblTodayImports" text="0" styleClass="stat-value">
+                                <font><Font name="System Bold" size="36"/></font>
+                            </Label>
+                            <Label text="imports" styleClass="stat-subtitle"/>
+                        </VBox>
+
+                        <!-- This Week's Imports -->
+                        <VBox spacing="5" styleClass="stat-box" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                            <Label text="This Week" styleClass="stat-label"/>
+                            <Label fx:id="lblWeekImports" text="0" styleClass="stat-value">
+                                <font><Font name="System Bold" size="36"/></font>
+                            </Label>
+                            <Label text="imports" styleClass="stat-subtitle"/>
+                        </VBox>
+
+                        <!-- This Month's Imports -->
+                        <VBox spacing="5" styleClass="stat-box" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                            <Label text="This Month" styleClass="stat-label"/>
+                            <Label fx:id="lblMonthImports" text="0" styleClass="stat-value">
+                                <font><Font name="System Bold" size="36"/></font>
+                            </Label>
+                            <Label text="imports" styleClass="stat-subtitle"/>
+                        </VBox>
+
+                        <!-- Success Rate -->
+                        <VBox spacing="5" styleClass="stat-box" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                            <Label text="Success Rate" styleClass="stat-label"/>
+                            <Label fx:id="lblSuccessRate" text="0%" styleClass="stat-value">
+                                <font><Font name="System Bold" size="36"/></font>
+                            </Label>
+                            <Label text="of imports successful" styleClass="stat-subtitle"/>
+                        </VBox>
+
+                        <!-- Pending Reviews -->
+                        <VBox spacing="5" styleClass="stat-box" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                            <Label text="Pending Reviews" styleClass="stat-label"/>
+                            <Label fx:id="lblPendingCount" text="0" styleClass="stat-value">
+                                <font><Font name="System Bold" size="36"/></font>
+                            </Label>
+                            <Label text="awaiting import" styleClass="stat-subtitle"/>
+                        </VBox>
+
+                        <!-- Failed Imports -->
+                        <VBox spacing="5" styleClass="stat-box" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                            <Label text="Failed Imports" styleClass="stat-label"/>
+                            <Label fx:id="lblFailedCount" text="0" styleClass="stat-value">
+                                <font><Font name="System Bold" size="36"/></font>
+                            </Label>
+                            <Label text="need attention" styleClass="stat-subtitle"/>
+                        </VBox>
+                    </GridPane>
+
+                    <!-- Recent Import History -->
+                    <VBox spacing="10" VBox.vgrow="ALWAYS">
+                        <Label text="Recent Import History" styleClass="section-subtitle">
+                            <font><Font name="System Bold" size="14"/></font>
+                        </Label>
+
+                        <TableView fx:id="tblImportHistory" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colHistoryDate" text="Date" prefWidth="150"/>
+                                <TableColumn fx:id="colHistoryType" text="Type" prefWidth="150"/>
+                                <TableColumn fx:id="colHistoryImportedBy" text="Imported By" prefWidth="150"/>
+                                <TableColumn fx:id="colHistorySuccessCount" text="Success" prefWidth="100"/>
+                                <TableColumn fx:id="colHistoryFailureCount" text="Failed" prefWidth="100"/>
+                                <TableColumn fx:id="colHistoryTotalCount" text="Total" prefWidth="100"/>
+                                <TableColumn fx:id="colHistoryStatus" text="Status" prefWidth="100"/>
+                            </columns>
+                            <placeholder>
+                                <Label text="No import history available"/>
+                            </placeholder>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>

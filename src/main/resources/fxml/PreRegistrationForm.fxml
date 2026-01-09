@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+  Pre-Registration Form for Upcoming School Year
+  Allows early enrollment and course selection for next academic year
+
+  Features:
+  - Grade advancement tracking
+  - Course preference selection
+  - Early bird registration
+  - Seat reservation
+  - Returning student verification
+  - Family verification
+
+  Location: src/main/resources/fxml/PreRegistrationForm.fxml
+  Controller: com.heronix.ui.controller.PreRegistrationFormController
+-->
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.PreRegistrationFormController"
+            styleClass="content-pane"
+            prefWidth="1000" prefHeight="700">
+
+    <top>
+        <VBox styleClass="header-section" spacing="15">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+
+            <!-- Page Title and Registration Number -->
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="Pre-Registration for Upcoming School Year" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="registrationNumberField" editable="false" promptText="Auto-generated" prefWidth="150"/>
+                <Label fx:id="statusLabel" text="DRAFT" styleClass="status-label"/>
+            </HBox>
+
+            <!-- School Year Selection -->
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="Pre-Registration For:" styleClass="label-bold"/>
+                <ComboBox fx:id="targetSchoolYear" promptText="Select School Year" prefWidth="150"/>
+                <Separator orientation="VERTICAL"/>
+                <Label text="Registration Period:" styleClass="label-bold"/>
+                <Label fx:id="registrationPeriodLabel" text="Not Started"/>
+                <Separator orientation="VERTICAL"/>
+                <Label text="Seats Available:" styleClass="label-bold"/>
+                <Label fx:id="seatsAvailableLabel" text="N/A"/>
+            </HBox>
+
+            <!-- Action Buttons -->
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+                <Button text="Save Draft" onAction="#handleSaveDraft" styleClass="button-primary"/>
+                <Button text="Submit Pre-Registration" onAction="#handleSubmit" fx:id="submitButton" styleClass="button-success"/>
+                <Button text="Check Eligibility" onAction="#handleCheckEligibility" styleClass="button-info"/>
+                <Button text="Print Confirmation" onAction="#handlePrint" styleClass="button-secondary"/>
+                <Button text="Cancel" onAction="#handleCancel" styleClass="button-cancel"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- ========== SECTION 1: STUDENT INFORMATION ========== -->
+                <TitledPane text="1. Current Student Information" expanded="true" collapsible="false">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+
+                        <!-- Row 0: Student Search -->
+                        <Label text="Student ID / Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label"/>
+                        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3">
+                            <TextField fx:id="studentSearchField" promptText="Enter Student ID or Name" prefWidth="300"/>
+                            <Button text="Search" onAction="#handleSearchStudent" styleClass="button-primary"/>
+                            <Button text="Clear" onAction="#handleClearStudent" styleClass="button-secondary"/>
+                        </HBox>
+
+                        <!-- Row 1: Student Details -->
+                        <Label text="Student Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label-required"/>
+                        <TextField fx:id="studentNameField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Auto-filled"/>
+
+                        <Label text="Student ID:" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="form-label"/>
+                        <TextField fx:id="studentIdField" editable="false" GridPane.columnIndex="3" GridPane.rowIndex="1" promptText="Auto-filled"/>
+
+                        <!-- Row 2: Current Grade and Next Grade -->
+                        <Label text="Current Grade:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label"/>
+                        <TextField fx:id="currentGradeField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2" promptText="Auto-filled"/>
+
+                        <Label text="Next Grade (Advancing To):" GridPane.columnIndex="2" GridPane.rowIndex="2" styleClass="form-label-required"/>
+                        <ComboBox fx:id="nextGradeComboBox" GridPane.columnIndex="3" GridPane.rowIndex="2" promptText="Select Next Grade" prefWidth="200"/>
+
+                        <!-- Row 3: Date of Birth and Contact -->
+                        <Label text="Date of Birth:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="form-label"/>
+                        <TextField fx:id="dateOfBirthField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="3" promptText="Auto-filled"/>
+
+                        <Label text="Student Email:" GridPane.columnIndex="2" GridPane.rowIndex="3" styleClass="form-label"/>
+                        <TextField fx:id="studentEmailField" GridPane.columnIndex="3" GridPane.rowIndex="3" promptText="Student Email (optional)"/>
+
+                        <!-- Row 4: Returning Student Status -->
+                        <Label text="Student Status:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="form-label"/>
+                        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.columnSpan="3">
+                            <CheckBox fx:id="isReturningStudentCheckbox" text="Returning Student (Currently Enrolled)" selected="true"/>
+                            <CheckBox fx:id="hasCompletedPriorYearCheckbox" text="Completed Prior Year Successfully"/>
+                            <CheckBox fx:id="isInGoodStandingCheckbox" text="In Good Academic Standing"/>
+                        </HBox>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 2: PARENT/GUARDIAN VERIFICATION ========== -->
+                <TitledPane text="2. Parent/Guardian Information &amp; Verification" expanded="true">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+
+                        <!-- Row 0: Primary Parent -->
+                        <Label text="Primary Parent/Guardian:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label-required"/>
+                        <TextField fx:id="parentNameField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3" promptText="Auto-filled from student record"/>
+
+                        <!-- Row 1: Contact Information -->
+                        <Label text="Primary Phone:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label-required"/>
+                        <TextField fx:id="parentPhoneField" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Verify/Update Phone"/>
+
+                        <Label text="Primary Email:" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="form-label-required"/>
+                        <TextField fx:id="parentEmailField" GridPane.columnIndex="3" GridPane.rowIndex="1" promptText="Verify/Update Email"/>
+
+                        <!-- Row 2: Address Verification -->
+                        <Label text="Current Address:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label"/>
+                        <TextArea fx:id="currentAddressArea" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3"
+                                  prefRowCount="2" editable="false" promptText="Auto-filled from student record"/>
+
+                        <!-- Row 3: Address Change -->
+                        <Label text="" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <CheckBox fx:id="addressChangedCheckbox" text="Address has changed (update required)"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.columnSpan="3"/>
+
+                        <!-- Row 4: New Address (if changed) -->
+                        <Label text="New Address:" fx:id="newAddressLabel" GridPane.columnIndex="0" GridPane.rowIndex="4"
+                               styleClass="form-label" visible="false" managed="false"/>
+                        <TextArea fx:id="newAddressArea" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.columnSpan="3"
+                                  prefRowCount="2" visible="false" managed="false" promptText="Enter new residential address"/>
+
+                        <!-- Row 5: Emergency Contacts -->
+                        <Label text="Emergency Contacts:" GridPane.columnIndex="0" GridPane.rowIndex="5" styleClass="form-label"/>
+                        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.columnSpan="3">
+                            <CheckBox fx:id="emergencyContactsVerified" text="Emergency contacts verified and current"/>
+                            <Button text="Update Emergency Contacts" onAction="#handleUpdateEmergencyContacts" styleClass="button-secondary"/>
+                        </HBox>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 3: COURSE PREFERENCES ========== -->
+                <TitledPane text="3. Course Preferences for Upcoming Year" expanded="true">
+                    <VBox spacing="15">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+
+                        <Label text="Select your preferred courses for the upcoming school year. Required courses are pre-selected."
+                               styleClass="help-text" wrapText="true"/>
+
+                        <!-- Core/Required Courses -->
+                        <VBox spacing="10">
+                            <Label text="Required Core Courses:" styleClass="section-subtitle"/>
+                            <TableView fx:id="requiredCoursesTable" prefHeight="200">
+                                <columns>
+                                    <TableColumn text="Course Code" prefWidth="100"/>
+                                    <TableColumn text="Course Name" prefWidth="250"/>
+                                    <TableColumn text="Credits" prefWidth="70"/>
+                                    <TableColumn text="Teacher Preference" prefWidth="150"/>
+                                    <TableColumn text="Period Preference" prefWidth="120"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+
+                        <!-- Elective Courses -->
+                        <VBox spacing="10">
+                            <Label text="Elective Course Preferences:" styleClass="section-subtitle"/>
+                            <HBox spacing="10">
+                                <Button text="Add Elective" onAction="#handleAddElective" styleClass="button-primary"/>
+                                <Button text="Remove Selected" onAction="#handleRemoveElective" styleClass="button-danger"/>
+                                <Label text="(Select up to 3 elective preferences)" styleClass="help-text"/>
+                            </HBox>
+                            <TableView fx:id="electiveCoursesTable" prefHeight="150">
+                                <columns>
+                                    <TableColumn text="Priority" prefWidth="70"/>
+                                    <TableColumn text="Course Code" prefWidth="100"/>
+                                    <TableColumn text="Course Name" prefWidth="250"/>
+                                    <TableColumn text="Credits" prefWidth="70"/>
+                                    <TableColumn text="Prerequisites Met" prefWidth="120"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+
+                        <!-- Special Program Enrollment -->
+                        <VBox spacing="10">
+                            <Label text="Special Programs:" styleClass="section-subtitle"/>
+                            <GridPane hgap="15" vgap="10">
+                                <CheckBox text="AP/Honors Track" GridPane.columnIndex="0" GridPane.rowIndex="0" fx:id="apHonorsCheckbox"/>
+                                <CheckBox text="Dual Enrollment (College Credit)" GridPane.columnIndex="1" GridPane.rowIndex="0" fx:id="dualEnrollmentCheckbox"/>
+                                <CheckBox text="Career &amp; Technical Education (CTE)" GridPane.columnIndex="0" GridPane.rowIndex="1" fx:id="cteCheckbox"/>
+                                <CheckBox text="Athletics" GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="athleticsCheckbox"/>
+                                <CheckBox text="Fine Arts (Band, Choir, Art)" GridPane.columnIndex="0" GridPane.rowIndex="2" fx:id="fineArtsCheckbox"/>
+                                <CheckBox text="STEM Academy" GridPane.columnIndex="1" GridPane.rowIndex="2" fx:id="stemCheckbox"/>
+                            </GridPane>
+                        </VBox>
+                    </VBox>
+                </TitledPane>
+
+                <!-- ========== SECTION 4: SPECIAL SERVICES & ACCOMMODATIONS ========== -->
+                <TitledPane text="4. Special Services &amp; Accommodations Continuation" expanded="false">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+
+                        <!-- Row 0: IEP Continuation -->
+                        <CheckBox text="Continue IEP Services" fx:id="continueIEPCheckbox"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+                        <Label text="IEP Review Date:" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="form-label"/>
+                        <DatePicker fx:id="iepReviewDatePicker" GridPane.columnIndex="3" GridPane.rowIndex="0" promptText="Next IEP Review"/>
+
+                        <!-- Row 1: 504 Plan Continuation -->
+                        <CheckBox text="Continue 504 Plan Accommodations" fx:id="continue504Checkbox"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2"/>
+                        <Label text="504 Review Date:" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="form-label"/>
+                        <DatePicker fx:id="plan504ReviewDatePicker" GridPane.columnIndex="3" GridPane.rowIndex="1" promptText="Next 504 Review"/>
+
+                        <!-- Row 2: ESL Services -->
+                        <CheckBox text="Continue ESL/ELL Services" fx:id="continueESLCheckbox"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
+                        <Label text="Language Proficiency Level:" GridPane.columnIndex="2" GridPane.rowIndex="2" styleClass="form-label"/>
+                        <ComboBox fx:id="languageProficiencyComboBox" GridPane.columnIndex="3" GridPane.rowIndex="2"
+                                  promptText="Select Level" prefWidth="200"/>
+
+                        <!-- Row 3: Gifted Services -->
+                        <CheckBox text="Continue Gifted/Talented Program" fx:id="continueGiftedCheckbox"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="4"/>
+
+                        <!-- Row 4: Special Transportation -->
+                        <CheckBox text="Requires Special Transportation" fx:id="specialTransportationCheckbox"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2"/>
+                        <Label text="Transportation Type:" GridPane.columnIndex="2" GridPane.rowIndex="4" styleClass="form-label"/>
+                        <ComboBox fx:id="transportationTypeComboBox" GridPane.columnIndex="3" GridPane.rowIndex="4"
+                                  promptText="Select Type" prefWidth="200"/>
+
+                        <!-- Row 5: Medical Accommodations -->
+                        <Label text="Medical Accommodations:" GridPane.columnIndex="0" GridPane.rowIndex="5" styleClass="form-label"/>
+                        <TextArea fx:id="medicalAccommodationsArea" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.columnSpan="3"
+                                  prefRowCount="2" promptText="List any medical accommodations needed"/>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 5: LUNCH PROGRAM & FEES ========== -->
+                <TitledPane text="5. Lunch Program &amp; Fee Information" expanded="false">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+
+                        <!-- Row 0: Lunch Program -->
+                        <Label text="Lunch Program Status:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label-required"/>
+                        <ComboBox fx:id="lunchProgramComboBox" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                  promptText="Select Lunch Status" prefWidth="200"/>
+                        <Label text="Current Year Status:" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="form-label"/>
+                        <TextField fx:id="currentLunchStatusField" editable="false" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                        <!-- Row 1: Free/Reduced Application -->
+                        <Label text="" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3">
+                            <CheckBox fx:id="needsLunchApplicationCheckbox" text="Requires new Free/Reduced Lunch application"/>
+                            <Button text="Download Application" onAction="#handleDownloadLunchApp" styleClass="button-secondary"/>
+                        </HBox>
+
+                        <!-- Row 2: Technology Fee -->
+                        <Label text="Technology Fee:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label"/>
+                        <Label fx:id="technologyFeeLabel" text="\$50.00" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <CheckBox text="Fee Waiver Requested" fx:id="techFeeWaiverCheckbox"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
+
+                        <!-- Row 3: Activity Fee -->
+                        <Label text="Activity Fee:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="form-label"/>
+                        <Label fx:id="activityFeeLabel" text="\$75.00" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <CheckBox text="Fee Waiver Requested" fx:id="activityFeeWaiverCheckbox"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.columnSpan="2"/>
+
+                        <!-- Row 4: Estimated Total Fees -->
+                        <Label text="Estimated Total Fees:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="form-label-bold"/>
+                        <Label fx:id="totalFeesLabel" text="\$125.00" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="form-label-bold"/>
+                        <Label text="(Subject to change)" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.columnSpan="2" styleClass="help-text"/>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 6: REGISTRATION PREFERENCES ========== -->
+                <TitledPane text="6. Schedule &amp; Registration Preferences" expanded="false">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+
+                        <!-- Row 0: Schedule Preferences -->
+                        <Label text="Preferred Start Time:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label"/>
+                        <ComboBox fx:id="preferredStartTimeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                  promptText="Select Preference" prefWidth="200"/>
+
+                        <Label text="Study Hall Preference:" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="form-label"/>
+                        <ComboBox fx:id="studyHallPreferenceComboBox" GridPane.columnIndex="3" GridPane.rowIndex="0"
+                                  promptText="Select Preference" prefWidth="200"/>
+
+                        <!-- Row 1: Lunch Period -->
+                        <Label text="Lunch Period Preference:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label"/>
+                        <ComboBox fx:id="lunchPeriodComboBox" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                  promptText="Select Period" prefWidth="200"/>
+
+                        <!-- Row 2: Early Bird / Zero Period -->
+                        <CheckBox text="Interested in Early Bird / Zero Period classes" fx:id="earlyBirdCheckbox"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
+                        <CheckBox text="Interested in After-School programs" fx:id="afterSchoolCheckbox"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
+
+                        <!-- Row 3: Additional Preferences -->
+                        <Label text="Additional Scheduling Notes:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="form-label"/>
+                        <TextArea fx:id="schedulingNotesArea" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.columnSpan="3"
+                                  prefRowCount="3" promptText="Any special scheduling considerations or requests"/>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 7: CONFIRMATION & ACKNOWLEDGMENT ========== -->
+                <TitledPane text="7. Parent/Guardian Acknowledgment &amp; Confirmation" expanded="true" collapsible="false">
+                    <VBox spacing="15">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+
+                        <VBox spacing="10" styleClass="info-box">
+                            <Label text="By submitting this pre-registration, you acknowledge:" styleClass="form-label-bold"/>
+                            <CheckBox fx:id="acknowledgeAccuracyCheckbox"
+                                      text="I certify that all information provided is accurate and current" wrapText="true"/>
+                            <CheckBox fx:id="acknowledgeReviewCheckbox"
+                                      text="I understand that this is a pre-registration and actual course placement is subject to availability and approval" wrapText="true"/>
+                            <CheckBox fx:id="acknowledgeDeadlineCheckbox"
+                                      text="I understand that failure to complete final registration by the deadline may result in loss of seat reservation" wrapText="true"/>
+                            <CheckBox fx:id="acknowledgeFeesCheckbox"
+                                      text="I acknowledge responsibility for all applicable fees and understand fee payment deadlines" wrapText="true"/>
+                            <CheckBox fx:id="acknowledgeUpdatesCheckbox"
+                                      text="I agree to notify the school immediately of any changes to contact information or student status" wrapText="true"/>
+                        </VBox>
+
+                        <GridPane hgap="15" vgap="12">
+                            <Label text="Parent/Guardian Signature:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label-required"/>
+                            <TextField fx:id="parentSignatureField" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                       promptText="Type full name to sign" prefWidth="300"/>
+
+                            <Label text="Date:" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="form-label"/>
+                            <TextField fx:id="signatureDateField" GridPane.columnIndex="3" GridPane.rowIndex="0"
+                                       editable="false" prefWidth="150"/>
+                        </GridPane>
+                    </VBox>
+                </TitledPane>
+
+                <!-- ========== SECTION 8: ADDITIONAL NOTES ========== -->
+                <TitledPane text="8. Additional Notes &amp; Comments" expanded="false">
+                    <VBox spacing="10">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Additional Comments or Special Requests:" styleClass="form-label"/>
+                        <TextArea fx:id="additionalNotesArea" prefRowCount="4"
+                                  promptText="Enter any additional information, questions, or special requests"/>
+                    </VBox>
+                </TitledPane>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="status-bar" spacing="20" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+            <Label text="Last Saved:" styleClass="status-text"/>
+            <Label fx:id="lastSavedLabel" text="Not saved" styleClass="status-value"/>
+            <Separator orientation="VERTICAL"/>
+            <Label text="Created By:" styleClass="status-text"/>
+            <Label fx:id="createdByLabel" text="N/A" styleClass="status-value"/>
+            <Separator orientation="VERTICAL"/>
+            <Label text="Registration Window:" styleClass="status-text"/>
+            <Label fx:id="registrationWindowLabel" text="Check eligibility" styleClass="status-value"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="* Required fields" styleClass="required-indicator"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.TransportationManagementController"
+            stylesheets="@../css/application.css"
+            prefWidth="1700" prefHeight="950">
+
+    <!-- Top: Header -->
+    <top>
+        <VBox spacing="15" style="-fx-background-color: linear-gradient(to right, #ff5722, #e64a19); -fx-padding: 20;">
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Transportation Management"
+                           style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label text="Manage bus routes, student assignments, drivers, and real-time tracking"
+                           style="-fx-font-size: 13px; -fx-text-fill: white;"/>
+                </VBox>
+
+                <!-- Quick Actions -->
+                <VBox spacing="5" alignment="CENTER_RIGHT">
+                    <Button text="+ Add Bus Route" onAction="#handleAddBusRoute"
+                            style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 8 20; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                    <Button text="📍 Live Tracking" onAction="#handleLiveTracking"
+                            style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-padding: 8 20; -fx-cursor: hand;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Stats Bar -->
+            <HBox spacing="15">
+                <VBox spacing="3" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
+                    <Label text="Total Buses" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <Label fx:id="totalBusesLabel" text="42"
+                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="3" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
+                    <Label text="Active Routes" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <Label fx:id="activeRoutesLabel" text="38"
+                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="3" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
+                    <Label text="Students Riding" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <Label fx:id="studentsRidingLabel" text="1,248"
+                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="3" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
+                    <Label text="Drivers" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <Label fx:id="driversLabel" text="45"
+                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="3" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
+                    <Label text="On Time %" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <Label fx:id="onTimePercentLabel" text="94.5%"
+                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Main Content -->
+    <center>
+        <TabPane style="-fx-background-color: #f5f5f5;" tabClosingPolicy="UNAVAILABLE">
+
+            <!-- Bus Routes Tab -->
+            <Tab text="🚌 Bus Routes">
+                <SplitPane dividerPositions="0.4">
+                    <!-- Route List -->
+                    <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white;">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Routes" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="routeSearchField" promptText="Search routes..." prefWidth="200"/>
+                        </HBox>
+
+                        <HBox spacing="10">
+                            <ComboBox fx:id="routeTypeFilterComboBox" prefWidth="140">
+                                <items>
+                                    <String fx:value="All Routes"/>
+                                    <String fx:value="Morning Only"/>
+                                    <String fx:value="Afternoon Only"/>
+                                    <String fx:value="Both"/>
+                                    <String fx:value="Special Needs"/>
+                                </items>
+                            </ComboBox>
+                            <ComboBox fx:id="routeStatusFilterComboBox" prefWidth="120">
+                                <items>
+                                    <String fx:value="All Status"/>
+                                    <String fx:value="Active"/>
+                                    <String fx:value="Inactive"/>
+                                    <String fx:value="Maintenance"/>
+                                </items>
+                            </ComboBox>
+                        </HBox>
+
+                        <ListView fx:id="routesListView" VBox.vgrow="ALWAYS">
+                            <placeholder>
+                                <Label text="No routes found" style="-fx-text-fill: #9e9e9e;"/>
+                            </placeholder>
+                        </ListView>
+
+                        <Button text="+ Create New Route" onAction="#handleCreateRoute"
+                                style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 10; -fx-cursor: hand;"
+                                maxWidth="Infinity"/>
+                    </VBox>
+
+                    <!-- Route Details -->
+                    <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white;">
+                        <Label text="Route Details" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                        <VBox spacing="10" style="-fx-background-color: #e3f2fd; -fx-padding: 15; -fx-border-radius: 5;">
+                            <Label fx:id="routeNameLabel" text="Select a route to view details"
+                                   style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1565c0;"/>
+                            <HBox spacing="10">
+                                <Label text="Bus:" style="-fx-font-weight: bold; -fx-min-width: 80;"/>
+                                <Label fx:id="routeBusLabel" text="—"/>
+                            </HBox>
+                            <HBox spacing="10">
+                                <Label text="Driver:" style="-fx-font-weight: bold; -fx-min-width: 80;"/>
+                                <Label fx:id="routeDriverLabel" text="—"/>
+                            </HBox>
+                            <HBox spacing="10">
+                                <Label text="Students:" style="-fx-font-weight: bold; -fx-min-width: 80;"/>
+                                <Label fx:id="routeStudentsLabel" text="—"/>
+                            </HBox>
+                            <HBox spacing="10">
+                                <Label text="Capacity:" style="-fx-font-weight: bold; -fx-min-width: 80;"/>
+                                <Label fx:id="routeCapacityLabel" text="—"/>
+                            </HBox>
+                        </VBox>
+
+                        <Label text="Route Stops" style="-fx-font-weight: bold;"/>
+                        <TableView fx:id="stopsTableView" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="stopOrderColumn" text="#" prefWidth="40"/>
+                                <TableColumn fx:id="stopLocationColumn" text="Location" prefWidth="200"/>
+                                <TableColumn fx:id="stopTimeColumn" text="Time" prefWidth="80"/>
+                                <TableColumn fx:id="stopStudentsColumn" text="Students" prefWidth="70"/>
+                            </columns>
+                            <placeholder>
+                                <Label text="No stops" style="-fx-text-fill: #9e9e9e;"/>
+                            </placeholder>
+                        </TableView>
+
+                        <HBox spacing="10">
+                            <Button text="Edit Route" onAction="#handleEditRoute"
+                                    style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-padding: 8 15; -fx-cursor: hand;"
+                                    HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Button text="View Map" onAction="#handleViewMap"
+                                    style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-padding: 8 15; -fx-cursor: hand;"
+                                    HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Button text="Print Schedule" onAction="#handlePrintSchedule"
+                                    style="-fx-padding: 8 15; -fx-cursor: hand;"
+                                    HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        </HBox>
+                    </VBox>
+                </SplitPane>
+            </Tab>
+
+            <!-- Student Assignments Tab -->
+            <Tab text="👥 Student Assignments">
+                <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white;">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Student Bus Assignments" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="studentSearchField" promptText="Search students..." prefWidth="250"/>
+                        <Button text="🔍" onAction="#handleSearchStudents"
+                                style="-fx-padding: 6 12; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <HBox spacing="10">
+                        <ComboBox fx:id="gradeFilterComboBox" prefWidth="120">
+                            <items>
+                                <String fx:value="All Grades"/>
+                                <String fx:value="Grade K"/>
+                                <String fx:value="Grade 1"/>
+                                <String fx:value="Grade 2"/>
+                                <String fx:value="Grade 3"/>
+                                <String fx:value="Grade 4"/>
+                                <String fx:value="Grade 5"/>
+                            </items>
+                        </ComboBox>
+                        <ComboBox fx:id="routeAssignmentFilterComboBox" prefWidth="150">
+                            <items>
+                                <String fx:value="All Students"/>
+                                <String fx:value="Assigned"/>
+                                <String fx:value="Not Assigned"/>
+                                <String fx:value="Special Needs"/>
+                            </items>
+                        </ComboBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="📥 Import Assignments" onAction="#handleImportAssignments"
+                                style="-fx-padding: 6 12; -fx-cursor: hand;"/>
+                        <Button text="📤 Export List" onAction="#handleExportAssignments"
+                                style="-fx-padding: 6 12; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <TableView fx:id="studentAssignmentsTableView" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="studentNameColumn" text="Student Name" prefWidth="200"/>
+                            <TableColumn fx:id="studentGradeColumn" text="Grade" prefWidth="60"/>
+                            <TableColumn fx:id="assignedRouteColumn" text="Route" prefWidth="100"/>
+                            <TableColumn fx:id="pickupStopColumn" text="Pickup Stop" prefWidth="200"/>
+                            <TableColumn fx:id="dropoffStopColumn" text="Dropoff Stop" prefWidth="200"/>
+                            <TableColumn fx:id="guardianColumn" text="Guardian" prefWidth="150"/>
+                            <TableColumn fx:id="phoneColumn" text="Phone" prefWidth="120"/>
+                            <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="100"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No students found" style="-fx-text-fill: #9e9e9e;"/>
+                        </placeholder>
+                    </TableView>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label fx:id="assignmentStatsLabel" text="Showing 0 students"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Assign Selected" onAction="#handleAssignStudents"
+                                style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 8 15; -fx-cursor: hand;"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- Drivers Tab -->
+            <Tab text="👨‍✈️ Drivers">
+                <SplitPane dividerPositions="0.5">
+                    <!-- Driver List -->
+                    <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white;">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Drivers" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="+ Add Driver" onAction="#handleAddDriver"
+                                    style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 6 12; -fx-cursor: hand;"/>
+                        </HBox>
+
+                        <TableView fx:id="driversTableView" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="driverNameColumn" text="Name" prefWidth="150"/>
+                                <TableColumn fx:id="driverIdColumn" text="ID" prefWidth="80"/>
+                                <TableColumn fx:id="licenseColumn" text="License" prefWidth="100"/>
+                                <TableColumn fx:id="assignedBusColumn" text="Assigned Bus" prefWidth="100"/>
+                                <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+                            </columns>
+                            <placeholder>
+                                <Label text="No drivers" style="-fx-text-fill: #9e9e9e;"/>
+                            </placeholder>
+                        </TableView>
+                    </VBox>
+
+                    <!-- Driver Details -->
+                    <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white;">
+                        <Label text="Driver Details" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                        <GridPane hgap="15" vgap="12" style="-fx-background-color: #f9f9f9; -fx-padding: 15;">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="120" prefWidth="120"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label fx:id="driverDetailNameLabel" text="—" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                            <Label text="License #:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+                            <Label fx:id="driverLicenseLabel" text="—" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                            <Label text="License Exp:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
+                            <Label fx:id="licenseExpirationLabel" text="—" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                            <Label text="Phone:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
+                            <Label fx:id="driverPhoneLabel" text="—" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                            <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-weight: bold;"/>
+                            <Label fx:id="driverEmailLabel" text="—" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                            <Label text="Assigned Bus:" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-font-weight: bold;"/>
+                            <Label fx:id="driverAssignedBusLabel" text="—" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                            <Label text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-font-weight: bold;"/>
+                            <Label fx:id="driverStatusLabel" text="—" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                        </GridPane>
+
+                        <Label text="Certifications & Training" style="-fx-font-weight: bold;"/>
+                        <ListView fx:id="certificationsListView" prefHeight="150">
+                            <placeholder>
+                                <Label text="No certifications" style="-fx-text-fill: #9e9e9e;"/>
+                            </placeholder>
+                        </ListView>
+
+                        <HBox spacing="10">
+                            <Button text="Edit Driver" onAction="#handleEditDriver"
+                                    style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-padding: 8 15; -fx-cursor: hand;"
+                                    HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Button text="View History" onAction="#handleDriverHistory"
+                                    style="-fx-padding: 8 15; -fx-cursor: hand;"
+                                    HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        </HBox>
+                    </VBox>
+                </SplitPane>
+            </Tab>
+
+            <!-- Maintenance Tab -->
+            <Tab text="🔧 Maintenance">
+                <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white;">
+                    <Label text="Vehicle Maintenance" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                    <HBox spacing="10">
+                        <ComboBox fx:id="maintenanceStatusComboBox" prefWidth="150">
+                            <items>
+                                <String fx:value="All Vehicles"/>
+                                <String fx:value="Due Soon"/>
+                                <String fx:value="Overdue"/>
+                                <String fx:value="In Service"/>
+                                <String fx:value="Out of Service"/>
+                            </items>
+                        </ComboBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="+ Schedule Maintenance" onAction="#handleScheduleMaintenance"
+                                style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-padding: 6 12; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <TableView fx:id="maintenanceTableView" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="busNumberColumn" text="Bus #" prefWidth="80"/>
+                            <TableColumn fx:id="makeModelColumn" text="Make/Model" prefWidth="150"/>
+                            <TableColumn fx:id="mileageColumn" text="Mileage" prefWidth="100"/>
+                            <TableColumn fx:id="lastServiceColumn" text="Last Service" prefWidth="120"/>
+                            <TableColumn fx:id="nextServiceColumn" text="Next Service" prefWidth="120"/>
+                            <TableColumn fx:id="serviceTypeColumn" text="Service Type" prefWidth="150"/>
+                            <TableColumn fx:id="maintenanceStatusColumn" text="Status" prefWidth="120"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No maintenance records" style="-fx-text-fill: #9e9e9e;"/>
+                        </placeholder>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- Reports Tab -->
+            <Tab text="📊 Reports">
+                <VBox spacing="20" style="-fx-padding: 20; -fx-background-color: white;">
+                    <Label text="Transportation Reports" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33.33"/>
+                            <ColumnConstraints percentWidth="33.33"/>
+                            <ColumnConstraints percentWidth="33.33"/>
+                        </columnConstraints>
+
+                        <!-- Report Cards -->
+                        <VBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                              style="-fx-background-color: #e3f2fd; -fx-padding: 20; -fx-border-radius: 5;">
+                            <Label text="📋 Route Efficiency" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="Analyze route performance and optimization opportunities" wrapText="true"
+                                   style="-fx-font-size: 11px;"/>
+                            <Button text="Generate Report" onAction="#handleRouteEfficiencyReport"
+                                    style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"
+                                    maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                              style="-fx-background-color: #f3e5f5; -fx-padding: 20; -fx-border-radius: 5;">
+                            <Label text="📋 Ridership Report" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="Student ridership statistics by route, grade, and timeframe" wrapText="true"
+                                   style="-fx-font-size: 11px;"/>
+                            <Button text="Generate Report" onAction="#handleRidershipReport"
+                                    style="-fx-background-color: #9c27b0; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"
+                                    maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="10" GridPane.columnIndex="2" GridPane.rowIndex="0"
+                              style="-fx-background-color: #fff3e0; -fx-padding: 20; -fx-border-radius: 5;">
+                            <Label text="📋 Driver Performance" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="On-time performance, incidents, and driver metrics" wrapText="true"
+                                   style="-fx-font-size: 11px;"/>
+                            <Button text="Generate Report" onAction="#handleDriverPerformanceReport"
+                                    style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"
+                                    maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                              style="-fx-background-color: #e8f5e9; -fx-padding: 20; -fx-border-radius: 5;">
+                            <Label text="📋 Maintenance History" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="Complete vehicle maintenance and repair history" wrapText="true"
+                                   style="-fx-font-size: 11px;"/>
+                            <Button text="Generate Report" onAction="#handleMaintenanceReport"
+                                    style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"
+                                    maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                              style="-fx-background-color: #ffebee; -fx-padding: 20; -fx-border-radius: 5;">
+                            <Label text="📋 Safety & Incidents" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="Safety inspections, incidents, and compliance records" wrapText="true"
+                                   style="-fx-font-size: 11px;"/>
+                            <Button text="Generate Report" onAction="#handleSafetyReport"
+                                    style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"
+                                    maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="10" GridPane.columnIndex="2" GridPane.rowIndex="1"
+                              style="-fx-background-color: #e0f2f1; -fx-padding: 20; -fx-border-radius: 5;">
+                            <Label text="📋 Cost Analysis" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="Fuel costs, maintenance expenses, and budget analysis" wrapText="true"
+                                   style="-fx-font-size: 11px;"/>
+                            <Button text="Generate Report" onAction="#handleCostAnalysisReport"
+                                    style="-fx-background-color: #00bcd4; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"
+                                    maxWidth="Infinity"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+            </Tab>
+
+        </TabPane>
+    </center>
+
+    <!-- Bottom: Status Bar -->
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_LEFT"
+              style="-fx-background-color: #fafafa; -fx-padding: 12; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <Label fx:id="statusLabel" text="Ready" style="-fx-font-size: 11px;"/>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="lastUpdatedLabel" text="Last updated: Just now" style="-fx-font-size: 11px; -fx-text-fill: #757575;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="🔄 Refresh" onAction="#handleRefresh"
+                    style="-fx-padding: 6 15; -fx-cursor: hand;"/>
+            <Button text="⚙ Settings" onAction="#handleSettings"
+                    style="-fx-padding: 6 15; -fx-cursor: hand;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

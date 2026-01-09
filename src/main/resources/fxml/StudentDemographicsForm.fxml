@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.heronix.controller.StudentDemographicsFormController"
+      spacing="10" styleClass="root-container">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-section">
+        <Label text="Student Demographics" styleClass="form-title">
+            <font>
+                <Font name="System Bold" size="24"/>
+            </font>
+        </Label>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnRefresh" text="Refresh" onAction="#handleRefresh" styleClass="btn-secondary"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Search and Filter Section -->
+    <VBox spacing="8" styleClass="filter-section">
+        <Label text="Search Student" styleClass="section-header">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Label>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Search:"/>
+            <TextField fx:id="txtSearch" promptText="Enter student name or ID" prefWidth="250"/>
+
+            <Label text="Grade:"/>
+            <ComboBox fx:id="cmbGradeFilter" promptText="All Grades" prefWidth="120"/>
+
+            <Label text="Status:"/>
+            <ComboBox fx:id="cmbStatusFilter" promptText="All Statuses" prefWidth="150"/>
+
+            <Button fx:id="btnSearch" text="Search" onAction="#handleSearch" styleClass="btn-primary"/>
+            <Button fx:id="btnClearFilters" text="Clear" onAction="#handleClearFilters" styleClass="btn-secondary"/>
+        </HBox>
+    </VBox>
+
+    <Separator/>
+
+    <!-- Main Content Area - Split Pane -->
+    <SplitPane dividerPositions="0.30" VBox.vgrow="ALWAYS">
+
+        <!-- Left Side: Student List -->
+        <VBox spacing="5">
+            <Label text="Students" styleClass="section-header">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+
+            <TableView fx:id="tblStudents" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colStudentId" text="ID" prefWidth="80"/>
+                    <TableColumn fx:id="colName" text="Name" prefWidth="150"/>
+                    <TableColumn fx:id="colGrade" text="Grade" prefWidth="60"/>
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="100"/>
+                </columns>
+                <placeholder>
+                    <Label text="No students found"/>
+                </placeholder>
+            </TableView>
+
+            <HBox spacing="5" alignment="CENTER_LEFT">
+                <Button fx:id="btnView" text="View" onAction="#handleView" styleClass="btn-secondary" disable="true"/>
+                <Button fx:id="btnEdit" text="Edit" onAction="#handleEdit" styleClass="btn-primary" disable="true"/>
+            </HBox>
+        </VBox>
+
+        <!-- Right Side: Student Demographics Details -->
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox spacing="15" styleClass="details-panel">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <!-- Basic Information Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Basic Information" styleClass="section-header" style="-fx-background-color: #E3F2FD; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Student ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtStudentId" editable="false" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="*First Name:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtFirstName" promptText="First name" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Middle Name:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtMiddleName" promptText="Middle name" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="*Last Name:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtLastName" promptText="Last name" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                        <Label text="Preferred First Name:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtPreferredFirstName" promptText="Preferred first name" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                        <Label text="Nickname:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtNickname" promptText="Nickname" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                        <Label text="*Date of Birth:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="dpDateOfBirth" promptText="MM/DD/YYYY" GridPane.rowIndex="6" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="*Gender:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbGender" promptText="Select Gender" GridPane.rowIndex="7" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Gender Identity:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtGenderIdentity" promptText="Self-identified gender" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+
+                        <Label text="Pronouns:" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtPronouns" promptText="e.g., he/him, she/her, they/them" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Contact Information Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Contact Information" styleClass="section-header" style="-fx-background-color: #E8F5E9; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Cell Phone:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtCellPhone" promptText="(555) 123-4567" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Email:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtEmail" promptText="student@school.edu" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Personal Email:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtPersonalEmail" promptText="student@example.com" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Address Information Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Residential Address" styleClass="section-header" style="-fx-background-color: #FFF3E0; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="*Street Address:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtStreetAddress" promptText="123 Main Street" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Apartment/Unit:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtApartment" promptText="Apt 4B" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="*City:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtCity" promptText="City" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="*State:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbState" promptText="Select State" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="Infinity" editable="true"/>
+
+                        <Label text="*ZIP Code:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtZipCode" promptText="12345" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                        <Label text="Country:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbCountry" promptText="United States" GridPane.rowIndex="5" GridPane.columnIndex="1" maxWidth="Infinity" editable="true"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Mailing Address Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Mailing Address" styleClass="section-header" style="-fx-background-color: #FCE4EC; -fx-padding: 5;">
+                            <font>
+                                <Font name="System Bold" size="13"/>
+                            </font>
+                        </Label>
+                        <CheckBox fx:id="chkSameAsResidential" text="Same as Residential" onAction="#handleSameAsResidential"/>
+                    </HBox>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Street Address:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtMailingStreet" promptText="PO Box or Street Address" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="City:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtMailingCity" promptText="City" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="State:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbMailingState" promptText="Select State" GridPane.rowIndex="2" GridPane.columnIndex="1" maxWidth="Infinity" editable="true"/>
+
+                        <Label text="ZIP Code:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtMailingZip" promptText="12345" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Ethnicity & Demographics Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Ethnicity &amp; Demographics" styleClass="section-header" style="-fx-background-color: #F3E5F5; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Race/Ethnicity:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbEthnicity" promptText="Select Ethnicity" GridPane.rowIndex="0" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Hispanic/Latino:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbHispanicLatino" promptText="Select" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Native Language:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbNativeLanguage" promptText="Select Language" GridPane.rowIndex="2" GridPane.columnIndex="1" maxWidth="Infinity" editable="true"/>
+
+                        <Label text="Home Language:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbHomeLanguage" promptText="Select Language" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="Infinity" editable="true"/>
+
+                        <Label text="Other Languages:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtOtherLanguages" promptText="Comma-separated list" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Citizenship & Immigration Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Citizenship &amp; Immigration" styleClass="section-header" style="-fx-background-color: #E1F5FE; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Citizenship Status:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbCitizenshipStatus" promptText="Select Status" GridPane.rowIndex="0" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Country of Birth:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbCountryOfBirth" promptText="Select Country" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="Infinity" editable="true"/>
+
+                        <Label text="Country of Citizenship:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbCountryOfCitizenship" promptText="Select Country" GridPane.rowIndex="2" GridPane.columnIndex="1" maxWidth="Infinity" editable="true"/>
+
+                        <Label text="Visa Type:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbVisaType" promptText="Select Visa Type" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                        <Label text="Visa Expiration:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="dpVisaExpiration" promptText="MM/DD/YYYY" GridPane.rowIndex="4" GridPane.columnIndex="1" maxWidth="Infinity"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Photo & Identification Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Photo &amp; Identification" styleClass="section-header" style="-fx-background-color: #FFF9C4; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Student Photo:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <HBox spacing="10" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                            <Label fx:id="lblPhotoPath" text="No photo uploaded"/>
+                            <Button fx:id="btnUploadPhoto" text="Upload Photo" onAction="#handleUploadPhoto" styleClass="btn-secondary"/>
+                        </HBox>
+
+                        <Label text="State ID Number:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtStateId" promptText="State-issued student ID" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="SSN (Last 4):" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtSsnLast4" promptText="Last 4 digits only" maxWidth="100" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Family Information Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Family Information" styleClass="section-header" style="-fx-background-color: #E8EAF6; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="65" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Number of Siblings:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <Spinner fx:id="spnNumSiblings" editable="true" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="100"/>
+
+                        <Label text="Birth Order:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Spinner fx:id="spnBirthOrder" editable="true" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="100"/>
+
+                        <Label text="Household Size:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Spinner fx:id="spnHouseholdSize" editable="true" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="100"/>
+
+                        <Label text="Lives With:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="cmbLivesWith" promptText="Select living arrangement" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="Infinity"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Additional Notes Section -->
+                <VBox spacing="8" styleClass="info-section">
+                    <Label text="Additional Notes" styleClass="section-header" style="-fx-background-color: #F5F5F5; -fx-padding: 5;">
+                        <font>
+                            <Font name="System Bold" size="13"/>
+                        </font>
+                    </Label>
+
+                    <TextArea fx:id="txtNotes" promptText="Additional demographic notes or information" prefRowCount="4" wrapText="true"/>
+                </VBox>
+
+                <!-- Action Buttons -->
+                <HBox spacing="10" alignment="CENTER">
+                    <Button fx:id="btnSave" text="Save" onAction="#handleSave" styleClass="btn-primary" prefWidth="100"/>
+                    <Button fx:id="btnCancel" text="Cancel" onAction="#handleCancel" styleClass="btn-secondary" prefWidth="100"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnPrint" text="Print Demographics" onAction="#handlePrint" styleClass="btn-secondary"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </SplitPane>
+
+    <Separator/>
+
+    <!-- Status Bar -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="status-bar">
+        <Label text="User:"/>
+        <Label fx:id="lblCurrentUser" text="System User" styleClass="status-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Total Students:"/>
+        <Label fx:id="lblTotalStudents" text="0" styleClass="status-label"/>
+        <Separator orientation="VERTICAL"/>
+        <Label text="Selected:"/>
+        <Label fx:id="lblSelectedStudent" text="None" styleClass="status-label"/>
+    </HBox>
+</VBox>

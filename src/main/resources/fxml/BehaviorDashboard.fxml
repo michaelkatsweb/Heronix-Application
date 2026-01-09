@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.BehaviorDashboardController"
+            styleClass="content-pane">
+
+    <top>
+        <VBox styleClass="header-section">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Behavior Management Dashboard" styleClass="page-title"/>
+                    <Label text="Track and analyze student behavior incidents" styleClass="page-subtitle"/>
+                </VBox>
+                <Button fx:id="newIncidentButton" text="+ New Incident" onAction="#handleNewIncident"
+                        styleClass="primary-button"/>
+                <Button fx:id="exportButton" text="Export Report" onAction="#handleExport"/>
+                <Button fx:id="refreshButton" text="Refresh" onAction="#handleRefresh"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.7" styleClass="split-pane">
+            <!-- Main Content -->
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- Filter Bar -->
+                <HBox spacing="15" alignment="CENTER_LEFT" styleClass="filter-bar">
+                    <Label text="Filters:"/>
+
+                    <VBox spacing="3">
+                        <Label text="Date Range" styleClass="filter-label"/>
+                        <HBox spacing="5">
+                            <DatePicker fx:id="startDatePicker" promptText="Start Date" prefWidth="130"/>
+                            <Label text="to"/>
+                            <DatePicker fx:id="endDatePicker" promptText="End Date" prefWidth="130"/>
+                        </HBox>
+                    </VBox>
+
+                    <VBox spacing="3">
+                        <Label text="Student" styleClass="filter-label"/>
+                        <ComboBox fx:id="studentFilterComboBox" promptText="All Students" prefWidth="180"/>
+                    </VBox>
+
+                    <VBox spacing="3">
+                        <Label text="Severity" styleClass="filter-label"/>
+                        <ComboBox fx:id="severityFilterComboBox" promptText="All Severities" prefWidth="140"/>
+                    </VBox>
+
+                    <VBox spacing="3">
+                        <Label text="Status" styleClass="filter-label"/>
+                        <ComboBox fx:id="statusFilterComboBox" promptText="All Statuses" prefWidth="140"/>
+                    </VBox>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Button fx:id="applyFiltersButton" text="Apply" onAction="#handleApplyFilters"/>
+                    <Button fx:id="clearFiltersButton" text="Clear" onAction="#handleClearFilters"/>
+                </HBox>
+
+                <!-- Statistics Cards -->
+                <GridPane hgap="15" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                    </columnConstraints>
+
+                    <VBox spacing="10" styleClass="stat-card" GridPane.columnIndex="0">
+                        <Label text="Total Incidents" styleClass="stat-label"/>
+                        <Label fx:id="totalIncidentsLabel" text="0" styleClass="stat-value"/>
+                        <Label fx:id="totalIncidentsTrendLabel" text="↑ 0% from last period" styleClass="stat-trend"/>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="stat-card" GridPane.columnIndex="1">
+                        <Label text="Pending Review" styleClass="stat-label"/>
+                        <Label fx:id="pendingReviewLabel" text="0" styleClass="stat-value warning"/>
+                        <Label text="Awaiting admin action" styleClass="stat-trend"/>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="stat-card" GridPane.columnIndex="2">
+                        <Label text="Major Incidents" styleClass="stat-label"/>
+                        <Label fx:id="majorIncidentsLabel" text="0" styleClass="stat-value danger"/>
+                        <Label fx:id="majorIncidentsTrendLabel" text="↓ 0% from last period" styleClass="stat-trend"/>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="stat-card" GridPane.columnIndex="3">
+                        <Label text="Students Involved" styleClass="stat-label"/>
+                        <Label fx:id="studentsInvolvedLabel" text="0" styleClass="stat-value"/>
+                        <Label fx:id="repeatOffendersLabel" text="0 repeat offenders" styleClass="stat-trend"/>
+                    </VBox>
+                </GridPane>
+
+                <!-- Charts -->
+                <GridPane hgap="15" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="50"/>
+                    </columnConstraints>
+
+                    <!-- Incidents by Type -->
+                    <VBox spacing="10" styleClass="chart-container" GridPane.columnIndex="0">
+                        <Label text="Incidents by Type" styleClass="chart-title"/>
+                        <PieChart fx:id="behaviorTypeChart" legendVisible="true" prefHeight="250"/>
+                    </VBox>
+
+                    <!-- Incidents by Severity -->
+                    <VBox spacing="10" styleClass="chart-container" GridPane.columnIndex="1">
+                        <Label text="Incidents by Severity" styleClass="chart-title"/>
+                        <PieChart fx:id="severityChart" legendVisible="true" prefHeight="250"/>
+                    </VBox>
+
+                    <!-- Trend Chart -->
+                    <VBox spacing="10" styleClass="chart-container" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                          GridPane.columnSpan="2">
+                        <Label text="Incident Trends (Last 30 Days)" styleClass="chart-title"/>
+                        <BarChart fx:id="trendChart" prefHeight="200">
+                            <xAxis>
+                                <CategoryAxis label="Date"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Number of Incidents" minorTickVisible="false"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+                </GridPane>
+
+                <!-- Recent Incidents Table -->
+                <VBox spacing="10" styleClass="table-container" VBox.vgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Recent Incidents" styleClass="section-header"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="searchField" promptText="Search incidents..." prefWidth="250"/>
+                    </HBox>
+
+                    <TableView fx:id="incidentsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="dateColumn" text="Date" prefWidth="100"/>
+                            <TableColumn fx:id="studentColumn" text="Student" prefWidth="150"/>
+                            <TableColumn fx:id="behaviorTypeColumn" text="Behavior Type" prefWidth="150"/>
+                            <TableColumn fx:id="locationColumn" text="Location" prefWidth="120"/>
+                            <TableColumn fx:id="severityColumn" text="Severity" prefWidth="100"/>
+                            <TableColumn fx:id="reportingStaffColumn" text="Reporting Staff" prefWidth="150"/>
+                            <TableColumn fx:id="statusColumn" text="Status" prefWidth="120"/>
+                            <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
+                        </columns>
+                    </TableView>
+
+                    <HBox spacing="10" alignment="CENTER">
+                        <Label fx:id="paginationLabel" text="Showing 0-0 of 0 incidents"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Pagination fx:id="pagination" maxPageIndicatorCount="5"/>
+                    </HBox>
+                </VBox>
+
+            </VBox>
+
+            <!-- Right Sidebar - Quick Stats -->
+            <VBox spacing="15" styleClass="sidebar">
+                <padding>
+                    <Insets top="20" right="15" bottom="20" left="15"/>
+                </padding>
+
+                <Label text="Quick Actions" styleClass="sidebar-header"/>
+
+                <Button text="Generate Report" maxWidth="Infinity" onAction="#handleGenerateReport"/>
+                <Button text="View Trends" maxWidth="Infinity" onAction="#handleViewTrends"/>
+                <Button text="Behavior Interventions" maxWidth="Infinity" onAction="#handleInterventions"/>
+
+                <Separator/>
+
+                <Label text="Top Behavior Types" styleClass="sidebar-header"/>
+                <ListView fx:id="topBehaviorsListView" prefHeight="150"/>
+
+                <Separator/>
+
+                <Label text="Students Needing Attention" styleClass="sidebar-header"/>
+                <ListView fx:id="atRiskStudentsListView" prefHeight="200"/>
+
+                <Separator/>
+
+                <Label text="Pending Actions" styleClass="sidebar-header"/>
+                <VBox spacing="8" fx:id="pendingActionsBox">
+                    <Label fx:id="pendingContactsLabel" text="0 parent contacts pending" styleClass="pending-item"/>
+                    <Label fx:id="pendingReferralsLabel" text="0 admin referrals pending" styleClass="pending-item"/>
+                    <Label fx:id="pendingFollowUpsLabel" text="0 follow-ups needed" styleClass="pending-item"/>
+                </VBox>
+
+            </VBox>
+        </SplitPane>
+    </center>
+
+</BorderPane>

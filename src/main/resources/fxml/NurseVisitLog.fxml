@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.NurseVisitLogController"
+            styleClass="content-pane">
+
+    <top>
+        <VBox styleClass="header-section">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="Nurse Visit Log" styleClass="page-title"/>
+            <Label text="Document student visit to health office" styleClass="page-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="form-scroll-pane">
+            <VBox spacing="20" styleClass="form-container">
+                <padding>
+                    <Insets top="20" right="40" bottom="20" left="40"/>
+                </padding>
+
+                <!-- Student & Visit Information -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Student & Visit Information" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Student *" styleClass="field-label"/>
+                            <ComboBox fx:id="studentComboBox" promptText="Select Student" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Grade" styleClass="field-label"/>
+                            <TextField fx:id="gradeField" editable="false"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Label text="Visit Date *" styleClass="field-label"/>
+                            <DatePicker fx:id="visitDatePicker" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                            <Label text="Visit Time *" styleClass="field-label"/>
+                            <TextField fx:id="visitTimeField" promptText="HH:MM (e.g., 09:30)"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <Label text="Attending Nurse *" styleClass="field-label"/>
+                            <ComboBox fx:id="attendingNurseComboBox" promptText="Select Nurse" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <Label text="Check-In Time" styleClass="field-label"/>
+                            <TextField fx:id="checkInTimeField" editable="false"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                            <Label text="Check-Out Time" styleClass="field-label"/>
+                            <TextField fx:id="checkOutTimeField" editable="false"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                            <Label text="Duration" styleClass="field-label"/>
+                            <TextField fx:id="durationField" editable="false" promptText="Auto-calculated"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Visit Reason -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Visit Reason" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Primary Reason *" styleClass="field-label"/>
+                            <ComboBox fx:id="visitReasonComboBox" promptText="Select Reason" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="ILLNESS"/>
+                                        <String fx:value="INJURY"/>
+                                        <String fx:value="MEDICATION"/>
+                                        <String fx:value="CHRONIC_CONDITION"/>
+                                        <String fx:value="MENTAL_HEALTH"/>
+                                        <String fx:value="MENSTRUAL"/>
+                                        <String fx:value="HEADACHE"/>
+                                        <String fx:value="DENTAL"/>
+                                        <String fx:value="VISION"/>
+                                        <String fx:value="HEARING"/>
+                                        <String fx:value="ALLERGIC_REACTION"/>
+                                        <String fx:value="ASTHMA"/>
+                                        <String fx:value="DIABETES"/>
+                                        <String fx:value="SEIZURE"/>
+                                        <String fx:value="OTHER"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                              fx:id="otherReasonBox" visible="false" managed="false">
+                            <Label text="Other Reason Details" styleClass="field-label"/>
+                            <TextField fx:id="otherReasonField" promptText="Specify other reason"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                            <Label text="Chief Complaint *" styleClass="field-label"/>
+                            <TextField fx:id="chiefComplaintField"
+                                       promptText="Primary symptom or reason for visit"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Symptoms & Assessment -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Symptoms & Assessment" styleClass="section-header"/>
+
+                    <GridPane hgap="20" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <CheckBox fx:id="hasFeverCheckBox" text="Fever"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="hasVomitingCheckBox" text="Vomiting"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="hasHeadacheCheckBox" text="Headache"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="hasStomachAcheCheckBox" text="Stomach Ache"
+                                  GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                        <CheckBox fx:id="hasInjuryCheckBox" text="Injury"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    </GridPane>
+
+                    <VBox spacing="5">
+                        <Label text="Detailed Symptoms" styleClass="field-label"/>
+                        <TextArea fx:id="symptomsTextArea"
+                                  promptText="Describe symptoms, onset, severity, duration..."
+                                  wrapText="true" prefRowCount="3"/>
+                    </VBox>
+
+                    <!-- Injury Details (conditional) -->
+                    <VBox spacing="15" fx:id="injuryDetailsBox" visible="false" managed="false">
+                        <GridPane hgap="15" vgap="15">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Injury Severity" styleClass="field-label"/>
+                                <ComboBox fx:id="injurySeverityComboBox" promptText="Select Severity"
+                                          maxWidth="Infinity">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="MINOR"/>
+                                            <String fx:value="MODERATE"/>
+                                            <String fx:value="SERIOUS"/>
+                                            <String fx:value="EMERGENCY"/>
+                                        </FXCollections>
+                                    </items>
+                                </ComboBox>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                                <Label text="Injury Description" styleClass="field-label"/>
+                                <TextArea fx:id="injuryDescriptionTextArea"
+                                          promptText="Describe injury location, cause, circumstances..."
+                                          wrapText="true" prefRowCount="2"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+                </VBox>
+
+                <!-- Vital Signs -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Vital Signs" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Temperature (°F)" styleClass="field-label"/>
+                            <TextField fx:id="temperatureField" promptText="e.g., 98.6"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Blood Pressure" styleClass="field-label"/>
+                            <TextField fx:id="bloodPressureField" promptText="e.g., 120/80"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Label text="Heart Rate (bpm)" styleClass="field-label"/>
+                            <TextField fx:id="heartRateField" promptText="e.g., 72"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                            <Label text="Respiratory Rate" styleClass="field-label"/>
+                            <TextField fx:id="respiratoryRateField" promptText="breaths/min"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <Label text="O₂ Saturation (%)" styleClass="field-label"/>
+                            <TextField fx:id="oxygenSaturationField" promptText="e.g., 98"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Treatment Provided -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Treatment Provided" styleClass="section-header"/>
+
+                    <GridPane hgap="20" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <CheckBox fx:id="medicationAdministeredCheckBox" text="Medication Administered"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="iceAppliedCheckBox" text="Ice Applied"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="bandageAppliedCheckBox" text="Bandage Applied"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                    </GridPane>
+
+                    <VBox spacing="5" fx:id="medicationDetailsBox" visible="false" managed="false">
+                        <Label text="Medication Details *" styleClass="field-label"/>
+                        <TextArea fx:id="medicationDetailsTextArea"
+                                  promptText="Medication name, dosage, time administered..."
+                                  wrapText="true" prefRowCount="2"/>
+                    </VBox>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Rest Period (minutes)" styleClass="field-label"/>
+                            <TextField fx:id="restPeriodField" promptText="e.g., 30"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                            <Label text="Treatment Notes" styleClass="field-label"/>
+                            <TextArea fx:id="treatmentProvidedTextArea"
+                                      promptText="Detail all treatments, care, and interventions provided..."
+                                      wrapText="true" prefRowCount="3"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Disposition -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Disposition" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Disposition *" styleClass="field-label"/>
+                            <ComboBox fx:id="dispositionComboBox" promptText="Select Disposition"
+                                      maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="RETURNED_TO_CLASS"/>
+                                        <String fx:value="SENT_HOME"/>
+                                        <String fx:value="PARENT_NOTIFIED_STAYED"/>
+                                        <String fx:value="EMERGENCY_TRANSPORT"/>
+                                        <String fx:value="STAYED_FOR_REST"/>
+                                        <String fx:value="REFERRED_TO_PHYSICIAN"/>
+                                        <String fx:value="NO_TREATMENT_NEEDED"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Disposition Time" styleClass="field-label"/>
+                            <TextField fx:id="dispositionTimeField" promptText="HH:MM"/>
+                        </VBox>
+                    </GridPane>
+
+                    <!-- Sent Home Details (conditional) -->
+                    <VBox spacing="10" fx:id="sentHomeBox" visible="false" managed="false"
+                          style="-fx-background-color: #ffebee; -fx-padding: 15;">
+                        <Label text="Sent Home Information" style="-fx-font-weight: bold; -fx-text-fill: #d32f2f;"/>
+                        <VBox spacing="5">
+                            <Label text="Reason for Sending Home *" styleClass="field-label"/>
+                            <TextArea fx:id="sentHomeReasonTextArea"
+                                      promptText="Document reason student sent home..."
+                                      wrapText="true" prefRowCount="2"/>
+                        </VBox>
+                        <HBox spacing="15">
+                            <CheckBox fx:id="parentPickedUpCheckBox" text="Parent Picked Up"/>
+                            <VBox spacing="5">
+                                <Label text="Pickup Time" styleClass="field-label"/>
+                                <TextField fx:id="parentPickupTimeField" promptText="HH:MM"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <!-- Parent Communication -->
+                <VBox spacing="15" styleClass="form-section"
+                      style="-fx-background-color: #fff9c4; -fx-padding: 15;">
+                    <Label text="Parent Communication" styleClass="section-header"/>
+
+                    <CheckBox fx:id="parentNotifiedCheckBox" text="Parent/Guardian Notified"/>
+
+                    <VBox spacing="15" fx:id="parentNotificationBox" visible="false" managed="false">
+                        <GridPane hgap="15" vgap="15">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Notification Method" styleClass="field-label"/>
+                                <ComboBox fx:id="parentNotificationMethodComboBox" promptText="Select Method"
+                                          maxWidth="Infinity">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="PHONE"/>
+                                            <String fx:value="EMAIL"/>
+                                            <String fx:value="TEXT_MESSAGE"/>
+                                            <String fx:value="IN_PERSON"/>
+                                            <String fx:value="PARENT_PORTAL"/>
+                                            <String fx:value="LEFT_MESSAGE"/>
+                                        </FXCollections>
+                                    </items>
+                                </ComboBox>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="Notification Time" styleClass="field-label"/>
+                                <TextField fx:id="parentNotificationTimeField" promptText="HH:MM"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                                <Label text="Communication Notes" styleClass="field-label"/>
+                                <TextArea fx:id="parentNotificationNotesTextArea"
+                                          promptText="Who was contacted, what was discussed, parent response..."
+                                          wrapText="true" prefRowCount="2"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+                </VBox>
+
+                <!-- Follow-Up & Referrals -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Follow-Up & Referrals" styleClass="section-header"/>
+
+                    <GridPane hgap="20" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="34"/>
+                        </columnConstraints>
+
+                        <CheckBox fx:id="requiresFollowUpCheckBox" text="Requires Follow-Up"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="physicianReferralNeededCheckBox" text="Physician Referral Needed"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <CheckBox fx:id="incidentReportFiledCheckBox" text="Incident Report Filed"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                    </GridPane>
+
+                    <VBox spacing="5" fx:id="followUpBox" visible="false" managed="false">
+                        <Label text="Follow-Up Instructions" styleClass="field-label"/>
+                        <TextArea fx:id="followUpInstructionsTextArea"
+                                  promptText="Follow-up care, monitoring needed, return to clinic..."
+                                  wrapText="true" prefRowCount="2"/>
+                    </VBox>
+
+                    <VBox spacing="5" fx:id="physicianReferralBox" visible="false" managed="false">
+                        <Label text="Physician Referral Reason" styleClass="field-label"/>
+                        <TextArea fx:id="physicianReferralReasonTextArea"
+                                  promptText="Why physician visit is recommended..."
+                                  wrapText="true" prefRowCount="2"/>
+                    </VBox>
+
+                    <VBox spacing="5" fx:id="incidentReportBox" visible="false" managed="false">
+                        <Label text="Incident Report Number" styleClass="field-label"/>
+                        <TextField fx:id="incidentReportNumberField" promptText="Report tracking number"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Nurse Notes -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Nurse Notes" styleClass="section-header"/>
+
+                    <VBox spacing="5">
+                        <Label text="Clinical Notes" styleClass="field-label"/>
+                        <TextArea fx:id="nurseNotesTextArea"
+                                  promptText="Assessment, observations, clinical judgment, interventions..."
+                                  wrapText="true" prefRowCount="4"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Confidential Notes (HIPAA Protected)"
+                               styleClass="field-label" style="-fx-text-fill: #c2185b;"/>
+                        <TextArea fx:id="confidentialNotesTextArea"
+                                  promptText="Sensitive health information, private discussions..."
+                                  wrapText="true" prefRowCount="3"
+                                  style="-fx-border-color: #c2185b; -fx-border-width: 2;"/>
+                    </VBox>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="button-bar">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label fx:id="statusIndicator" text=""/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="checkOutButton" text="Check Out Student" onAction="#handleCheckOut"
+                    styleClass="primary-button"/>
+            <Button fx:id="saveButton" text="Save Visit" onAction="#handleSave" styleClass="primary-button"/>
+            <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.TeacherDashboardController"
+            stylesheets="@../css/application.css"
+            prefWidth="1700" prefHeight="950">
+
+    <!-- Top: Header -->
+    <top>
+        <VBox spacing="15" style="-fx-background-color: linear-gradient(to right, #00897b, #00695c); -fx-padding: 20;">
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Teacher Dashboard"
+                           style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label fx:id="teacherNameLabel" text="Welcome, Ms. Rodriguez"
+                           style="-fx-font-size: 14px; -fx-text-fill: white;"/>
+                </VBox>
+
+                <!-- Period Selector -->
+                <VBox spacing="5" alignment="CENTER_RIGHT">
+                    <Label text="Current Period" style="-fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;"/>
+                    <ComboBox fx:id="periodSelectorComboBox" promptText="Select period..." prefWidth="280"
+                              style="-fx-font-size: 13px;"/>
+                </VBox>
+
+                <!-- Quick Actions -->
+                <VBox spacing="5" alignment="CENTER_RIGHT">
+                    <Button text="📋 Take Attendance" onAction="#handleTakeAttendance"
+                            style="-fx-background-color: #ffa726; -fx-text-fill: white; -fx-padding: 8 16; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                    <Button text="📝 Enter Grades" onAction="#handleEnterGrades"
+                            style="-fx-background-color: #26a69a; -fx-text-fill: white; -fx-padding: 8 16; -fx-cursor: hand;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Today's Schedule & Stats -->
+            <HBox spacing="15">
+                <VBox spacing="3" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
+                    <Label text="Today's Classes" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <Label fx:id="todaysClassesLabel" text="6"
+                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="3" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
+                    <Label text="Total Students" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <Label fx:id="totalStudentsLabel" text="142"
+                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="3" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
+                    <Label text="Grades to Post" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <Label fx:id="gradesToPostLabel" text="23"
+                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="3" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
+                    <Label text="Unread Messages" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <Label fx:id="unreadMessagesLabel" text="7"
+                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="3" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
+                    <Label text="Attendance Rate" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                    <Label fx:id="attendanceRateLabel" text="94.8%"
+                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Main Dashboard Content -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: #f5f5f5;">
+            <VBox spacing="20" style="-fx-padding: 20;">
+
+                <!-- Today's Schedule & Alerts Row -->
+                <HBox spacing="15">
+                    <!-- Today's Schedule -->
+                    <VBox spacing="10" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="🕐 Today's Schedule" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="currentTimeLabel" text="10:45 AM"
+                                   style="-fx-font-size: 12px; -fx-text-fill: #757575;"/>
+                        </HBox>
+
+                        <ListView fx:id="scheduleListView" prefHeight="200">
+                            <placeholder>
+                                <Label text="No classes today" style="-fx-text-fill: #9e9e9e;"/>
+                            </placeholder>
+                        </ListView>
+                    </VBox>
+
+                    <!-- Action Items -->
+                    <VBox spacing="10" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #ff9800; -fx-border-width: 2; -fx-border-radius: 5;">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="⚡ Action Items" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="actionItemsCountLabel" text="5"
+                                   style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-padding: 4 8; -fx-font-weight: bold; -fx-background-radius: 12;"/>
+                        </HBox>
+
+                        <ListView fx:id="actionItemsListView" prefHeight="200">
+                            <placeholder>
+                                <Label text="No action items" style="-fx-text-fill: #9e9e9e;"/>
+                            </placeholder>
+                        </ListView>
+                    </VBox>
+                </HBox>
+
+                <!-- Current Class Overview -->
+                <VBox spacing="10"
+                      style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="👥 Current Class Overview" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="classInfoLabel" text="No class selected" style="-fx-font-size: 12px; -fx-text-fill: #757575;"/>
+                        <Button text="View Roster" onAction="#handleViewRoster"
+                                style="-fx-padding: 6 12; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <HBox spacing="15">
+                        <!-- Student List -->
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Students" style="-fx-font-weight: bold;"/>
+                                <TextField fx:id="studentSearchField" promptText="Search students..." prefWidth="200"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <ComboBox fx:id="studentFilterComboBox" prefWidth="150">
+                                    <items>
+                                        <String fx:value="All Students"/>
+                                        <String fx:value="Present Today"/>
+                                        <String fx:value="Absent Today"/>
+                                        <String fx:value="Struggling (D/F)"/>
+                                        <String fx:value="Excelling (A)"/>
+                                    </items>
+                                </ComboBox>
+                            </HBox>
+
+                            <TableView fx:id="studentsTableView" prefHeight="250">
+                                <columns>
+                                    <TableColumn fx:id="studentNameColumn" text="Name" prefWidth="150"/>
+                                    <TableColumn fx:id="studentIdColumn" text="ID" prefWidth="80"/>
+                                    <TableColumn fx:id="currentGradeColumn" text="Grade" prefWidth="60"/>
+                                    <TableColumn fx:id="attendanceColumn" text="Attendance" prefWidth="90"/>
+                                    <TableColumn fx:id="lastAssignmentColumn" text="Last Assignment" prefWidth="120"/>
+                                    <TableColumn fx:id="participationColumn" text="Participation" prefWidth="100"/>
+                                </columns>
+                                <placeholder>
+                                    <Label text="No students" style="-fx-text-fill: #9e9e9e;"/>
+                                </placeholder>
+                            </TableView>
+                        </VBox>
+
+                        <!-- Class Statistics -->
+                        <VBox spacing="10" prefWidth="320"
+                              style="-fx-background-color: #f9f9f9; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
+                            <Label text="Class Statistics" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+
+                            <GridPane hgap="10" vgap="10">
+                                <columnConstraints>
+                                    <ColumnConstraints percentWidth="50"/>
+                                    <ColumnConstraints percentWidth="50"/>
+                                </columnConstraints>
+
+                                <VBox spacing="3" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                      style="-fx-background-color: #e8f5e9; -fx-padding: 10; -fx-border-radius: 5;">
+                                    <Label text="Class Average" style="-fx-font-size: 10px; -fx-text-fill: #2e7d32;"/>
+                                    <Label fx:id="classAverageLabel" text="87.3%"
+                                           style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                                </VBox>
+
+                                <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                      style="-fx-background-color: #e3f2fd; -fx-padding: 10; -fx-border-radius: 5;">
+                                    <Label text="Present Today" style="-fx-font-size: 10px; -fx-text-fill: #1565c0;"/>
+                                    <Label fx:id="presentTodayLabel" text="22 / 24"
+                                           style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1565c0;"/>
+                                </VBox>
+
+                                <VBox spacing="3" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                                      style="-fx-background-color: #fff3e0; -fx-padding: 10; -fx-border-radius: 5;">
+                                    <Label text="Missing Work" style="-fx-font-size: 10px; -fx-text-fill: #e65100;"/>
+                                    <Label fx:id="missingWorkLabel" text="8"
+                                           style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+                                </VBox>
+
+                                <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                      style="-fx-background-color: #ffebee; -fx-padding: 10; -fx-border-radius: 5;">
+                                    <Label text="At Risk (D/F)" style="-fx-font-size: 10px; -fx-text-fill: #c62828;"/>
+                                    <Label fx:id="atRiskLabel" text="3"
+                                           style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                                </VBox>
+                            </GridPane>
+
+                            <Label text="Grade Distribution" style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 10 0 0 0;"/>
+                            <BarChart fx:id="gradeDistributionChart" prefHeight="150" legendVisible="false">
+                                <xAxis>
+                                    <CategoryAxis side="BOTTOM"/>
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis side="LEFT" label="Students"/>
+                                </yAxis>
+                            </BarChart>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Assignments & Lesson Plans Row -->
+                <HBox spacing="15">
+                    <!-- Recent Assignments -->
+                    <VBox spacing="10" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="📚 Assignments" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="+ Create Assignment" onAction="#handleCreateAssignment"
+                                    style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-padding: 5 12; -fx-cursor: hand;"/>
+                        </HBox>
+
+                        <TableView fx:id="assignmentsTableView" prefHeight="220">
+                            <columns>
+                                <TableColumn fx:id="assignmentNameColumn" text="Assignment" prefWidth="200"/>
+                                <TableColumn fx:id="dueDateColumn" text="Due Date" prefWidth="100"/>
+                                <TableColumn fx:id="submittedColumn" text="Submitted" prefWidth="80"/>
+                                <TableColumn fx:id="gradedColumn" text="Graded" prefWidth="80"/>
+                                <TableColumn fx:id="averageScoreColumn" text="Avg Score" prefWidth="80"/>
+                            </columns>
+                            <placeholder>
+                                <Label text="No assignments" style="-fx-text-fill: #9e9e9e;"/>
+                            </placeholder>
+                        </TableView>
+                    </VBox>
+
+                    <!-- Lesson Plans -->
+                    <VBox spacing="10" prefWidth="450"
+                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="📖 Lesson Plans" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="+ New Lesson" onAction="#handleNewLesson"
+                                    style="-fx-background-color: #673ab7; -fx-text-fill: white; -fx-padding: 5 12; -fx-cursor: hand;"/>
+                        </HBox>
+
+                        <ListView fx:id="lessonPlansListView" prefHeight="220">
+                            <placeholder>
+                                <Label text="No lesson plans" style="-fx-text-fill: #9e9e9e;"/>
+                            </placeholder>
+                        </ListView>
+                    </VBox>
+                </HBox>
+
+                <!-- Communication & Resources Row -->
+                <HBox spacing="15">
+                    <!-- Messages -->
+                    <VBox spacing="10" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="✉ Messages" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="Compose" onAction="#handleComposeMessage"
+                                    style="-fx-background-color: #ff5722; -fx-text-fill: white; -fx-padding: 5 12; -fx-cursor: hand;"/>
+                        </HBox>
+
+                        <ListView fx:id="messagesListView" prefHeight="180">
+                            <placeholder>
+                                <Label text="No messages" style="-fx-text-fill: #9e9e9e;"/>
+                            </placeholder>
+                        </ListView>
+                    </VBox>
+
+                    <!-- Quick Resources -->
+                    <VBox spacing="10" prefWidth="380"
+                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
+                        <Label text="🔧 Quick Resources" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+
+                            <Button text="📊 Grade Reports" onAction="#handleGradeReports"
+                                    GridPane.columnIndex="0" GridPane.rowIndex="0" maxWidth="Infinity"
+                                    style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 12; -fx-cursor: hand;"/>
+
+                            <Button text="📅 Calendar" onAction="#handleCalendar"
+                                    GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity"
+                                    style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-padding: 12; -fx-cursor: hand;"/>
+
+                            <Button text="📋 Forms & Templates" onAction="#handleForms"
+                                    GridPane.columnIndex="0" GridPane.rowIndex="1" maxWidth="Infinity"
+                                    style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-padding: 12; -fx-cursor: hand;"/>
+
+                            <Button text="📖 Curriculum" onAction="#handleCurriculum"
+                                    GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="Infinity"
+                                    style="-fx-background-color: #673ab7; -fx-text-fill: white; -fx-padding: 12; -fx-cursor: hand;"/>
+
+                            <Button text="🎯 Standards" onAction="#handleStandards"
+                                    GridPane.columnIndex="0" GridPane.rowIndex="2" maxWidth="Infinity"
+                                    style="-fx-background-color: #00bcd4; -fx-text-fill: white; -fx-padding: 12; -fx-cursor: hand;"/>
+
+                            <Button text="💡 Resources Library" onAction="#handleResourcesLibrary"
+                                    GridPane.columnIndex="1" GridPane.rowIndex="2" maxWidth="Infinity"
+                                    style="-fx-background-color: #607d8b; -fx-text-fill: white; -fx-padding: 12; -fx-cursor: hand;"/>
+                        </GridPane>
+                    </VBox>
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Bottom: Footer -->
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_LEFT"
+              style="-fx-background-color: #fafafa; -fx-padding: 12; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <Label fx:id="statusLabel" text="Dashboard ready" style="-fx-font-size: 11px;"/>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="lastUpdatedLabel" text="Last updated: Just now" style="-fx-font-size: 11px; -fx-text-fill: #757575;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="🔄 Refresh" onAction="#handleRefresh"
+                    style="-fx-padding: 6 15; -fx-cursor: hand;"/>
+            <Button text="⚙ Settings" onAction="#handleSettings"
+                    style="-fx-padding: 6 15; -fx-cursor: hand;"/>
+            <Button text="❓ Help" onAction="#handleHelp"
+                    style="-fx-padding: 6 15; -fx-cursor: hand;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

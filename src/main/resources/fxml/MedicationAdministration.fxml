@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.MedicationAdministrationController"
+            styleClass="content-pane">
+
+    <top>
+        <VBox styleClass="header-section">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="Medication Administration Log" styleClass="page-title"/>
+            <Label text="Document medication administration with full compliance tracking"
+                   styleClass="page-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="form-scroll-pane">
+            <VBox spacing="20" styleClass="form-container">
+                <padding>
+                    <Insets top="20" right="40" bottom="20" left="40"/>
+                </padding>
+
+                <!-- Legal Compliance Banner -->
+                <VBox style="-fx-background-color: #e3f2fd; -fx-padding: 15; -fx-border-color: #2196f3; -fx-border-width: 2;">
+                    <Label text="⚕ MEDICATION ADMINISTRATION RECORD (MAR)"
+                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+                    <Label text="This is a legal document. All fields must be accurate and complete."
+                           style="-fx-text-fill: #1976d2;"/>
+                </VBox>
+
+                <!-- Student & Medication Selection -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Student & Medication" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="34"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Student *" styleClass="field-label"/>
+                            <ComboBox fx:id="studentComboBox" promptText="Select Student" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Grade" styleClass="field-label"/>
+                            <TextField fx:id="gradeField" editable="false"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Label text="Medication *" styleClass="field-label"/>
+                            <ComboBox fx:id="medicationComboBox" promptText="Select Medication" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="3">
+                            <Label text="Medication Details" styleClass="field-label"
+                                   style="-fx-font-weight: bold;"/>
+                            <TextArea fx:id="medicationDetailsTextArea" editable="false"
+                                      wrapText="true" prefRowCount="2"
+                                      style="-fx-background-color: #f5f5f5;"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Administration Details -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Administration Details" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Administration Date *" styleClass="field-label"/>
+                            <DatePicker fx:id="administrationDatePicker" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Administration Time *" styleClass="field-label"/>
+                            <TextField fx:id="administrationTimeField" promptText="HH:MM"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Label text="Dose Given *" styleClass="field-label"/>
+                            <TextField fx:id="doseGivenField" promptText="e.g., 10mg, 1 tablet"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                            <Label text="Administration Route *" styleClass="field-label"/>
+                            <ComboBox fx:id="administrationRouteComboBox" promptText="Select Route"
+                                      maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="ORAL"/>
+                                        <String fx:value="SUBLINGUAL"/>
+                                        <String fx:value="TOPICAL"/>
+                                        <String fx:value="INHALED"/>
+                                        <String fx:value="OPHTHALMIC"/>
+                                        <String fx:value="OTIC"/>
+                                        <String fx:value="NASAL"/>
+                                        <String fx:value="RECTAL"/>
+                                        <String fx:value="INJECTION_IM"/>
+                                        <String fx:value="INJECTION_SC"/>
+                                        <String fx:value="INJECTION_IV"/>
+                                        <String fx:value="TRANSDERMAL"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <Label text="Reason for Administration *" styleClass="field-label"/>
+                            <ComboBox fx:id="administrationReasonComboBox" promptText="Select Reason"
+                                      maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="SCHEDULED"/>
+                                        <String fx:value="PRN_PAIN"/>
+                                        <String fx:value="PRN_FEVER"/>
+                                        <String fx:value="PRN_ASTHMA"/>
+                                        <String fx:value="PRN_ALLERGY"/>
+                                        <String fx:value="PRN_ANXIETY"/>
+                                        <String fx:value="PRN_SEIZURE"/>
+                                        <String fx:value="PRN_DIABETES"/>
+                                        <String fx:value="PRN_OTHER"/>
+                                        <String fx:value="EMERGENCY"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="2"
+                              fx:id="reasonDetailsBox" visible="false" managed="false">
+                            <Label text="PRN Reason Details *" styleClass="field-label"/>
+                            <TextField fx:id="reasonDetailsField"
+                                       promptText="Why was PRN medication needed?"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Administrator Information -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Administrator Information" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="34"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Administered By *" styleClass="field-label"/>
+                            <ComboBox fx:id="administratorComboBox" promptText="Select Nurse/Staff"
+                                      maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Administrator Title *" styleClass="field-label"/>
+                            <TextField fx:id="administratorTitleField" promptText="e.g., School Nurse, RN"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Label text="Witness (if required)" styleClass="field-label"/>
+                            <ComboBox fx:id="witnessComboBox" promptText="Select Witness (Optional)"
+                                      maxWidth="Infinity"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Safety Verification Checklist -->
+                <VBox spacing="15" styleClass="form-section"
+                      style="-fx-background-color: #fff9c4; -fx-padding: 15;">
+                    <Label text="⚠ Safety Verification Checklist (5 Rights of Medication Administration)"
+                           styleClass="section-header" style="-fx-text-fill: #f57f17;"/>
+
+                    <GridPane hgap="20" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <CheckBox fx:id="studentIdentifiedCheckBox" text="✓ Right Patient - Student Identity Verified"
+                                  selected="true"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                  style="-fx-font-weight: bold;"/>
+                        <CheckBox fx:id="medicationVerifiedCheckBox" text="✓ Right Medication - Label Verified"
+                                  selected="true"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                  style="-fx-font-weight: bold;"/>
+
+                        <CheckBox fx:id="dosageVerifiedCheckBox" text="✓ Right Dose - Dosage Verified"
+                                  selected="true"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="1"
+                                  style="-fx-font-weight: bold;"/>
+                        <CheckBox fx:id="studentConsentVerifiedCheckBox" text="✓ Right Time - Schedule Verified"
+                                  selected="true"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                  style="-fx-font-weight: bold;"/>
+
+                        <CheckBox fx:id="routeVerifiedCheckBox" text="✓ Right Route - Administration Route Verified"
+                                  selected="true"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="2"
+                                  style="-fx-font-weight: bold;"/>
+                    </GridPane>
+
+                    <Separator/>
+
+                    <HBox spacing="20">
+                        <CheckBox fx:id="refusedByStudentCheckBox" text="Student Refused Medication"
+                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"/>
+                    </HBox>
+
+                    <VBox spacing="5" fx:id="refusalReasonBox" visible="false" managed="false">
+                        <Label text="Refusal Reason *" styleClass="field-label"
+                               style="-fx-text-fill: #d32f2f;"/>
+                        <TextArea fx:id="refusalReasonTextArea"
+                                  promptText="Document why student refused medication..."
+                                  wrapText="true" prefRowCount="2"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Student Response -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Student Response & Monitoring" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Student Response" styleClass="field-label"/>
+                            <ComboBox fx:id="studentResponseComboBox" promptText="Select Response"
+                                      maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="POSITIVE"/>
+                                        <String fx:value="NEUTRAL"/>
+                                        <String fx:value="NEGATIVE"/>
+                                        <String fx:value="ADVERSE_REACTION"/>
+                                        <String fx:value="TOO_SOON_TO_ASSESS"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                            <Label text="Response Notes" styleClass="field-label"/>
+                            <TextArea fx:id="responseNotesTextArea"
+                                      promptText="How did student respond? Any effects observed..."
+                                      wrapText="true" prefRowCount="2"/>
+                        </VBox>
+                    </GridPane>
+
+                    <CheckBox fx:id="adverseReactionCheckBox" text="⚠ Adverse Reaction Observed"
+                              style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"/>
+
+                    <!-- Adverse Reaction Details (conditional) -->
+                    <VBox spacing="15" fx:id="adverseReactionBox" visible="false" managed="false"
+                          style="-fx-background-color: #ffebee; -fx-padding: 15;">
+                        <Label text="⚠ ADVERSE REACTION DOCUMENTATION"
+                               style="-fx-font-weight: bold; -fx-text-fill: #d32f2f; -fx-font-size: 14px;"/>
+
+                        <GridPane hgap="15" vgap="15">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Reaction Severity *" styleClass="field-label"
+                                       style="-fx-text-fill: #d32f2f;"/>
+                                <ComboBox fx:id="adverseReactionSeverityComboBox" promptText="Select Severity"
+                                          maxWidth="Infinity">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="MILD"/>
+                                            <String fx:value="MODERATE"/>
+                                            <String fx:value="SEVERE"/>
+                                            <String fx:value="LIFE_THREATENING"/>
+                                        </FXCollections>
+                                    </items>
+                                </ComboBox>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                                  GridPane.columnSpan="2">
+                                <Label text="Reaction Description *" styleClass="field-label"
+                                       style="-fx-text-fill: #d32f2f;"/>
+                                <TextArea fx:id="adverseReactionDescriptionTextArea"
+                                          promptText="Describe adverse reaction in detail (symptoms, onset time, severity)..."
+                                          wrapText="true" prefRowCount="3"
+                                          style="-fx-border-color: #d32f2f; -fx-border-width: 2;"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                <CheckBox fx:id="parentNotifiedOfReactionCheckBox"
+                                          text="Parent Notified of Reaction"
+                                          style="-fx-font-weight: bold;"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <CheckBox fx:id="physicianNotifiedOfReactionCheckBox"
+                                          text="Physician Notified of Reaction"
+                                          style="-fx-font-weight: bold;"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+                </VBox>
+
+                <!-- Parent Notification -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Parent Notification" styleClass="section-header"/>
+
+                    <HBox spacing="20">
+                        <CheckBox fx:id="parentNotificationRequiredCheckBox" text="Parent Notification Required"/>
+                        <CheckBox fx:id="parentNotifiedCheckBox" text="Parent Notified"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Inventory Management -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Inventory Management" styleClass="section-header"/>
+
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <CheckBox fx:id="inventoryUpdatedCheckBox" text="Inventory Updated"
+                                      selected="true" style="-fx-font-weight: bold;"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Remaining Quantity" styleClass="field-label"/>
+                            <TextField fx:id="remainingQuantityField"
+                                       promptText="Quantity after this dose"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Notes & Documentation -->
+                <VBox spacing="15" styleClass="form-section">
+                    <Label text="Notes & Documentation" styleClass="section-header"/>
+
+                    <VBox spacing="5">
+                        <Label text="Administration Notes" styleClass="field-label"/>
+                        <TextArea fx:id="notesTextArea"
+                                  promptText="Additional notes, observations, special circumstances..."
+                                  wrapText="true" prefRowCount="4"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Administrator Signature/Initials *" styleClass="field-label"/>
+                        <TextField fx:id="signatureField"
+                                   promptText="Enter initials or digital signature"/>
+                    </VBox>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="button-bar">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label fx:id="statusIndicator" text=""/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="saveButton" text="Record Administration" onAction="#handleSave"
+                    styleClass="primary-button"/>
+            <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

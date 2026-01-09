@@ -1,0 +1,68 @@
+package com.heronix.service;
+
+import com.heronix.model.domain.CounselingSession;
+import com.heronix.model.domain.CounselingReferral;
+import com.heronix.model.domain.Student;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Service for managing Counseling Session records
+ */
+@Service
+public class CounselingSessionService {
+
+    private final List<CounselingSession> sessions = new ArrayList<>();
+
+    public CounselingSession save(CounselingSession session) {
+        sessions.add(session);
+        return session;
+    }
+
+    public List<CounselingSession> findAll() {
+        return new ArrayList<>(sessions);
+    }
+
+    public CounselingSession findById(Long id) {
+        return sessions.stream()
+                .filter(s -> s.getId() != null && s.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void delete(CounselingSession session) {
+        sessions.remove(session);
+    }
+
+    public CounselingSession saveSession(CounselingSession session) {
+        return save(session);
+    }
+
+    public List<CounselingSession> getSessionsByStudent(Student student) {
+        if (student == null) return new ArrayList<>();
+        return sessions.stream()
+                .filter(s -> s.getStudent() != null && s.getStudent().getId().equals(student.getId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<CounselingReferral> getReferralsByStudent(Student student) {
+        // Stub implementation - would normally query referral repository
+        return new ArrayList<>();
+    }
+
+    public List<CounselingSession> getAllSessions() {
+        return findAll();
+    }
+
+    public List<CounselingSession> getSessionsByDateRange(LocalDate startDate, LocalDate endDate) {
+        return sessions.stream()
+                .filter(s -> s.getSessionDate() != null &&
+                            !s.getSessionDate().isBefore(startDate) &&
+                            !s.getSessionDate().isAfter(endDate))
+                .collect(Collectors.toList());
+    }
+}

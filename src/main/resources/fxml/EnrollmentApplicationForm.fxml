@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+Enrollment Application Form - Walk-in, Re-enrollment, and Transfer Students
+Location: src/main/resources/fxml/EnrollmentApplicationForm.fxml
+
+Comprehensive form for in-house student enrollment with:
+- New Student Enrollment (Walk-in)
+- Re-Enrollment (Grade Transfer)
+- Transfer Students (from other schools)
+- Document Tracking
+- Workflow Status Management
+
+@author Heronix Educational Systems LLC
+@version 1.0.0
+@since 2025-12-23
+-->
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.EnrollmentApplicationFormController"
+            styleClass="content-pane">
+
+    <!-- Top: Header and Quick Actions -->
+    <top>
+        <VBox styleClass="header-section" spacing="10">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+
+            <!-- Title and Application Number -->
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="Student Enrollment Application" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Application #:" styleClass="label-bold"/>
+                <TextField fx:id="applicationNumberField" editable="false" prefWidth="150"
+                           promptText="Auto-generated" styleClass="readonly-field"/>
+                <Label text="Status:" styleClass="label-bold"/>
+                <Label fx:id="statusLabel" text="DRAFT" styleClass="status-label"/>
+            </HBox>
+
+            <!-- Enrollment Type Selection -->
+            <fx:define>
+                <ToggleGroup fx:id="enrollmentTypeGroup"/>
+            </fx:define>
+            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="type-selection">
+                <Label text="Enrollment Type:" styleClass="label-bold"/>
+                <RadioButton text="New Student (Walk-in)" toggleGroup="$enrollmentTypeGroup" selected="true"
+                             fx:id="newStudentRadio"/>
+                <RadioButton text="Re-Enrollment (Grade Transfer)" toggleGroup="$enrollmentTypeGroup"
+                             fx:id="reEnrollmentRadio"/>
+                <RadioButton text="Transfer Student" toggleGroup="$enrollmentTypeGroup"
+                             fx:id="transferRadio"/>
+                <RadioButton text="Mid-Year Enrollment" toggleGroup="$enrollmentTypeGroup"
+                             fx:id="midYearRadio"/>
+            </HBox>
+
+            <!-- Action Buttons -->
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+                <Button text="Save Draft" onAction="#handleSaveDraft" styleClass="button"/>
+                <Button text="Submit for Documents" onAction="#handleSubmitForDocuments"
+                        styleClass="button,primary-button" fx:id="submitButton"/>
+                <Button text="Print Application" onAction="#handlePrint" styleClass="button"/>
+                <Button text="Cancel" onAction="#handleCancel" styleClass="button,secondary-button"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Scrollable Form Content -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="form-scroll-pane">
+            <VBox spacing="20" styleClass="form-container">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- ========== SECTION 1: ENROLLMENT DETAILS ========== -->
+                <TitledPane text="1. Enrollment Information" expanded="true" collapsible="false"
+                            styleClass="form-section">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                        <!-- Row 0 -->
+                        <Label text="*Intended Grade Level:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <ComboBox fx:id="gradeLevelComboBox" promptText="Select Grade Level"
+                                  prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="*School Year:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                        <TextField fx:id="schoolYearField" promptText="2025-2026" prefWidth="150"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                        <!-- Row 1 -->
+                        <Label text="Application Date:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <DatePicker fx:id="applicationDatePicker" prefWidth="200"
+                                    GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Intended Start Date:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                        <DatePicker fx:id="startDatePicker" prefWidth="200"
+                                    GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                        </columnConstraints>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 2: STUDENT INFORMATION ========== -->
+                <TitledPane text="2. Student Information" expanded="true" collapsible="false"
+                            styleClass="form-section">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                        <!-- Row 0: Name -->
+                        <Label text="*Legal First Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="studentFirstNameField" promptText="First Name"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Middle Name:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                        <TextField fx:id="studentMiddleNameField" promptText="Middle Name"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                        <!-- Row 1 -->
+                        <Label text="*Legal Last Name:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="studentLastNameField" promptText="Last Name"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Preferred Name:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                        <TextField fx:id="studentPreferredNameField" promptText="Nickname/Preferred"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                        <!-- Row 2 -->
+                        <Label text="*Date of Birth:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <DatePicker fx:id="studentDobPicker" promptText="MM/DD/YYYY"
+                                    GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="*Gender:" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                        <ComboBox fx:id="studentGenderComboBox" promptText="Select Gender"
+                                  GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+
+                        <!-- Row 3 -->
+                        <Label text="Student Phone:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <TextField fx:id="studentPhoneField" promptText="(555) 123-4567"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="Student Email:" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                        <TextField fx:id="studentEmailField" promptText="student@example.com"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+
+                        <!-- Row 4: Demographics -->
+                        <Label text="Race:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <ComboBox fx:id="studentRaceComboBox" promptText="Select Race"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                        <Label text="Ethnicity:" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
+                        <ComboBox fx:id="studentEthnicityComboBox" promptText="Select Ethnicity"
+                                  GridPane.columnIndex="3" GridPane.rowIndex="4"/>
+
+                        <!-- Row 5 -->
+                        <Label text="Primary Language:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                        <TextField fx:id="primaryLanguageField" promptText="English"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                        <Label text="English Learner (ELL):" GridPane.columnIndex="2" GridPane.rowIndex="5"/>
+                        <CheckBox fx:id="isEnglishLearnerCheckBox" GridPane.columnIndex="3" GridPane.rowIndex="5"/>
+
+                        <!-- Row 6 -->
+                        <Label text="Nationality:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                        <TextField fx:id="nationalityField" promptText="Country"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                        </columnConstraints>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 3: RESIDENTIAL ADDRESS ========== -->
+                <TitledPane text="3. Residential Address" expanded="true" collapsible="false"
+                            styleClass="form-section">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                        <!-- Row 0 -->
+                        <Label text="*Street Address:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="residentialAddressField" promptText="123 Main Street"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3"/>
+
+                        <!-- Row 1 -->
+                        <Label text="*City:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="residentialCityField" promptText="City"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="*State:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                        <ComboBox fx:id="residentialStateComboBox" promptText="State"
+                                  GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                        <!-- Row 2 -->
+                        <Label text="*ZIP Code:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="residentialZipField" promptText="12345"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="County:" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                        <TextField fx:id="residentialCountyField" promptText="County"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+
+                        <!-- Row 3: Mailing Address -->
+                        <CheckBox text="Mailing address same as residential"
+                                  fx:id="sameMailingAddressCheckBox" selected="true"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="4"/>
+
+                        <!-- Row 4 (hidden if same address checked) -->
+                        <Label text="Mailing Address:" fx:id="mailingAddressLabel"
+                               GridPane.columnIndex="0" GridPane.rowIndex="4" managed="false" visible="false"/>
+                        <TextField fx:id="mailingAddressField" promptText="P.O. Box or Street"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.columnSpan="3"
+                                   managed="false" visible="false"/>
+
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                        </columnConstraints>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 4: PARENT/GUARDIAN 1 (PRIMARY) ========== -->
+                <TitledPane text="4. Parent/Guardian 1 (Primary Contact)" expanded="true" collapsible="false"
+                            styleClass="form-section">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                        <!-- Row 0 -->
+                        <Label text="*First Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="parent1FirstNameField" promptText="First Name"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="*Last Name:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                        <TextField fx:id="parent1LastNameField" promptText="Last Name"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                        <!-- Row 1 -->
+                        <Label text="*Relationship:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <ComboBox fx:id="parent1RelationshipComboBox" promptText="Select Relationship"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="*Phone Number:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                        <TextField fx:id="parent1PhoneField" promptText="(555) 123-4567"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                        <!-- Row 2 -->
+                        <Label text="*Email:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="parent1EmailField" promptText="parent@example.com"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3"/>
+
+                        <!-- Row 3 -->
+                        <Label text="Employer:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <TextField fx:id="parent1EmployerField" promptText="Company Name"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="Work Phone:" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                        <TextField fx:id="parent1WorkPhoneField" promptText="(555) 987-6543"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+
+                        <!-- Row 4 -->
+                        <CheckBox text="Custodial Parent/Guardian" fx:id="parent1CustodialCheckBox"
+                                  selected="true" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2"/>
+                        <CheckBox text="Authorized for Pickup" fx:id="parent1CanPickupCheckBox"
+                                  selected="true" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.columnSpan="2"/>
+
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                        </columnConstraints>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 5: PARENT/GUARDIAN 2 (OPTIONAL) ========== -->
+                <TitledPane text="5. Parent/Guardian 2 (Optional)" expanded="false" collapsible="true"
+                            styleClass="form-section">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                        <!-- Same fields as Parent 1 with parent2 prefix -->
+                        <Label text="First Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="parent2FirstNameField" promptText="First Name"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Last Name:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                        <TextField fx:id="parent2LastNameField" promptText="Last Name"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                        <Label text="Relationship:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <ComboBox fx:id="parent2RelationshipComboBox" promptText="Select Relationship"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Phone Number:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                        <TextField fx:id="parent2PhoneField" promptText="(555) 123-4567"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                        <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="parent2EmailField" promptText="parent@example.com"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3"/>
+
+                        <Label text="Employer:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <TextField fx:id="parent2EmployerField" promptText="Company Name"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="Work Phone:" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                        <TextField fx:id="parent2WorkPhoneField" promptText="(555) 987-6543"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+
+                        <CheckBox text="Custodial Parent/Guardian" fx:id="parent2CustodialCheckBox"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2"/>
+                        <CheckBox text="Authorized for Pickup" fx:id="parent2CanPickupCheckBox"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.columnSpan="2"/>
+
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                        </columnConstraints>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 6: EMERGENCY CONTACTS ========== -->
+                <TitledPane text="6. Emergency Contacts" expanded="false" collapsible="true"
+                            styleClass="form-section">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                        <!-- Emergency Contact 1 -->
+                        <Label text="Emergency Contact 1:" styleClass="label-bold"
+                               GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="4"/>
+
+                        <Label text="*Name:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="emergency1NameField" promptText="Full Name"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="*Relationship:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                        <TextField fx:id="emergency1RelationshipField" promptText="Aunt, Uncle, Friend"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                        <Label text="*Phone:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="emergency1PhoneField" promptText="(555) 123-4567"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3"/>
+
+                        <!-- Emergency Contact 2 -->
+                        <Separator GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="4"/>
+
+                        <Label text="Emergency Contact 2:" styleClass="label-bold"
+                               GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="4"/>
+
+                        <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                        <TextField fx:id="emergency2NameField" promptText="Full Name"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                        <Label text="Relationship:" GridPane.columnIndex="2" GridPane.rowIndex="5"/>
+                        <TextField fx:id="emergency2RelationshipField" promptText="Aunt, Uncle, Friend"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="5"/>
+
+                        <Label text="Phone:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                        <TextField fx:id="emergency2PhoneField" promptText="(555) 123-4567"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.columnSpan="3"/>
+
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                        </columnConstraints>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 7: PREVIOUS SCHOOL (Transfer Students) ========== -->
+                <TitledPane text="7. Previous School Information (Transfer Students Only)"
+                            fx:id="previousSchoolSection" expanded="false" collapsible="true"
+                            styleClass="form-section">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                        <Label text="School Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="previousSchoolNameField" promptText="Previous School Name"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3"/>
+
+                        <Label text="District:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="previousSchoolDistrictField" promptText="School District"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="City, State:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                        <TextField fx:id="previousSchoolCityStateField" promptText="City, ST"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                        <Label text="Phone:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="previousSchoolPhoneField" promptText="(555) 123-4567"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="Last Attendance Date:" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                        <DatePicker fx:id="lastAttendanceDatePicker" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+
+                        <Label text="Last Grade Completed:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <ComboBox fx:id="lastGradeCompletedComboBox" promptText="Select Grade"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                        </columnConstraints>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 8: SPECIAL PROGRAMS & SERVICES ========== -->
+                <TitledPane text="8. Special Programs &amp; Services" expanded="false" collapsible="true"
+                            styleClass="form-section">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                        <!-- Row 0 -->
+                        <CheckBox text="Has IEP (Individualized Education Program)"
+                                  fx:id="hasIEPCheckBox" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+                        <CheckBox text="Has 504 Plan" fx:id="has504PlanCheckBox"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+
+                        <!-- Row 1 -->
+                        <CheckBox text="Gifted/Talented Program" fx:id="isGiftedCheckBox"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2"/>
+                        <CheckBox text="Needs ESL/ELL Services" fx:id="needsESLCheckBox"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.columnSpan="2"/>
+
+                        <!-- Row 2 -->
+                        <CheckBox text="Needs Special Transportation" fx:id="needsSpecialTransportationCheckBox"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
+
+                        <!-- Row 3: Special Circumstances -->
+                        <Separator GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="4"/>
+                        <Label text="Special Circumstances:" styleClass="label-bold"
+                               GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="4"/>
+
+                        <!-- Row 5 -->
+                        <CheckBox text="Homeless/McKinney-Vento Eligible" fx:id="isHomelessCheckBox"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2"/>
+                        <CheckBox text="Foster Care" fx:id="isFosterCareCheckBox"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="5" GridPane.columnSpan="2"/>
+
+                        <!-- Row 6 -->
+                        <CheckBox text="Military Family" fx:id="isMilitaryCheckBox"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="6" GridPane.columnSpan="2"/>
+
+                        <!-- Row 7: Lunch Program -->
+                        <Separator GridPane.columnIndex="0" GridPane.rowIndex="7" GridPane.columnSpan="4"/>
+                        <Label text="School Lunch Program:" styleClass="label-bold"
+                               GridPane.columnIndex="0" GridPane.rowIndex="8" GridPane.columnSpan="4"/>
+
+                        <!-- Row 9 -->
+                        <Label text="Lunch Status:" GridPane.columnIndex="0" GridPane.rowIndex="9"/>
+                        <ComboBox fx:id="lunchStatusComboBox" promptText="Select Status"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="9" GridPane.columnSpan="3"/>
+
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                        </columnConstraints>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 9: MEDICAL INFORMATION ========== -->
+                <TitledPane text="9. Medical Information" expanded="false" collapsible="true"
+                            styleClass="form-section">
+                    <GridPane hgap="15" vgap="12" styleClass="form-grid">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                        <Label text="Medical Conditions:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextArea fx:id="medicalConditionsTextArea" promptText="Diabetes, Asthma, etc."
+                                  prefRowCount="2" wrapText="true"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3"/>
+
+                        <Label text="Medications:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextArea fx:id="medicationsTextArea" promptText="List medications and dosages"
+                                  prefRowCount="2" wrapText="true"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3"/>
+
+                        <Label text="Allergies:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextArea fx:id="allergiesTextArea" promptText="Food allergies, bee stings, etc."
+                                  prefRowCount="2" wrapText="true"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3"/>
+
+                        <Label text="Dietary Restrictions:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <TextArea fx:id="dietaryRestrictionsTextArea" promptText="Vegetarian, gluten-free, etc."
+                                  prefRowCount="2" wrapText="true"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.columnSpan="3"/>
+
+                        <CheckBox text="Requires daily medication at school" fx:id="requiresDailyMedicationCheckBox"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="4"/>
+
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                            <ColumnConstraints minWidth="150" prefWidth="180"/>
+                            <ColumnConstraints minWidth="200" prefWidth="250" hgrow="SOMETIMES"/>
+                        </columnConstraints>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- ========== SECTION 10: DOCUMENT CHECKLIST ========== -->
+                <TitledPane text="10. Required Documents Checklist" expanded="true" collapsible="false"
+                            styleClass="form-section">
+                    <VBox spacing="10" styleClass="document-checklist">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                        <Label text="Please provide copies of the following documents:"
+                               styleClass="label-bold"/>
+
+                        <CheckBox text="Birth Certificate (Certified Copy)" fx:id="birthCertificateCheckBox"/>
+                        <CheckBox text="Proof of Residency (Utility bill, lease agreement, etc.)"
+                                  fx:id="residencyProofCheckBox"/>
+                        <CheckBox text="Immunization Records (Up-to-date)" fx:id="immunizationRecordsCheckBox"/>
+                        <CheckBox text="Previous School Transcript/Records (Transfer students only)"
+                                  fx:id="transcriptCheckBox"/>
+                        <CheckBox text="IEP Documents (If applicable)" fx:id="iepDocumentsCheckBox"/>
+                        <CheckBox text="504 Plan Documents (If applicable)" fx:id="plan504DocumentsCheckBox"/>
+                        <CheckBox text="Custody/Legal Guardianship Papers (If applicable)"
+                                  fx:id="custodyPapersCheckBox"/>
+                        <CheckBox text="Parent/Guardian Photo ID" fx:id="parentIdCheckBox"/>
+
+                        <Separator/>
+
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Button text="Attach Documents" onAction="#handleAttachDocuments"
+                                    styleClass="button"/>
+                            <Label fx:id="documentsAttachedLabel" text="0 documents attached"/>
+                        </HBox>
+                    </VBox>
+                </TitledPane>
+
+                <!-- ========== SECTION 11: NOTES & COMMENTS ========== -->
+                <TitledPane text="11. Additional Notes &amp; Comments" expanded="false" collapsible="true"
+                            styleClass="form-section">
+                    <VBox spacing="10">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                        <Label text="Enrollment Notes (Internal Use):" styleClass="label-bold"/>
+                        <TextArea fx:id="enrollmentNotesTextArea"
+                                  promptText="Special circumstances, accommodations needed, etc."
+                                  prefRowCount="4" wrapText="true"/>
+                    </VBox>
+                </TitledPane>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Bottom: Status Bar -->
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="15">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+
+            <Label text="Last Saved:" styleClass="status-label"/>
+            <Label fx:id="lastSavedLabel" text="Not saved" styleClass="status-value"/>
+
+            <Separator orientation="VERTICAL"/>
+
+            <Label text="Created By:" styleClass="status-label"/>
+            <Label fx:id="createdByLabel" text="Current User" styleClass="status-value"/>
+
+            <Separator orientation="VERTICAL"/>
+
+            <Label fx:id="requiredFieldsLabel" text="* Required fields"
+                   styleClass="required-notice"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="View Workflow History" onAction="#handleViewHistory"
+                    styleClass="button,secondary-button"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

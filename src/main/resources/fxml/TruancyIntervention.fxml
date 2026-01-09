@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+Truancy Intervention Management View
+Location: src/main/resources/fxml/TruancyIntervention.fxml
+-->
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:id="rootContainer"
+      fx:controller="com.heronix.ui.controller.TruancyInterventionController"
+      styleClass="root"
+      spacing="20">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header Section -->
+    <HBox alignment="CENTER_LEFT" spacing="15" styleClass="card">
+        <Label text="⚖️ Truancy Intervention Management" styleClass="label-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="🔄 Refresh" onAction="#handleRefresh" styleClass="button-secondary"/>
+    </HBox>
+
+    <!-- Summary Cards -->
+    <HBox spacing="15">
+        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+            <Label text="📊 Total Cases" styleClass="label"/>
+            <Label fx:id="totalCasesLabel" text="0"
+                   style="-fx-font-size: 32; -fx-font-weight: bold;"/>
+        </VBox>
+
+        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+            <Label text="✅ Active Cases" styleClass="label"/>
+            <Label fx:id="activeCasesLabel" text="0"
+                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
+        </VBox>
+
+        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+            <Label text="⚖️ Court Referrals" styleClass="label"/>
+            <Label fx:id="courtReferralsLabel" text="0"
+                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #F44336;"/>
+        </VBox>
+    </HBox>
+
+    <!-- Main Tab Pane -->
+    <TabPane fx:id="mainTabPane" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+
+        <!-- ========== ACTIVE CASES TAB ========== -->
+        <Tab fx:id="activeCasesTab" text="📋 Active Cases" closable="false">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- Filter Section -->
+                <HBox spacing="15" alignment="CENTER_LEFT" styleClass="card">
+                    <Label text="Filter by Severity:" style="-fx-font-weight: bold;"/>
+                    <ComboBox fx:id="severityFilterComboBox" promptText="All Severities"
+                              prefWidth="200" onAction="#handleFilterBySeverity"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                </HBox>
+
+                <!-- Active Cases Table -->
+                <VBox spacing="15" styleClass="card" VBox.vgrow="ALWAYS">
+                    <Label text="📋 Active Truancy Cases" styleClass="label-title"/>
+
+                    <TableView fx:id="activeCasesTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="caseIdCol" text="Case ID"
+                                         prefWidth="120" minWidth="100"/>
+                            <TableColumn fx:id="studentNameCol" text="Student Name"
+                                         prefWidth="180" minWidth="150"/>
+                            <TableColumn fx:id="gradeCol" text="Grade"
+                                         prefWidth="70" minWidth="60"/>
+                            <TableColumn fx:id="absencesCol" text="Absences"
+                                         prefWidth="90" minWidth="80"/>
+                            <TableColumn fx:id="severityCol" text="Severity"
+                                         prefWidth="130" minWidth="110"/>
+                            <TableColumn fx:id="statusCol" text="Status"
+                                         prefWidth="120" minWidth="100"/>
+                            <TableColumn fx:id="openedDateCol" text="Opened Date"
+                                         prefWidth="130" minWidth="110"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No active truancy cases"/>
+                        </placeholder>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </Tab>
+
+        <!-- ========== NEW CASE TAB ========== -->
+        <Tab fx:id="newCaseTab" text="➕ New Case" closable="false">
+            <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="scroll-pane">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <Label text="➕ Open New Truancy Case" styleClass="label-title"/>
+
+                    <!-- Case Information -->
+                    <VBox spacing="15" styleClass="card">
+                        <Label text="📋 Case Information" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                        <HBox spacing="15">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Student:" style="-fx-font-weight: bold;"/>
+                                <ComboBox fx:id="studentComboBox" promptText="Select Student"
+                                          prefWidth="Infinity" maxWidth="Infinity"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Unexcused Absences:" style="-fx-font-weight: bold;"/>
+                                <Spinner fx:id="absencesSpinner" prefWidth="150" editable="true"/>
+                            </VBox>
+                        </HBox>
+
+                        <VBox spacing="5">
+                            <Label text="Reason for Truancy Case:" style="-fx-font-weight: bold;"/>
+                            <TextArea fx:id="reasonArea" prefHeight="120" wrapText="true"
+                                      promptText="Describe the reason for opening this truancy case..."/>
+                        </VBox>
+                    </VBox>
+
+                    <!-- Action Buttons -->
+                    <HBox spacing="15" alignment="CENTER">
+                        <Button text="✅ Open Truancy Case" onAction="#handleOpenCase"
+                                styleClass="button-primary" minWidth="180"/>
+                    </HBox>
+
+                    <!-- Result Display -->
+                    <VBox spacing="10" styleClass="card" VBox.vgrow="ALWAYS">
+                        <Label text="📄 Result" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                        <TextArea fx:id="newCaseResultArea" editable="false" wrapText="true"
+                                  prefHeight="250" promptText="Open a case to see the result..."/>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <!-- ========== ADD INTERVENTION TAB ========== -->
+        <Tab fx:id="interventionTab" text="🤝 Add Intervention" closable="false">
+            <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="scroll-pane">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <Label text="🤝 Add Intervention to Case" styleClass="label-title"/>
+
+                    <!-- Intervention Information -->
+                    <VBox spacing="15" styleClass="card">
+                        <Label text="📋 Intervention Details" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                        <VBox spacing="5">
+                            <Label text="Case ID:" style="-fx-font-weight: bold;"/>
+                            <TextField fx:id="caseIdField" promptText="Enter Case ID (e.g., TC-12345-2025)"/>
+                        </VBox>
+
+                        <HBox spacing="15">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Intervention Type:" style="-fx-font-weight: bold;"/>
+                                <ComboBox fx:id="interventionTypeComboBox" promptText="Select Intervention Type"
+                                          prefWidth="Infinity" maxWidth="Infinity"/>
+                            </VBox>
+
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Assigned To:" style="-fx-font-weight: bold;"/>
+                                <TextField fx:id="assignedToField" promptText="e.g., School Counselor, Truancy Officer"
+                                           prefWidth="Infinity" maxWidth="Infinity"/>
+                            </VBox>
+                        </HBox>
+
+                        <VBox spacing="5">
+                            <Label text="Intervention Description:" style="-fx-font-weight: bold;"/>
+                            <TextArea fx:id="interventionDescriptionArea" prefHeight="120" wrapText="true"
+                                      promptText="Describe the intervention strategy and goals..."/>
+                        </VBox>
+                    </VBox>
+
+                    <!-- Action Buttons -->
+                    <HBox spacing="15" alignment="CENTER">
+                        <Button text="✅ Add Intervention" onAction="#handleAddIntervention"
+                                styleClass="button-primary" minWidth="180"/>
+                    </HBox>
+
+                    <!-- Result Display -->
+                    <VBox spacing="10" styleClass="card" VBox.vgrow="ALWAYS">
+                        <Label text="📄 Result" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                        <TextArea fx:id="interventionResultArea" editable="false" wrapText="true"
+                                  prefHeight="200" promptText="Add an intervention to see the result..."/>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <!-- ========== CLOSE CASE TAB ========== -->
+        <Tab fx:id="closeCaseTab" text="✅ Close Case" closable="false">
+            <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="scroll-pane">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <Label text="✅ Close Truancy Case" styleClass="label-title"/>
+
+                    <!-- Case Closure Information -->
+                    <VBox spacing="15" styleClass="card">
+                        <Label text="📋 Case Closure Details" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                        <VBox spacing="5">
+                            <Label text="Case ID:" style="-fx-font-weight: bold;"/>
+                            <TextField fx:id="closeCaseIdField" promptText="Enter Case ID to close"/>
+                        </VBox>
+
+                        <HBox spacing="15">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Resolution:" style="-fx-font-weight: bold;"/>
+                                <ComboBox fx:id="resolutionComboBox" promptText="Select Resolution"
+                                          prefWidth="Infinity" maxWidth="Infinity"/>
+                            </VBox>
+
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Closed By:" style="-fx-font-weight: bold;"/>
+                                <TextField fx:id="closedByField" promptText="Your name or role"
+                                           prefWidth="Infinity" maxWidth="Infinity"/>
+                            </VBox>
+                        </HBox>
+
+                        <VBox spacing="5">
+                            <Label text="Resolution Notes:" style="-fx-font-weight: bold;"/>
+                            <TextArea fx:id="resolutionNotesArea" prefHeight="120" wrapText="true"
+                                      promptText="Enter any additional notes about the case resolution..."/>
+                        </VBox>
+                    </VBox>
+
+                    <!-- Action Buttons -->
+                    <HBox spacing="15" alignment="CENTER">
+                        <Button text="✅ Close Case" onAction="#handleCloseCase"
+                                styleClass="button-success" minWidth="180"/>
+                    </HBox>
+
+                    <!-- Result Display -->
+                    <VBox spacing="10" styleClass="card" VBox.vgrow="ALWAYS">
+                        <Label text="📄 Result" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                        <TextArea fx:id="closeCaseResultArea" editable="false" wrapText="true"
+                                  prefHeight="250" promptText="Close a case to see the result..."/>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+    </TabPane>
+</VBox>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.StudentAssessmentDashboardController" prefWidth="1500" prefHeight="900">
+    <top>
+        <VBox spacing="10" style="-fx-background-color: #9c27b0; -fx-padding: 20;">
+            <Label text="Student Assessment Dashboard" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        </VBox>
+    </top>
+    <center>
+        <VBox spacing="15" style="-fx-padding: 15;">
+            <BarChart fx:id="assessmentChart">
+                <xAxis><CategoryAxis/></xAxis>
+                <yAxis><NumberAxis/></yAxis>
+            </BarChart>
+            <TableView fx:id="assessmentTableView">
+                <columns>
+                    <TableColumn text="Assessment" prefWidth="200"/>
+                    <TableColumn text="Score" prefWidth="80"/>
+                    <TableColumn text="Date" prefWidth="100"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>

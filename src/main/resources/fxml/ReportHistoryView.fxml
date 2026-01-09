@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.heronix.ui.controller.ReportHistoryViewController"
+      spacing="20" styleClass="report-history-root"
+      stylesheets="@../css/report-history.css">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header Section -->
+    <HBox styleClass="header-section" alignment="CENTER_LEFT" spacing="15">
+        <VBox HBox.hgrow="ALWAYS">
+            <Text text="Report History" styleClass="page-title"/>
+            <Text text="View and manage generated attendance reports" styleClass="page-subtitle"/>
+        </VBox>
+        <Button text="Refresh" onAction="#handleRefresh" styleClass="action-button"/>
+        <Button text="Generate New Report" onAction="#handleGenerateNewReport" styleClass="primary-button"/>
+    </HBox>
+
+    <!-- Statistics Cards -->
+    <HBox spacing="15" styleClass="stats-container">
+        <VBox styleClass="stat-card stat-card-primary" HBox.hgrow="ALWAYS">
+            <Text text="Total Reports" styleClass="stat-label"/>
+            <Text fx:id="totalReportsLabel" text="0" styleClass="stat-value"/>
+        </VBox>
+        <VBox styleClass="stat-card stat-card-success" HBox.hgrow="ALWAYS">
+            <Text text="Completed" styleClass="stat-label"/>
+            <Text fx:id="completedReportsLabel" text="0" styleClass="stat-value"/>
+        </VBox>
+        <VBox styleClass="stat-card stat-card-danger" HBox.hgrow="ALWAYS">
+            <Text text="Failed" styleClass="stat-label"/>
+            <Text fx:id="failedReportsLabel" text="0" styleClass="stat-value"/>
+        </VBox>
+        <VBox styleClass="stat-card stat-card-warning" HBox.hgrow="ALWAYS">
+            <Text text="Scheduled" styleClass="stat-label"/>
+            <Text fx:id="scheduledReportsLabel" text="0" styleClass="stat-value"/>
+        </VBox>
+    </HBox>
+
+    <!-- Filter Section -->
+    <HBox spacing="15" styleClass="filter-section" alignment="CENTER_LEFT">
+        <VBox spacing="5">
+            <Label text="Report Type"/>
+            <ComboBox fx:id="reportTypeFilter" promptText="All Types" minWidth="150">
+                <items>
+                    <String fx:value="All Types"/>
+                    <String fx:value="Daily Attendance"/>
+                    <String fx:value="Student Summary"/>
+                    <String fx:value="Chronic Absenteeism"/>
+                    <String fx:value="Weekly Summary"/>
+                    <String fx:value="Monthly Summary"/>
+                </items>
+            </ComboBox>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Status"/>
+            <ComboBox fx:id="statusFilter" promptText="All Statuses" minWidth="150">
+                <items>
+                    <String fx:value="All Statuses"/>
+                    <String fx:value="Completed"/>
+                    <String fx:value="Failed"/>
+                    <String fx:value="Generating"/>
+                    <String fx:value="Archived"/>
+                </items>
+            </ComboBox>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Date Range"/>
+            <ComboBox fx:id="dateRangeFilter" promptText="All Time" minWidth="150">
+                <items>
+                    <String fx:value="All Time"/>
+                    <String fx:value="Today"/>
+                    <String fx:value="Last 7 Days"/>
+                    <String fx:value="Last 30 Days"/>
+                    <String fx:value="This Month"/>
+                </items>
+            </ComboBox>
+        </VBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <VBox spacing="5">
+            <Label text="Search"/>
+            <TextField fx:id="searchField" promptText="Search by name..." minWidth="200"/>
+        </VBox>
+
+        <VBox spacing="5" alignment="BOTTOM_LEFT">
+            <Label text=" "/>
+            <Button text="Apply Filters" onAction="#handleApplyFilters" styleClass="action-button"/>
+        </VBox>
+
+        <VBox spacing="5" alignment="BOTTOM_LEFT">
+            <Label text=" "/>
+            <Button text="Clear" onAction="#handleClearFilters" styleClass="secondary-button"/>
+        </VBox>
+    </HBox>
+
+    <!-- Table Section -->
+    <VBox VBox.vgrow="ALWAYS" styleClass="table-container">
+        <TableView fx:id="reportsTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
+                <TableColumn fx:id="reportNameColumn" text="Report Name" prefWidth="250"/>
+                <TableColumn fx:id="reportTypeColumn" text="Type" prefWidth="150"/>
+                <TableColumn fx:id="formatColumn" text="Format" prefWidth="80"/>
+                <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+                <TableColumn fx:id="generatedByColumn" text="Generated By" prefWidth="120"/>
+                <TableColumn fx:id="generatedAtColumn" text="Generated At" prefWidth="150"/>
+                <TableColumn fx:id="fileSizeColumn" text="Size" prefWidth="80"/>
+                <TableColumn fx:id="downloadCountColumn" text="Downloads" prefWidth="90"/>
+                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="180"/>
+            </columns>
+            <placeholder>
+                <VBox alignment="CENTER" spacing="10">
+                    <Text text="No reports found" styleClass="placeholder-text"/>
+                    <Text text="Generate your first report to get started" styleClass="placeholder-subtitle"/>
+                </VBox>
+            </placeholder>
+        </TableView>
+    </VBox>
+
+    <!-- Pagination and Actions -->
+    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="footer-section">
+        <Label fx:id="recordCountLabel" text="Showing 0 of 0 reports"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Cleanup Old Reports" onAction="#handleCleanupOldReports" styleClass="warning-button"/>
+        <Button text="Export to CSV" onAction="#handleExportToCsv" styleClass="action-button"/>
+    </HBox>
+
+    <!-- Progress Indicator -->
+    <StackPane fx:id="progressOverlay" visible="false" managed="false"
+               styleClass="progress-overlay" StackPane.alignment="CENTER">
+        <VBox alignment="CENTER" spacing="15" styleClass="progress-container">
+            <ProgressIndicator fx:id="progressIndicator"/>
+            <Label fx:id="progressLabel" text="Loading reports..."/>
+        </VBox>
+    </StackPane>
+
+</VBox>

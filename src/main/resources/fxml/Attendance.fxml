@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+Attendance Management View - Dark Futuristic Theme
+Location: src/main/resources/fxml/Attendance.fxml
+-->
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:id="rootContainer"
+      fx:controller="com.heronix.ui.controller.AttendanceController"
+      styleClass="root"
+      spacing="20">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header Section -->
+    <HBox alignment="CENTER_LEFT" spacing="15" styleClass="card">
+        <Label text="📋 Attendance Management" styleClass="label-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="🔄 Refresh" onAction="#handleRefresh" styleClass="button-secondary"/>
+    </HBox>
+
+    <!-- Main Tab Pane -->
+    <TabPane fx:id="mainTabPane" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+
+        <!-- ========== DASHBOARD TAB ========== -->
+        <Tab fx:id="dashboardTab" text="📊 Dashboard" closable="false">
+            <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="scroll-pane">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- Today's Date Header -->
+                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="card">
+                        <Label fx:id="todayDateLabel" text="Today: Loading..." styleClass="label-title"/>
+                    </HBox>
+
+                    <!-- Attendance Summary Cards -->
+                    <HBox spacing="15">
+                        <!-- Total Students Card -->
+                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                            <Label text="👥 Total Students" styleClass="label"/>
+                            <Label fx:id="totalStudentsLabel" text="0"
+                                   style="-fx-font-size: 32; -fx-font-weight: bold;"/>
+                        </VBox>
+
+                        <!-- Present Card -->
+                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                            <Label text="✅ Present" styleClass="label"/>
+                            <Label fx:id="presentCountLabel" text="0"
+                                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
+                        </VBox>
+
+                        <!-- Absent Card -->
+                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                            <Label text="❌ Absent" styleClass="label"/>
+                            <Label fx:id="absentCountLabel" text="0"
+                                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #F44336;"/>
+                        </VBox>
+
+                        <!-- Tardy Card -->
+                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                            <Label text="⏰ Tardy" styleClass="label"/>
+                            <Label fx:id="tardyCountLabel" text="0"
+                                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #FF9800;"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Attendance Rate Section -->
+                    <VBox spacing="10" styleClass="card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="📈 Attendance Rate" styleClass="label"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="attendanceRateLabel" text="0.0%"
+                                   style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+                        </HBox>
+                        <ProgressBar fx:id="attendanceRateProgress" prefWidth="Infinity" prefHeight="20"/>
+                    </VBox>
+
+                    <!-- Chronic Absence Alerts -->
+                    <VBox spacing="15" styleClass="card" VBox.vgrow="ALWAYS">
+                        <Label text="⚠️ Chronic Absence Alerts" styleClass="label-title"/>
+
+                        <TableView fx:id="chronicAbsenceTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="studentNameCol" text="Student Name"
+                                             prefWidth="200" minWidth="150"/>
+                                <TableColumn fx:id="gradeLevelCol" text="Grade"
+                                             prefWidth="80" minWidth="60"/>
+                                <TableColumn fx:id="absencesCol" text="Absences"
+                                             prefWidth="100" minWidth="80"/>
+                                <TableColumn fx:id="rateCol" text="Absence Rate"
+                                             prefWidth="120" minWidth="100"/>
+                                <TableColumn fx:id="actionsCol" text="Actions"
+                                             prefWidth="150" minWidth="120" sortable="false"/>
+                            </columns>
+                            <placeholder>
+                                <Label text="No chronic absence alerts"/>
+                            </placeholder>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <!-- ========== PERIOD ATTENDANCE TAB ========== -->
+        <Tab fx:id="periodAttendanceTab" text="📝 Period Attendance" closable="false">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- Selection Controls -->
+                <VBox spacing="15" styleClass="card">
+                    <Label text="📅 Select Period" styleClass="label-title"/>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <VBox spacing="5">
+                            <Label text="Date:" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="attendanceDatePicker" prefWidth="180"/>
+                        </VBox>
+
+                        <VBox spacing="5">
+                            <Label text="Campus:" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="campusComboBox" promptText="Select Campus"
+                                      prefWidth="200" onAction="#handleCampusChange"/>
+                        </VBox>
+
+                        <VBox spacing="5">
+                            <Label text="Course:" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="courseComboBox" promptText="Select Course"
+                                      prefWidth="300" onAction="#handleCourseChange"/>
+                        </VBox>
+
+                        <VBox spacing="5">
+                            <Label text="Period:" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="periodComboBox" promptText="Select Period"
+                                      prefWidth="100"/>
+                        </VBox>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="📋 Load Attendance" onAction="#handleLoadAttendance"
+                                styleClass="button-primary" minWidth="150"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Attendance Entry Table -->
+                <VBox spacing="15" styleClass="card" VBox.vgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="✏️ Mark Attendance" styleClass="label-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Mark All Present" onAction="#handleMarkAllPresent"
+                                styleClass="button-success" minWidth="130"/>
+                        <Button text="Mark All Absent" onAction="#handleMarkAllAbsent"
+                                styleClass="button-danger" minWidth="130"/>
+                    </HBox>
+
+                    <TableView fx:id="periodAttendanceTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="studentIdCol" text="Student ID"
+                                         prefWidth="120" minWidth="100"/>
+                            <TableColumn fx:id="studentNameCol2" text="Student Name"
+                                         prefWidth="200" minWidth="150"/>
+                            <TableColumn fx:id="gradeCol" text="Grade"
+                                         prefWidth="80" minWidth="60"/>
+                            <TableColumn fx:id="statusCol" text="Status"
+                                         prefWidth="150" minWidth="120"/>
+                            <TableColumn fx:id="notesCol" text="Notes"
+                                         prefWidth="250" minWidth="150"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="Select a course and period to load students"/>
+                        </placeholder>
+                    </TableView>
+
+                    <!-- Action Buttons -->
+                    <HBox spacing="15" alignment="CENTER_RIGHT">
+                        <Button text="💾 Save Attendance" onAction="#handleSaveAttendance"
+                                styleClass="button-primary" minWidth="150"/>
+                        <Button text="❌ Cancel" onAction="#handleCancelAttendance"
+                                styleClass="button-secondary" minWidth="100"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </Tab>
+
+        <!-- ========== QUICK ACTIONS TAB ========== -->
+        <Tab fx:id="quickActionsTab" text="⚡ Quick Actions" closable="false">
+            <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="scroll-pane">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <Label text="⚡ Quick Actions" styleClass="label-title"/>
+
+                    <!-- Daily Reports Section -->
+                    <VBox spacing="15" styleClass="card">
+                        <Label text="📊 Daily Reports" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <VBox spacing="5">
+                                <Label text="Campus:" style="-fx-font-weight: bold;"/>
+                                <ComboBox fx:id="reportCampusComboBox" promptText="Select Campus"
+                                          prefWidth="200"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Date:" style="-fx-font-weight: bold;"/>
+                                <DatePicker fx:id="reportDatePicker" prefWidth="180"/>
+                            </VBox>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="📄 View Daily Report" onAction="#handleViewDailyReport"
+                                    styleClass="button-primary" minWidth="150"/>
+                        </HBox>
+
+                        <TextArea fx:id="reportOutputArea" editable="false" wrapText="true"
+                                  prefHeight="200" promptText="Report output will appear here..."/>
+                    </VBox>
+
+                    <!-- Notifications Section -->
+                    <VBox spacing="15" styleClass="card">
+                        <Label text="📧 Notifications" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <VBox spacing="5">
+                                <Label text="Campus:" style="-fx-font-weight: bold;"/>
+                                <ComboBox fx:id="notificationCampusComboBox" promptText="Select Campus"
+                                          prefWidth="200"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Date:" style="-fx-font-weight: bold;"/>
+                                <DatePicker fx:id="notificationDatePicker" prefWidth="180"/>
+                            </VBox>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="📨 Send Absence Notifications"
+                                    onAction="#handleSendNotifications"
+                                    styleClass="button-primary" minWidth="200"/>
+                        </HBox>
+
+                        <TextArea fx:id="notificationOutputArea" editable="false" wrapText="true"
+                                  prefHeight="150" promptText="Notification results will appear here..."/>
+                    </VBox>
+
+                    <!-- Truancy Reports Section -->
+                    <VBox spacing="15" styleClass="card">
+                        <Label text="⚠️ Truancy Reports" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <VBox spacing="5">
+                                <Label text="Start Date:" style="-fx-font-weight: bold;"/>
+                                <DatePicker fx:id="truancyStartDatePicker" prefWidth="180"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="End Date:" style="-fx-font-weight: bold;"/>
+                                <DatePicker fx:id="truancyEndDatePicker" prefWidth="180"/>
+                            </VBox>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="📋 View Truancy Cases"
+                                    onAction="#handleViewTruancyCases"
+                                    styleClass="button-primary" minWidth="180"/>
+                        </HBox>
+
+                        <TextArea fx:id="truancyOutputArea" editable="false" wrapText="true"
+                                  prefHeight="200" promptText="Truancy cases will appear here..."/>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+    </TabPane>
+</VBox>
