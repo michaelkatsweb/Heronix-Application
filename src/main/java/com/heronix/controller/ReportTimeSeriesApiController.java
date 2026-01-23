@@ -38,7 +38,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 126 - Report Time-Series Database & Analytics
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/timeseries")
 @RequiredArgsConstructor
 @Slf4j

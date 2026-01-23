@@ -1,7 +1,7 @@
 package com.heronix.ui.controller;
 
 import com.heronix.model.domain.Student;
-import com.heronix.repository.StudentRepository;
+import com.heronix.service.StudentService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -60,7 +60,7 @@ import java.util.UUID;
 public class StudentQRCodeDialogController {
 
     @Autowired
-    private StudentRepository studentRepository;
+    private StudentService studentService;
 
     @FXML private Label studentNameLabel;
     @FXML private Label studentIdLabel;
@@ -221,7 +221,7 @@ public class StudentQRCodeDialogController {
         String newQRCodeId = String.format("QR-%s-%s", student.getStudentId(), shortUUID);
 
         student.setQrCodeId(newQRCodeId);
-        studentRepository.save(student);
+        studentService.save(student);
 
         qrCodeIdLabel.setText(newQRCodeId);
         log.info("Generated new QR code ID: {}", newQRCodeId);

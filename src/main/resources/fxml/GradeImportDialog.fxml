@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -22,6 +24,7 @@ Features:
             styleClass="dialog-pane"
             prefWidth="900"
             prefHeight="700">
+
 
     <content>
         <VBox spacing="20" style="-fx-padding: 20;">
@@ -49,16 +52,16 @@ Features:
                         <Label text="Selected File:" styleClass="label"/>
                         <Label fx:id="fileNameLabel" text="No file selected"
                                styleClass="label"
-                               style="-fx-text-fill: #aaaaaa;"/>
+                               styleClass="text-muted"/>
                     </VBox>
 
                     <VBox spacing="5" alignment="CENTER_RIGHT">
                         <Label fx:id="detectedPlatformLabel" text="Platform: Unknown"
                                styleClass="label"
-                               style="-fx-text-fill: #4CAF50; -fx-font-weight: bold;"/>
+                               styleClass="form-label"/>
                         <Label fx:id="recordCountLabel" text="Records: 0"
                                styleClass="label"
-                               style="-fx-text-fill: #2196F3;"/>
+                               styleClass="text-info"/>
                     </VBox>
                 </HBox>
 
@@ -69,7 +72,7 @@ Features:
                               selected="true"/>
                     <Label text="(Recommended for Skyward, PowerSchool, Infinite Campus)"
                            styleClass="label"
-                           style="-fx-text-fill: #888888; -fx-font-size: 11;"/>
+                           styleClass="text-muted"/>
                 </HBox>
             </VBox>
 
@@ -98,17 +101,17 @@ Features:
                 <Label text="🔧 Field Mapping Configuration" styleClass="label"/>
                 <Label text="Map your CSV columns to Heronix Scheduler fields:"
                        styleClass="label"
-                       style="-fx-font-size: 11; -fx-text-fill: #888888;"/>
+                       styleClass="text-muted"/>
 
                 <GridPane hgap="15" vgap="10">
                     <Label text="CSV Column →" GridPane.columnIndex="0" GridPane.rowIndex="0"
-                           style="-fx-font-weight: bold;"/>
+                           styleClass="form-label"/>
                     <Label text="Heronix Scheduler Field" GridPane.columnIndex="1" GridPane.rowIndex="0"
-                           style="-fx-font-weight: bold;"/>
+                           styleClass="form-label"/>
 
                     <!-- Field mapping controls would go here -->
                     <Label text="Auto-mapping active" GridPane.columnIndex="0" GridPane.rowIndex="1"
-                           GridPane.columnSpan="2" style="-fx-text-fill: #4CAF50;"/>
+                           GridPane.columnSpan="2" styleClass="text-success"/>
                 </GridPane>
             </VBox>
 
@@ -137,13 +140,13 @@ Features:
 
             <!-- Info Box -->
             <VBox spacing="5" styleClass="card"
-                  style="-fx-background-color: #1e3a5f; -fx-border-color: #2196F3; -fx-border-width: 1;">
+                  styleClass="card">
                 <padding>
                     <Insets top="10" right="10" bottom="10" left="10"/>
                 </padding>
 
                 <Label text="ℹ️ Supported Formats:" styleClass="label"
-                       style="-fx-font-weight: bold; -fx-text-fill: #2196F3;"/>
+                       styleClass="form-label"/>
 
                 <HBox spacing="30">
                     <VBox spacing="3">

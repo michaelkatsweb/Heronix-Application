@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+Incomplete Registrations Management View
+Location: src/main/resources/fxml/IncompleteRegistrations.fxml
+
+Administrator/Registrar dashboard for tracking and managing
+incomplete student registrations.
+
+@author Heronix SIS Team
+@version 1.0.0
+@since 2026-01
+-->
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.IncompleteRegistrationsController"
+            prefWidth="1400" prefHeight="800"
+            styleClass="main-container">
+
+    <!-- Top: Header and Statistics -->
+    <top>
+        <VBox spacing="0">
+            <!-- Header -->
+            <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-gradient">
+                <VBox>
+                    <Label text="Incomplete Registrations" styleClass="page-title-white"/>
+                    <Label text="Track and manage incomplete student registrations" styleClass="text-muted"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="refreshButton" text="Refresh" onAction="#handleRefresh"
+                        styleClass="button-refresh-white-orange"/>
+            </HBox>
+
+            <!-- Statistics Cards -->
+            <HBox spacing="15" alignment="CENTER" styleClass="stats-section-white">
+                <!-- Total Incomplete -->
+                <VBox alignment="CENTER" spacing="5" styleClass="card, metric-warning">
+                    <Label fx:id="totalIncompleteLabel" text="0" styleClass="stat-value-28-warning"/>
+                    <Label text="Total Incomplete" styleClass="text-muted"/>
+                </VBox>
+
+                <!-- Overdue -->
+                <VBox alignment="CENTER" spacing="5" styleClass="card, metric-danger">
+                    <Label fx:id="overdueCountLabel" text="0" styleClass="stat-value-28-danger"/>
+                    <Label text="Overdue" styleClass="text-muted"/>
+                </VBox>
+
+                <!-- Follow-up Due -->
+                <VBox alignment="CENTER" spacing="5" styleClass="card, metric-info">
+                    <Label fx:id="followupDueLabel" text="0" styleClass="stat-value-28-primary"/>
+                    <Label text="Follow-up Due" styleClass="text-muted"/>
+                </VBox>
+
+                <!-- Urgent -->
+                <VBox alignment="CENTER" spacing="5" styleClass="card">
+                    <Label fx:id="urgentCountLabel" text="0" styleClass="stat-value-28-pink"/>
+                    <Label text="Urgent Cases" styleClass="text-muted"/>
+                </VBox>
+
+                <!-- Missing Documents -->
+                <VBox alignment="CENTER" spacing="5" styleClass="card">
+                    <Label fx:id="missingDocsCountLabel" text="0" styleClass="stat-value-28-purple-deep"/>
+                    <Label text="Missing Docs" styleClass="text-muted"/>
+                </VBox>
+
+                <!-- Missing Photo -->
+                <VBox alignment="CENTER" spacing="5" styleClass="card, metric-success">
+                    <Label fx:id="missingPhotoCountLabel" text="0" styleClass="stat-value-28-success"/>
+                    <Label text="Missing Photo" styleClass="text-muted"/>
+                </VBox>
+            </HBox>
+
+            <!-- Filters -->
+            <HBox spacing="15" alignment="CENTER_LEFT" styleClass="card">
+                <TextField fx:id="searchField" promptText="Search student or guardian name..." prefWidth="250"/>
+
+                <ComboBox fx:id="statusFilterCombo" promptText="Status" prefWidth="180"/>
+                <ComboBox fx:id="reasonFilterCombo" promptText="Reason" prefWidth="200"/>
+                <ComboBox fx:id="priorityFilterCombo" promptText="Priority" prefWidth="150"/>
+
+                <Separator orientation="VERTICAL"/>
+
+                <CheckBox fx:id="overdueOnlyCheckbox" text="Overdue Only"/>
+                <CheckBox fx:id="followupDueCheckbox" text="Follow-up Due"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button fx:id="clearFiltersButton" text="Clear Filters" onAction="#handleClearFilters"
+                        styleClass="button-primary"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Split Pane with Table and Details -->
+    <center>
+        <SplitPane dividerPositions="0.7" styleClass="content-padding-15">
+
+            <!-- Left: Registrations Table -->
+            <VBox spacing="10">
+                <TableView fx:id="registrationsTable" VBox.vgrow="ALWAYS" styleClass="card">
+                    <columns>
+                        <TableColumn fx:id="selectColumn" text="" prefWidth="40" sortable="false"/>
+                        <TableColumn fx:id="studentNameColumn" text="Student Name" prefWidth="150"/>
+                        <TableColumn fx:id="gradeLevelColumn" text="Grade" prefWidth="80"/>
+                        <TableColumn fx:id="guardianColumn" text="Guardian" prefWidth="130"/>
+                        <TableColumn fx:id="phoneColumn" text="Phone" prefWidth="110"/>
+                        <TableColumn fx:id="statusColumn" text="Status" prefWidth="140"/>
+                        <TableColumn fx:id="reasonColumn" text="Reason" prefWidth="160"/>
+                        <TableColumn fx:id="missingDocsColumn" text="Missing Documents" prefWidth="180"/>
+                        <TableColumn fx:id="daysIncompleteColumn" text="Days" prefWidth="60"/>
+                        <TableColumn fx:id="nextFollowupColumn" text="Next Follow-up" prefWidth="120"/>
+                        <TableColumn fx:id="priorityColumn" text="Priority" prefWidth="80"/>
+                        <TableColumn fx:id="assignedToColumn" text="Assigned To" prefWidth="100"/>
+                    </columns>
+                    <placeholder>
+                        <Label text="No incomplete registrations found" styleClass="text-muted"/>
+                    </placeholder>
+                </TableView>
+
+                <!-- Action Buttons -->
+                <HBox spacing="10" alignment="CENTER_LEFT" styleClass="padding-top-10">
+                    <Button fx:id="recordFollowupButton" text="Record Follow-up" onAction="#handleRecordFollowup"
+                            styleClass="button-primary"/>
+                    <Button fx:id="markCompleteButton" text="Mark Complete" onAction="#handleMarkComplete"
+                            styleClass="button-primary"/>
+                    <Button fx:id="editButton" text="Edit" onAction="#handleEdit"
+                            styleClass="button-primary"/>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Button fx:id="exportButton" text="Export Report" onAction="#handleExport"
+                            styleClass="button-primary"/>
+                    <Button fx:id="deleteButton" text="Delete Selected" onAction="#handleDelete"
+                            styleClass="header-danger"/>
+                </HBox>
+            </VBox>
+
+            <!-- Right: Details Panel -->
+            <VBox fx:id="detailsPanel" spacing="15" styleClass="details-panel-white">
+                <Label text="Registration Details" styleClass="label-16-bold-dark"/>
+
+                <Separator/>
+
+                <!-- Student Info -->
+                <VBox spacing="5">
+                    <Label text="STUDENT" styleClass="section-label-gray"/>
+                    <Label fx:id="detailStudentName" text="-" styleClass="section-title"/>
+                    <Label fx:id="detailGradeLevel" text="-" styleClass="text-muted"/>
+                </VBox>
+
+                <Separator/>
+
+                <!-- Guardian Info -->
+                <VBox spacing="5">
+                    <Label text="GUARDIAN/CONTACT" styleClass="section-label-gray"/>
+                    <Label fx:id="detailGuardianInfo" text="-" styleClass="label-13" wrapText="true"/>
+                </VBox>
+
+                <Separator/>
+
+                <!-- Status Info -->
+                <VBox spacing="5">
+                    <Label text="STATUS" styleClass="section-label-gray"/>
+                    <Label fx:id="detailStatus" text="-" styleClass="label-14-bold-dark"/>
+                </VBox>
+
+                <!-- Missing Documents -->
+                <VBox spacing="5">
+                    <Label text="MISSING DOCUMENTS" styleClass="section-label-gray"/>
+                    <Label fx:id="detailMissingDocs" text="-" styleClass="text-muted" wrapText="true"/>
+                </VBox>
+
+                <!-- Days Incomplete -->
+                <VBox spacing="5">
+                    <Label text="INCOMPLETE FOR" styleClass="section-label-gray"/>
+                    <Label fx:id="detailDaysIncomplete" text="-" styleClass="label-14"/>
+                </VBox>
+
+                <Separator/>
+
+                <!-- Follow-up Notes -->
+                <VBox spacing="5" VBox.vgrow="ALWAYS">
+                    <Label text="FOLLOW-UP NOTES" styleClass="section-label-gray"/>
+                    <TextArea fx:id="detailFollowupNotes" editable="false" wrapText="true" VBox.vgrow="ALWAYS"
+                              styleClass="label-12-dark"/>
+                </VBox>
+            </VBox>
+
+        </SplitPane>
+    </center>
+
+    <!-- Bottom: Legend/Help -->
+    <bottom>
+        <HBox spacing="30" alignment="CENTER" styleClass="card">
+            <HBox spacing="5" alignment="CENTER">
+                <Label text="" styleClass="card"/>
+                <Label text="Overdue" styleClass="legend-label-11"/>
+            </HBox>
+            <HBox spacing="5" alignment="CENTER">
+                <Label text="" styleClass="card"/>
+                <Label text="Follow-up Due" styleClass="legend-label-11"/>
+            </HBox>
+            <HBox spacing="5" alignment="CENTER">
+                <Label text="" styleClass="card"/>
+                <Label text="Urgent" styleClass="legend-label-11"/>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Tip: Select a registration to see details. Use checkboxes for bulk actions." styleClass="text-muted"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

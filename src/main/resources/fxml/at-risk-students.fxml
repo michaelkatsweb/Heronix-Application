@@ -10,10 +10,6 @@
       spacing="16"
       styleClass="at-risk-container">
 
-    <!-- Stylesheets -->
-    <stylesheets>
-        <String fx:value="@../css/glassmorphic-theme.css"/>
-    </stylesheets>
 
     <!-- Header Section -->
     <HBox alignment="CENTER_LEFT" spacing="12" styleClass="glass-header">

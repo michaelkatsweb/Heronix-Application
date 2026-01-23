@@ -3,9 +3,11 @@ package com.heronix.service;
 import com.heronix.model.domain.Course;
 import com.heronix.model.domain.CourseSection;
 import com.heronix.model.domain.Student;
+import com.heronix.model.enums.GradeLevel;
 import com.heronix.repository.CourseRepository;
 import com.heronix.repository.CourseSectionRepository;
 import com.heronix.repository.StudentRepository;
+import com.heronix.service.validation.GradeLevelValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ public class StudentEnrollmentService {
     private final CourseRepository courseRepository;
     private final CourseSectionRepository courseSectionRepository;
     private final PrerequisiteValidationService prerequisiteValidationService;
+    private final GradeLevelValidator gradeLevelValidator;
 
     @Autowired
     private ConflictDetectionService conflictDetectionService;
@@ -42,11 +45,13 @@ public class StudentEnrollmentService {
     public StudentEnrollmentService(StudentRepository studentRepository,
                                    CourseRepository courseRepository,
                                    CourseSectionRepository courseSectionRepository,
-                                   PrerequisiteValidationService prerequisiteValidationService) {
+                                   PrerequisiteValidationService prerequisiteValidationService,
+                                   GradeLevelValidator gradeLevelValidator) {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
         this.courseSectionRepository = courseSectionRepository;
         this.prerequisiteValidationService = prerequisiteValidationService;
+        this.gradeLevelValidator = gradeLevelValidator;
     }
 
     // ========================================================================
@@ -77,6 +82,15 @@ public class StudentEnrollmentService {
         if (student.getEnrolledCourses().contains(course)) {
             logger.warn("Student {} is already enrolled in course {}", studentId, courseId);
             return;
+        }
+
+        // Check grade level eligibility (CRITICAL - prevents Pre-K students in High School courses)
+        if (!checkGradeLevelEligibility(student, course)) {
+            String studentGrade = student.getGradeLevel() != null ? student.getGradeLevel() : "Unknown";
+            String courseGradeRange = course.getGradeLevelDescription();
+            throw new IllegalStateException(
+                    "Student grade level (" + studentGrade + ") is not eligible for course " +
+                    course.getCourseCode() + " (" + courseGradeRange + ")");
         }
 
         // Check course capacity
@@ -243,6 +257,49 @@ public class StudentEnrollmentService {
     // ========================================================================
     // VALIDATION
     // ========================================================================
+
+    /**
+     * Check if student's grade level is eligible for the course
+     * CRITICAL: Prevents inappropriate course assignments (e.g., Pre-K in Calculus)
+     *
+     * @param student The student to check
+     * @param course The course to validate against
+     * @return true if student can take this course based on grade level
+     */
+    private boolean checkGradeLevelEligibility(Student student, Course course) {
+        if (student == null || course == null) {
+            return false;
+        }
+
+        // Parse student grade level
+        String gradeLevelStr = student.getGradeLevel();
+        if (gradeLevelStr == null || gradeLevelStr.isEmpty()) {
+            logger.warn("Student {} has no grade level set, cannot validate course eligibility",
+                    student.getStudentId());
+            return false; // Require grade level for enrollment
+        }
+
+        // Use GradeLevelValidator to parse the grade level string
+        Integer studentGradeValue = gradeLevelValidator.parseGradeLevel(gradeLevelStr);
+        if (studentGradeValue == null) {
+            logger.warn("Could not parse grade level '{}' for student {}",
+                    gradeLevelStr, student.getStudentId());
+            return false;
+        }
+
+        // Use Course's built-in eligibility check
+        boolean eligible = course.isEligibleForGradeLevel(studentGradeValue);
+
+        if (!eligible) {
+            logger.warn("Student {} (Grade {}) is not eligible for course {} ({})",
+                    student.getStudentId(),
+                    gradeLevelValidator.getGradeLevelDisplay(studentGradeValue),
+                    course.getCourseCode(),
+                    course.getGradeLevelDescription());
+        }
+
+        return eligible;
+    }
 
     /**
      * Check if student meets prerequisites for a course

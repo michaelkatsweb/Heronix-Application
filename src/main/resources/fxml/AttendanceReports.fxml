@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -8,73 +10,73 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.AttendanceReportsController"
-            stylesheets="@../css/application.css"
             prefWidth="1400" prefHeight="900">
+
 
     <!-- Top: Header -->
     <top>
-        <VBox spacing="15" style="-fx-background-color: #1976d2; -fx-padding: 20;">
+        <VBox spacing="15" styleClass="card">
             <Label text="Attendance Reports &amp; Analytics"
-                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                   styleClass="page-title-white"/>
             <Label text="Comprehensive attendance reporting, analytics, and state/federal compliance reporting"
-                   style="-fx-font-size: 13px; -fx-text-fill: white;"/>
+                   styleClass="text-white"/>
         </VBox>
     </top>
 
     <!-- Center: Main Content -->
     <center>
-        <SplitPane dividerPositions="0.25" style="-fx-background-color: #f5f5f5;">
+        <SplitPane dividerPositions="0.25" styleClass="main-container">
 
             <!-- Left: Report Selection & Filters -->
-            <VBox spacing="20" style="-fx-padding: 15; -fx-background-color: white;">
+            <VBox spacing="20" styleClass="padding-15-white">
 
                 <!-- Report Type Selection -->
                 <VBox spacing="10">
-                    <Label text="Report Type" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Label text="Report Type" styleClass="section-title"/>
                     <Separator/>
 
                     <ComboBox fx:id="reportTypeComboBox" promptText="Select report type..." maxWidth="Infinity"/>
                 </VBox>
 
                 <!-- Date Range Filters -->
-                <VBox spacing="10" style="-fx-background-color: #e3f2fd; -fx-padding: 15; -fx-border-color: #90caf9; -fx-border-width: 2;">
-                    <Label text="Date Range" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #0d47a1;"/>
+                <VBox spacing="10" styleClass="card, metric-info">
+                    <Label text="Date Range" styleClass="label-14-bold-blue"/>
 
-                    <Label text="Start Date:" style="-fx-font-weight: bold;"/>
+                    <Label text="Start Date:" styleClass="form-label"/>
                     <DatePicker fx:id="startDatePicker" promptText="Start date" maxWidth="Infinity"/>
 
-                    <Label text="End Date:" style="-fx-font-weight: bold;"/>
+                    <Label text="End Date:" styleClass="form-label"/>
                     <DatePicker fx:id="endDatePicker" promptText="End date" maxWidth="Infinity"/>
 
                     <HBox spacing="5">
-                        <Button text="Today" onAction="#handleToday" style="-fx-font-size: 10px; -fx-padding: 5;"/>
-                        <Button text="This Week" onAction="#handleThisWeek" style="-fx-font-size: 10px; -fx-padding: 5;"/>
-                        <Button text="This Month" onAction="#handleThisMonth" style="-fx-font-size: 10px; -fx-padding: 5;"/>
+                        <Button text="Today" onAction="#handleToday" styleClass="button-small"/>
+                        <Button text="This Week" onAction="#handleThisWeek" styleClass="button-small"/>
+                        <Button text="This Month" onAction="#handleThisMonth" styleClass="button-small"/>
                     </HBox>
 
                     <HBox spacing="5">
-                        <Button text="This Quarter" onAction="#handleThisQuarter" style="-fx-font-size: 10px; -fx-padding: 5;"/>
-                        <Button text="This Year" onAction="#handleThisYear" style="-fx-font-size: 10px; -fx-padding: 5;"/>
+                        <Button text="This Quarter" onAction="#handleThisQuarter" styleClass="button-small"/>
+                        <Button text="This Year" onAction="#handleThisYear" styleClass="button-small"/>
                     </HBox>
                 </VBox>
 
                 <!-- Student Filters -->
                 <VBox spacing="10">
-                    <Label text="Student Filters" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                    <Label text="Student Filters" styleClass="label-14-bold"/>
 
-                    <Label text="Grade Level:" style="-fx-font-weight: bold; -fx-font-size: 11px;"/>
+                    <Label text="Grade Level:" styleClass="label-11-bold"/>
                     <ComboBox fx:id="gradeLevelComboBox" promptText="All Grades" maxWidth="Infinity"/>
 
-                    <Label text="Homeroom:" style="-fx-font-weight: bold; -fx-font-size: 11px;"/>
+                    <Label text="Homeroom:" styleClass="label-11-bold"/>
                     <ComboBox fx:id="homeroomComboBox" promptText="All Homerooms" maxWidth="Infinity"/>
 
-                    <Label text="Student:" style="-fx-font-weight: bold; -fx-font-size: 11px;"/>
+                    <Label text="Student:" styleClass="label-11-bold"/>
                     <ComboBox fx:id="studentComboBox" promptText="All Students" maxWidth="Infinity" editable="true"/>
                 </VBox>
 
                 <!-- Attendance Filters -->
-                <VBox spacing="10" style="-fx-background-color: #fff3e0; -fx-padding: 15; -fx-border-color: #ffcc80; -fx-border-width: 2;">
-                    <Label text="Attendance Filters" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+                <VBox spacing="10" styleClass="card, metric-warning">
+                    <Label text="Attendance Filters" styleClass="label-14-bold-orange"/>
 
                     <CheckBox fx:id="includeAbsentCheckBox" text="Absences" selected="true"/>
                     <CheckBox fx:id="includeTardyCheckBox" text="Tardies" selected="true"/>
@@ -86,60 +88,60 @@
                 <!-- Action Buttons -->
                 <VBox spacing="10">
                     <Button fx:id="generateButton" text="Generate Report" onAction="#handleGenerateReport"
-                            style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 12; -fx-cursor: hand;" maxWidth="Infinity"/>
+                            styleClass="button-primary" maxWidth="Infinity"/>
 
                     <Button fx:id="exportButton" text="Export to Excel" onAction="#handleExportExcel"
-                            style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-padding: 10; -fx-cursor: hand;" maxWidth="Infinity"/>
+                            styleClass="button-primary" maxWidth="Infinity"/>
 
                     <Button fx:id="exportPdfButton" text="Export to PDF" onAction="#handleExportPdf"
-                            style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-padding: 10; -fx-cursor: hand;" maxWidth="Infinity"/>
+                            styleClass="header-danger" maxWidth="Infinity"/>
 
                     <Button fx:id="printButton" text="Print Report" onAction="#handlePrint"
-                            style="-fx-background-color: #9e9e9e; -fx-text-fill: white; -fx-padding: 10; -fx-cursor: hand;" maxWidth="Infinity"/>
+                            styleClass="button-primary" maxWidth="Infinity"/>
                 </VBox>
 
             </VBox>
 
             <!-- Right: Report Content -->
-            <BorderPane style="-fx-background-color: white;">
+            <BorderPane styleClass="card">
 
                 <!-- Report Header -->
                 <top>
-                    <VBox spacing="15" style="-fx-padding: 20; -fx-background-color: #fafafa; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
+                    <VBox spacing="15" styleClass="card">
                         <HBox spacing="15" alignment="CENTER_LEFT">
                             <VBox HBox.hgrow="ALWAYS">
                                 <Label fx:id="reportTitleLabel" text="Select a report type to begin"
-                                       style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                       styleClass="section-title"/>
                                 <Label fx:id="reportSubtitleLabel" text=""
-                                       style="-fx-font-size: 12px; -fx-text-fill: #757575;"/>
+                                       styleClass="text-muted"/>
                             </VBox>
 
                             <VBox spacing="5" alignment="CENTER_RIGHT">
-                                <Label fx:id="generatedDateLabel" text="" style="-fx-font-size: 10px; -fx-text-fill: #757575;"/>
-                                <Label fx:id="recordCountLabel" text="" style="-fx-font-size: 12px; -fx-font-weight: bold;"/>
+                                <Label fx:id="generatedDateLabel" text="" styleClass="text-muted"/>
+                                <Label fx:id="recordCountLabel" text="" styleClass="label-12-bold"/>
                             </VBox>
                         </HBox>
 
                         <!-- Summary Statistics -->
                         <HBox spacing="20" fx:id="summaryStatsBox" managed="false" visible="false">
-                            <VBox spacing="5" style="-fx-background-color: #e8f5e9; -fx-padding: 10; -fx-border-color: #4caf50; -fx-border-width: 2;">
-                                <Label text="Total Present" style="-fx-font-size: 10px; -fx-text-fill: #2e7d32;"/>
-                                <Label fx:id="totalPresentLabel" text="0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                            <VBox spacing="5" styleClass="card, metric-success">
+                                <Label text="Total Present" styleClass="text-muted"/>
+                                <Label fx:id="totalPresentLabel" text="0" styleClass="stat-value-20-green-dark"/>
                             </VBox>
 
-                            <VBox spacing="5" style="-fx-background-color: #ffebee; -fx-padding: 10; -fx-border-color: #f44336; -fx-border-width: 2;">
-                                <Label text="Total Absent" style="-fx-font-size: 10px; -fx-text-fill: #c62828;"/>
-                                <Label fx:id="totalAbsentLabel" text="0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                            <VBox spacing="5" styleClass="card, metric-danger">
+                                <Label text="Total Absent" styleClass="text-muted"/>
+                                <Label fx:id="totalAbsentLabel" text="0" styleClass="stat-value-20-red-dark"/>
                             </VBox>
 
-                            <VBox spacing="5" style="-fx-background-color: #fff9c4; -fx-padding: 10; -fx-border-color: #fbc02d; -fx-border-width: 2;">
-                                <Label text="Total Tardy" style="-fx-font-size: 10px; -fx-text-fill: #f57f17;"/>
-                                <Label fx:id="totalTardyLabel" text="0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #f57f17;"/>
+                            <VBox spacing="5" styleClass="card">
+                                <Label text="Total Tardy" styleClass="text-muted"/>
+                                <Label fx:id="totalTardyLabel" text="0" styleClass="stat-value-20-warning"/>
                             </VBox>
 
-                            <VBox spacing="5" style="-fx-background-color: #e3f2fd; -fx-padding: 10; -fx-border-color: #2196f3; -fx-border-width: 2;">
-                                <Label text="Attendance Rate" style="-fx-font-size: 10px; -fx-text-fill: #0d47a1;"/>
-                                <Label fx:id="attendanceRateLabel" text="0%" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #0d47a1;"/>
+                            <VBox spacing="5" styleClass="card, metric-info">
+                                <Label text="Attendance Rate" styleClass="text-muted"/>
+                                <Label fx:id="attendanceRateLabel" text="0%" styleClass="stat-value-20-blue-dark"/>
                             </VBox>
                         </HBox>
                     </VBox>
@@ -147,12 +149,12 @@
 
                 <!-- Report Content Area -->
                 <center>
-                    <TabPane fx:id="reportTabPane" tabClosingPolicy="UNAVAILABLE" style="-fx-padding: 15;">
+                    <TabPane fx:id="reportTabPane" tabClosingPolicy="UNAVAILABLE" styleClass="content-padding-15">
 
                         <!-- Data Table Tab -->
                         <Tab text="Data Table">
                             <ScrollPane fitToWidth="true" fitToHeight="true">
-                                <VBox spacing="15" style="-fx-padding: 15;">
+                                <VBox spacing="15" styleClass="content-padding-15">
                                     <TableView fx:id="reportTableView" VBox.vgrow="ALWAYS">
                                         <!-- Columns will be dynamically added based on report type -->
                                     </TableView>
@@ -163,9 +165,9 @@
                         <!-- Summary Tab -->
                         <Tab text="Summary">
                             <ScrollPane fitToWidth="true" fitToHeight="true">
-                                <VBox spacing="20" style="-fx-padding: 20;">
+                                <VBox spacing="20" styleClass="padding-20">
                                     <TextArea fx:id="summaryTextArea" editable="false" wrapText="true" prefRowCount="20"
-                                              style="-fx-font-family: 'Courier New'; -fx-font-size: 12px;"/>
+                                              styleClass="text-area-monospace"/>
                                 </VBox>
                             </ScrollPane>
                         </Tab>
@@ -173,7 +175,7 @@
                         <!-- Charts Tab -->
                         <Tab text="Charts">
                             <ScrollPane fitToWidth="true" fitToHeight="true">
-                                <VBox spacing="20" style="-fx-padding: 20;">
+                                <VBox spacing="20" styleClass="padding-20">
                                     <StackPane fx:id="chartContainer" minHeight="400"/>
                                 </VBox>
                             </ScrollPane>
@@ -182,29 +184,29 @@
                         <!-- Interventions Needed Tab -->
                         <Tab text="Interventions Needed">
                             <ScrollPane fitToWidth="true" fitToHeight="true">
-                                <VBox spacing="15" style="-fx-padding: 15;">
+                                <VBox spacing="15" styleClass="content-padding-15">
 
                                     <!-- Chronic Absenteeism Alerts -->
-                                    <VBox spacing="10" style="-fx-background-color: #ffebee; -fx-padding: 15; -fx-border-color: #ef5350; -fx-border-width: 2;">
-                                        <Label text="Chronic Absenteeism (&gt;= 10% absent)" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                                    <VBox spacing="10" styleClass="card, metric-danger">
+                                        <Label text="Chronic Absenteeism (&gt;= 10% absent)" styleClass="label-14-bold-red"/>
                                         <ListView fx:id="chronicAbsenteeismList" prefHeight="150"/>
                                     </VBox>
 
                                     <!-- Truancy Alerts -->
-                                    <VBox spacing="10" style="-fx-background-color: #fff3e0; -fx-padding: 15; -fx-border-color: #ff9800; -fx-border-width: 2;">
-                                        <Label text="Truancy Risk (Unexcused Absences)" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+                                    <VBox spacing="10" styleClass="card, metric-warning">
+                                        <Label text="Truancy Risk (Unexcused Absences)" styleClass="label-14-bold-orange"/>
                                         <ListView fx:id="truancyRiskList" prefHeight="150"/>
                                     </VBox>
 
                                     <!-- Excessive Tardies -->
-                                    <VBox spacing="10" style="-fx-background-color: #fff9c4; -fx-padding: 15; -fx-border-color: #fbc02d; -fx-border-width: 2;">
-                                        <Label text="Excessive Tardies (&gt;= 5 tardies)" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #f57f17;"/>
+                                    <VBox spacing="10" styleClass="card">
+                                        <Label text="Excessive Tardies (&gt;= 5 tardies)" styleClass="label-14-bold-warning"/>
                                         <ListView fx:id="excessiveTardiesList" prefHeight="150"/>
                                     </VBox>
 
                                     <!-- Early Warning -->
-                                    <VBox spacing="10" style="-fx-background-color: #e3f2fd; -fx-padding: 15; -fx-border-color: #2196f3; -fx-border-width: 2;">
-                                        <Label text="Early Warning (3+ absences)" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #0d47a1;"/>
+                                    <VBox spacing="10" styleClass="card, metric-info">
+                                        <Label text="Early Warning (3+ absences)" styleClass="label-14-bold-blue"/>
                                         <ListView fx:id="earlyWarningList" prefHeight="150"/>
                                     </VBox>
 
@@ -215,10 +217,10 @@
                         <!-- Perfect Attendance Tab -->
                         <Tab text="Perfect Attendance">
                             <ScrollPane fitToWidth="true" fitToHeight="true">
-                                <VBox spacing="15" style="-fx-padding: 15;">
+                                <VBox spacing="15" styleClass="content-padding-15">
 
-                                    <VBox spacing="10" style="-fx-background-color: #e8f5e9; -fx-padding: 15; -fx-border-color: #4caf50; -fx-border-width: 2;">
-                                        <Label text="Perfect Attendance (No absences, max 2 tardies)" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                                    <VBox spacing="10" styleClass="card, metric-success">
+                                        <Label text="Perfect Attendance (No absences, max 2 tardies)" styleClass="label-14-bold-green"/>
                                         <TableView fx:id="perfectAttendanceTableView" prefHeight="400">
                                             <columns>
                                                 <TableColumn fx:id="perfectStudentIdColumn" text="Student ID" prefWidth="100"/>
@@ -246,10 +248,10 @@
 
     <!-- Bottom: Status Bar -->
     <bottom>
-        <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-background-color: #fafafa; -fx-padding: 10; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
-            <Label fx:id="statusLabel" text="Ready" style="-fx-font-size: 11px;"/>
+        <HBox spacing="15" alignment="CENTER_LEFT" styleClass="card">
+            <Label fx:id="statusLabel" text="Ready" styleClass="label-11"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="processingTimeLabel" text="" style="-fx-font-size: 10px; -fx-text-fill: #757575;"/>
+            <Label fx:id="processingTimeLabel" text="" styleClass="text-muted"/>
         </HBox>
     </bottom>
 

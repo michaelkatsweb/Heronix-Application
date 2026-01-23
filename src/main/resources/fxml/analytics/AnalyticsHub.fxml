@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+
+<!--
+    Analytics Hub - Central Dashboard
+    Phase 59: Comprehensive Analytics Module
+
+    Features:
+    - Quick stats overview
+    - Navigation tiles to specialized analytics
+    - Campus and date filters
+    - Export capabilities
+-->
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.analytics.AnalyticsHubController"
+            styleClass="analytics-hub">
+
+    <!-- Header Section -->
+    <top>
+        <VBox spacing="15" styleClass="header-section">
+            <padding><Insets top="20" right="20" bottom="15" left="20"/></padding>
+
+            <!-- Title and Filters Row -->
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <VBox spacing="3">
+                    <Label text="Analytics Hub" styleClass="page-title"/>
+                    <Label text="Comprehensive School Data Analytics" styleClass="page-subtitle"/>
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Global Filters -->
+                <HBox spacing="15" alignment="CENTER_LEFT" styleClass="filter-bar">
+                    <Label text="Campus:" styleClass="filter-label"/>
+                    <ComboBox fx:id="campusFilter" promptText="All Campuses" prefWidth="180"/>
+
+                    <Label text="Year:" styleClass="filter-label"/>
+                    <ComboBox fx:id="yearFilter" prefWidth="120"/>
+
+                    <Button fx:id="refreshBtn" text="Refresh" onAction="#handleRefresh"
+                            styleClass="button-secondary"/>
+                    <Button fx:id="exportSummaryBtn" text="Export Summary" onAction="#handleExportSummary"
+                            styleClass="button-primary"/>
+                </HBox>
+            </HBox>
+
+            <!-- Quick Stats Row -->
+            <GridPane fx:id="quickStatsGrid" hgap="15" vgap="15" styleClass="quick-stats-grid">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="16.66"/>
+                    <ColumnConstraints percentWidth="16.66"/>
+                    <ColumnConstraints percentWidth="16.66"/>
+                    <ColumnConstraints percentWidth="16.66"/>
+                    <ColumnConstraints percentWidth="16.66"/>
+                    <ColumnConstraints percentWidth="16.66"/>
+                </columnConstraints>
+
+                <!-- Total Students -->
+                <VBox styleClass="metric-card metric-primary" GridPane.columnIndex="0">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Total Students" styleClass="metric-label"/>
+                    <Label fx:id="totalStudentsLabel" text="0" styleClass="metric-value"/>
+                    <Label fx:id="studentsTrendLabel" text="" styleClass="metric-trend"/>
+                </VBox>
+
+                <!-- Attendance Rate -->
+                <VBox styleClass="metric-card metric-success" GridPane.columnIndex="1">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Attendance Rate" styleClass="metric-label"/>
+                    <Label fx:id="attendanceRateLabel" text="0%" styleClass="metric-value"/>
+                    <Label fx:id="attendanceTrendLabel" text="" styleClass="metric-trend"/>
+                </VBox>
+
+                <!-- Average GPA -->
+                <VBox styleClass="metric-card metric-info" GridPane.columnIndex="2">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Average GPA" styleClass="metric-label"/>
+                    <Label fx:id="averageGPALabel" text="0.00" styleClass="metric-value"/>
+                    <Label fx:id="gpaTrendLabel" text="" styleClass="metric-trend"/>
+                </VBox>
+
+                <!-- Today's Incidents -->
+                <VBox styleClass="metric-card metric-warning" GridPane.columnIndex="3">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Today's Incidents" styleClass="metric-label"/>
+                    <Label fx:id="todayIncidentsLabel" text="0" styleClass="metric-value"/>
+                    <Label fx:id="incidentsTrendLabel" text="" styleClass="metric-trend"/>
+                </VBox>
+
+                <!-- Staff Count -->
+                <VBox styleClass="metric-card metric-purple" GridPane.columnIndex="4">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Total Staff" styleClass="metric-label"/>
+                    <Label fx:id="totalStaffLabel" text="0" styleClass="metric-value"/>
+                    <Label fx:id="certComplianceLabel" text="" styleClass="metric-trend"/>
+                </VBox>
+
+                <!-- Health Score -->
+                <VBox styleClass="metric-card metric-health" GridPane.columnIndex="5">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Health Score" styleClass="metric-label"/>
+                    <Label fx:id="healthScoreLabel" text="0" styleClass="metric-value"/>
+                    <Label fx:id="healthStatusLabel" text="" styleClass="metric-trend"/>
+                </VBox>
+            </GridPane>
+        </VBox>
+    </top>
+
+    <!-- Main Content - Navigation Tiles -->
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="content-scroll">
+            <VBox spacing="20">
+                <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                <!-- Section Header -->
+                <Label text="Analytics Domains" styleClass="section-header"/>
+
+                <!-- Navigation Tiles Grid -->
+                <GridPane hgap="20" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="33.33"/>
+                        <ColumnConstraints percentWidth="33.33"/>
+                        <ColumnConstraints percentWidth="33.33"/>
+                    </columnConstraints>
+
+                    <!-- Student Analytics Tile -->
+                    <VBox fx:id="studentAnalyticsTile" styleClass="analytics-tile tile-students"
+                          onMouseClicked="#navigateToStudentAnalytics"
+                          GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                        <Label text="Student Analytics" styleClass="tile-title"/>
+                        <Label text="Enrollment trends, demographics, GPA analysis, at-risk identification"
+                               styleClass="tile-description" wrapText="true"/>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <VBox>
+                                <Label fx:id="tileStudentCount" text="0" styleClass="tile-metric"/>
+                                <Label text="Students" styleClass="tile-metric-label"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="View Details >" styleClass="tile-action"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Attendance Analytics Tile -->
+                    <VBox fx:id="attendanceAnalyticsTile" styleClass="analytics-tile tile-attendance"
+                          onMouseClicked="#navigateToAttendanceAnalytics"
+                          GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                        <Label text="Attendance Analytics" styleClass="tile-title"/>
+                        <Label text="Daily/weekly trends, chronic absenteeism, tardy patterns, equity analysis"
+                               styleClass="tile-description" wrapText="true"/>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <VBox>
+                                <Label fx:id="tileAttendanceRate" text="0%" styleClass="tile-metric"/>
+                                <Label text="Rate" styleClass="tile-metric-label"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="View Details >" styleClass="tile-action"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Academic Performance Tile -->
+                    <VBox fx:id="academicAnalyticsTile" styleClass="analytics-tile tile-academic"
+                          onMouseClicked="#navigateToAcademicAnalytics"
+                          GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                        <Label text="Academic Performance" styleClass="tile-title"/>
+                        <Label text="Grade distributions, GPA trends, pass/fail rates, honor roll tracking"
+                               styleClass="tile-description" wrapText="true"/>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <VBox>
+                                <Label fx:id="tileAverageGPA" text="0.00" styleClass="tile-metric"/>
+                                <Label text="Avg GPA" styleClass="tile-metric-label"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="View Details >" styleClass="tile-action"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Staff Analytics Tile -->
+                    <VBox fx:id="staffAnalyticsTile" styleClass="analytics-tile tile-staff"
+                          onMouseClicked="#navigateToStaffAnalytics"
+                          GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                        <Label text="Staff Analytics" styleClass="tile-title"/>
+                        <Label text="Certification compliance, workload distribution, experience analysis"
+                               styleClass="tile-description" wrapText="true"/>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <VBox>
+                                <Label fx:id="tileCertCompliance" text="0%" styleClass="tile-metric"/>
+                                <Label text="Certified" styleClass="tile-metric-label"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="View Details >" styleClass="tile-action"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Behavior Analytics Tile -->
+                    <VBox fx:id="behaviorAnalyticsTile" styleClass="analytics-tile tile-behavior"
+                          onMouseClicked="#navigateToBehaviorAnalytics"
+                          GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                        <Label text="Behavior Analytics" styleClass="tile-title"/>
+                        <Label text="Incident trends, location analysis, positive/negative ratios, at-risk students"
+                               styleClass="tile-description" wrapText="true"/>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <VBox>
+                                <Label fx:id="tileTodayIncidents" text="0" styleClass="tile-metric"/>
+                                <Label text="Today" styleClass="tile-metric-label"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="View Details >" styleClass="tile-action"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- District Overview Tile -->
+                    <VBox fx:id="districtOverviewTile" styleClass="analytics-tile tile-district"
+                          onMouseClicked="#navigateToDistrictOverview"
+                          GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                        <Label text="District Overview" styleClass="tile-title"/>
+                        <Label text="Cross-campus comparisons, district-wide metrics, compliance dashboards"
+                               styleClass="tile-description" wrapText="true"/>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <VBox>
+                                <Label fx:id="tileCampusCount" text="0" styleClass="tile-metric"/>
+                                <Label text="Campuses" styleClass="tile-metric-label"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="View Details >" styleClass="tile-action"/>
+                        </HBox>
+                    </VBox>
+                </GridPane>
+
+                <!-- Alerts Section -->
+                <VBox spacing="10" styleClass="alerts-section">
+                    <Label text="Alerts &amp; Notifications" styleClass="section-header"/>
+
+                    <HBox spacing="15">
+                        <!-- Chronic Absenteeism Alert -->
+                        <VBox fx:id="chronicAbsentAlert" styleClass="alert-card alert-warning" HBox.hgrow="ALWAYS">
+                            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Chronic Absenteeism" styleClass="alert-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="chronicAbsentCount" text="0 students" styleClass="alert-count"/>
+                            </HBox>
+                            <Label text="Students with attendance below 90%" styleClass="alert-description"/>
+                        </VBox>
+
+                        <!-- Certification Expiring Alert -->
+                        <VBox fx:id="certExpiringAlert" styleClass="alert-card alert-danger" HBox.hgrow="ALWAYS">
+                            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Certifications Expiring" styleClass="alert-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="certExpiringCount" text="0 staff" styleClass="alert-count"/>
+                            </HBox>
+                            <Label text="Staff certifications expiring within 90 days" styleClass="alert-description"/>
+                        </VBox>
+
+                        <!-- At-Risk Students Alert -->
+                        <VBox fx:id="atRiskAlert" styleClass="alert-card alert-info" HBox.hgrow="ALWAYS">
+                            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="At-Risk Students" styleClass="alert-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="atRiskCount" text="0 students" styleClass="alert-count"/>
+                            </HBox>
+                            <Label text="Students requiring intervention" styleClass="alert-description"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Footer / Status Bar -->
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_LEFT" styleClass="status-bar">
+            <padding><Insets top="10" right="20" bottom="10" left="20"/></padding>
+            <Label fx:id="lastUpdatedLabel" text="Last updated: --" styleClass="status-text"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="dataSourceLabel" text="Data as of: --" styleClass="status-text"/>
+        </HBox>
+    </bottom>
+</BorderPane>

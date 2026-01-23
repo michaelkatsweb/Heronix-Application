@@ -67,7 +67,7 @@
                     </font>
                 </Label>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="lblRecordCount" text="0 contacts" style="-fx-text-fill: #666;"/>
+                <Label fx:id="lblRecordCount" text="0 contacts" styleClass="text-muted"/>
             </HBox>
 
             <TableView fx:id="tblContacts" VBox.vgrow="ALWAYS">
@@ -101,7 +101,7 @@
 
                     <!-- Basic Information -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Basic Information" styleClass="section-header" style="-fx-background-color: #E3F2FD; -fx-padding: 5;">
+                        <Label text="Basic Information" styleClass="section-header-info">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -113,20 +113,20 @@
                                 <ColumnConstraints percentWidth="70"/>
                             </columnConstraints>
 
-                            <Label text="Student:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="Student:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="form-label"/>
                             <ComboBox fx:id="cmbDetailStudent" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="300"/>
 
-                            <Label text="First Name:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="First Name:" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="form-label"/>
                             <TextField fx:id="txtFirstName" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="250"/>
 
-                            <Label text="Last Name:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="Last Name:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="form-label"/>
                             <TextField fx:id="txtLastName" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="250"/>
 
-                            <Label text="Relationship:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="Relationship:" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="form-label"/>
                             <TextField fx:id="txtRelationship" GridPane.rowIndex="3" GridPane.columnIndex="1"
                                        promptText="e.g., Mother, Father, Grandmother..." prefWidth="250"/>
 
-                            <Label text="Priority Order:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="Priority Order:" GridPane.rowIndex="4" GridPane.columnIndex="0" styleClass="form-label"/>
                             <Spinner fx:id="spnPriority" GridPane.rowIndex="4" GridPane.columnIndex="1"
                                      min="1" max="10" initialValue="1" prefWidth="100"/>
                         </GridPane>
@@ -134,7 +134,7 @@
 
                     <!-- Contact Information -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Contact Information" styleClass="section-header" style="-fx-background-color: #E8F5E9; -fx-padding: 5;">
+                        <Label text="Contact Information" styleClass="section-header-success">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -166,7 +166,7 @@
 
                     <!-- Address -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Address" styleClass="section-header" style="-fx-background-color: #FFF3E0; -fx-padding: 5;">
+                        <Label text="Address" styleClass="section-header-warning">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -196,7 +196,7 @@
 
                     <!-- Authorization -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Authorization Levels" styleClass="section-header" style="-fx-background-color: #F3E5F5; -fx-padding: 5;">
+                        <Label text="Authorization Levels" styleClass="section-header">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -214,7 +214,7 @@
 
                     <!-- Verification -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Verification &amp; Status" styleClass="section-header" style="-fx-background-color: #E1F5FE; -fx-padding: 5;">
+                        <Label text="Verification &amp; Status" styleClass="section-header">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -239,7 +239,7 @@
 
                     <!-- Notes -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Additional Notes" styleClass="section-header" style="-fx-background-color: #F5F5F5; -fx-padding: 5;">
+                        <Label text="Additional Notes" styleClass="section-header">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>

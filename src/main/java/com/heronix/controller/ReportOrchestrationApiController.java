@@ -40,7 +40,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 91 - Report Orchestration & Workflow Engine
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/orchestration")
 @RequiredArgsConstructor
 @Slf4j

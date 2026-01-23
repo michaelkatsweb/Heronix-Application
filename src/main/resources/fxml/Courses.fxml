@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -12,7 +14,9 @@ Location: src/main/resources/fxml/Courses.fxml
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.heronix.ui.controller.CoursesController"
-            styleClass="root">
+            styleClass="root"
+            prefHeight="800" prefWidth="1200">
+
 
     <top>
         <VBox spacing="15" style="-fx-padding: 20;">
@@ -55,7 +59,7 @@ Location: src/main/resources/fxml/Courses.fxml
 
     <center>
         <!-- Courses Table Container -->
-        <VBox spacing="10" styleClass="card">
+        <VBox spacing="10" styleClass="card" VBox.vgrow="ALWAYS" minHeight="300">
             <padding>
                 <Insets top="15" right="20" bottom="20" left="20"/>
             </padding>
@@ -66,7 +70,7 @@ Location: src/main/resources/fxml/Courses.fxml
                 <Label fx:id="recordCountLabel" text="Total: 0" styleClass="label"/>
             </HBox>
 
-            <TableView fx:id="coursesTable" VBox.vgrow="ALWAYS">
+            <TableView fx:id="coursesTable" VBox.vgrow="ALWAYS" minHeight="400" prefHeight="500">
                 <columns>
                     <!-- Status Indicator Column -->
                     <TableColumn fx:id="statusColumn" text="●" prefWidth="50" minWidth="50" maxWidth="50" sortable="true" style="-fx-alignment: CENTER;"/>
@@ -82,6 +86,9 @@ Location: src/main/resources/fxml/Courses.fxml
 
                     <!-- ENHANCED: Multi-Subject Teaching MVP - Qualification Indicator Column -->
                     <TableColumn fx:id="qualificationColumn" text="Qualified" prefWidth="90" minWidth="70" maxWidth="120" sortable="true" style="-fx-alignment: CENTER;"/>
+
+                    <!-- Quick Assign Column -->
+                    <TableColumn fx:id="quickAssignColumn" text="Quick Assign" prefWidth="120" minWidth="100" style="-fx-alignment: CENTER;"/>
 
                     <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="220" minWidth="200"/>
                 </columns>

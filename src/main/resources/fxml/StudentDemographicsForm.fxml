@@ -90,7 +90,7 @@
 
                 <!-- Basic Information Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Basic Information" styleClass="section-header" style="-fx-background-color: #E3F2FD; -fx-padding: 5;">
+                    <Label text="Basic Information" styleClass="section-header-info">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -136,7 +136,7 @@
 
                 <!-- Contact Information Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Contact Information" styleClass="section-header" style="-fx-background-color: #E8F5E9; -fx-padding: 5;">
+                    <Label text="Contact Information" styleClass="section-header-success">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -161,7 +161,7 @@
 
                 <!-- Address Information Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Residential Address" styleClass="section-header" style="-fx-background-color: #FFF3E0; -fx-padding: 5;">
+                    <Label text="Residential Address" styleClass="section-header-warning">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -196,7 +196,7 @@
                 <!-- Mailing Address Section -->
                 <VBox spacing="8" styleClass="info-section">
                     <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="Mailing Address" styleClass="section-header" style="-fx-background-color: #FCE4EC; -fx-padding: 5;">
+                        <Label text="Mailing Address" styleClass="section-header">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -226,7 +226,7 @@
 
                 <!-- Ethnicity & Demographics Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Ethnicity &amp; Demographics" styleClass="section-header" style="-fx-background-color: #F3E5F5; -fx-padding: 5;">
+                    <Label text="Ethnicity &amp; Demographics" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -257,7 +257,7 @@
 
                 <!-- Citizenship & Immigration Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Citizenship &amp; Immigration" styleClass="section-header" style="-fx-background-color: #E1F5FE; -fx-padding: 5;">
+                    <Label text="Citizenship &amp; Immigration" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -288,7 +288,7 @@
 
                 <!-- Photo & Identification Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Photo &amp; Identification" styleClass="section-header" style="-fx-background-color: #FFF9C4; -fx-padding: 5;">
+                    <Label text="Photo &amp; Identification" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -316,7 +316,7 @@
 
                 <!-- Family Information Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Family Information" styleClass="section-header" style="-fx-background-color: #E8EAF6; -fx-padding: 5;">
+                    <Label text="Family Information" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -344,7 +344,7 @@
 
                 <!-- Additional Notes Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Additional Notes" styleClass="section-header" style="-fx-background-color: #F5F5F5; -fx-padding: 5;">
+                    <Label text="Additional Notes" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>

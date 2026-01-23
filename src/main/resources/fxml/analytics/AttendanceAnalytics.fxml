@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.analytics.AttendanceAnalyticsController"
+            styleClass="analytics-view"
+            stylesheets="@../../css/analytics-module.css">
+
+    <!-- Header Section -->
+    <top>
+        <VBox styleClass="header-section">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Button fx:id="backBtn" text="&lt; Back to Hub" styleClass="button-secondary"
+                        onAction="#handleBackToHub"/>
+
+                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                    <Label text="Attendance Analytics" styleClass="page-title"/>
+                    <Label text="Attendance rates, patterns, and chronic absenteeism analysis"
+                           styleClass="page-subtitle"/>
+                </VBox>
+
+                <!-- Filter Controls -->
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <VBox spacing="2">
+                        <Label text="Campus" styleClass="filter-label"/>
+                        <ComboBox fx:id="campusFilter" prefWidth="180" promptText="All Campuses"/>
+                    </VBox>
+
+                    <VBox spacing="2">
+                        <Label text="Date Range" styleClass="filter-label"/>
+                        <ComboBox fx:id="dateRangeFilter" prefWidth="140" promptText="Last 30 Days"/>
+                    </VBox>
+
+                    <VBox spacing="2">
+                        <Label text="Start Date" styleClass="filter-label"/>
+                        <DatePicker fx:id="startDatePicker" prefWidth="130"/>
+                    </VBox>
+
+                    <VBox spacing="2">
+                        <Label text="End Date" styleClass="filter-label"/>
+                        <DatePicker fx:id="endDatePicker" prefWidth="130"/>
+                    </VBox>
+
+                    <Button fx:id="refreshBtn" text="Refresh" styleClass="button-secondary"
+                            onAction="#handleRefresh"/>
+
+                    <MenuButton fx:id="exportBtn" text="Export" styleClass="button-primary">
+                        <items>
+                            <MenuItem text="Export Report (PDF)" onAction="#handleExportPDF"/>
+                            <MenuItem text="Export Data (Excel)" onAction="#handleExportExcel"/>
+                            <MenuItem text="Export Data (CSV)" onAction="#handleExportCSV"/>
+                        </items>
+                    </MenuButton>
+                </HBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Main Content - TabPane with 5 tabs -->
+    <center>
+        <TabPane fx:id="analyticsTabs" styleClass="analytics-tabs" tabClosingPolicy="UNAVAILABLE">
+
+            <!-- Tab 1: Overview -->
+            <Tab text="Overview">
+                <ScrollPane fitToWidth="true" styleClass="content-scroll">
+                    <VBox spacing="20">
+                        <padding>
+                            <Insets topRightBottomLeft="20"/>
+                        </padding>
+
+                        <!-- Quick Stats Row -->
+                        <HBox spacing="15" styleClass="quick-stats-grid">
+                            <VBox styleClass="metric-card, metric-primary" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="OVERALL RATE" styleClass="metric-label"/>
+                                <Label fx:id="overallRateValue" text="--%" styleClass="metric-value"/>
+                                <Label fx:id="overallRateTrend" text="for selected period" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-success" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="TODAY'S RATE" styleClass="metric-label"/>
+                                <Label fx:id="todayRateValue" text="--%" styleClass="metric-value"/>
+                                <Label text="as of now" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-warning" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="CHRONIC ABSENT" styleClass="metric-label"/>
+                                <Label fx:id="chronicAbsentValue" text="--" styleClass="metric-value"/>
+                                <Label fx:id="chronicAbsentPercent" text="% of students" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-danger" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="TOTAL TARDIES" styleClass="metric-label"/>
+                                <Label fx:id="totalTardiesValue" text="--" styleClass="metric-value"/>
+                                <Label fx:id="peakTardyPeriod" text="peak period: --" styleClass="metric-trend"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Charts Row -->
+                        <HBox spacing="20">
+                            <!-- Daily Attendance Trend Line Chart -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Daily Attendance Trend" styleClass="tile-title"/>
+                                <LineChart fx:id="dailyTrendChart" legendVisible="true"
+                                           VBox.vgrow="ALWAYS" prefHeight="300">
+                                    <xAxis>
+                                        <CategoryAxis label="Date"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Attendance %" lowerBound="0" upperBound="100"/>
+                                    </yAxis>
+                                </LineChart>
+                            </VBox>
+
+                            <!-- Status Breakdown Bar Chart -->
+                            <VBox styleClass="analytics-tile" prefWidth="350" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Attendance Status Breakdown" styleClass="tile-title"/>
+                                <PieChart fx:id="statusBreakdownChart" legendSide="BOTTOM"
+                                          VBox.vgrow="ALWAYS" prefHeight="300"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Tab 2: Chronic Absenteeism -->
+            <Tab text="Chronic Absenteeism">
+                <ScrollPane fitToWidth="true" styleClass="content-scroll">
+                    <VBox spacing="20">
+                        <padding>
+                            <Insets topRightBottomLeft="20"/>
+                        </padding>
+
+                        <!-- Chronic Absenteeism Stats -->
+                        <HBox spacing="15" styleClass="quick-stats-grid">
+                            <VBox styleClass="metric-card, metric-warning" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="CHRONIC (&lt;90%)" styleClass="metric-label"/>
+                                <Label fx:id="chronicCountValue" text="--" styleClass="metric-value"/>
+                                <Label text="students" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-danger" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="SEVERE (&lt;85%)" styleClass="metric-label"/>
+                                <Label fx:id="severeCountValue" text="--" styleClass="metric-value"/>
+                                <Label text="students" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card" style="-fx-border-color: #DC2626;" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="CRITICAL (&lt;80%)" styleClass="metric-label"/>
+                                <Label fx:id="criticalCountValue" text="--" styleClass="metric-value" style="-fx-text-fill: #DC2626;"/>
+                                <Label text="students" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-info" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="% OF ENROLLMENT" styleClass="metric-label"/>
+                                <Label fx:id="chronicPercentValue" text="--%" styleClass="metric-value"/>
+                                <Label text="chronically absent" styleClass="metric-trend"/>
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="20">
+                            <!-- Chronic Absenteeism Distribution -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Chronic Absenteeism by Threshold" styleClass="tile-title"/>
+                                <BarChart fx:id="chronicThresholdChart" legendVisible="false"
+                                          VBox.vgrow="ALWAYS" prefHeight="280">
+                                    <xAxis>
+                                        <CategoryAxis label="Attendance Rate"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Students"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+
+                            <!-- Chronic by Grade -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Chronic Absenteeism by Grade" styleClass="tile-title"/>
+                                <BarChart fx:id="chronicByGradeChart" legendVisible="false"
+                                          VBox.vgrow="ALWAYS" prefHeight="280">
+                                    <xAxis>
+                                        <CategoryAxis label="Grade"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Students"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Chronically Absent Students Table -->
+                        <VBox styleClass="analytics-tile" spacing="10">
+                            <padding><Insets topRightBottomLeft="15"/></padding>
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="Chronically Absent Students" styleClass="tile-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <ComboBox fx:id="chronicThresholdFilter" promptText="All Thresholds"/>
+                                <Button text="Export List" styleClass="button-secondary"
+                                        onAction="#handleExportChronicList"/>
+                            </HBox>
+                            <TableView fx:id="chronicAbsentTable" VBox.vgrow="ALWAYS" prefHeight="200"
+                                       styleClass="analytics-table">
+                                <columns>
+                                    <TableColumn fx:id="caStudentIdCol" text="Student ID" prefWidth="100"/>
+                                    <TableColumn fx:id="caStudentNameCol" text="Name" prefWidth="180"/>
+                                    <TableColumn fx:id="caGradeCol" text="Grade" prefWidth="80"/>
+                                    <TableColumn fx:id="caAttendanceRateCol" text="Attendance %" prefWidth="100"/>
+                                    <TableColumn fx:id="caAbsencesCol" text="Absences" prefWidth="80"/>
+                                    <TableColumn fx:id="caStatusCol" text="Status" prefWidth="100"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Tab 3: By Dimension -->
+            <Tab text="By Dimension">
+                <ScrollPane fitToWidth="true" styleClass="content-scroll">
+                    <VBox spacing="20">
+                        <padding>
+                            <Insets topRightBottomLeft="20"/>
+                        </padding>
+
+                        <!-- Dimension Selector -->
+                        <HBox spacing="15" alignment="CENTER_LEFT" styleClass="filter-bar">
+                            <Label text="View attendance by:" styleClass="filter-label"/>
+                            <ToggleGroup fx:id="dimensionGroup"/>
+                            <RadioButton fx:id="byGradeRadio" text="Grade Level" toggleGroup="$dimensionGroup" selected="true"/>
+                            <RadioButton fx:id="byCampusRadio" text="Campus" toggleGroup="$dimensionGroup"/>
+                            <RadioButton fx:id="byTeacherRadio" text="Teacher" toggleGroup="$dimensionGroup"/>
+                            <RadioButton fx:id="byCourseRadio" text="Course" toggleGroup="$dimensionGroup"/>
+                        </HBox>
+
+                        <!-- Attendance by Dimension Chart -->
+                        <VBox styleClass="analytics-tile" spacing="10" VBox.vgrow="ALWAYS">
+                            <padding><Insets topRightBottomLeft="15"/></padding>
+                            <Label fx:id="dimensionChartTitle" text="Attendance Rate by Grade Level" styleClass="tile-title"/>
+                            <BarChart fx:id="dimensionChart" legendVisible="false"
+                                      VBox.vgrow="ALWAYS" prefHeight="350">
+                                <xAxis>
+                                    <CategoryAxis fx:id="dimensionXAxis" label="Grade Level"/>
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="Attendance %" lowerBound="0" upperBound="100"/>
+                                </yAxis>
+                            </BarChart>
+                        </VBox>
+
+                        <!-- Dimension Details Table -->
+                        <VBox styleClass="analytics-tile" spacing="10">
+                            <padding><Insets topRightBottomLeft="15"/></padding>
+                            <Label fx:id="dimensionTableTitle" text="Grade Level Details" styleClass="tile-title"/>
+                            <TableView fx:id="dimensionTable" VBox.vgrow="ALWAYS" prefHeight="200"
+                                       styleClass="analytics-table">
+                                <columns>
+                                    <TableColumn fx:id="dimNameCol" text="Name" prefWidth="200"/>
+                                    <TableColumn fx:id="dimEnrollmentCol" text="Enrollment" prefWidth="100"/>
+                                    <TableColumn fx:id="dimAttendanceCol" text="Attendance %" prefWidth="120"/>
+                                    <TableColumn fx:id="dimChronicCol" text="Chronic Absent" prefWidth="120"/>
+                                    <TableColumn fx:id="dimTrendCol" text="Trend" prefWidth="100"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Tab 4: Tardy Patterns -->
+            <Tab text="Tardy Patterns">
+                <ScrollPane fitToWidth="true" styleClass="content-scroll">
+                    <VBox spacing="20">
+                        <padding>
+                            <Insets topRightBottomLeft="20"/>
+                        </padding>
+
+                        <!-- Tardy Stats -->
+                        <HBox spacing="15" styleClass="quick-stats-grid">
+                            <VBox styleClass="metric-card, metric-warning" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="TOTAL TARDIES" styleClass="metric-label"/>
+                                <Label fx:id="tardyTotalValue" text="--" styleClass="metric-value"/>
+                                <Label text="for period" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-info" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="PEAK PERIOD" styleClass="metric-label"/>
+                                <Label fx:id="peakPeriodValue" text="--" styleClass="metric-value"/>
+                                <Label fx:id="peakPeriodCount" text="tardies" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-danger" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="FREQUENT TARDY" styleClass="metric-label"/>
+                                <Label fx:id="frequentTardyValue" text="--" styleClass="metric-value"/>
+                                <Label text="students (5+ tardies)" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-primary" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="DAILY AVERAGE" styleClass="metric-label"/>
+                                <Label fx:id="dailyAvgTardyValue" text="--" styleClass="metric-value"/>
+                                <Label text="tardies/day" styleClass="metric-trend"/>
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="20">
+                            <!-- Tardies by Period -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Tardies by Period" styleClass="tile-title"/>
+                                <BarChart fx:id="tardyByPeriodChart" legendVisible="false"
+                                          VBox.vgrow="ALWAYS" prefHeight="280">
+                                    <xAxis>
+                                        <CategoryAxis label="Period"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Tardies"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+
+                            <!-- Tardies by Day of Week -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Tardies by Day of Week" styleClass="tile-title"/>
+                                <BarChart fx:id="tardyByDayChart" legendVisible="false"
+                                          VBox.vgrow="ALWAYS" prefHeight="280">
+                                    <xAxis>
+                                        <CategoryAxis label="Day"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Tardies"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Frequent Tardy Students -->
+                        <VBox styleClass="analytics-tile" spacing="10">
+                            <padding><Insets topRightBottomLeft="15"/></padding>
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="Frequently Tardy Students" styleClass="tile-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="Min tardies:" styleClass="filter-label"/>
+                                <Spinner fx:id="minTardiesSpinner" prefWidth="80"/>
+                                <Button text="Export List" styleClass="button-secondary"
+                                        onAction="#handleExportTardyList"/>
+                            </HBox>
+                            <TableView fx:id="frequentTardyTable" VBox.vgrow="ALWAYS" prefHeight="200"
+                                       styleClass="analytics-table">
+                                <columns>
+                                    <TableColumn fx:id="ftStudentIdCol" text="Student ID" prefWidth="100"/>
+                                    <TableColumn fx:id="ftStudentNameCol" text="Name" prefWidth="180"/>
+                                    <TableColumn fx:id="ftGradeCol" text="Grade" prefWidth="80"/>
+                                    <TableColumn fx:id="ftTardyCountCol" text="Tardies" prefWidth="80"/>
+                                    <TableColumn fx:id="ftPeakPeriodCol" text="Peak Period" prefWidth="100"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Tab 5: Equity Analysis -->
+            <Tab text="Equity Analysis">
+                <ScrollPane fitToWidth="true" styleClass="content-scroll">
+                    <VBox spacing="20">
+                        <padding>
+                            <Insets topRightBottomLeft="20"/>
+                        </padding>
+
+                        <!-- Equity Alert Banner -->
+                        <HBox fx:id="disparityAlertBanner" styleClass="alert-card, alert-warning"
+                              alignment="CENTER_LEFT" spacing="10" managed="false" visible="false">
+                            <padding><Insets topRightBottomLeft="15"/></padding>
+                            <Label text="Disparity Alert:" style="-fx-font-weight: bold; -fx-text-fill: #F59E0B;"/>
+                            <Label fx:id="disparityAlertText" styleClass="alert-description" style="-fx-text-fill: white;"/>
+                        </HBox>
+
+                        <!-- Equity Overview Stats -->
+                        <HBox spacing="15" styleClass="quick-stats-grid">
+                            <VBox styleClass="metric-card, metric-primary" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="OVERALL AVERAGE" styleClass="metric-label"/>
+                                <Label fx:id="equityOverallValue" text="--%" styleClass="metric-value"/>
+                                <Label text="all groups" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-success" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="HIGHEST GROUP" styleClass="metric-label"/>
+                                <Label fx:id="highestGroupValue" text="--%" styleClass="metric-value"/>
+                                <Label fx:id="highestGroupName" text="" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-danger" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="LOWEST GROUP" styleClass="metric-label"/>
+                                <Label fx:id="lowestGroupValue" text="--%" styleClass="metric-value"/>
+                                <Label fx:id="lowestGroupName" text="" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-warning" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="GAP" styleClass="metric-label"/>
+                                <Label fx:id="equityGapValue" text="--%" styleClass="metric-value"/>
+                                <Label text="highest - lowest" styleClass="metric-trend"/>
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="20">
+                            <!-- Attendance by Ethnicity -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Attendance Rate by Ethnicity" styleClass="tile-title"/>
+                                <BarChart fx:id="ethnicityAttendanceChart" legendVisible="false"
+                                          VBox.vgrow="ALWAYS" prefHeight="300">
+                                    <xAxis>
+                                        <CategoryAxis label="Ethnicity"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Attendance %" lowerBound="0" upperBound="100"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+
+                            <!-- Attendance by Gender -->
+                            <VBox styleClass="analytics-tile" prefWidth="350" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Attendance by Gender" styleClass="tile-title"/>
+                                <BarChart fx:id="genderAttendanceChart" legendVisible="false"
+                                          VBox.vgrow="ALWAYS" prefHeight="300">
+                                    <xAxis>
+                                        <CategoryAxis label="Gender"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Attendance %" lowerBound="0" upperBound="100"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Equity Details Table -->
+                        <VBox styleClass="analytics-tile" spacing="10">
+                            <padding><Insets topRightBottomLeft="15"/></padding>
+                            <Label text="Demographic Group Details" styleClass="tile-title"/>
+                            <TableView fx:id="equityTable" VBox.vgrow="ALWAYS" prefHeight="200"
+                                       styleClass="analytics-table">
+                                <columns>
+                                    <TableColumn fx:id="eqGroupCol" text="Group" prefWidth="200"/>
+                                    <TableColumn fx:id="eqCountCol" text="Students" prefWidth="100"/>
+                                    <TableColumn fx:id="eqAttendanceCol" text="Attendance %" prefWidth="120"/>
+                                    <TableColumn fx:id="eqChronicCol" text="Chronic %" prefWidth="100"/>
+                                    <TableColumn fx:id="eqGapCol" text="Gap from Avg" prefWidth="120"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+        </TabPane>
+    </center>
+
+    <!-- Status Bar -->
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets topRightBottomLeft="8"/>
+            </padding>
+            <Label fx:id="statusLabel" text="Ready" styleClass="status-text"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lastUpdatedLabel" text="Last updated: --" styleClass="status-text"/>
+        </HBox>
+    </bottom>
+</BorderPane>

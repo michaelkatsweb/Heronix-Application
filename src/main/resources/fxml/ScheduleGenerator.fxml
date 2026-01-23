@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -17,8 +19,8 @@ All fx:id attributes now match controller @FXML fields exactly
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.heronix.ui.controller.ScheduleGeneratorController"
             fitToWidth="true"
-            stylesheets="@../css/dark-futuristic-theme.css"
             styleClass="root">
+
 
     <VBox spacing="20" style="-fx-padding: 20;">
 
@@ -45,7 +47,7 @@ All fx:id attributes now match controller @FXML fields exactly
 
             <!-- Schedule Name -->
             <VBox spacing="5">
-                <Label text="Schedule Name:" styleClass="label" style="-fx-font-weight: bold;"/>
+                <Label text="Schedule Name:" styleClass="form-label"/>
                 <TextField fx:id="scheduleNameField" 
                           promptText="e.g., Fall 2025 Master Schedule"
                           prefWidth="400"
@@ -58,7 +60,7 @@ All fx:id attributes now match controller @FXML fields exactly
 
             <!-- Schedule Type -->
             <VBox spacing="5">
-                <Label text="Schedule Type:" styleClass="label" style="-fx-font-weight: bold;"/>
+                <Label text="Schedule Type:" styleClass="form-label"/>
                 <ComboBox fx:id="scheduleTypeComboBox" 
                          prefWidth="300"
                          style="-fx-font-size: 14px;">
@@ -73,7 +75,7 @@ All fx:id attributes now match controller @FXML fields exactly
             <!-- Date Range -->
             <HBox spacing="20">
                 <VBox spacing="5" HBox.hgrow="ALWAYS">
-                    <Label text="Start Date:" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="Start Date:" styleClass="form-label"/>
                     <DatePicker fx:id="startDatePicker" prefWidth="200" style="-fx-font-size: 14px;">
                         <tooltip>
                             <Tooltip text="First day of the schedule"/>
@@ -82,7 +84,7 @@ All fx:id attributes now match controller @FXML fields exactly
                 </VBox>
 
                 <VBox spacing="5" HBox.hgrow="ALWAYS">
-                    <Label text="End Date:" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="End Date:" styleClass="form-label"/>
                     <DatePicker fx:id="endDatePicker" prefWidth="200" style="-fx-font-size: 14px;">
                         <tooltip>
                             <Tooltip text="Last day of the schedule"/>
@@ -95,23 +97,23 @@ All fx:id attributes now match controller @FXML fields exactly
 
             <!-- Time Configuration -->
             <Label text="⏰ Time Configuration"
-                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                   styleClass="section-title-16-slate"/>
 
             <GridPane hgap="20" vgap="15">
                 <!-- School Hours -->
                 <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                    <Label text="School Start Hour:" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="School Start Hour:" styleClass="form-label"/>
                     <Spinner fx:id="startHourSpinner" prefWidth="120" editable="true" style="-fx-font-size: 14px;"/>
                 </VBox>
 
                 <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                    <Label text="School End Hour:" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="School End Hour:" styleClass="form-label"/>
                     <Spinner fx:id="endHourSpinner" prefWidth="120" editable="true" style="-fx-font-size: 14px;"/>
                 </VBox>
 
                 <!-- Period Duration -->
                 <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                    <Label text="Period Duration (min):" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="Period Duration (min):" styleClass="form-label"/>
                     <Spinner fx:id="periodDurationSpinner" prefWidth="120" editable="true" style="-fx-font-size: 14px;"/>
                 </VBox>
             </GridPane>
@@ -120,12 +122,12 @@ All fx:id attributes now match controller @FXML fields exactly
 
             <!-- Minute-Precise Time Configuration -->
             <Label text="⏰ Time Configuration (Minute-Precise)"
-                   style="-fx-font-size: 15; -fx-font-weight: bold;"/>
+                   styleClass="section-title-15-bold"/>
 
             <GridPane hgap="20" vgap="15">
                 <!-- School Start Time (Breakfast/Arrival) -->
                 <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                    <Label text="School Start Time:" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="School Start Time:" styleClass="form-label"/>
                     <TextField fx:id="schoolStartTimeField"
                               promptText="07:00"
                               prefWidth="120"
@@ -139,7 +141,7 @@ All fx:id attributes now match controller @FXML fields exactly
 
                 <!-- First Period Start Time -->
                 <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                    <Label text="First Period Start Time:" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="First Period Start Time:" styleClass="form-label"/>
                     <TextField fx:id="firstPeriodStartTimeField"
                               promptText="07:20"
                               prefWidth="120"
@@ -153,7 +155,7 @@ All fx:id attributes now match controller @FXML fields exactly
 
                 <!-- School End Time -->
                 <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                    <Label text="School End Time:" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="School End Time:" styleClass="form-label"/>
                     <TextField fx:id="schoolEndTimeField"
                               promptText="14:10"
                               prefWidth="120"
@@ -167,7 +169,7 @@ All fx:id attributes now match controller @FXML fields exactly
 
                 <!-- Lunch Start Time -->
                 <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                    <Label text="Lunch Start Time:" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="Lunch Start Time:" styleClass="form-label"/>
                     <TextField fx:id="lunchStartTimeField"
                               promptText="10:50"
                               prefWidth="120"
@@ -181,7 +183,7 @@ All fx:id attributes now match controller @FXML fields exactly
 
                 <!-- Passing Period Duration (Phase 2) -->
                 <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2">
-                    <Label text="Passing Period (min):" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="Passing Period (min):" styleClass="form-label"/>
                     <Spinner fx:id="passingPeriodSpinner" prefWidth="120" editable="true" style="-fx-font-size: 14;">
                         <tooltip>
                             <Tooltip text="Time between classes for student movement (typically 4-5 minutes)"/>
@@ -192,7 +194,7 @@ All fx:id attributes now match controller @FXML fields exactly
 
                 <!-- Lunch Duration -->
                 <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                    <Label text="Lunch Duration (min):" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="Lunch Duration (min):" styleClass="form-label"/>
                     <Spinner fx:id="lunchDurationSpinner" prefWidth="120" editable="true" style="-fx-font-size: 14px;"/>
                     <Label text="Typically 30 minutes" styleClass="label-caption"/>
                 </VBox>
@@ -201,7 +203,7 @@ All fx:id attributes now match controller @FXML fields exactly
             <!-- Lunch Configuration -->
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <CheckBox fx:id="enableLunchCheckBox" text="Enable Lunch Period" 
-                         styleClass="label" style="-fx-font-weight: bold;"/>
+                         styleClass="form-label"/>
                 <Label text="Start Hour:"/>
                 <Spinner fx:id="lunchStartHourSpinner" prefWidth="100" editable="true"/>
             </HBox>
@@ -210,17 +212,17 @@ All fx:id attributes now match controller @FXML fields exactly
 
             <!-- Teacher Constraints -->
             <Label text="👥 Teacher Constraints"
-                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                   styleClass="section-title-16-slate"/>
 
             <GridPane hgap="20" vgap="15">
                 <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                    <Label text="Max Consecutive Hours:" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="Max Consecutive Hours:" styleClass="form-label"/>
                     <Spinner fx:id="maxConsecutiveHoursSpinner" prefWidth="120" editable="true"/>
                     <Label text="Prevent teacher burnout" styleClass="label-caption"/>
                 </VBox>
 
                 <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                    <Label text="Max Daily Hours:" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="Max Daily Hours:" styleClass="form-label"/>
                     <Spinner fx:id="maxDailyHoursSpinner" prefWidth="120" editable="true"/>
                     <Label text="Total teaching hours per day" styleClass="label-caption"/>
                 </VBox>
@@ -230,13 +232,13 @@ All fx:id attributes now match controller @FXML fields exactly
 
             <!-- AI Optimization Settings -->
             <Label text="🧠 AI Optimization Settings"
-                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                   styleClass="section-title-16-slate"/>
 
             <VBox spacing="5">
                 <HBox alignment="CENTER_LEFT" spacing="10">
-                    <Label text="Optimization Time:" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="Optimization Time:" styleClass="form-label"/>
                     <Label fx:id="optimizationTimeLabel" text="2 min 0 sec"
-                           style="-fx-text-fill: #3498db; -fx-font-weight: bold; -fx-font-size: 14px;"/>
+                           styleClass="text-muted"/>
                 </HBox>
                 <Slider fx:id="optimizationTimeSlider" 
                        min="30" max="600" value="120"
@@ -274,42 +276,42 @@ All fx:id attributes now match controller @FXML fields exactly
                 <!-- Teachers -->
                 <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0"
                       styleClass="stat-card" style=" -fx-padding: 15; -fx-background-radius: 5;">
-                    <Label text="👨‍🏫 Teachers" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="👨‍🏫 Teachers" styleClass="form-label"/>
                     <Label fx:id="teacherCountLabel" text="0"
-                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #3498db;"/>
+                           styleClass="stat-value-24-blue"/>
                     <Label text="Available" styleClass="label-caption"/>
                 </VBox>
 
                 <!-- Courses -->
                 <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0"
                       styleClass="stat-card" style=" -fx-padding: 15; -fx-background-radius: 5;">
-                    <Label text="📚 Courses" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="📚 Courses" styleClass="form-label"/>
                     <Label fx:id="courseCountLabel" text="0"
-                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #9b59b6;"/>
+                           styleClass="stat-value-24-purple"/>
                     <Label text="Available" styleClass="label-caption"/>
                 </VBox>
 
                 <!-- Rooms -->
                 <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0"
                       styleClass="stat-card" style=" -fx-padding: 15; -fx-background-radius: 5;">
-                    <Label text="🏫 Rooms" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="🏫 Rooms" styleClass="form-label"/>
                     <Label fx:id="roomCountLabel" text="0"
-                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                           styleClass="stat-value-24-green"/>
                     <Label text="Available" styleClass="label-caption"/>
                 </VBox>
 
                 <!-- Students -->
                 <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="0"
                       styleClass="stat-card" style=" -fx-padding: 15; -fx-background-radius: 5;">
-                    <Label text="👨‍🎓 Students" styleClass="label" style="-fx-font-weight: bold;"/>
+                    <Label text="👨‍🎓 Students" styleClass="form-label"/>
                     <Label fx:id="studentCountLabel" text="0"
-                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;"/>
+                           styleClass="stat-value-24-red"/>
                     <Label text="Enrolled" styleClass="label-caption"/>
                 </VBox>
             </GridPane>
 
             <!-- Validation Messages -->
-            <VBox fx:id="validationMessagesBox" spacing="5" style="-fx-padding: 10; -fx-background-color: #f8f9fa; -fx-background-radius: 5;">
+            <VBox fx:id="validationMessagesBox" spacing="5" styleClass="card">
                 <!-- Validation messages will be added dynamically -->
             </VBox>
         </VBox>
@@ -346,24 +348,24 @@ All fx:id attributes now match controller @FXML fields exactly
 
             <!-- Progress Bar -->
             <ProgressBar fx:id="generationProgressBar" prefWidth="600" progress="0"
-                        visible="true" 
-                        style="-fx-accent: #27ae60;"/>
+                        visible="true"
+                        styleClass="progress-bar-success-accent"/>
 
             <!-- Status Label -->
             <Label fx:id="generationStatusLabel" text="Ready to generate schedule"
-                   style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;" 
+                   styleClass="text-muted" 
                    alignment="CENTER" textAlignment="CENTER"/>
 
             <Separator/>
 
             <!-- Generation Log -->
             <VBox spacing="5">
-                <Label text="📝 Generation Log:" styleClass="label" style="-fx-font-weight: bold;"/>
-                <TextArea fx:id="generationLogArea" 
-                         prefRowCount="8" 
+                <Label text="📝 Generation Log:" styleClass="form-label"/>
+                <TextArea fx:id="generationLogArea"
+                         prefRowCount="8"
                          editable="false"
                          wrapText="true"
-                         style="-fx-control-inner-background: #2c3e50; -fx-text-fill: #ecf0f1; -fx-font-family: 'Courier New'; -fx-font-size: 12px;"/>
+                         styleClass="log-text-area-dark"/>
             </VBox>
         </VBox>
 
@@ -374,7 +376,7 @@ All fx:id attributes now match controller @FXML fields exactly
               styleClass="card" style=" -fx-padding: 20; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
 
             <Label text="✅ Schedule Generated Successfully!"
-                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                   styleClass="label-22-success-bold"/>
 
             <Separator/>
 
@@ -384,45 +386,45 @@ All fx:id attributes now match controller @FXML fields exactly
                 <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0"
                       styleClass="stat-card" style=" -fx-padding: 20; -fx-background-radius: 8; -fx-alignment: center;">
                     <Label text="Optimization Score" 
-                           style="-fx-font-weight: bold; -fx-text-fill: #34495e; -fx-font-size: 14px;"/>
+                           styleClass="text-muted"/>
                     <Label fx:id="optimizationScoreLabel" text="0.0%"
-                           style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                           styleClass="stat-value-32-green"/>
                 </VBox>
 
                 <!-- Assignment Rate -->
                 <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0"
                       styleClass="stat-card" style=" -fx-padding: 20; -fx-background-radius: 8; -fx-alignment: center;">
                     <Label text="Assignment Rate" 
-                           style="-fx-font-weight: bold; -fx-text-fill: #34495e; -fx-font-size: 14px;"/>
+                           styleClass="text-muted"/>
                     <Label fx:id="assignmentRateLabel" text="0.0%"
-                           style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #3498db;"/>
+                           styleClass="stat-value-32-blue"/>
                 </VBox>
 
                 <!-- Conflicts -->
                 <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0"
                       styleClass="stat-card" style=" -fx-padding: 20; -fx-background-radius: 8; -fx-alignment: center;">
                     <Label text="Conflicts" 
-                           style="-fx-font-weight: bold; -fx-text-fill: #34495e; -fx-font-size: 14px;"/>
+                           styleClass="text-muted"/>
                     <Label fx:id="conflictCountLabel" text="0"
-                           style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;"/>
+                           styleClass="stat-value-32-red-modern"/>
                 </VBox>
 
                 <!-- Teacher Utilization -->
                 <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1"
                       styleClass="stat-card" style=" -fx-padding: 20; -fx-background-radius: 8; -fx-alignment: center;">
                     <Label text="Teacher Utilization" 
-                           style="-fx-font-weight: bold; -fx-text-fill: #34495e; -fx-font-size: 14px;"/>
+                           styleClass="text-muted"/>
                     <Label fx:id="teacherUtilizationLabel" text="0.0%"
-                           style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #9b59b6;"/>
+                           styleClass="stat-value-28-purple-modern"/>
                 </VBox>
 
                 <!-- Room Utilization -->
                 <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1"
                       styleClass="stat-card" style=" -fx-padding: 20; -fx-background-radius: 8; -fx-alignment: center;">
                     <Label text="Room Utilization" 
-                           style="-fx-font-weight: bold; -fx-text-fill: #34495e; -fx-font-size: 14px;"/>
+                           styleClass="text-muted"/>
                     <Label fx:id="roomUtilizationLabel" text="0.0%"
-                           style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #f39c12;"/>
+                           styleClass="stat-value-28-yellow-modern"/>
                 </VBox>
             </GridPane>
 
@@ -430,12 +432,12 @@ All fx:id attributes now match controller @FXML fields exactly
 
             <!-- Results Summary -->
             <VBox spacing="5">
-                <Label text="📊 Detailed Summary:" style="-fx-font-weight: bold; -fx-text-fill: #34495e; -fx-font-size: 16px;"/>
-                <TextArea fx:id="resultsSummaryArea" 
-                         prefRowCount="15" 
+                <Label text="📊 Detailed Summary:" styleClass="text-muted"/>
+                <TextArea fx:id="resultsSummaryArea"
+                         prefRowCount="15"
                          editable="false"
                          wrapText="true"
-                         style="-fx-control-inner-background: #f8f9fa; -fx-font-family: 'Courier New'; -fx-font-size: 12px;"/>
+                         styleClass="summary-text-area-light"/>
             </VBox>
 
             <Separator/>
@@ -443,7 +445,7 @@ All fx:id attributes now match controller @FXML fields exactly
             <!-- Action Buttons -->
             <HBox spacing="15" alignment="CENTER">
                 <Button fx:id="saveDraftButton" text="💾 Save Draft" onAction="#handleSaveDraft"
-                        style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 12 25; -fx-cursor: hand; -fx-background-radius: 5; -fx-font-weight: bold;">
+                        styleClass="button-primary">
                     <tooltip>
                         <Tooltip text="Save schedule as draft"/>
                     </tooltip>

@@ -2,8 +2,11 @@ package com.heronix.service.integration;
 
 import com.heronix.dto.scheduler.*;
 import com.heronix.integration.SchedulerApiClient;
+import com.heronix.model.DistrictSettings;
 import com.heronix.model.domain.*;
 import com.heronix.repository.*;
+import com.heronix.service.DistrictSettingsService;
+import com.heronix.security.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 public class SchedulerSyncService {
 
     private final SchedulerApiClient schedulerApiClient;
+    private final DistrictSettingsService districtSettingsService;
 
     // Repositories
     private final ScheduleRepository scheduleRepository;
@@ -114,29 +118,39 @@ public class SchedulerSyncService {
     }
 
     /**
-     * Build school information
+     * Build school information from district settings
      */
     private SchoolInfoDTO buildSchoolInfo(Schedule schedule) {
+        DistrictSettings settings = districtSettingsService.getOrCreateDistrictSettings();
+
         return SchoolInfoDTO.builder()
                 .schoolName(schedule.getScheduleName())
-                .districtName("District") // TODO: Get from configuration
-                .campusName("Main Campus") // TODO: Get from schedule or configuration
+                .districtName(settings.getDistrictNameOrDefault())
+                .campusName(settings.getCampusNameOrDefault())
                 .build();
     }
 
     /**
-     * Build academic configuration
+     * Build academic configuration from schedule and district settings
      */
     private AcademicConfigDTO buildAcademicConfig(Schedule schedule) {
+        DistrictSettings settings = districtSettingsService.getOrCreateDistrictSettings();
         int year = schedule.getStartDate().getYear();
+
+        // Get schedule type from schedule entity, fall back to district settings
+        String scheduleType = schedule.getScheduleType() != null
+                ? schedule.getScheduleType().name()
+                : settings.getScheduleTypeOrDefault();
 
         return AcademicConfigDTO.builder()
                 .academicYear(year + "-" + (year + 1))
                 .schoolYearStartDate(schedule.getStartDate())
                 .schoolYearEndDate(schedule.getEndDate())
-                .scheduleType("TRADITIONAL") // TODO: Get from schedule type
-                .instructionalDaysPerWeek(5)
-                .periodsPerDay(7) // TODO: Get from schedule configuration
+                .scheduleType(scheduleType)
+                .instructionalDaysPerWeek(settings.getInstructionalDaysPerWeek() != null
+                        ? settings.getInstructionalDaysPerWeek() : 5)
+                .periodsPerDay(settings.getPeriodsPerDay() != null
+                        ? settings.getPeriodsPerDay() : 7)
                 .gradingPeriods(new ArrayList<>()) // TODO: Implement grading periods
                 .build();
     }
@@ -345,12 +359,13 @@ public class SchedulerSyncService {
     }
 
     /**
-     * Build constraint configuration
+     * Build constraint configuration from district settings
      */
     private ConstraintConfigDTO buildConstraintConfig(Schedule schedule) {
-        // Use default constraint configuration
-        // TODO: Make these configurable via application.yml or admin UI
+        DistrictSettings settings = districtSettingsService.getOrCreateDistrictSettings();
+
         return ConstraintConfigDTO.builder()
+                // Hard constraints (always enforced)
                 .enforceNoStudentConflicts(true)
                 .enforceNoTeacherConflicts(true)
                 .enforceNoRoomConflicts(true)
@@ -358,19 +373,33 @@ public class SchedulerSyncService {
                 .enforceRoomRequirements(true)
                 .enforcePrerequisites(true)
                 .enforceLunchAssignment(true)
-                .studentPreferenceWeight(100)
-                .teacherTravelWeight(50)
-                .scheduleCompactnessWeight(30)
-                .sectionBalanceWeight(70)
-                .teacherPreferenceWeight(60)
-                .gradeLevelClusteringWeight(40)
-                .departmentClusteringWeight(40)
-                .lunchContinuityWeight(50)
-                .maxOptimizationTimeSeconds(120)
+                // Soft constraint weights from district settings
+                .studentPreferenceWeight(settings.getStudentPreferenceWeight() != null
+                        ? settings.getStudentPreferenceWeight() : 100)
+                .teacherTravelWeight(settings.getTeacherTravelWeight() != null
+                        ? settings.getTeacherTravelWeight() : 50)
+                .scheduleCompactnessWeight(settings.getScheduleCompactnessWeight() != null
+                        ? settings.getScheduleCompactnessWeight() : 30)
+                .sectionBalanceWeight(settings.getSectionBalanceWeight() != null
+                        ? settings.getSectionBalanceWeight() : 70)
+                .teacherPreferenceWeight(settings.getTeacherPreferenceWeight() != null
+                        ? settings.getTeacherPreferenceWeight() : 60)
+                .gradeLevelClusteringWeight(settings.getGradeLevelClusteringWeight() != null
+                        ? settings.getGradeLevelClusteringWeight() : 40)
+                .departmentClusteringWeight(settings.getDepartmentClusteringWeight() != null
+                        ? settings.getDepartmentClusteringWeight() : 40)
+                .lunchContinuityWeight(settings.getLunchContinuityWeight() != null
+                        ? settings.getLunchContinuityWeight() : 50)
+                // Optimization settings from district settings
+                .maxOptimizationTimeSeconds(settings.getMaxOptimizationTimeSeconds() != null
+                        ? settings.getMaxOptimizationTimeSeconds() : 120)
                 .targetScoreThreshold(0)
-                .enableAdvancedOptimization(true)
+                .enableAdvancedOptimization(settings.getEnableAdvancedOptimization() != null
+                        ? settings.getEnableAdvancedOptimization() : true)
                 .enableParallelOptimization(true)
-                .optimizationThreads(4)
+                .optimizationThreads(settings.getOptimizationThreads() != null
+                        ? settings.getOptimizationThreads() : 4)
+                // Scheduling preferences
                 .preferEarlyAdvancedCourses(true)
                 .preferLateElectives(false)
                 .preferConsecutiveSections(true)
@@ -393,16 +422,20 @@ public class SchedulerSyncService {
     }
 
     /**
-     * Build export metadata
+     * Build export metadata with current user info from SecurityContext
      */
     private ExportMetadataDTO buildExportMetadata(Schedule schedule) {
+        String exportedBy = SecurityContext.getCurrentUsername()
+                .orElse("Heronix-SIS System");
+        Long exportedByUserId = SecurityContext.getCurrentStaffId();
+
         return ExportMetadataDTO.builder()
                 .exportId(java.util.UUID.randomUUID().toString())
                 .scheduleId(schedule.getId())
                 .exportTimestamp(LocalDateTime.now())
                 .sisVersion("1.0.0")
-                .exportedBy("Heronix-SIS System")
-                .exportedByUserId(null) // TODO: Get from security context
+                .exportedBy(exportedBy)
+                .exportedByUserId(exportedByUserId)
                 .totalStudents((int) studentRepository.count())
                 .totalCourseRequests((int) enrollmentRequestRepository.count())
                 .totalCourses((int) courseRepository.count())

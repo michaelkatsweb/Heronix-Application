@@ -4,6 +4,7 @@ import com.heronix.model.domain.Substitute;
 import com.heronix.model.domain.SubstituteAssignment;
 import com.heronix.model.enums.AssignmentStatus;
 import com.heronix.model.enums.SubstituteType;
+import com.heronix.service.SubstituteImportService;
 import com.heronix.service.SubstituteManagementService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -15,7 +16,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.control.ScrollPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -25,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -51,6 +55,9 @@ public class SubstituteManagementUIController {
 
     @Autowired
     private com.heronix.service.SubstituteReportService substituteReportService;
+
+    @Autowired
+    private SubstituteImportService substituteImportService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -547,6 +554,250 @@ public class SubstituteManagementUIController {
     private void handleRefreshSubstitutes() {
         substituteSearchField.clear();
         loadSubstitutes();
+    }
+
+    /**
+     * Handle import third-party CSV
+     * Opens a dialog to select and configure CSV import for third-party substitute services
+     */
+    @FXML
+    private void handleImportThirdPartyCSV() {
+        try {
+            // Create dialog for import configuration
+            Dialog<SubstituteImportService.ImportResult> dialog = new Dialog<>();
+            dialog.setTitle("Import Third-Party Substitutes");
+            dialog.setHeaderText("Import substitutes from a third-party CSV file");
+
+            // Set button types
+            ButtonType importButtonType = new ButtonType("Import", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(importButtonType, ButtonType.CANCEL);
+
+            // Create form layout
+            GridPane grid = new GridPane();
+            grid.setHgap(10);
+            grid.setVgap(10);
+            grid.setPadding(new Insets(20, 20, 10, 10));
+
+            // Agency selection
+            ComboBox<String> agencyCombo = new ComboBox<>();
+            Map<String, SubstituteImportService.ImportConfig> knownConfigs = substituteImportService.getKnownAgencyConfigs();
+            agencyCombo.getItems().addAll(knownConfigs.keySet());
+            agencyCombo.setPromptText("Select agency or Custom");
+            agencyCombo.setPrefWidth(250);
+
+            // Custom agency name field
+            TextField customAgencyField = new TextField();
+            customAgencyField.setPromptText("Enter custom agency name");
+            customAgencyField.setVisible(false);
+            customAgencyField.setManaged(false);
+
+            // File selection
+            TextField filePathField = new TextField();
+            filePathField.setPromptText("Select CSV file...");
+            filePathField.setEditable(false);
+            filePathField.setPrefWidth(300);
+
+            Button browseButton = new Button("Browse...");
+            final File[] selectedFile = {null};
+
+            browseButton.setOnAction(e -> {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Select CSV File");
+                fileChooser.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter("CSV Files", "*.csv"),
+                        new FileChooser.ExtensionFilter("All Files", "*.*")
+                );
+
+                File file = fileChooser.showOpenDialog(dialog.getDialogPane().getScene().getWindow());
+                if (file != null) {
+                    selectedFile[0] = file;
+                    filePathField.setText(file.getName());
+                }
+            });
+
+            // Options
+            CheckBox updateExistingCheck = new CheckBox("Update existing substitutes if found");
+            updateExistingCheck.setSelected(true);
+
+            CheckBox hasHeaderCheck = new CheckBox("CSV has header row");
+            hasHeaderCheck.setSelected(true);
+
+            // Preview area
+            TextArea previewArea = new TextArea();
+            previewArea.setPromptText("CSV preview will appear here after selecting a file");
+            previewArea.setEditable(false);
+            previewArea.setPrefRowCount(6);
+            previewArea.setPrefWidth(500);
+
+            // Show/hide custom agency field based on selection
+            agencyCombo.setOnAction(e -> {
+                boolean isCustom = "Custom".equals(agencyCombo.getValue());
+                customAgencyField.setVisible(isCustom);
+                customAgencyField.setManaged(isCustom);
+            });
+
+            // Update preview when file is selected
+            browseButton.setOnAction(e -> {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Select CSV File");
+                fileChooser.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter("CSV Files", "*.csv"),
+                        new FileChooser.ExtensionFilter("All Files", "*.*")
+                );
+
+                File file = fileChooser.showOpenDialog(dialog.getDialogPane().getScene().getWindow());
+                if (file != null) {
+                    selectedFile[0] = file;
+                    filePathField.setText(file.getName());
+
+                    // Show preview
+                    try {
+                        List<String[]> preview = substituteImportService.previewCsv(file, 5);
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < preview.size(); i++) {
+                            sb.append("Row ").append(i + 1).append(": ");
+                            sb.append(String.join(" | ", preview.get(i)));
+                            sb.append("\n");
+                        }
+                        previewArea.setText(sb.toString());
+                    } catch (Exception ex) {
+                        previewArea.setText("Error reading file: " + ex.getMessage());
+                    }
+                }
+            });
+
+            // Add to grid
+            int row = 0;
+            grid.add(new Label("Third-Party Agency:"), 0, row);
+            grid.add(agencyCombo, 1, row);
+            row++;
+
+            grid.add(new Label("Custom Agency Name:"), 0, row);
+            grid.add(customAgencyField, 1, row);
+            row++;
+
+            grid.add(new Label("CSV File:"), 0, row);
+            javafx.scene.layout.HBox fileBox = new javafx.scene.layout.HBox(10, filePathField, browseButton);
+            grid.add(fileBox, 1, row);
+            row++;
+
+            grid.add(new Label("Options:"), 0, row);
+            VBox optionsBox = new VBox(5, hasHeaderCheck, updateExistingCheck);
+            grid.add(optionsBox, 1, row);
+            row++;
+
+            grid.add(new Label("Preview:"), 0, row);
+            grid.add(previewArea, 1, row);
+
+            dialog.getDialogPane().setContent(grid);
+            dialog.getDialogPane().setPrefWidth(650);
+
+            // Enable/disable import button
+            Node importButton = dialog.getDialogPane().lookupButton(importButtonType);
+            importButton.setDisable(true);
+
+            agencyCombo.valueProperty().addListener((obs, old, newVal) -> {
+                boolean valid = newVal != null && selectedFile[0] != null;
+                if ("Custom".equals(newVal)) {
+                    valid = valid && !customAgencyField.getText().trim().isEmpty();
+                }
+                importButton.setDisable(!valid);
+            });
+
+            customAgencyField.textProperty().addListener((obs, old, newVal) -> {
+                boolean valid = agencyCombo.getValue() != null && selectedFile[0] != null;
+                if ("Custom".equals(agencyCombo.getValue())) {
+                    valid = valid && !newVal.trim().isEmpty();
+                }
+                importButton.setDisable(!valid);
+            });
+
+            filePathField.textProperty().addListener((obs, old, newVal) -> {
+                boolean valid = agencyCombo.getValue() != null && !newVal.isEmpty();
+                if ("Custom".equals(agencyCombo.getValue())) {
+                    valid = valid && !customAgencyField.getText().trim().isEmpty();
+                }
+                importButton.setDisable(!valid);
+            });
+
+            // Result converter
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == importButtonType && selectedFile[0] != null) {
+                    try {
+                        String agencyName = "Custom".equals(agencyCombo.getValue())
+                                ? customAgencyField.getText().trim()
+                                : agencyCombo.getValue();
+
+                        SubstituteImportService.ImportConfig config;
+
+                        // Get config based on agency selection
+                        if ("Custom".equals(agencyCombo.getValue())) {
+                            // Auto-detect columns from header
+                            String[] header = substituteImportService.readHeaderRow(selectedFile[0]);
+                            config = substituteImportService.autoDetectColumns(header, agencyName);
+                        } else {
+                            config = knownConfigs.get(agencyCombo.getValue());
+                        }
+
+                        config.hasHeaderRow(hasHeaderCheck.isSelected());
+                        config.updateExisting(updateExistingCheck.isSelected());
+
+                        // Perform import
+                        return substituteImportService.importFromCsv(selectedFile[0], config);
+
+                    } catch (Exception e) {
+                        logger.error("Error during CSV import", e);
+                        showError("Import Error", "Failed to import CSV: " + e.getMessage());
+                    }
+                }
+                return null;
+            });
+
+            // Show dialog and handle result
+            Optional<SubstituteImportService.ImportResult> result = dialog.showAndWait();
+
+            result.ifPresent(importResult -> {
+                // Show result summary
+                StringBuilder summary = new StringBuilder();
+                summary.append("Import Complete!\n\n");
+                summary.append("Reference: ").append(importResult.getImportReference()).append("\n\n");
+                summary.append("Results:\n");
+                summary.append("- Total rows processed: ").append(importResult.getTotalRows()).append("\n");
+                summary.append("- New substitutes imported: ").append(importResult.getImported()).append("\n");
+                summary.append("- Existing substitutes updated: ").append(importResult.getUpdated()).append("\n");
+                summary.append("- Rows skipped: ").append(importResult.getSkipped()).append("\n");
+                summary.append("- Errors: ").append(importResult.getErrors()).append("\n");
+
+                if (!importResult.getErrorMessages().isEmpty()) {
+                    summary.append("\nError details:\n");
+                    int maxErrors = Math.min(10, importResult.getErrorMessages().size());
+                    for (int i = 0; i < maxErrors; i++) {
+                        summary.append("- ").append(importResult.getErrorMessages().get(i)).append("\n");
+                    }
+                    if (importResult.getErrorMessages().size() > 10) {
+                        summary.append("... and ").append(importResult.getErrorMessages().size() - 10).append(" more errors\n");
+                    }
+                }
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Import Result");
+                alert.setHeaderText("Third-Party Substitute Import");
+
+                TextArea textArea = new TextArea(summary.toString());
+                textArea.setEditable(false);
+                textArea.setWrapText(true);
+                textArea.setPrefRowCount(15);
+                alert.getDialogPane().setContent(textArea);
+                alert.showAndWait();
+
+                // Refresh the substitutes list
+                loadSubstitutes();
+            });
+
+        } catch (Exception e) {
+            logger.error("Error opening import dialog", e);
+            showError("Error", "Could not open import dialog: " + e.getMessage());
+        }
     }
 
     /**

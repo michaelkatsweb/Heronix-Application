@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 146 - Event Sourcing & CQRS
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/event-sourcing")
 @RequiredArgsConstructor
 public class ReportEventSourcingApiController {

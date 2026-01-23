@@ -25,7 +25,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 63 - System Health Monitoring & Performance Dashboard
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/health")
 @RequiredArgsConstructor
 @Slf4j

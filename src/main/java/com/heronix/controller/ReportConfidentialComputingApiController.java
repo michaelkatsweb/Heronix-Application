@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 151 - Confidential Computing & Trusted Execution Environment
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/confidential-computing")
 @RequiredArgsConstructor
 public class ReportConfidentialComputingApiController {

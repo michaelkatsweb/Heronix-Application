@@ -32,7 +32,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 83 - Report Data Warehouse & ETL
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/etl")
 @RequiredArgsConstructor
 @Slf4j

@@ -362,6 +362,92 @@ public class TeacherApiController {
     }
 
     // ========================================================================
+    // TEACHER BULK SYNC ENDPOINT (For Heronix-Talk Integration)
+    // ========================================================================
+
+    @GetMapping("/all")
+    @Operation(summary = "Get all teachers for sync",
+               description = "Retrieve all active teachers for bulk synchronization with external systems (e.g., Heronix-Talk)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Teachers list returned")
+    })
+    public ResponseEntity<List<Map<String, Object>>> getAllTeachersForSync(
+            @RequestParam(required = false) @Parameter(description = "Only return active teachers") Boolean activeOnly) {
+
+        log.info("Fetching all teachers for sync - activeOnly: {}", activeOnly);
+
+        List<Teacher> teachers;
+        if (activeOnly != null && activeOnly) {
+            teachers = teacherRepository.findByActiveTrue();
+        } else {
+            teachers = teacherRepository.findAll();
+        }
+
+        List<Map<String, Object>> teacherList = teachers.stream()
+            .map(teacher -> {
+                Map<String, Object> data = new HashMap<>();
+                data.put("employeeId", teacher.getEmployeeId());
+                data.put("username", teacher.getEmployeeId()); // Use employeeId as username
+                data.put("firstName", teacher.getFirstName());
+                data.put("lastName", teacher.getLastName());
+                data.put("email", teacher.getEmail());
+                data.put("department", teacher.getDepartment());
+                data.put("phoneNumber", teacher.getPhoneNumber());
+                data.put("role", teacher.getRole() != null ? teacher.getRole().name() : "TEACHER");
+                data.put("active", Boolean.TRUE.equals(teacher.getActive()));
+                data.put("password", teacher.getPassword()); // BCrypt hash for auth
+                return data;
+            })
+            .collect(Collectors.toList());
+
+        log.info("Returning {} teachers for sync", teacherList.size());
+        return ResponseEntity.ok(teacherList);
+    }
+
+    // ========================================================================
+    // TEACHER LOOKUP ENDPOINT (For Heronix-Talk Integration)
+    // ========================================================================
+
+    @GetMapping("/employee/{employeeId}")
+    @Operation(summary = "Get teacher by employee ID",
+               description = "Retrieve teacher details by employee ID for external system integration (e.g., Heronix-Talk)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Teacher found"),
+        @ApiResponse(responseCode = "404", description = "Teacher not found")
+    })
+    public ResponseEntity<Map<String, Object>> getTeacherByEmployeeId(
+            @PathVariable @Parameter(description = "Employee ID") String employeeId) {
+
+        log.info("Looking up teacher by employee ID: {}", employeeId);
+
+        Optional<Teacher> teacherOpt = teacherRepository.findByEmployeeId(employeeId);
+
+        if (teacherOpt.isEmpty()) {
+            log.warn("Teacher not found with employee ID: {}", employeeId);
+            return ResponseEntity.notFound().build();
+        }
+
+        Teacher teacher = teacherOpt.get();
+
+        // Return teacher data including password hash for external auth validation
+        Map<String, Object> teacherData = new HashMap<>();
+        teacherData.put("id", teacher.getId());
+        teacherData.put("employeeId", teacher.getEmployeeId());
+        teacherData.put("firstName", teacher.getFirstName());
+        teacherData.put("lastName", teacher.getLastName());
+        teacherData.put("email", teacher.getEmail());
+        teacherData.put("department", teacher.getDepartment());
+        teacherData.put("phoneNumber", teacher.getPhoneNumber());
+        teacherData.put("role", teacher.getRole() != null ? teacher.getRole().name() : "TEACHER");
+        teacherData.put("active", teacher.getActive());
+        teacherData.put("password", teacher.getPassword()); // BCrypt hash for auth validation
+
+        log.info("Found teacher: {} {}", teacher.getFirstName(), teacher.getLastName());
+
+        return ResponseEntity.ok(teacherData);
+    }
+
+    // ========================================================================
     // HELPER METHODS - DTO CONVERSIONS
     // ========================================================================
 

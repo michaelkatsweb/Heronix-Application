@@ -1,13 +1,12 @@
 package com.heronix.controller.api;
 
+import com.heronix.service.ConflictAnalysisService;
+import com.heronix.service.ConflictAnalysisService.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 
 /**
@@ -48,7 +47,7 @@ import java.util.*;
  * - Manual override tracking
  *
  * @author Heronix Development Team
- * @version 1.0
+ * @version 2.0 - Fully Implemented
  * @since December 30, 2025 - Phase 38
  */
 @RestController
@@ -56,8 +55,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ConflictAnalysisApiController {
 
-    // TODO: Inject ConflictAnalysisService when implemented
-    // private final ConflictAnalysisService conflictService;
+    private final ConflictAnalysisService conflictService;
 
     // ========================================================================
     // STUDENT CONFLICTS
@@ -74,17 +72,16 @@ public class ConflictAnalysisApiController {
             @RequestParam Long termId) {
 
         try {
-            // TODO: Implement getStudentConflicts in ConflictAnalysisService
-            List<Map<String, Object>> conflicts = new ArrayList<>();
+            StudentConflictsResult result = conflictService.getStudentConflicts(studentId, termId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("studentId", studentId);
-            response.put("termId", termId);
-            response.put("conflicts", conflicts);
-            response.put("count", 0);
-            response.put("hasConflicts", false);
-            response.put("message", "This endpoint is under development");
+            response.put("studentId", result.getStudentId());
+            response.put("studentName", result.getStudentName());
+            response.put("termId", result.getTermId());
+            response.put("conflicts", result.getConflicts());
+            response.put("count", result.getConflictCount());
+            response.put("hasConflicts", result.isHasConflicts());
 
             return ResponseEntity.ok(response);
 
@@ -115,24 +112,23 @@ public class ConflictAnalysisApiController {
 
         try {
             Long courseId = Long.valueOf(requestBody.get("courseId").toString());
-            Long sectionId = requestBody.containsKey("sectionId") ?
+            Long sectionId = requestBody.containsKey("sectionId") && requestBody.get("sectionId") != null ?
                 Long.valueOf(requestBody.get("sectionId").toString()) : null;
             Long termId = Long.valueOf(requestBody.get("termId").toString());
 
-            // TODO: Implement checkCourseAdditionConflicts in ConflictAnalysisService
-            Map<String, Object> conflictCheck = new HashMap<>();
-            conflictCheck.put("message", "This endpoint is under development");
-            conflictCheck.put("hasConflicts", false);
-            conflictCheck.put("conflicts", new ArrayList<>());
-            conflictCheck.put("canEnroll", true);
+            CourseAdditionCheck result = conflictService.checkCourseAdditionConflicts(
+                studentId, courseId, sectionId, termId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("studentId", studentId);
-            response.put("courseId", courseId);
-            response.put("sectionId", sectionId);
-            response.put("termId", termId);
-            response.put("conflictCheck", conflictCheck);
+            response.put("studentId", result.getStudentId());
+            response.put("courseId", result.getCourseId());
+            response.put("sectionId", result.getSectionId());
+            response.put("termId", result.getTermId());
+            response.put("canEnroll", result.isCanEnroll());
+            response.put("hasConflicts", result.isHasConflicts());
+            response.put("conflicts", result.getConflicts());
+            response.put("alternativeSections", result.getAlternativeSections());
 
             return ResponseEntity.ok(response);
 
@@ -159,17 +155,17 @@ public class ConflictAnalysisApiController {
             @RequestParam Long termId) {
 
         try {
-            // TODO: Implement getTeacherConflicts in ConflictAnalysisService
-            List<Map<String, Object>> conflicts = new ArrayList<>();
+            TeacherConflictsResult result = conflictService.getTeacherConflicts(teacherId, termId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("teacherId", teacherId);
-            response.put("termId", termId);
-            response.put("conflicts", conflicts);
-            response.put("count", 0);
-            response.put("hasConflicts", false);
-            response.put("message", "This endpoint is under development");
+            response.put("teacherId", result.getTeacherId());
+            response.put("teacherName", result.getTeacherName());
+            response.put("termId", result.getTermId());
+            response.put("conflicts", result.getConflicts());
+            response.put("count", result.getConflictCount());
+            response.put("hasConflicts", result.isHasConflicts());
+            response.put("totalPeriodsPerWeek", result.getTotalPeriodsPerWeek());
 
             return ResponseEntity.ok(response);
 
@@ -193,17 +189,18 @@ public class ConflictAnalysisApiController {
             @RequestParam(required = false) String dayOfWeek) {
 
         try {
-            // TODO: Implement getTeacherAvailability in ConflictAnalysisService
-            List<Map<String, Object>> availableSlots = new ArrayList<>();
+            TeacherAvailabilityResult result = conflictService.getTeacherAvailability(
+                teacherId, termId, dayOfWeek);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("teacherId", teacherId);
-            response.put("termId", termId);
-            response.put("dayOfWeek", dayOfWeek);
-            response.put("availableSlots", availableSlots);
-            response.put("count", 0);
-            response.put("message", "This endpoint is under development");
+            response.put("teacherId", result.getTeacherId());
+            response.put("teacherName", result.getTeacherName());
+            response.put("termId", result.getTermId());
+            response.put("dayOfWeek", result.getDayOfWeek());
+            response.put("availableSlots", result.getAvailableSlots());
+            response.put("count", result.getTotalAvailable());
+            response.put("occupiedSlots", result.getOccupiedSlots());
 
             return ResponseEntity.ok(response);
 
@@ -230,17 +227,17 @@ public class ConflictAnalysisApiController {
             @RequestParam Long termId) {
 
         try {
-            // TODO: Implement getRoomConflicts in ConflictAnalysisService
-            List<Map<String, Object>> conflicts = new ArrayList<>();
+            RoomConflictsResult result = conflictService.getRoomConflicts(roomId, termId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("roomId", roomId);
-            response.put("termId", termId);
-            response.put("conflicts", conflicts);
-            response.put("count", 0);
-            response.put("hasConflicts", false);
-            response.put("message", "This endpoint is under development");
+            response.put("roomId", result.getRoomId());
+            response.put("roomNumber", result.getRoomNumber());
+            response.put("capacity", result.getCapacity());
+            response.put("termId", result.getTermId());
+            response.put("conflicts", result.getConflicts());
+            response.put("count", result.getConflictCount());
+            response.put("hasConflicts", result.isHasConflicts());
 
             return ResponseEntity.ok(response);
 
@@ -264,17 +261,19 @@ public class ConflictAnalysisApiController {
             @RequestParam(required = false) String dayOfWeek) {
 
         try {
-            // TODO: Implement getRoomAvailability in ConflictAnalysisService
-            List<Map<String, Object>> availableSlots = new ArrayList<>();
+            RoomAvailabilityResult result = conflictService.getRoomAvailability(
+                roomId, termId, dayOfWeek);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("roomId", roomId);
-            response.put("termId", termId);
-            response.put("dayOfWeek", dayOfWeek);
-            response.put("availableSlots", availableSlots);
-            response.put("count", 0);
-            response.put("message", "This endpoint is under development");
+            response.put("roomId", result.getRoomId());
+            response.put("roomNumber", result.getRoomNumber());
+            response.put("capacity", result.getCapacity());
+            response.put("termId", result.getTermId());
+            response.put("dayOfWeek", result.getDayOfWeek());
+            response.put("availableSlots", result.getAvailableSlots());
+            response.put("count", result.getTotalAvailable());
+            response.put("occupiedSlots", result.getOccupiedSlots());
 
             return ResponseEntity.ok(response);
 
@@ -301,16 +300,18 @@ public class ConflictAnalysisApiController {
             @RequestParam(required = false) String severity) {
 
         try {
-            // TODO: Implement getAllConflicts in ConflictAnalysisService
-            List<Map<String, Object>> conflicts = new ArrayList<>();
+            AllConflictsResult result = conflictService.getAllConflicts(termId, severity);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("termId", termId);
+            response.put("termId", result.getTermId());
             response.put("severity", severity);
-            response.put("conflicts", conflicts);
-            response.put("count", 0);
-            response.put("message", "This endpoint is under development");
+            response.put("conflicts", result.getConflicts());
+            response.put("count", result.getTotalCount());
+            response.put("criticalCount", result.getCriticalCount());
+            response.put("highCount", result.getHighCount());
+            response.put("mediumCount", result.getMediumCount());
+            response.put("lowCount", result.getLowCount());
 
             return ResponseEntity.ok(response);
 
@@ -332,19 +333,22 @@ public class ConflictAnalysisApiController {
             @PathVariable Long termId) {
 
         try {
-            // TODO: Implement getConflictDashboard in ConflictAnalysisService
-            Map<String, Object> dashboard = new HashMap<>();
-            dashboard.put("message", "This endpoint is under development");
-            dashboard.put("totalConflicts", 0);
-            dashboard.put("studentConflicts", 0);
-            dashboard.put("teacherConflicts", 0);
-            dashboard.put("roomConflicts", 0);
-            dashboard.put("highSeverityConflicts", 0);
+            ConflictDashboard dashboard = conflictService.getConflictDashboard(termId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("termId", termId);
-            response.put("dashboard", dashboard);
+            response.put("termId", dashboard.getTermId());
+            response.put("dashboard", Map.of(
+                "totalConflicts", dashboard.getTotalConflicts(),
+                "studentConflicts", dashboard.getStudentConflicts(),
+                "teacherConflicts", dashboard.getTeacherConflicts(),
+                "roomConflicts", dashboard.getRoomConflicts(),
+                "criticalConflicts", dashboard.getCriticalConflicts(),
+                "highSeverityConflicts", dashboard.getHighSeverityConflicts(),
+                "mediumSeverityConflicts", dashboard.getMediumSeverityConflicts(),
+                "lowSeverityConflicts", dashboard.getLowSeverityConflicts(),
+                "recentConflicts", dashboard.getRecentConflicts()
+            ));
 
             return ResponseEntity.ok(response);
 
@@ -370,15 +374,47 @@ public class ConflictAnalysisApiController {
             @PathVariable Long conflictId) {
 
         try {
-            // TODO: Implement getResolutionSuggestions in ConflictAnalysisService
+            // Resolution suggestions are embedded in conflict details
+            // This endpoint returns generic resolution strategies
             List<Map<String, Object>> suggestions = new ArrayList<>();
+
+            suggestions.add(Map.of(
+                "id", 1,
+                "type", "RESCHEDULE",
+                "description", "Move one of the conflicting items to a different time slot",
+                "difficulty", "EASY",
+                "automaticResolution", true
+            ));
+
+            suggestions.add(Map.of(
+                "id", 2,
+                "type", "REASSIGN_ROOM",
+                "description", "Assign a different room to resolve the conflict",
+                "difficulty", "EASY",
+                "automaticResolution", true
+            ));
+
+            suggestions.add(Map.of(
+                "id", 3,
+                "type", "REASSIGN_TEACHER",
+                "description", "Assign a different teacher to one of the sections",
+                "difficulty", "MEDIUM",
+                "automaticResolution", false
+            ));
+
+            suggestions.add(Map.of(
+                "id", 4,
+                "type", "SPLIT_SECTION",
+                "description", "Split the class into multiple sections",
+                "difficulty", "HARD",
+                "automaticResolution", false
+            ));
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("conflictId", conflictId);
             response.put("suggestions", suggestions);
-            response.put("count", 0);
-            response.put("message", "This endpoint is under development");
+            response.put("count", suggestions.size());
 
             return ResponseEntity.ok(response);
 
@@ -412,22 +448,27 @@ public class ConflictAnalysisApiController {
         try {
             Long courseId = Long.valueOf(requestBody.get("courseId").toString());
             Long teacherId = Long.valueOf(requestBody.get("teacherId").toString());
-            Long roomId = requestBody.containsKey("roomId") ?
+            Long roomId = requestBody.containsKey("roomId") && requestBody.get("roomId") != null ?
                 Long.valueOf(requestBody.get("roomId").toString()) : null;
             Long termId = Long.valueOf(requestBody.get("termId").toString());
+            Integer duration = requestBody.containsKey("duration") ?
+                Integer.valueOf(requestBody.get("duration").toString()) : 50;
 
-            // TODO: Implement findAlternativeSlots in ConflictAnalysisService
-            List<Map<String, Object>> alternativeSlots = new ArrayList<>();
+            @SuppressWarnings("unchecked")
+            List<String> preferredDays = requestBody.containsKey("preferredDays") ?
+                (List<String>) requestBody.get("preferredDays") : null;
+
+            AlternativeSlotsResult result = conflictService.findAlternativeSlots(
+                courseId, teacherId, roomId, termId, duration, preferredDays);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("courseId", courseId);
-            response.put("teacherId", teacherId);
-            response.put("roomId", roomId);
-            response.put("termId", termId);
-            response.put("alternativeSlots", alternativeSlots);
-            response.put("count", 0);
-            response.put("message", "This endpoint is under development");
+            response.put("courseId", result.getCourseId());
+            response.put("teacherId", result.getTeacherId());
+            response.put("roomId", result.getRoomId());
+            response.put("termId", result.getTermId());
+            response.put("alternativeSlots", result.getAlternativeSlots());
+            response.put("count", result.getCount());
 
             return ResponseEntity.ok(response);
 
@@ -454,16 +495,14 @@ public class ConflictAnalysisApiController {
             @RequestParam(required = false) String type) {
 
         try {
-            // TODO: Implement getConstraintViolations in ConflictAnalysisService
-            List<Map<String, Object>> violations = new ArrayList<>();
+            ConstraintViolationsResult result = conflictService.getConstraintViolations(termId, type);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("termId", termId);
-            response.put("violationType", type);
-            response.put("violations", violations);
-            response.put("count", 0);
-            response.put("message", "This endpoint is under development");
+            response.put("termId", result.getTermId());
+            response.put("violationType", result.getViolationType());
+            response.put("violations", result.getViolations());
+            response.put("count", result.getTotalCount());
 
             return ResponseEntity.ok(response);
 
@@ -489,15 +528,13 @@ public class ConflictAnalysisApiController {
             @PathVariable Long termId) {
 
         try {
-            // TODO: Implement getOptimizationOpportunities in ConflictAnalysisService
-            List<Map<String, Object>> opportunities = new ArrayList<>();
+            OptimizationOpportunitiesResult result = conflictService.getOptimizationOpportunities(termId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("termId", termId);
-            response.put("opportunities", opportunities);
-            response.put("count", 0);
-            response.put("message", "This endpoint is under development");
+            response.put("termId", result.getTermId());
+            response.put("opportunities", result.getOpportunities());
+            response.put("count", result.getTotalCount());
 
             return ResponseEntity.ok(response);
 
@@ -519,19 +556,22 @@ public class ConflictAnalysisApiController {
             @PathVariable Long termId) {
 
         try {
-            // TODO: Implement getScheduleQualityMetrics in ConflictAnalysisService
-            Map<String, Object> metrics = new HashMap<>();
-            metrics.put("message", "This endpoint is under development");
-            metrics.put("conflictRate", "0.00%");
-            metrics.put("roomUtilization", "0.00%");
-            metrics.put("teacherLoadBalance", "0.00%");
-            metrics.put("studentSatisfaction", "0.00%");
-            metrics.put("overallScore", 0);
+            ScheduleQualityMetrics metrics = conflictService.getScheduleQualityMetrics(termId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("termId", termId);
-            response.put("metrics", metrics);
+            response.put("termId", metrics.getTermId());
+            response.put("metrics", Map.of(
+                "conflictRate", metrics.getConflictRate(),
+                "roomUtilization", metrics.getRoomUtilization(),
+                "teacherLoadBalance", metrics.getTeacherLoadBalance(),
+                "studentSatisfaction", metrics.getStudentSatisfaction(),
+                "overallScore", metrics.getOverallScore(),
+                "totalSlots", metrics.getTotalSlots(),
+                "totalConflicts", metrics.getTotalConflicts(),
+                "roomCount", metrics.getRoomCount(),
+                "teacherCount", metrics.getTeacherCount()
+            ));
 
             return ResponseEntity.ok(response);
 

@@ -42,7 +42,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 93 - Report Archival & Long-term Storage
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/archival")
 @RequiredArgsConstructor
 @Slf4j

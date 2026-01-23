@@ -28,7 +28,7 @@ import java.util.Map;
  * - GET /api/courses/subject/{subject} - Get by subject
  * - GET /api/courses/available - Get courses with available seats
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/courses")
 @CrossOrigin(origins = "*")
 public class CourseController {

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -11,6 +13,7 @@
       prefWidth="800" prefHeight="600"
       spacing="15"
       styleClass="dialog-root">
+
 
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
@@ -34,11 +37,11 @@
 
     <!-- File Information -->
     <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label text="📄 File:" style="-fx-font-weight: bold;"/>
-        <Label fx:id="fileNameLabel" text="No file selected" style="-fx-text-fill: #666;"/>
-        <Label text="|" style="-fx-text-fill: #ccc;"/>
-        <Label text="Entity Type:" style="-fx-font-weight: bold;"/>
-        <Label fx:id="entityTypeLabel" text="Unknown" style="-fx-text-fill: #666;"/>
+        <Label text="📄 File:" styleClass="form-label"/>
+        <Label fx:id="fileNameLabel" text="No file selected" styleClass="text-muted"/>
+        <Label text="|" styleClass="text-separator"/>
+        <Label text="Entity Type:" styleClass="form-label"/>
+        <Label fx:id="entityTypeLabel" text="Unknown" styleClass="text-muted"/>
     </HBox>
 
     <!-- Template Selection -->
@@ -48,14 +51,14 @@
         <Button fx:id="powerSchoolTemplateBtn" text="PowerSchool" onAction="#applyPowerSchoolTemplate" prefWidth="100"/>
         <Button fx:id="customTemplateBtn" text="Custom" onAction="#applyCustomTemplate" prefWidth="100"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <Button fx:id="autoDetectBtn" text="🔍 Auto-Detect" onAction="#autoDetectMapping" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+        <Button fx:id="autoDetectBtn" text="🔍 Auto-Detect" onAction="#autoDetectMapping" styleClass="button-primary"/>
     </HBox>
 
     <Separator/>
 
     <!-- Mapping Table -->
     <VBox VBox.vgrow="ALWAYS" spacing="5">
-        <Label text="Column Mappings:" style="-fx-font-weight: bold;"/>
+        <Label text="Column Mappings:" styleClass="form-label"/>
 
         <TableView fx:id="mappingTable" VBox.vgrow="ALWAYS">
             <columns>
@@ -79,23 +82,23 @@
     </VBox>
 
     <!-- Mapping Statistics -->
-    <HBox spacing="20" style="-fx-background-color: #f5f5f5; -fx-padding: 10; -fx-background-radius: 5;">
+    <HBox spacing="20" styleClass="card">
         <VBox spacing="5">
-            <Label text="Mapping Statistics" style="-fx-font-weight: bold;"/>
+            <Label text="Mapping Statistics" styleClass="form-label"/>
             <HBox spacing="15">
                 <Label fx:id="totalColumnsLabel" text="Total Columns: 0"/>
-                <Label fx:id="mappedColumnsLabel" text="Mapped: 0" style="-fx-text-fill: #4CAF50;"/>
-                <Label fx:id="unmappedColumnsLabel" text="Unmapped: 0" style="-fx-text-fill: #FF9800;"/>
-                <Label fx:id="requiredFieldsLabel" text="Required Fields: 0/0" style="-fx-text-fill: #2196F3;"/>
+                <Label fx:id="mappedColumnsLabel" text="Mapped: 0" styleClass="text-success"/>
+                <Label fx:id="unmappedColumnsLabel" text="Unmapped: 0" styleClass="text-warning"/>
+                <Label fx:id="requiredFieldsLabel" text="Required Fields: 0/0" styleClass="text-info"/>
             </HBox>
         </VBox>
     </HBox>
 
     <!-- Validation Messages -->
-    <VBox fx:id="validationBox" spacing="5" style="-fx-background-color: #fff3cd; -fx-padding: 10; -fx-background-radius: 5;" managed="false" visible="false">
+    <VBox fx:id="validationBox" spacing="5" styleClass="card" managed="false" visible="false">
         <HBox spacing="5" alignment="CENTER_LEFT">
-            <Label text="⚠" style="-fx-font-size: 16; -fx-text-fill: #ff9800;"/>
-            <Label text="Validation Issues:" style="-fx-font-weight: bold;"/>
+            <Label text="⚠" styleClass="text-muted"/>
+            <Label text="Validation Issues:" styleClass="form-label"/>
         </HBox>
         <TextArea fx:id="validationTextArea" editable="false" prefRowCount="3" wrapText="true"/>
     </VBox>
@@ -103,10 +106,10 @@
     <!-- Action Buttons -->
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <Button fx:id="resetButton" text="Reset Mapping" onAction="#handleReset" prefWidth="120"/>
-        <Button fx:id="validateButton" text="Validate Mapping" onAction="#handleValidate" prefWidth="120" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+        <Button fx:id="validateButton" text="Validate Mapping" onAction="#handleValidate" prefWidth="120" styleClass="button-primary"/>
         <Region HBox.hgrow="ALWAYS"/>
         <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel" prefWidth="100"/>
-        <Button fx:id="saveButton" text="Save &amp; Continue" onAction="#handleSave" prefWidth="120" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" disable="true"/>
+        <Button fx:id="saveButton" text="Save &amp; Continue" onAction="#handleSave" prefWidth="120" styleClass="button-success" disable="true"/>
     </HBox>
 
 </VBox>

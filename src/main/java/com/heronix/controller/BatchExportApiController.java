@@ -39,7 +39,7 @@ import java.util.List;
  * @version 1.0
  * @since Phase 61 - Enhanced Report Export Capabilities
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/reports/batch")
 @RequiredArgsConstructor
 @Slf4j

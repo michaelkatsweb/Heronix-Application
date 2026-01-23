@@ -39,7 +39,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 112 - Report Quantum Computing & Optimization
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/quantum-computing")
 @RequiredArgsConstructor
 @Slf4j

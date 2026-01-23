@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -15,6 +17,7 @@ Purpose: Create new block schedules with ODD/EVEN day rotation
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.heronix.ui.controller.dialogs.BlockScheduleGeneratorDialogController"
             styleClass="dialog-pane">
+
 
     <content>
         <VBox spacing="15" style="-fx-padding: 20;">
@@ -123,12 +126,12 @@ Purpose: Create new block schedules with ODD/EVEN day rotation
                 </HBox>
 
                 <Label text="💡 Tip: Block schedules typically use 90-minute periods meeting 3 times per week"
-                       styleClass="label-caption" style="-fx-text-fill: #888;" wrapText="true"/>
+                       styleClass="label-caption, text-muted-light" wrapText="true"/>
             </VBox>
 
             <!-- Info Panel -->
-            <VBox spacing="5" styleClass="card" style="-fx-padding: 10; -fx-background-color: #2a2a4a;">
-                <Label text="ℹ️ Block Schedule Information" styleClass="label-subtitle" style="-fx-text-fill: #00aaff;"/>
+            <VBox spacing="5" styleClass="card">
+                <Label text="ℹ️ Block Schedule Information" styleClass="label-subtitle, text-muted"/>
                 <Label text="• Courses alternate between ODD days (Mon/Wed/Fri) and EVEN days (Tue/Thu)"
                        styleClass="label-caption" wrapText="true"/>
                 <Label text="• Extended periods allow for deeper learning and hands-on activities"
@@ -141,7 +144,7 @@ Purpose: Create new block schedules with ODD/EVEN day rotation
             <ProgressIndicator fx:id="progressIndicator" visible="false" prefWidth="50" prefHeight="50"/>
 
             <!-- Status Label -->
-            <Label fx:id="statusLabel" styleClass="label-caption" style="-fx-text-fill: #888;" wrapText="true"/>
+            <Label fx:id="statusLabel" styleClass="label-caption, text-muted-light" wrapText="true"/>
         </VBox>
     </content>
 

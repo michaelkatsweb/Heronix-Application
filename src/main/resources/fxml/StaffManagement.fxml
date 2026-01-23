@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.StaffManagementController"
+            styleClass="main-content">
+
+    <!-- Header Section -->
+    <top>
+        <VBox styleClass="header-section" spacing="10">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Staff Management" styleClass="page-title"/>
+                    <Label text="Manage non-instructional staff: Administrative, Support, Facilities, and more" styleClass="page-subtitle"/>
+                </VBox>
+                <Button fx:id="addButton" text="+ Add Staff" styleClass="button-primary" onAction="#handleAddStaff"/>
+                <Button fx:id="exportButton" text="Export" styleClass="button-secondary" onAction="#handleExport"/>
+            </HBox>
+
+            <!-- Filter Bar -->
+            <HBox spacing="15" alignment="CENTER_LEFT" styleClass="filter-bar">
+                <Label text="Filter:"/>
+                <ComboBox fx:id="occupationFilter" promptText="All Occupations" prefWidth="200"/>
+                <ComboBox fx:id="departmentFilter" promptText="All Departments" prefWidth="180"/>
+                <ComboBox fx:id="statusFilter" promptText="Status" prefWidth="120"/>
+                <TextField fx:id="searchField" promptText="Search by name or ID..." prefWidth="250"/>
+                <Button text="Search" styleClass="button-secondary" onAction="#handleSearch"/>
+                <Button text="Clear" styleClass="button-link" onAction="#handleClearFilters"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Main Content - Staff Table -->
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+
+            <!-- Quick Stats Row -->
+            <HBox spacing="15" alignment="CENTER_LEFT" styleClass="quick-stats-row">
+                <VBox styleClass="stat-card" spacing="2" minWidth="140">
+                    <Label text="TOTAL STAFF" styleClass="stat-label"/>
+                    <Label fx:id="totalStaffLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                <VBox styleClass="stat-card" spacing="2" minWidth="140">
+                    <Label text="PARAPROFESSIONALS" styleClass="stat-label"/>
+                    <Label fx:id="paraCountLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                <VBox styleClass="stat-card" spacing="2" minWidth="140">
+                    <Label text="ADMINISTRATIVE" styleClass="stat-label"/>
+                    <Label fx:id="adminCountLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                <VBox styleClass="stat-card" spacing="2" minWidth="140">
+                    <Label text="STUDENT SERVICES" styleClass="stat-label"/>
+                    <Label fx:id="servicesCountLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                <VBox styleClass="stat-card, stat-warning" spacing="2" minWidth="140">
+                    <Label text="EXPIRING COMPLIANCE" styleClass="stat-label"/>
+                    <Label fx:id="expiringCountLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+            </HBox>
+
+            <!-- Staff Table -->
+            <TableView fx:id="staffTable" VBox.vgrow="ALWAYS" styleClass="data-table">
+                <placeholder>
+                    <Label text="No staff records found. Click '+ Add Staff' to add a new staff member."/>
+                </placeholder>
+                <columns>
+                    <TableColumn fx:id="employeeIdCol" text="Employee ID" prefWidth="100"/>
+                    <TableColumn fx:id="nameCol" text="Name" prefWidth="180"/>
+                    <TableColumn fx:id="occupationCol" text="Occupation" prefWidth="160"/>
+                    <TableColumn fx:id="departmentCol" text="Department" prefWidth="130"/>
+                    <TableColumn fx:id="emailCol" text="Email" prefWidth="180"/>
+                    <TableColumn fx:id="phoneCol" text="Phone" prefWidth="120"/>
+                    <TableColumn fx:id="hireDateCol" text="Hire Date" prefWidth="100"/>
+                    <TableColumn fx:id="statusCol" text="Status" prefWidth="80"/>
+                    <TableColumn fx:id="complianceCol" text="Compliance" prefWidth="100"/>
+                    <TableColumn fx:id="actionsCol" text="Actions" prefWidth="120"/>
+                </columns>
+            </TableView>
+
+            <!-- Pagination -->
+            <HBox alignment="CENTER" spacing="10">
+                <Button fx:id="prevPageBtn" text="Previous" styleClass="button-link" onAction="#handlePrevPage"/>
+                <Label fx:id="pageInfoLabel" text="Page 1 of 1"/>
+                <Button fx:id="nextPageBtn" text="Next" styleClass="button-link" onAction="#handleNextPage"/>
+                <Separator orientation="VERTICAL"/>
+                <Label text="Items per page:"/>
+                <ComboBox fx:id="pageSizeCombo" prefWidth="80"/>
+                <Separator orientation="VERTICAL"/>
+                <Label fx:id="totalItemsLabel" text="0 items"/>
+            </HBox>
+        </VBox>
+    </center>
+
+    <!-- Status Bar -->
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets top="8" right="20" bottom="8" left="20"/>
+            </padding>
+            <Label fx:id="statusLabel" text="Ready" styleClass="status-text"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lastUpdatedLabel" text="Last updated: --" styleClass="status-text"/>
+        </HBox>
+    </bottom>
+</BorderPane>

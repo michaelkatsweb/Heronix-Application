@@ -271,7 +271,7 @@ Features: 7-step wizard with validation, auto-calculations, and comprehensive da
                     <HBox spacing="15" alignment="CENTER_LEFT" styleClass="total-row">
                         <Label text="Total Service Minutes per Week:" styleClass="label-bold"/>
                         <Label fx:id="totalServiceMinutesLabel" text="0 minutes"
-                               styleClass="label-value" style="-fx-font-size: 18; -fx-text-fill: #4ade80;"/>
+                               styleClass="label-value"/>
                     </HBox>
 
                     <Label text="Note: Service minutes will be automatically calculated based on your selections"

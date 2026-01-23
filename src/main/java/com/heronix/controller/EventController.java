@@ -27,7 +27,7 @@ import java.util.List;
  * - GET /api/events/compliance - Get compliance meetings
  * - GET /api/events/date-range - Get events in date range
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/events")
 @CrossOrigin(origins = "*")
 public class EventController {

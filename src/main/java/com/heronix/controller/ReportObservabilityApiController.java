@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 144 - Observability & Telemetry
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/observability")
 @RequiredArgsConstructor
 public class ReportObservabilityApiController {

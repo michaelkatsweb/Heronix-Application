@@ -40,7 +40,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 89 - Report Intelligence & Insights
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/intelligence")
 @RequiredArgsConstructor
 @Slf4j

@@ -5,8 +5,9 @@ import com.heronix.model.domain.ReEnrollment.ReEnrollmentStatus;
 import com.heronix.model.domain.ReEnrollment.ApprovalDecision;
 import com.heronix.model.domain.ReEnrollment.WithdrawalReason;
 import com.heronix.model.domain.Student;
-import com.heronix.service.ReEnrollmentService;
 import com.heronix.repository.StudentRepository;
+import com.heronix.security.SecurityContext;
+import com.heronix.service.ReEnrollmentService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -221,13 +222,13 @@ public class ReEnrollmentFormController {
                         selectedStudent.getId(),
                         requestedGradeLevel.getValue(),
                         intendedEnrollmentDate.getValue(),
-                        1L // TODO: Get actual staff ID
+                        SecurityContext.getCurrentStaffId()
                 );
             }
 
             // Submit for approval
             currentReEnrollment = reEnrollmentService.submitForApproval(
-                    currentReEnrollment.getId(), 1L);
+                    currentReEnrollment.getId(), SecurityContext.getCurrentStaffId());
 
             statusLabel.setText(currentReEnrollment.getStatus().getDisplayName());
             showSuccess("Re-enrollment submitted for review");
@@ -250,7 +251,7 @@ public class ReEnrollmentFormController {
                     currentReEnrollment.getId(),
                     ReEnrollment.ApprovalDecision.APPROVED,
                     approvalNotes.getText(),
-                    1L);
+                    SecurityContext.getCurrentStaffId());
 
             statusLabel.setText(currentReEnrollment.getStatus().getDisplayName());
             showSuccess("Re-enrollment approved");
@@ -276,7 +277,7 @@ public class ReEnrollmentFormController {
 
         try {
             currentReEnrollment = reEnrollmentService.rejectApplication(
-                    currentReEnrollment.getId(), reason, 1L);
+                    currentReEnrollment.getId(), reason, SecurityContext.getCurrentStaffId());
 
             statusLabel.setText(currentReEnrollment.getStatus().getDisplayName());
             showSuccess("Re-enrollment rejected");
@@ -303,13 +304,13 @@ public class ReEnrollmentFormController {
                         selectedStudent.getId(),
                         requestedGradeLevel.getValue(),
                         intendedEnrollmentDate.getValue(),
-                        1L // TODO: Get actual staff ID
+                        SecurityContext.getCurrentStaffId()
                 );
             } else {
                 // Update existing
                 saveFormData();
                 currentReEnrollment = reEnrollmentService.updateReEnrollment(
-                        currentReEnrollment, 1L);
+                        currentReEnrollment, SecurityContext.getCurrentStaffId());
             }
 
             reEnrollmentNumberField.setText(currentReEnrollment.getReEnrollmentNumber());

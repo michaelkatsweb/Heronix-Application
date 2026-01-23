@@ -37,7 +37,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 97 - Report Serverless & Function-as-a-Service
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/serverless")
 @RequiredArgsConstructor
 @Slf4j

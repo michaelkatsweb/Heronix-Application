@@ -84,7 +84,7 @@
 
     <!-- Display Size Selection -->
     <VBox spacing="10">
-        <Label text="Display Size:" styleClass="label-secondary" style="-fx-font-weight: bold;"/>
+        <Label text="Display Size:" styleClass="form-label"/>
         <HBox spacing="10" alignment="CENTER_LEFT">
             <RadioButton text="Small (200px)" toggleGroup="$sizeToggleGroup" fx:id="sizeSmallRadio"/>
             <RadioButton text="Medium (300px)" toggleGroup="$sizeToggleGroup" fx:id="sizeMediumRadio" selected="true"/>
@@ -96,7 +96,7 @@
 
     <!-- Print Layout Selection -->
     <VBox spacing="10">
-        <Label text="Print Layout:" styleClass="label-secondary" style="-fx-font-weight: bold;"/>
+        <Label text="Print Layout:" styleClass="form-label"/>
         <ComboBox fx:id="printLayoutCombo" prefWidth="250"/>
 
         <!-- Custom size input (visible when "Custom" is selected) -->

@@ -9,11 +9,6 @@
             fx:controller="com.heronix.ui.controller.TeacherQuickEntryController"
             styleClass="teacher-dashboard-container">
 
-    <!-- Stylesheets -->
-    <stylesheets>
-        <String fx:value="@../css/glassmorphic-theme.css"/>
-        <String fx:value="@../css/teacher-dashboard.css"/>
-    </stylesheets>
 
     <!-- Top Section: Header and Course Selector -->
     <top>

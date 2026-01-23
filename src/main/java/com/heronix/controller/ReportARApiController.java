@@ -37,7 +37,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 104 - Report Augmented Reality & Visualization
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/ar")
 @RequiredArgsConstructor
 @Slf4j

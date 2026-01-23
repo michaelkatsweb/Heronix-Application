@@ -41,7 +41,7 @@ import java.time.LocalDate;
  * @version 1.0
  * @since Phase 59 - Report Analytics Dashboard
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/reports/analytics")
 @RequiredArgsConstructor
 @Slf4j

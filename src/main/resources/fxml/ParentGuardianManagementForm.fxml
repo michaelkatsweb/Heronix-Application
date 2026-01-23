@@ -103,7 +103,7 @@
 
                 <!-- Basic Information Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Basic Information" styleClass="section-header" style="-fx-background-color: #E3F2FD; -fx-padding: 5;">
+                    <Label text="Basic Information" styleClass="section-header-info">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -134,7 +134,7 @@
 
                 <!-- Contact Information Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Contact Information" styleClass="section-header" style="-fx-background-color: #E8F5E9; -fx-padding: 5;">
+                    <Label text="Contact Information" styleClass="section-header-success">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -165,7 +165,7 @@
 
                 <!-- Address Information Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Address Information" styleClass="section-header" style="-fx-background-color: #FFF3E0; -fx-padding: 5;">
+                    <Label text="Address Information" styleClass="section-header-warning">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -196,7 +196,7 @@
 
                 <!-- Employment Information Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Employment Information" styleClass="section-header" style="-fx-background-color: #F3E5F5; -fx-padding: 5;">
+                    <Label text="Employment Information" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -221,7 +221,7 @@
 
                 <!-- Custodial & Permissions Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Custodial Status &amp; Permissions" styleClass="section-header" style="-fx-background-color: #FFEBEE; -fx-padding: 5;">
+                    <Label text="Custodial Status &amp; Permissions" styleClass="section-header-danger">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -255,7 +255,7 @@
 
                 <!-- Portal Access Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Parent Portal Access" styleClass="section-header" style="-fx-background-color: #E1F5FE; -fx-padding: 5;">
+                    <Label text="Parent Portal Access" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -289,7 +289,7 @@
 
                 <!-- Communication Preferences Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Communication Preferences" styleClass="section-header" style="-fx-background-color: #F5F5F5; -fx-padding: 5;">
+                    <Label text="Communication Preferences" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -338,7 +338,7 @@
             </ListView>
 
             <VBox spacing="5">
-                <Label text="Link to Student" style="-fx-font-weight: bold;"/>
+                <Label text="Link to Student" styleClass="form-label"/>
 
                 <HBox spacing="5" alignment="CENTER_LEFT">
                     <ComboBox fx:id="cmbLinkStudent" promptText="Select Student" prefWidth="200" editable="true" HBox.hgrow="ALWAYS"/>
@@ -363,7 +363,7 @@
             <Separator/>
 
             <VBox spacing="5">
-                <Label text="Siblings" style="-fx-font-weight: bold;"/>
+                <Label text="Siblings" styleClass="form-label"/>
                 <ListView fx:id="lstSiblings" prefHeight="100">
                     <placeholder>
                         <Label text="No siblings found"/>

@@ -21,7 +21,7 @@ import java.util.Map;
  * @since 2025-12-24
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/pre-registrations")
 @CrossOrigin(origins = "*")
 public class PreRegistrationController {

@@ -42,7 +42,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 78 - Report Caching & Performance Optimization
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/cache")
 @RequiredArgsConstructor
 @Slf4j

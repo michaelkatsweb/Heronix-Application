@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.analytics.AcademicPerformanceAnalyticsController"
+            styleClass="analytics-view">
+
+    <!-- Header Section -->
+    <top>
+        <VBox styleClass="header-section" spacing="5">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Button fx:id="backButton" text="← Back to Hub" styleClass="button-secondary"
+                        onAction="#handleBackToHub"/>
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Academic Performance Analytics" styleClass="page-title"/>
+                    <Label text="GPA trends, grade distribution, honor roll, and at-risk analysis" styleClass="page-subtitle"/>
+                </VBox>
+                <Button text="Export Report" styleClass="button-primary" onAction="#handleExportReport"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Main Content - TabPane with 4 Tabs -->
+    <center>
+        <TabPane fx:id="mainTabPane" styleClass="analytics-tabs" tabClosingPolicy="UNAVAILABLE">
+
+            <!-- Tab 1: Grade Distribution -->
+            <Tab text="Grade Distribution" closable="false">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- Quick Stats Row -->
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="quick-stats-grid">
+                        <VBox fx:id="avgGpaCard" styleClass="metric-card, metric-info" spacing="5" minWidth="180">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="AVERAGE GPA" styleClass="metric-label"/>
+                            <Label fx:id="avgGpaValue" text="0.00" styleClass="metric-value"/>
+                            <Label fx:id="avgGpaTrend" text="vs last term" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox fx:id="passingCard" styleClass="metric-card, metric-success" spacing="5" minWidth="180">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="PASS RATE" styleClass="metric-label"/>
+                            <Label fx:id="passRateValue" text="0%" styleClass="metric-value"/>
+                            <Label text="of all grades" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox fx:id="honorRollCard" styleClass="metric-card, metric-purple" spacing="5" minWidth="180">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="HONOR ROLL" styleClass="metric-label"/>
+                            <Label fx:id="honorRollValue" text="0" styleClass="metric-value"/>
+                            <Label text="students (GPA ≥ 3.5)" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox fx:id="failingCard" styleClass="metric-card, metric-danger" spacing="5" minWidth="180">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="AT-RISK" styleClass="metric-label"/>
+                            <Label fx:id="atRiskValue" text="0" styleClass="metric-value"/>
+                            <Label text="students (GPA &lt; 2.0)" styleClass="metric-trend"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Charts Row -->
+                    <HBox spacing="20" VBox.vgrow="ALWAYS">
+                        <!-- GPA Distribution Bar Chart -->
+                        <VBox styleClass="chart-container" HBox.hgrow="ALWAYS" spacing="10">
+                            <padding>
+                                <Insets top="15" right="15" bottom="15" left="15"/>
+                            </padding>
+                            <Label text="GPA Distribution" styleClass="section-header"/>
+                            <BarChart fx:id="gpaDistributionChart" VBox.vgrow="ALWAYS"
+                                      legendVisible="false" animated="true">
+                                <xAxis>
+                                    <CategoryAxis label="GPA Range"/>
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="Students"/>
+                                </yAxis>
+                            </BarChart>
+                        </VBox>
+
+                        <!-- Letter Grade Pie Chart -->
+                        <VBox styleClass="chart-container" minWidth="350" spacing="10">
+                            <padding>
+                                <Insets top="15" right="15" bottom="15" left="15"/>
+                            </padding>
+                            <Label text="Letter Grade Distribution" styleClass="section-header"/>
+                            <PieChart fx:id="letterGradeChart" VBox.vgrow="ALWAYS"
+                                      legendSide="BOTTOM" labelsVisible="true"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 2: GPA Trends -->
+            <Tab text="GPA Trends" closable="false">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- GPA by Grade Level -->
+                    <VBox styleClass="chart-container" VBox.vgrow="ALWAYS" spacing="10">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Average GPA by Grade Level" styleClass="section-header"/>
+                        <BarChart fx:id="gpaByGradeChart" VBox.vgrow="ALWAYS"
+                                  legendVisible="false" animated="true">
+                            <xAxis>
+                                <CategoryAxis label="Grade Level"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Average GPA" lowerBound="0" upperBound="4" tickUnit="0.5"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+
+                    <!-- GPA Trend Over Time (Placeholder) -->
+                    <VBox styleClass="chart-container" VBox.vgrow="ALWAYS" spacing="10">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="GPA Trend Over Time" styleClass="section-header"/>
+                        <LineChart fx:id="gpaTrendChart" VBox.vgrow="ALWAYS"
+                                   legendVisible="true" animated="true">
+                            <xAxis>
+                                <CategoryAxis label="Term"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Average GPA" lowerBound="0" upperBound="4"/>
+                            </yAxis>
+                        </LineChart>
+                    </VBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 3: Honor Roll -->
+            <Tab text="Honor Roll" closable="false">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- Honor Roll Tiers -->
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="quick-stats-grid">
+                        <VBox styleClass="metric-card, metric-purple" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="HIGH HONORS (≥3.75)" styleClass="metric-label"/>
+                            <Label fx:id="highHonorsValue" text="0" styleClass="metric-value"/>
+                            <Label text="students" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-info" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="HONORS (≥3.50)" styleClass="metric-label"/>
+                            <Label fx:id="honorsValue" text="0" styleClass="metric-value"/>
+                            <Label text="students" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-success" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="HONORABLE MENTION (≥3.25)" styleClass="metric-label"/>
+                            <Label fx:id="honorableMentionValue" text="0" styleClass="metric-value"/>
+                            <Label text="students" styleClass="metric-trend"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Honor Roll Distribution Chart -->
+                    <VBox styleClass="chart-container" spacing="10" VBox.vgrow="SOMETIMES">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Honor Roll Distribution" styleClass="section-header"/>
+                        <PieChart fx:id="honorRollChart" VBox.vgrow="ALWAYS"
+                                  legendSide="RIGHT" labelsVisible="true"/>
+                    </VBox>
+
+                    <!-- Honor Roll Student List (Placeholder) -->
+                    <VBox styleClass="chart-container" spacing="10" VBox.vgrow="ALWAYS">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Honor Roll Students" styleClass="section-header"/>
+                        <TableView fx:id="honorRollTable" VBox.vgrow="ALWAYS" styleClass="analytics-table">
+                            <placeholder>
+                                <Label text="No honor roll students found"/>
+                            </placeholder>
+                            <columns>
+                                <TableColumn fx:id="hrStudentIdCol" text="Student ID" prefWidth="100"/>
+                                <TableColumn fx:id="hrStudentNameCol" text="Name" prefWidth="200"/>
+                                <TableColumn fx:id="hrGradeLevelCol" text="Grade" prefWidth="80"/>
+                                <TableColumn fx:id="hrGpaCol" text="GPA" prefWidth="80"/>
+                                <TableColumn fx:id="hrTierCol" text="Honor Tier" prefWidth="150"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 4: At-Risk Students -->
+            <Tab text="At-Risk Students" closable="false">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- At-Risk Tiers -->
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="quick-stats-grid">
+                        <VBox styleClass="metric-card, metric-danger" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="CRITICAL RISK (GPA &lt; 1.5)" styleClass="metric-label"/>
+                            <Label fx:id="criticalRiskValue" text="0" styleClass="metric-value"/>
+                            <Label text="students" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-warning" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="HIGH RISK (GPA &lt; 2.0)" styleClass="metric-label"/>
+                            <Label fx:id="highRiskValue" text="0" styleClass="metric-value"/>
+                            <Label text="students" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-info" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="MODERATE RISK (GPA &lt; 2.5)" styleClass="metric-label"/>
+                            <Label fx:id="moderateRiskValue" text="0" styleClass="metric-value"/>
+                            <Label text="students" styleClass="metric-trend"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- At-Risk Distribution Chart -->
+                    <VBox styleClass="chart-container" spacing="10" VBox.vgrow="SOMETIMES">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="At-Risk Distribution by Risk Level" styleClass="section-header"/>
+                        <BarChart fx:id="atRiskChart" VBox.vgrow="ALWAYS"
+                                  legendVisible="false" animated="true">
+                            <xAxis>
+                                <CategoryAxis label="Risk Level"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Students"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+
+                    <!-- At-Risk Student List -->
+                    <VBox styleClass="chart-container" spacing="10" VBox.vgrow="ALWAYS">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="At-Risk Students" styleClass="section-header"/>
+                        <TableView fx:id="atRiskTable" VBox.vgrow="ALWAYS" styleClass="analytics-table">
+                            <placeholder>
+                                <Label text="No at-risk students found"/>
+                            </placeholder>
+                            <columns>
+                                <TableColumn fx:id="arStudentIdCol" text="Student ID" prefWidth="100"/>
+                                <TableColumn fx:id="arStudentNameCol" text="Name" prefWidth="200"/>
+                                <TableColumn fx:id="arGradeLevelCol" text="Grade" prefWidth="80"/>
+                                <TableColumn fx:id="arGpaCol" text="GPA" prefWidth="80"/>
+                                <TableColumn fx:id="arRiskLevelCol" text="Risk Level" prefWidth="120"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+
+    <!-- Status Bar -->
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets top="8" right="20" bottom="8" left="20"/>
+            </padding>
+            <Label fx:id="statusLabel" text="Ready" styleClass="status-text"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lastUpdatedLabel" text="Last updated: --" styleClass="status-text"/>
+        </HBox>
+    </bottom>
+</BorderPane>

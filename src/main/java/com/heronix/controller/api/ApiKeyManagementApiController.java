@@ -1,5 +1,7 @@
 package com.heronix.controller.api;
 
+import com.heronix.service.ApiKeyService;
+import com.heronix.service.ApiKeyService.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +49,7 @@ import java.util.*;
  * - webhooks:manage
  *
  * @author Heronix Development Team
- * @version 1.0
+ * @version 2.0 - Fully Implemented
  * @since December 30, 2025 - Phase 37
  */
 @RestController
@@ -55,7 +57,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ApiKeyManagementApiController {
 
-    private final com.heronix.service.ApiKeyService apiKeyService;
+    private final ApiKeyService apiKeyService;
 
     // ========================================================================
     // API KEY CRUD OPERATIONS
@@ -169,6 +171,8 @@ public class ApiKeyManagementApiController {
                     keyData.put("lastUsedAt", key.getLastUsedAt());
                     keyData.put("expiresAt", key.getExpiresAt());
                     keyData.put("createdAt", key.getCreatedAt());
+                    keyData.put("isExpired", key.isExpired());
+                    keyData.put("isValid", key.isValid());
                     return keyData;
                 })
                 .toList();
@@ -222,6 +226,8 @@ public class ApiKeyManagementApiController {
             keyData.put("ipWhitelist", apiKey.getIpWhitelist());
             keyData.put("createdAt", apiKey.getCreatedAt());
             keyData.put("updatedAt", apiKey.getUpdatedAt());
+            keyData.put("isExpired", apiKey.isExpired());
+            keyData.put("isValid", apiKey.isValid());
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
@@ -252,7 +258,7 @@ public class ApiKeyManagementApiController {
      *
      * PUT /api/api-keys/{keyId}
      *
-     * Can update: name, scopes, rate limits, IP whitelist
+     * Can update: name, description, scopes, rate limits, IP whitelist, expiration
      * Cannot update: the actual key value
      */
     @PutMapping("/{keyId}")
@@ -261,42 +267,54 @@ public class ApiKeyManagementApiController {
             @RequestBody Map<String, Object> requestBody) {
 
         try {
-            // TODO: Add updateApiKey method to ApiKeyService for production
-            // For now, this is a stub implementation that validates ownership
-
             // Get current user ID from security context
             String userId = org.springframework.security.core.context.SecurityContextHolder
                     .getContext().getAuthentication().getName();
 
-            // Verify user owns this API key
             Long keyIdLong = Long.parseLong(keyId);
-            apiKeyService.getUserApiKeys(userId).stream()
-                .filter(key -> key.getId().equals(keyIdLong))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("API key not found: " + keyId));
 
-            // Extract update parameters (stub - not persisted)
+            // Extract update parameters
             String name = (String) requestBody.get("name");
+            String description = (String) requestBody.get("description");
+
             @SuppressWarnings("unchecked")
             List<String> scopesList = (List<String>) requestBody.get("scopes");
-            Integer rateLimit = requestBody.containsKey("rateLimit") ?
+            Set<String> scopes = scopesList != null ? new HashSet<>(scopesList) : null;
+
+            Integer rateLimit = requestBody.containsKey("rateLimit") && requestBody.get("rateLimit") != null ?
                 Integer.valueOf(requestBody.get("rateLimit").toString()) : null;
+
             @SuppressWarnings("unchecked")
             List<String> ipWhitelistList = (List<String>) requestBody.get("ipWhitelist");
+            Set<String> ipWhitelist = ipWhitelistList != null ? new HashSet<>(ipWhitelistList) : null;
 
-            Map<String, Object> apiKey = new HashMap<>();
-            apiKey.put("id", keyIdLong);
-            apiKey.put("name", name);
-            apiKey.put("scopes", scopesList);
-            apiKey.put("rateLimit", rateLimit);
-            apiKey.put("ipWhitelist", ipWhitelistList);
-            apiKey.put("updatedAt", LocalDateTime.now());
-            apiKey.put("message", "Stub implementation - add ApiKeyService.updateApiKey() for production");
+            LocalDateTime expiresAt = null;
+            if (requestBody.containsKey("expiresInDays") && requestBody.get("expiresInDays") != null) {
+                int expiresInDays = Integer.parseInt(requestBody.get("expiresInDays").toString());
+                expiresAt = LocalDateTime.now().plusDays(expiresInDays);
+            }
+
+            // Update via service
+            com.heronix.model.domain.ApiKey updatedKey = apiKeyService.updateApiKey(
+                keyIdLong, userId, name, description, scopes, rateLimit, ipWhitelist, expiresAt);
+
+            // Build response
+            Map<String, Object> keyData = new HashMap<>();
+            keyData.put("id", updatedKey.getId());
+            keyData.put("name", updatedKey.getName());
+            keyData.put("description", updatedKey.getDescription());
+            keyData.put("keyPrefix", updatedKey.getKeyPrefix() + "_****");
+            keyData.put("scopes", updatedKey.getScopes());
+            keyData.put("rateLimit", updatedKey.getRateLimit());
+            keyData.put("ipWhitelist", updatedKey.getIpWhitelist());
+            keyData.put("expiresAt", updatedKey.getExpiresAt());
+            keyData.put("updatedAt", updatedKey.getUpdatedAt());
+            keyData.put("active", updatedKey.getActive());
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("apiKey", apiKey);
-            response.put("message", "API key configuration validated (not persisted - stub mode)");
+            response.put("apiKey", keyData);
+            response.put("message", "API key updated successfully");
 
             return ResponseEntity.ok(response);
 
@@ -305,6 +323,11 @@ public class ApiKeyManagementApiController {
             errorResponse.put("success", false);
             errorResponse.put("error", "Invalid API key ID format");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (SecurityException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
         } catch (IllegalArgumentException e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -314,6 +337,46 @@ public class ApiKeyManagementApiController {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
             errorResponse.put("error", "Failed to update API key: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * Activate/deactivate an API key
+     *
+     * PATCH /api/api-keys/{keyId}/status
+     */
+    @PatchMapping("/{keyId}/status")
+    public ResponseEntity<Map<String, Object>> setApiKeyStatus(
+            @PathVariable String keyId,
+            @RequestBody Map<String, Object> requestBody) {
+
+        try {
+            String userId = org.springframework.security.core.context.SecurityContextHolder
+                    .getContext().getAuthentication().getName();
+
+            Long keyIdLong = Long.parseLong(keyId);
+            boolean active = Boolean.TRUE.equals(requestBody.get("active"));
+
+            com.heronix.model.domain.ApiKey updatedKey = apiKeyService.setApiKeyActive(keyIdLong, userId, active);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("keyId", updatedKey.getId());
+            response.put("active", updatedKey.getActive());
+            response.put("message", active ? "API key activated" : "API key deactivated");
+
+            return ResponseEntity.ok(response);
+
+        } catch (SecurityException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to update API key status: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
@@ -374,7 +437,7 @@ public class ApiKeyManagementApiController {
      *
      * POST /api/api-keys/{keyId}/rotate
      *
-     * Returns new key while keeping old key valid for grace period
+     * Returns new key while revoking old key
      */
     @PostMapping("/{keyId}/rotate")
     public ResponseEntity<Map<String, Object>> rotateApiKey(@PathVariable String keyId) {
@@ -395,19 +458,20 @@ public class ApiKeyManagementApiController {
 
             Map<String, Object> rotation = new HashMap<>();
             rotation.put("oldKeyId", keyId);
+            rotation.put("oldKeyRevoked", true);
             rotation.put("newKeyId", result.apiKeyEntity().getId());
             rotation.put("newKey", result.plainTextKey()); // Only shown once
             rotation.put("newKeyPrefix", result.plainTextKey().substring(0,
                 Math.min(10, result.plainTextKey().length())) + "...");
-            rotation.put("gracePeriodEnds", LocalDateTime.now().plusDays(30));
             rotation.put("scopes", result.apiKeyEntity().getScopes());
             rotation.put("rateLimit", result.apiKeyEntity().getRateLimit());
-            rotation.put("warning", "Update your integration with the new key before grace period ends");
+            rotation.put("createdAt", result.apiKeyEntity().getCreatedAt());
+            rotation.put("warning", "Save the new key securely - it won't be shown again!");
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("rotation", rotation);
-            response.put("message", "API key rotated successfully");
+            response.put("message", "API key rotated successfully. Old key has been revoked.");
 
             return ResponseEntity.ok(response);
 
@@ -434,7 +498,7 @@ public class ApiKeyManagementApiController {
     // ========================================================================
 
     /**
-     * Get API key usage statistics
+     * Get comprehensive API key usage analytics
      *
      * GET /api/api-keys/{keyId}/usage?days=30
      */
@@ -444,32 +508,17 @@ public class ApiKeyManagementApiController {
             @RequestParam(defaultValue = "30") int days) {
 
         try {
-            // TODO: Add usage analytics tracking to ApiKeyService for production
-            // For now, return basic usage info from the API key entity
-
-            // Get current user ID from security context
             String userId = org.springframework.security.core.context.SecurityContextHolder
                     .getContext().getAuthentication().getName();
 
-            // Verify user owns this API key
             Long keyIdLong = Long.parseLong(keyId);
-            com.heronix.model.domain.ApiKey apiKey = apiKeyService.getUserApiKeys(userId).stream()
-                .filter(key -> key.getId().equals(keyIdLong))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("API key not found: " + keyId));
 
-            // Build usage response (from ApiKey entity)
-            Map<String, Object> usage = new HashMap<>();
-            usage.put("keyId", keyId);
-            usage.put("totalRequests", apiKey.getRequestCount() != null ? apiKey.getRequestCount() : 0);
-            usage.put("lastUsedAt", apiKey.getLastUsedAt());
-            usage.put("rateLimit", apiKey.getRateLimit());
-            usage.put("active", apiKey.getActive());
-            usage.put("message", "Detailed usage analytics not implemented - add usage tracking service");
+            // Get comprehensive usage analytics from service
+            ApiKeyUsageAnalytics analytics = apiKeyService.getUsageAnalytics(keyIdLong, userId, days);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("usage", usage);
+            response.put("usage", analytics);
             response.put("period", days + " days");
 
             return ResponseEntity.ok(response);
@@ -479,6 +528,11 @@ public class ApiKeyManagementApiController {
             errorResponse.put("success", false);
             errorResponse.put("error", "Invalid API key ID format");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (SecurityException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
         } catch (IllegalArgumentException e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -493,40 +547,64 @@ public class ApiKeyManagementApiController {
     }
 
     /**
+     * Get aggregated analytics for all user's API keys
+     *
+     * GET /api/api-keys/analytics?days=30
+     */
+    @GetMapping("/analytics")
+    public ResponseEntity<Map<String, Object>> getUserAnalytics(
+            @RequestParam(defaultValue = "30") int days) {
+
+        try {
+            String userId = org.springframework.security.core.context.SecurityContextHolder
+                    .getContext().getAuthentication().getName();
+
+            UserApiKeyAnalytics analytics = apiKeyService.getUserAnalytics(userId, days);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("analytics", analytics);
+            response.put("period", days + " days");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to retrieve analytics: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
      * Get API request logs for a key
      *
-     * GET /api/api-keys/{keyId}/logs?limit=100
+     * GET /api/api-keys/{keyId}/logs?limit=100&offset=0
      */
     @GetMapping("/{keyId}/logs")
     public ResponseEntity<Map<String, Object>> getApiKeyLogs(
             @PathVariable String keyId,
-            @RequestParam(defaultValue = "100") int limit) {
+            @RequestParam(defaultValue = "100") int limit,
+            @RequestParam(defaultValue = "0") int offset) {
 
         try {
-            // TODO: Add request logging to ApiKeyService for production
-            // Requires: ApiKeyRequestLog entity, repository, and logging in filter
-
-            // Get current user ID from security context
             String userId = org.springframework.security.core.context.SecurityContextHolder
                     .getContext().getAuthentication().getName();
 
-            // Verify user owns this API key
             Long keyIdLong = Long.parseLong(keyId);
-            apiKeyService.getUserApiKeys(userId).stream()
-                .filter(key -> key.getId().equals(keyIdLong))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("API key not found: " + keyId));
 
-            // Return empty logs (stub implementation)
-            List<Map<String, Object>> logs = new ArrayList<>();
+            ApiKeyLogsResult logsResult = apiKeyService.getApiKeyLogs(keyIdLong, userId, limit, offset);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("keyId", keyId);
-            response.put("logs", logs);
-            response.put("count", logs.size());
-            response.put("limit", limit);
-            response.put("message", "Request logging not implemented - add ApiKeyRequestLog entity and tracking");
+            response.put("keyId", logsResult.getKeyId());
+            response.put("keyName", logsResult.getKeyName());
+            response.put("logs", logsResult.getLogs());
+            response.put("totalCount", logsResult.getTotalCount());
+            response.put("limit", logsResult.getLimit());
+            response.put("offset", logsResult.getOffset());
+            response.put("hasMore", logsResult.isHasMore());
+            response.put("note", logsResult.getNote());
 
             return ResponseEntity.ok(response);
 
@@ -535,6 +613,11 @@ public class ApiKeyManagementApiController {
             errorResponse.put("success", false);
             errorResponse.put("error", "Invalid API key ID format");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (SecurityException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
         } catch (IllegalArgumentException e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -603,31 +686,16 @@ public class ApiKeyManagementApiController {
     @GetMapping("/{keyId}/rate-limit")
     public ResponseEntity<Map<String, Object>> getRateLimitStatus(@PathVariable String keyId) {
         try {
-            // TODO: Add rate limiting tracking to ApiKeyService for production
-            // Requires: Redis or in-memory cache with sliding window algorithm
-
-            // Get current user ID from security context
             String userId = org.springframework.security.core.context.SecurityContextHolder
                     .getContext().getAuthentication().getName();
 
-            // Verify user owns this API key
             Long keyIdLong = Long.parseLong(keyId);
-            com.heronix.model.domain.ApiKey apiKey = apiKeyService.getUserApiKeys(userId).stream()
-                .filter(key -> key.getId().equals(keyIdLong))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("API key not found: " + keyId));
 
-            // Build rate limit response (stub - not tracking actual usage)
-            Map<String, Object> rateLimit = new HashMap<>();
-            rateLimit.put("keyId", keyId);
-            rateLimit.put("limit", apiKey.getRateLimit());
-            rateLimit.put("remaining", apiKey.getRateLimit()); // Stub: always full
-            rateLimit.put("resetAt", LocalDateTime.now().plusHours(1));
-            rateLimit.put("message", "Rate limit tracking not implemented - add Redis cache or token bucket algorithm");
+            RateLimitStatus status = apiKeyService.getRateLimitStatus(keyIdLong, userId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("rateLimit", rateLimit);
+            response.put("rateLimit", status);
 
             return ResponseEntity.ok(response);
 
@@ -636,6 +704,11 @@ public class ApiKeyManagementApiController {
             errorResponse.put("success", false);
             errorResponse.put("error", "Invalid API key ID format");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (SecurityException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
         } catch (IllegalArgumentException e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);

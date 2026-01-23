@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -15,6 +17,7 @@ Location: src/main/resources/fxml/AttendanceReporting.fxml
       fx:controller="com.heronix.ui.controller.AttendanceReportingController"
       styleClass="root"
       spacing="20">
+
 
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
@@ -46,18 +49,18 @@ Location: src/main/resources/fxml/AttendanceReporting.fxml
 
                         <HBox spacing="15" alignment="CENTER_LEFT">
                             <VBox spacing="5">
-                                <Label text="Campus:" style="-fx-font-weight: bold;"/>
+                                <Label text="Campus:" styleClass="form-label"/>
                                 <ComboBox fx:id="adaCampusComboBox" promptText="Select Campus"
                                           prefWidth="250"/>
                             </VBox>
 
                             <VBox spacing="5">
-                                <Label text="Start Date:" style="-fx-font-weight: bold;"/>
+                                <Label text="Start Date:" styleClass="form-label"/>
                                 <DatePicker fx:id="adaStartDatePicker" prefWidth="180"/>
                             </VBox>
 
                             <VBox spacing="5">
-                                <Label text="End Date:" style="-fx-font-weight: bold;"/>
+                                <Label text="End Date:" styleClass="form-label"/>
                                 <DatePicker fx:id="adaEndDatePicker" prefWidth="180"/>
                             </VBox>
 
@@ -72,13 +75,13 @@ Location: src/main/resources/fxml/AttendanceReporting.fxml
                         <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
                             <Label text="📊 ADA (Average Daily Attendance)" styleClass="label"/>
                             <Label fx:id="adaValueLabel" text="0.00"
-                                   style="-fx-font-size: 36; -fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
+                                   styleClass="stat-value-36-green"/>
                         </VBox>
 
                         <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
                             <Label text="👥 ADM (Average Daily Membership)" styleClass="label"/>
                             <Label fx:id="admValueLabel" text="0.00"
-                                   style="-fx-font-size: 36; -fx-font-weight: bold; -fx-text-fill: #2196F3;"/>
+                                   styleClass="stat-value-36-blue"/>
                         </VBox>
 
                         <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
@@ -117,12 +120,12 @@ Location: src/main/resources/fxml/AttendanceReporting.fxml
 
                     <HBox spacing="15" alignment="CENTER_LEFT">
                         <VBox spacing="5">
-                            <Label text="Start Date:" style="-fx-font-weight: bold;"/>
+                            <Label text="Start Date:" styleClass="form-label"/>
                             <DatePicker fx:id="teacherStartDatePicker" prefWidth="180"/>
                         </VBox>
 
                         <VBox spacing="5">
-                            <Label text="End Date:" style="-fx-font-weight: bold;"/>
+                            <Label text="End Date:" styleClass="form-label"/>
                             <DatePicker fx:id="teacherEndDatePicker" prefWidth="180"/>
                         </VBox>
 
@@ -170,12 +173,12 @@ Location: src/main/resources/fxml/AttendanceReporting.fxml
 
                     <HBox spacing="15" alignment="CENTER_LEFT">
                         <VBox spacing="5">
-                            <Label text="Start Date:" style="-fx-font-weight: bold;"/>
+                            <Label text="Start Date:" styleClass="form-label"/>
                             <DatePicker fx:id="gradeStartDatePicker" prefWidth="180"/>
                         </VBox>
 
                         <VBox spacing="5">
-                            <Label text="End Date:" style="-fx-font-weight: bold;"/>
+                            <Label text="End Date:" styleClass="form-label"/>
                             <DatePicker fx:id="gradeEndDatePicker" prefWidth="180"/>
                         </VBox>
 
@@ -226,18 +229,18 @@ Location: src/main/resources/fxml/AttendanceReporting.fxml
 
                         <HBox spacing="15" alignment="CENTER_LEFT">
                             <VBox spacing="5">
-                                <Label text="Student:" style="-fx-font-weight: bold;"/>
+                                <Label text="Student:" styleClass="form-label"/>
                                 <ComboBox fx:id="studentComboBox" promptText="Select Student"
                                           prefWidth="300"/>
                             </VBox>
 
                             <VBox spacing="5">
-                                <Label text="Start Date:" style="-fx-font-weight: bold;"/>
+                                <Label text="Start Date:" styleClass="form-label"/>
                                 <DatePicker fx:id="studentStartDatePicker" prefWidth="180"/>
                             </VBox>
 
                             <VBox spacing="5">
-                                <Label text="End Date:" style="-fx-font-weight: bold;"/>
+                                <Label text="End Date:" styleClass="form-label"/>
                                 <DatePicker fx:id="studentEndDatePicker" prefWidth="180"/>
                             </VBox>
 
@@ -252,19 +255,19 @@ Location: src/main/resources/fxml/AttendanceReporting.fxml
                         <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
                             <Label text="✅ Days Present" styleClass="label"/>
                             <Label fx:id="totalPresentLabel" text="0"
-                                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
+                                   styleClass="stat-value-32-green-material"/>
                         </VBox>
 
                         <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
                             <Label text="❌ Days Absent" styleClass="label"/>
                             <Label fx:id="totalAbsentLabel" text="0"
-                                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #F44336;"/>
+                                   styleClass="stat-value-32-red"/>
                         </VBox>
 
                         <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
                             <Label text="⏰ Days Tardy" styleClass="label"/>
                             <Label fx:id="totalTardyLabel" text="0"
-                                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #FF9800;"/>
+                                   styleClass="stat-value-32-orange-material"/>
                         </VBox>
                     </HBox>
 
@@ -302,23 +305,23 @@ Location: src/main/resources/fxml/AttendanceReporting.fxml
 
                     <HBox spacing="15" alignment="CENTER_LEFT">
                         <VBox spacing="5">
-                            <Label text="Campus (Optional):" style="-fx-font-weight: bold;"/>
+                            <Label text="Campus (Optional):" styleClass="form-label"/>
                             <ComboBox fx:id="chronicCampusComboBox" promptText="All Campuses"
                                       prefWidth="200"/>
                         </VBox>
 
                         <VBox spacing="5">
-                            <Label text="Start Date:" style="-fx-font-weight: bold;"/>
+                            <Label text="Start Date:" styleClass="form-label"/>
                             <DatePicker fx:id="chronicStartDatePicker" prefWidth="180"/>
                         </VBox>
 
                         <VBox spacing="5">
-                            <Label text="End Date:" style="-fx-font-weight: bold;"/>
+                            <Label text="End Date:" styleClass="form-label"/>
                             <DatePicker fx:id="chronicEndDatePicker" prefWidth="180"/>
                         </VBox>
 
                         <VBox spacing="5">
-                            <Label text="Threshold (Days):" style="-fx-font-weight: bold;"/>
+                            <Label text="Threshold (Days):" styleClass="form-label"/>
                             <Spinner fx:id="thresholdSpinner" prefWidth="120" editable="true"/>
                         </VBox>
 

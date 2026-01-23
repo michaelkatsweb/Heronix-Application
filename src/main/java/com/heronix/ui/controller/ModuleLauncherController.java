@@ -171,7 +171,7 @@ public class ModuleLauncherController {
 
     @FXML
     private void handleDiscipline(MouseEvent event) {
-        navigateToView("Discipline.fxml", "Discipline Management");
+        navigateToView("BehaviorDashboard.fxml", "Discipline Management");
     }
 
     @FXML
@@ -181,7 +181,7 @@ public class ModuleLauncherController {
 
     @FXML
     private void handleHealthCounseling(MouseEvent event) {
-        navigateToView("HealthOffice.fxml", "Health & Counseling");
+        navigateToView("HealthOfficeDashboard.fxml", "Health & Counseling");
     }
 
     @FXML
@@ -191,7 +191,7 @@ public class ModuleLauncherController {
 
     @FXML
     private void handleOperations(MouseEvent event) {
-        navigateToView("StudentFees.fxml", "Operations");
+        navigateToView("TransportationManagement.fxml", "Operations");
     }
 
     @FXML
@@ -209,9 +209,16 @@ public class ModuleLauncherController {
         navigateToView("ReportsAnalytics.fxml", "Reports & Analytics");
     }
 
+    // ========== System Administration Handlers ==========
+
     @FXML
-    private void handleSystemAdmin(MouseEvent event) {
-        navigateToView("UserManagement.fxml", "System Administration");
+    private void handleSystemSettings(MouseEvent event) {
+        navigateToView("Settings.fxml", "System Settings");
+    }
+
+    @FXML
+    private void handleUserManagement(MouseEvent event) {
+        navigateToView("UserManagementView.fxml", "User Management");
     }
 
     @FXML
@@ -221,7 +228,27 @@ public class ModuleLauncherController {
 
     @FXML
     private void handleAuditSecurity(MouseEvent event) {
-        navigateToView("AuditLog.fxml", "Audit & Security");
+        navigateToView("AuditLogView.fxml", "Audit & Security");
+    }
+
+    @FXML
+    private void handleNetworkPanel(MouseEvent event) {
+        navigateToView("NetworkPanel.fxml", "Network Panel");
+    }
+
+    @FXML
+    private void handleSecureSync(MouseEvent event) {
+        navigateToView("SecureSyncControlPanel.fxml", "Secure Sync");
+    }
+
+    @FXML
+    private void handleDatabaseAdmin(MouseEvent event) {
+        navigateToView("DatabaseManagement.fxml", "Database Administration");
+    }
+
+    @FXML
+    private void handleAPIManagement(MouseEvent event) {
+        navigateToView("Settings.fxml", "API Management");
     }
 
     @FXML

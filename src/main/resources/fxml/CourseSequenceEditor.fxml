@@ -116,7 +116,7 @@
 
                 <!-- Basic Info -->
                 <VBox spacing="5">
-                    <Label text="Basic Information" styleClass="label-small" style="-fx-font-weight: bold;"/>
+                    <Label text="Basic Information" styleClass="form-label"/>
                     <GridPane hgap="10" vgap="8">
                         <columnConstraints>
                             <ColumnConstraints percentWidth="35"/>
@@ -141,7 +141,7 @@
 
                 <!-- Requirements -->
                 <VBox spacing="5">
-                    <Label text="Requirements" styleClass="label-small" style="-fx-font-weight: bold;"/>
+                    <Label text="Requirements" styleClass="form-label"/>
                     <GridPane hgap="10" vgap="8">
                         <columnConstraints>
                             <ColumnConstraints percentWidth="35"/>
@@ -163,7 +163,7 @@
 
                 <!-- Description -->
                 <VBox spacing="5" VBox.vgrow="ALWAYS">
-                    <Label text="Description" styleClass="label-small" style="-fx-font-weight: bold;"/>
+                    <Label text="Description" styleClass="form-label"/>
                     <TextArea fx:id="descriptionArea" wrapText="true" editable="false" VBox.vgrow="ALWAYS"
                               promptText="No description available"/>
                 </VBox>
@@ -172,7 +172,7 @@
 
                 <!-- Statistics -->
                 <VBox spacing="5">
-                    <Label text="Statistics" styleClass="label-small" style="-fx-font-weight: bold;"/>
+                    <Label text="Statistics" styleClass="form-label"/>
                     <GridPane hgap="10" vgap="8">
                         <columnConstraints>
                             <ColumnConstraints percentWidth="50"/>

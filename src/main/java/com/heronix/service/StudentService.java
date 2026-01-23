@@ -116,4 +116,64 @@ public class StudentService {
     public long countActiveStudents() {
         return studentRepository.countByStudentStatus(Student.StudentStatus.ACTIVE);
     }
+
+    /**
+     * Save student (alias for create/update)
+     */
+    public Student save(Student student) {
+        log.info("Saving student: {}", student.getStudentId());
+        return studentRepository.save(student);
+    }
+
+    /**
+     * Delete student entity
+     */
+    public void delete(Student student) {
+        log.info("Deleting student: {}", student.getStudentId());
+        studentRepository.delete(student);
+    }
+
+    /**
+     * Find student by ID (returns Student or null)
+     */
+    public Student findById(Long id) {
+        return studentRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * Find student by student ID
+     */
+    public Optional<Student> findByStudentId(String studentId) {
+        return studentRepository.findByStudentId(studentId);
+    }
+
+    /**
+     * Find all active students
+     */
+    public List<Student> findByActiveTrue() {
+        return studentRepository.findByActiveTrue();
+    }
+
+    /**
+     * Find all students with enrolled courses (eager loading)
+     */
+    @Transactional(readOnly = true)
+    public List<Student> findAllWithEnrolledCourses() {
+        return studentRepository.findAllWithEnrolledCourses();
+    }
+
+    /**
+     * Find student by ID with enrolled courses
+     */
+    @Transactional(readOnly = true)
+    public Optional<Student> findByIdWithEnrolledCourses(Long id) {
+        return studentRepository.findByIdWithEnrolledCourses(id);
+    }
+
+    /**
+     * Check if student exists by student ID
+     */
+    public boolean existsByStudentId(String studentId) {
+        return studentRepository.findByStudentId(studentId).isPresent();
+    }
 }

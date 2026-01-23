@@ -45,7 +45,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 65 - Report Scheduling & Automation Enhancements
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/schedules")
 @RequiredArgsConstructor
 @Slf4j

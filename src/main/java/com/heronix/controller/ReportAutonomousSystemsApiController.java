@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 153 - Autonomous Systems & Self-Healing Infrastructure
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/autonomous-systems")
 @RequiredArgsConstructor
 public class ReportAutonomousSystemsApiController {

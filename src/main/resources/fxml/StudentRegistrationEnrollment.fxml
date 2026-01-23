@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -7,51 +9,51 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.StudentRegistrationEnrollmentController"
-            stylesheets="@../css/application.css"
             prefWidth="1400" prefHeight="900">
+
 
     <!-- Top: Header -->
     <top>
-        <VBox spacing="15" style="-fx-background-color: #1976d2; -fx-padding: 20;">
+        <VBox spacing="15" styleClass="card">
             <Label text="Student Registration &amp; Enrollment"
-                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                   styleClass="page-title-white"/>
             <Label text="Complete student registration with automatic course enrollment and document management"
-                   style="-fx-font-size: 13px; -fx-text-fill: white;"/>
+                   styleClass="text-white"/>
         </VBox>
     </top>
 
     <!-- Center: Registration Wizard -->
     <center>
-        <BorderPane style="-fx-background-color: #f5f5f5;">
+        <BorderPane styleClass="main-container">
 
             <!-- Progress Indicator -->
             <top>
-                <VBox spacing="15" style="-fx-padding: 20; -fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
-                    <Label text="Registration Progress" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                <VBox spacing="15" styleClass="progress-header-white">
+                    <Label text="Registration Progress" styleClass="label-14-bold"/>
                     <HBox spacing="0" alignment="CENTER">
-                        <VBox spacing="5" alignment="CENTER" style="-fx-padding: 10;" HBox.hgrow="ALWAYS">
-                            <Label fx:id="step1Indicator" text="●" style="-fx-font-size: 24px; -fx-text-fill: #2196f3;"/>
-                            <Label text="Student Info" style="-fx-font-size: 11px;"/>
+                        <VBox spacing="5" alignment="CENTER" styleClass="step-container-padding" HBox.hgrow="ALWAYS">
+                            <Label fx:id="step1Indicator" text="●" styleClass="text-muted"/>
+                            <Label text="Student Info" styleClass="label-11"/>
                         </VBox>
                         <Separator orientation="HORIZONTAL" HBox.hgrow="ALWAYS"/>
-                        <VBox spacing="5" alignment="CENTER" style="-fx-padding: 10;" HBox.hgrow="ALWAYS">
-                            <Label fx:id="step2Indicator" text="○" style="-fx-font-size: 24px; -fx-text-fill: #9e9e9e;"/>
-                            <Label text="Guardian Info" style="-fx-font-size: 11px;"/>
+                        <VBox spacing="5" alignment="CENTER" styleClass="step-container-padding" HBox.hgrow="ALWAYS">
+                            <Label fx:id="step2Indicator" text="○" styleClass="text-muted"/>
+                            <Label text="Guardian Info" styleClass="label-11"/>
                         </VBox>
                         <Separator orientation="HORIZONTAL" HBox.hgrow="ALWAYS"/>
-                        <VBox spacing="5" alignment="CENTER" style="-fx-padding: 10;" HBox.hgrow="ALWAYS">
-                            <Label fx:id="step3Indicator" text="○" style="-fx-font-size: 24px; -fx-text-fill: #9e9e9e;"/>
-                            <Label text="Enrollment" style="-fx-font-size: 11px;"/>
+                        <VBox spacing="5" alignment="CENTER" styleClass="step-container-padding" HBox.hgrow="ALWAYS">
+                            <Label fx:id="step3Indicator" text="○" styleClass="text-muted"/>
+                            <Label text="Enrollment" styleClass="label-11"/>
                         </VBox>
                         <Separator orientation="HORIZONTAL" HBox.hgrow="ALWAYS"/>
-                        <VBox spacing="5" alignment="CENTER" style="-fx-padding: 10;" HBox.hgrow="ALWAYS">
-                            <Label fx:id="step4Indicator" text="○" style="-fx-font-size: 24px; -fx-text-fill: #9e9e9e;"/>
-                            <Label text="Documents" style="-fx-font-size: 11px;"/>
+                        <VBox spacing="5" alignment="CENTER" styleClass="step-container-padding" HBox.hgrow="ALWAYS">
+                            <Label fx:id="step4Indicator" text="○" styleClass="text-muted"/>
+                            <Label text="Documents" styleClass="label-11"/>
                         </VBox>
                         <Separator orientation="HORIZONTAL" HBox.hgrow="ALWAYS"/>
-                        <VBox spacing="5" alignment="CENTER" style="-fx-padding: 10;" HBox.hgrow="ALWAYS">
-                            <Label fx:id="step5Indicator" text="○" style="-fx-font-size: 24px; -fx-text-fill: #9e9e9e;"/>
-                            <Label text="Review" style="-fx-font-size: 11px;"/>
+                        <VBox spacing="5" alignment="CENTER" styleClass="step-container-padding" HBox.hgrow="ALWAYS">
+                            <Label fx:id="step5Indicator" text="○" styleClass="text-muted"/>
+                            <Label text="Review" styleClass="label-11"/>
                         </VBox>
                     </HBox>
                     <ProgressBar fx:id="registrationProgressBar" progress="0.2" prefWidth="Infinity"/>
@@ -63,8 +65,8 @@
                     <VBox fx:id="wizardContainer" spacing="20" style="-fx-padding: 30;">
 
                         <!-- Step 1: Student Information -->
-                        <VBox fx:id="step1Panel" spacing="20" style="-fx-background-color: white; -fx-padding: 25; -fx-border-color: #2196f3; -fx-border-width: 2;">
-                            <Label text="Step 1: Student Information" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+                        <VBox fx:id="step1Panel" spacing="20" styleClass="step-panel-blue">
+                            <Label text="Step 1: Student Information" styleClass="step-title-blue"/>
 
                             <GridPane hgap="20" vgap="15">
                                 <columnConstraints>
@@ -74,60 +76,60 @@
                                     <ColumnConstraints percentWidth="25"/>
                                 </columnConstraints>
 
-                                <Label text="First Name:*" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <Label text="First Name:*" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                                 <TextField fx:id="firstNameField" promptText="First name" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                                <Label text="Middle Name:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                <Label text="Middle Name:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
                                 <TextField fx:id="middleNameField" promptText="Middle name" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
 
-                                <Label text="Last Name:*" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <Label text="Last Name:*" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                                 <TextField fx:id="lastNameField" promptText="Last name" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                                <Label text="Preferred Name:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                                <Label text="Preferred Name:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
                                 <TextField fx:id="preferredNameField" promptText="Nickname" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
 
-                                <Label text="Date of Birth:*" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                <Label text="Date of Birth:*" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                                 <DatePicker fx:id="birthDatePicker" promptText="MM/DD/YYYY" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                                <Label text="Gender:*" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                                <Label text="Gender:*" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
                                 <ComboBox fx:id="genderComboBox" promptText="Select gender..." maxWidth="Infinity" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
 
-                                <Label text="Student ID:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                <Label text="Student ID:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                                 <TextField fx:id="studentIdField" promptText="Auto-generated" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-                                <Label text="Grade Level:*" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                                <Label text="Grade Level:*" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
                                 <ComboBox fx:id="gradeLevelComboBox" promptText="Select grade..." maxWidth="Infinity" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
 
-                                <Label text="Ethnicity:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                                <Label text="Ethnicity:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
                                 <ComboBox fx:id="ethnicityComboBox" promptText="Select..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
 
-                                <Label text="Language:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
+                                <Label text="Language:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
                                 <ComboBox fx:id="languageComboBox" promptText="Primary language" maxWidth="Infinity" GridPane.columnIndex="3" GridPane.rowIndex="4"/>
 
-                                <Label text="Home Address:*" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                                <Label text="Home Address:*" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
                                 <TextField fx:id="addressField" promptText="Street address" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.columnSpan="3"/>
 
-                                <Label text="City:*" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                                <Label text="City:*" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
                                 <TextField fx:id="cityField" promptText="City" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
 
-                                <Label text="State:*" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="6"/>
+                                <Label text="State:*" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="6"/>
                                 <ComboBox fx:id="stateComboBox" promptText="State" maxWidth="Infinity" GridPane.columnIndex="3" GridPane.rowIndex="6"/>
 
-                                <Label text="ZIP Code:*" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                                <Label text="ZIP Code:*" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
                                 <TextField fx:id="zipCodeField" promptText="ZIP" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
 
-                                <Label text="Phone:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="7"/>
+                                <Label text="Phone:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="7"/>
                                 <TextField fx:id="phoneField" promptText="(555) 555-5555" GridPane.columnIndex="3" GridPane.rowIndex="7"/>
                             </GridPane>
                         </VBox>
 
                         <!-- Step 2: Guardian Information -->
-                        <VBox fx:id="step2Panel" spacing="20" managed="false" visible="false" style="-fx-background-color: white; -fx-padding: 25; -fx-border-color: #2196f3; -fx-border-width: 2;">
-                            <Label text="Step 2: Guardian/Parent Information" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+                        <VBox fx:id="step2Panel" spacing="20" managed="false" visible="false" styleClass="step-panel-blue">
+                            <Label text="Step 2: Guardian/Parent Information" styleClass="step-title-blue"/>
 
                             <!-- Guardian 1 -->
-                            <VBox spacing="15" style="-fx-background-color: #e3f2fd; -fx-padding: 15; -fx-border-color: #2196f3; -fx-border-width: 1;">
-                                <Label text="Primary Guardian" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #0d47a1;"/>
+                            <VBox spacing="15" styleClass="card, metric-info">
+                                <Label text="Primary Guardian" styleClass="label-14-bold-blue-dark"/>
 
                                 <GridPane hgap="20" vgap="15">
                                     <columnConstraints>
@@ -137,25 +139,25 @@
                                         <ColumnConstraints percentWidth="25"/>
                                     </columnConstraints>
 
-                                    <Label text="First Name:*" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                    <Label text="First Name:*" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                                     <TextField fx:id="guardian1FirstNameField" promptText="First name" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                                    <Label text="Last Name:*" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                    <Label text="Last Name:*" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
                                     <TextField fx:id="guardian1LastNameField" promptText="Last name" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
 
-                                    <Label text="Relationship:*" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                    <Label text="Relationship:*" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                                     <ComboBox fx:id="guardian1RelationshipComboBox" promptText="Select..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                                    <Label text="Email:*" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                                    <Label text="Email:*" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
                                     <TextField fx:id="guardian1EmailField" promptText="email@example.com" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
 
-                                    <Label text="Cell Phone:*" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                    <Label text="Cell Phone:*" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                                     <TextField fx:id="guardian1CellPhoneField" promptText="(555) 555-5555" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                                    <Label text="Work Phone:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                                    <Label text="Work Phone:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
                                     <TextField fx:id="guardian1WorkPhoneField" promptText="(555) 555-5555" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
 
-                                    <Label text="Employer:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                    <Label text="Employer:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                                     <TextField fx:id="guardian1EmployerField" promptText="Company name" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.columnSpan="3"/>
                                 </GridPane>
 
@@ -164,9 +166,9 @@
                             </VBox>
 
                             <!-- Guardian 2 (Optional) -->
-                            <VBox spacing="15" style="-fx-background-color: #f5f5f5; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                            <VBox spacing="15" styleClass="card">
                                 <HBox spacing="10" alignment="CENTER_LEFT">
-                                    <Label text="Secondary Guardian (Optional)" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                                    <Label text="Secondary Guardian (Optional)" styleClass="label-14-bold-gray"/>
                                     <CheckBox fx:id="addGuardian2CheckBox" text="Add second guardian" onAction="#handleAddGuardian2"/>
                                 </HBox>
 
@@ -178,32 +180,32 @@
                                         <ColumnConstraints percentWidth="25"/>
                                     </columnConstraints>
 
-                                    <Label text="First Name:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                    <Label text="First Name:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                                     <TextField fx:id="guardian2FirstNameField" promptText="First name" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                                    <Label text="Last Name:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                    <Label text="Last Name:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
                                     <TextField fx:id="guardian2LastNameField" promptText="Last name" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
 
-                                    <Label text="Relationship:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                    <Label text="Relationship:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                                     <ComboBox fx:id="guardian2RelationshipComboBox" promptText="Select..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                                    <Label text="Email:" style="-fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                                    <Label text="Email:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
                                     <TextField fx:id="guardian2EmailField" promptText="email@example.com" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
 
-                                    <Label text="Cell Phone:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                    <Label text="Cell Phone:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                                     <TextField fx:id="guardian2CellPhoneField" promptText="(555) 555-5555" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                                 </GridPane>
                             </VBox>
                         </VBox>
 
                         <!-- Step 3: Course Enrollment -->
-                        <VBox fx:id="step3Panel" spacing="20" managed="false" visible="false" style="-fx-background-color: white; -fx-padding: 25; -fx-border-color: #2196f3; -fx-border-width: 2;">
-                            <Label text="Step 3: Course Enrollment" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+                        <VBox fx:id="step3Panel" spacing="20" managed="false" visible="false" styleClass="step-panel-blue">
+                            <Label text="Step 3: Course Enrollment" styleClass="step-title-blue"/>
 
                             <HBox spacing="20">
                                 <!-- Available Courses -->
                                 <VBox spacing="10" HBox.hgrow="ALWAYS">
-                                    <Label text="Available Courses" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                                    <Label text="Available Courses" styleClass="label-14-bold"/>
                                     <TextField fx:id="courseSearchField" promptText="Search courses..."/>
                                     <TableView fx:id="availableCoursesTable" VBox.vgrow="ALWAYS" prefHeight="400">
                                         <columns>
@@ -213,43 +215,92 @@
                                             <TableColumn fx:id="availableSeatsColumn" text="Seats" prefWidth="60"/>
                                         </columns>
                                     </TableView>
-                                    <Button text="Add to Schedule →" onAction="#handleAddCourse" style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"/>
+                                    <Button text="Add to Schedule →" onAction="#handleAddCourse" styleClass="button-primary"/>
                                 </VBox>
 
                                 <!-- Enrolled Courses -->
                                 <VBox spacing="10" HBox.hgrow="ALWAYS">
-                                    <Label text="Enrolled Courses" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-                                    <Label fx:id="totalCreditsLabel" text="Total Credits: 0" style="-fx-font-size: 12px; -fx-text-fill: #757575;"/>
+                                    <Label text="Enrolled Courses" styleClass="label-14-bold"/>
+                                    <Label fx:id="totalCreditsLabel" text="Total Credits: 0" styleClass="text-muted"/>
                                     <ListView fx:id="enrolledCoursesList" VBox.vgrow="ALWAYS" prefHeight="400"/>
-                                    <Button text="← Remove Course" onAction="#handleRemoveCourse" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-padding: 8; -fx-cursor: hand;"/>
+                                    <Button text="← Remove Course" onAction="#handleRemoveCourse" styleClass="header-danger"/>
                                 </VBox>
                             </HBox>
                         </VBox>
 
                         <!-- Step 4: Documents -->
-                        <VBox fx:id="step4Panel" spacing="20" managed="false" visible="false" style="-fx-background-color: white; -fx-padding: 25; -fx-border-color: #2196f3; -fx-border-width: 2;">
-                            <Label text="Step 4: Required Documents" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+                        <VBox fx:id="step4Panel" spacing="20" managed="false" visible="false" styleClass="step-panel-blue">
+                            <Label text="Step 4: Required Documents" styleClass="step-title-blue"/>
 
-                            <VBox spacing="15">
-                                <CheckBox fx:id="birthCertificateCheckBox" text="Birth Certificate (Required)"/>
-                                <CheckBox fx:id="immunizationCheckBox" text="Immunization Records (Required)"/>
-                                <CheckBox fx:id="proofOfResidenceCheckBox" text="Proof of Residence (Required)"/>
+                            <!-- Required Documents Section -->
+                            <VBox spacing="10">
+                                <Label text="Required Documents:" styleClass="label-14-bold"/>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <CheckBox fx:id="birthCertificateCheckBox" text="Birth Certificate" prefWidth="200"/>
+                                    <ComboBox fx:id="birthCertificateStatus" promptText="Status" prefWidth="140"/>
+                                </HBox>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <CheckBox fx:id="immunizationCheckBox" text="Immunization Records" prefWidth="200"/>
+                                    <ComboBox fx:id="immunizationStatus" promptText="Status" prefWidth="140"/>
+                                </HBox>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <CheckBox fx:id="proofOfResidenceCheckBox" text="Proof of Residence" prefWidth="200"/>
+                                    <ComboBox fx:id="proofOfResidenceStatus" promptText="Status" prefWidth="140"/>
+                                </HBox>
+                            </VBox>
+
+                            <Separator/>
+
+                            <!-- Student Photo Section -->
+                            <VBox spacing="10">
+                                <Label text="Student Photo:" styleClass="label-14-bold"/>
+                                <HBox spacing="15" alignment="CENTER_LEFT">
+                                    <RadioButton fx:id="photoTakenRadio" text="Photo Taken"/>
+                                    <RadioButton fx:id="photoNotAvailableRadio" text="Photo Not Available (follow-up needed)"/>
+                                    <RadioButton fx:id="photoRefusedRadio" text="Parent Refused Photo"/>
+                                </HBox>
+                                <VBox fx:id="photoRefusalReasonBox" spacing="5" managed="false" visible="false">
+                                    <Label text="Refusal Reason/Documentation:" styleClass="label-12"/>
+                                    <TextArea fx:id="photoRefusalReasonArea" promptText="Document the reason for photo refusal..." prefRowCount="2"/>
+                                </VBox>
+                            </VBox>
+
+                            <Separator/>
+
+                            <!-- Optional Documents Section -->
+                            <VBox spacing="10">
+                                <Label text="Optional Documents:" styleClass="label-14-bold"/>
                                 <CheckBox fx:id="previousTranscriptCheckBox" text="Previous School Transcript"/>
                                 <CheckBox fx:id="iepDocumentCheckBox" text="IEP/504 Plan (if applicable)"/>
                                 <CheckBox fx:id="medicalRecordsCheckBox" text="Medical Records"/>
                                 <CheckBox fx:id="photoReleaseCheckBox" text="Photo/Media Release Form"/>
                             </VBox>
 
-                            <Button text="Upload Documents" onAction="#handleUploadDocuments" style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand;"/>
+                            <Separator/>
+
+                            <!-- Missing Documents Note -->
+                            <VBox fx:id="missingDocumentsBox" spacing="10" styleClass="card, metric-warning">
+                                <Label text="Missing Documents?" styleClass="form-label"/>
+                                <Label text="If parent hasn't brought all required documents, you can save this registration as 'Incomplete' and follow up later." wrapText="true" styleClass="label-12"/>
+                                <HBox spacing="10">
+                                    <DatePicker fx:id="expectedDocumentsDate" promptText="Expected submission date"/>
+                                    <TextField fx:id="documentNotesField" promptText="Notes for follow-up..." HBox.hgrow="ALWAYS"/>
+                                </HBox>
+                            </VBox>
+
+                            <HBox spacing="15">
+                                <Button text="Upload Documents" onAction="#handleUploadDocuments" styleClass="button-primary"/>
+                                <Button fx:id="saveIncompleteBtn" text="Save as Incomplete" onAction="#handleSaveIncomplete" styleClass="button-primary"/>
+                            </HBox>
                         </VBox>
 
                         <!-- Step 5: Review & Submit -->
-                        <VBox fx:id="step5Panel" spacing="20" managed="false" visible="false" style="-fx-background-color: white; -fx-padding: 25; -fx-border-color: #2196f3; -fx-border-width: 2;">
-                            <Label text="Step 5: Review &amp; Submit" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+                        <VBox fx:id="step5Panel" spacing="20" managed="false" visible="false" styleClass="step-panel-blue">
+                            <Label text="Step 5: Review &amp; Submit" styleClass="step-title-blue"/>
 
                             <TextArea fx:id="reviewSummaryArea" editable="false" wrapText="true" prefHeight="400"/>
 
-                            <CheckBox fx:id="certifyCheckBox" text="I certify that all information provided is accurate and complete" style="-fx-font-weight: bold;"/>
+                            <CheckBox fx:id="certifyCheckBox" text="I certify that all information provided is accurate and complete" styleClass="form-label"/>
                         </VBox>
 
                     </VBox>
@@ -261,17 +312,17 @@
 
     <!-- Bottom: Navigation -->
     <bottom>
-        <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+        <HBox spacing="15" alignment="CENTER_RIGHT" styleClass="footer-white-border">
             <Button fx:id="previousButton" text="← Previous" onAction="#handlePrevious" disable="true"
-                    style="-fx-background-color: #9e9e9e; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30; -fx-cursor: hand;"/>
+                    styleClass="button-primary"/>
 
             <Region HBox.hgrow="ALWAYS"/>
 
             <Button fx:id="nextButton" text="Next →" onAction="#handleNext"
-                    style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30; -fx-cursor: hand;"/>
+                    styleClass="button-primary"/>
 
             <Button fx:id="submitButton" text="Submit Registration" onAction="#handleSubmit" managed="false" visible="false"
-                    style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 30; -fx-cursor: hand;"/>
+                    styleClass="button-primary"/>
         </HBox>
     </bottom>
 

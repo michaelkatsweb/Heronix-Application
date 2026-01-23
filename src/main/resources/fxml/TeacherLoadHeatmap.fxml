@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -15,6 +17,7 @@ Location: src/main/resources/fxml/TeacherLoadHeatmap.fxml
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.heronix.ui.controller.TeacherLoadHeatmapController"
             styleClass="main-container">
+
 
     <!-- HEADER -->
     <top>
@@ -76,23 +79,23 @@ Location: src/main/resources/fxml/TeacherLoadHeatmap.fxml
                     <Label text="🎨 Load Intensity Legend" styleClass="section-title"/>
                     <HBox spacing="30" alignment="CENTER_LEFT">
                         <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Region prefWidth="30" prefHeight="20" style="-fx-background-color: #e8f5e9;"/>
+                            <Region prefWidth="30" prefHeight="20" styleClass="card, metric-success"/>
                             <Label text="0-2 periods (Light)" styleClass="stat-label"/>
                         </HBox>
                         <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Region prefWidth="30" prefHeight="20" style="-fx-background-color: #fff9c4;"/>
+                            <Region prefWidth="30" prefHeight="20" styleClass="card"/>
                             <Label text="3-4 periods (Moderate)" styleClass="stat-label"/>
                         </HBox>
                         <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Region prefWidth="30" prefHeight="20" style="-fx-background-color: #ffcc80;"/>
+                            <Region prefWidth="30" prefHeight="20" styleClass="card"/>
                             <Label text="5-6 periods (High)" styleClass="stat-label"/>
                         </HBox>
                         <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Region prefWidth="30" prefHeight="20" style="-fx-background-color: #ff9999;"/>
+                            <Region prefWidth="30" prefHeight="20" styleClass="card"/>
                             <Label text="7+ periods (Overloaded)" styleClass="stat-label"/>
                         </HBox>
                         <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Region prefWidth="30" prefHeight="20" style="-fx-background-color: #f0f0f0; -fx-border-color: #cccccc;"/>
+                            <Region prefWidth="30" prefHeight="20" styleClass="card"/>
                             <Label text="No Assignment" styleClass="stat-label"/>
                         </HBox>
                     </HBox>

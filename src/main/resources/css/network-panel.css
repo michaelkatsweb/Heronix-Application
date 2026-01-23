@@ -1,0 +1,523 @@
+/*
+ * ============================================================================
+ * HERONIX-SIS NETWORK PANEL STYLES
+ * ============================================================================
+ *
+ * Styling for the Network Panel module including:
+ *   - Dashboard statistics cards
+ *   - Device management table
+ *   - Network tools interface
+ *   - Status indicators
+ *
+ * @version 1.0.0
+ * @since 2026-01-21
+ * ============================================================================
+ */
+
+/* ============================================================================
+ * NETWORK PANEL CONTAINER
+ * ============================================================================ */
+
+.network-panel {
+    -fx-background-color: #f8f9fa;
+}
+
+.network-panel .panel-header {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* ============================================================================
+ * STATISTICS CARDS
+ * ============================================================================ */
+
+.stat-card {
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4, 0, 0, 2);
+    -fx-cursor: hand;
+}
+
+.stat-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 4);
+}
+
+.stat-card-online {
+    -fx-background-color: linear-gradient(to bottom right, #e8f5e9, #c8e6c9);
+}
+
+.stat-card-offline {
+    -fx-background-color: linear-gradient(to bottom right, #ffebee, #ffcdd2);
+}
+
+.stat-card-warning {
+    -fx-background-color: linear-gradient(to bottom right, #fff3e0, #ffe0b2);
+}
+
+.stat-card-maintenance {
+    -fx-background-color: linear-gradient(to bottom right, #e0f7fa, #b2ebf2);
+}
+
+.stat-card-total {
+    -fx-background-color: linear-gradient(to bottom right, #e3f2fd, #bbdefb);
+}
+
+/* ============================================================================
+ * STATUS INDICATORS
+ * ============================================================================ */
+
+.status-online {
+    -fx-fill: #28a745;
+}
+
+.status-offline {
+    -fx-fill: #dc3545;
+}
+
+.status-warning {
+    -fx-fill: #ffc107;
+}
+
+.status-maintenance {
+    -fx-fill: #17a2b8;
+}
+
+.status-unknown {
+    -fx-fill: #6c757d;
+}
+
+/* Status badge labels */
+.status-badge {
+    -fx-padding: 3 8 3 8;
+    -fx-background-radius: 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.status-badge-online {
+    -fx-background-color: #d4edda;
+    -fx-text-fill: #155724;
+}
+
+.status-badge-offline {
+    -fx-background-color: #f8d7da;
+    -fx-text-fill: #721c24;
+}
+
+.status-badge-warning {
+    -fx-background-color: #fff3cd;
+    -fx-text-fill: #856404;
+}
+
+.status-badge-maintenance {
+    -fx-background-color: #d1ecf1;
+    -fx-text-fill: #0c5460;
+}
+
+/* ============================================================================
+ * DEVICE TABLE
+ * ============================================================================ */
+
+.network-panel .table-view {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.network-panel .table-view .column-header {
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: #e0e0e0;
+    -fx-padding: 8 10 8 10;
+}
+
+.network-panel .table-view .column-header .label {
+    -fx-font-weight: 600;
+    -fx-text-fill: #424242;
+}
+
+.network-panel .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #f0f0f0 transparent;
+}
+
+.network-panel .table-row-cell:hover {
+    -fx-background-color: #f5f5f5;
+}
+
+.network-panel .table-row-cell:selected {
+    -fx-background-color: #e3f2fd;
+}
+
+/* Row styling based on device status */
+.network-panel .table-row-cell.status-offline {
+    -fx-background-color: #fff5f5;
+}
+
+.network-panel .table-row-cell.status-warning {
+    -fx-background-color: #fffbf0;
+}
+
+/* ============================================================================
+ * ACTION BUTTONS
+ * ============================================================================ */
+
+.network-panel .action-button {
+    -fx-padding: 4 8 4 8;
+    -fx-font-size: 11px;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.network-panel .action-button-ping {
+    -fx-background-color: #2196f3;
+    -fx-text-fill: white;
+}
+
+.network-panel .action-button-ping:hover {
+    -fx-background-color: #1976d2;
+}
+
+.network-panel .action-button-edit {
+    -fx-background-color: #f5f5f5;
+    -fx-text-fill: #424242;
+    -fx-border-color: #e0e0e0;
+}
+
+.network-panel .action-button-edit:hover {
+    -fx-background-color: #eeeeee;
+}
+
+.network-panel .action-button-delete {
+    -fx-background-color: #f44336;
+    -fx-text-fill: white;
+}
+
+.network-panel .action-button-delete:hover {
+    -fx-background-color: #d32f2f;
+}
+
+/* Primary action buttons */
+.network-panel .primary-button {
+    -fx-background-color: #4caf50;
+    -fx-text-fill: white;
+    -fx-font-weight: 600;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 4;
+}
+
+.network-panel .primary-button:hover {
+    -fx-background-color: #43a047;
+}
+
+.network-panel .secondary-button {
+    -fx-background-color: #2196f3;
+    -fx-text-fill: white;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 4;
+}
+
+.network-panel .secondary-button:hover {
+    -fx-background-color: #1976d2;
+}
+
+/* ============================================================================
+ * NETWORK TOOLS SECTION
+ * ============================================================================ */
+
+.network-panel .tool-section {
+    -fx-background-color: white;
+    -fx-padding: 15;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+.network-panel .output-console {
+    -fx-background-color: #263238;
+    -fx-padding: 15;
+    -fx-background-radius: 8;
+}
+
+.network-panel .output-console .text-area {
+    -fx-control-inner-background: #263238;
+    -fx-text-fill: #b0bec5;
+    -fx-font-family: "Consolas", "Monaco", monospace;
+    -fx-font-size: 12px;
+}
+
+.network-panel .output-console .label {
+    -fx-text-fill: #90a4ae;
+    -fx-font-weight: bold;
+}
+
+/* ============================================================================
+ * TITLED PANES
+ * ============================================================================ */
+
+.network-panel .titled-pane {
+    -fx-background-color: white;
+}
+
+.network-panel .titled-pane > .title {
+    -fx-background-color: #f5f5f5;
+    -fx-padding: 10 15 10 15;
+    -fx-font-weight: 600;
+}
+
+.network-panel .titled-pane > .content {
+    -fx-background-color: white;
+    -fx-padding: 15;
+}
+
+/* ============================================================================
+ * FORM STYLING
+ * ============================================================================ */
+
+.network-panel .form-section {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 8;
+}
+
+.network-panel .form-label {
+    -fx-font-weight: 600;
+    -fx-text-fill: #424242;
+}
+
+.network-panel .form-field {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 12 8 12;
+}
+
+.network-panel .form-field:focused {
+    -fx-border-color: #2196f3;
+    -fx-background-color: white;
+}
+
+/* ============================================================================
+ * CHARTS
+ * ============================================================================ */
+
+.network-panel .chart-container {
+    -fx-background-color: white;
+    -fx-padding: 15;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+.network-panel .chart {
+    -fx-legend-side: bottom;
+}
+
+.network-panel .chart-legend {
+    -fx-background-color: transparent;
+}
+
+/* Pie chart colors for status */
+.network-panel .default-color0.chart-pie { -fx-pie-color: #28a745; } /* Online */
+.network-panel .default-color1.chart-pie { -fx-pie-color: #dc3545; } /* Offline */
+.network-panel .default-color2.chart-pie { -fx-pie-color: #ffc107; } /* Warning */
+.network-panel .default-color3.chart-pie { -fx-pie-color: #17a2b8; } /* Maintenance */
+.network-panel .default-color4.chart-pie { -fx-pie-color: #6c757d; } /* Unknown */
+
+/* ============================================================================
+ * TAB PANE
+ * ============================================================================ */
+
+.network-panel .tab-pane {
+    -fx-background-color: transparent;
+}
+
+.network-panel .tab-pane .tab-header-area {
+    -fx-background-color: white;
+    -fx-padding: 0;
+}
+
+.network-panel .tab-pane .tab {
+    -fx-background-color: #f5f5f5;
+    -fx-padding: 10 20 10 20;
+    -fx-background-radius: 4 4 0 0;
+}
+
+.network-panel .tab-pane .tab:selected {
+    -fx-background-color: white;
+    -fx-border-color: #2196f3 transparent transparent transparent;
+    -fx-border-width: 3 0 0 0;
+}
+
+.network-panel .tab-pane .tab .tab-label {
+    -fx-font-weight: 600;
+    -fx-text-fill: #666;
+}
+
+.network-panel .tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #2196f3;
+}
+
+/* ============================================================================
+ * FOOTER
+ * ============================================================================ */
+
+.network-panel .panel-footer {
+    -fx-background-color: #f5f5f5;
+    -fx-padding: 10 20 10 20;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1 0 0 0;
+}
+
+.network-panel .panel-footer .label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #666;
+}
+
+/* ============================================================================
+ * ATTENTION TABLE (Devices requiring attention)
+ * ============================================================================ */
+
+.network-panel .attention-table {
+    -fx-background-color: #fff8e1;
+    -fx-border-color: #ffcc80;
+    -fx-border-radius: 4;
+}
+
+.network-panel .attention-table .table-row-cell {
+    -fx-background-color: #fff8e1;
+}
+
+.network-panel .attention-table .table-row-cell:hover {
+    -fx-background-color: #ffecb3;
+}
+
+/* ============================================================================
+ * FILTER TOOLBAR
+ * ============================================================================ */
+
+.network-panel .filter-toolbar {
+    -fx-background-color: white;
+    -fx-padding: 10 15 10 15;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.network-panel .filter-toolbar .combo-box {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.network-panel .filter-toolbar .text-field {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 6 10 6 10;
+}
+
+/* ============================================================================
+ * SPINNER (for numeric inputs)
+ * ============================================================================ */
+
+.network-panel .spinner {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.network-panel .spinner .increment-arrow-button,
+.network-panel .spinner .decrement-arrow-button {
+    -fx-background-color: #e0e0e0;
+}
+
+.network-panel .spinner .increment-arrow-button:hover,
+.network-panel .spinner .decrement-arrow-button:hover {
+    -fx-background-color: #bdbdbd;
+}
+
+/* ============================================================================
+ * SCROLLBARS
+ * ============================================================================ */
+
+.network-panel .scroll-bar:vertical,
+.network-panel .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.network-panel .scroll-bar:vertical .thumb,
+.network-panel .scroll-bar:horizontal .thumb {
+    -fx-background-color: #bdbdbd;
+    -fx-background-radius: 4;
+}
+
+.network-panel .scroll-bar:vertical .thumb:hover,
+.network-panel .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #9e9e9e;
+}
+
+/* ============================================================================
+ * DARK THEME OVERRIDES
+ * ============================================================================ */
+
+.dark-theme .network-panel {
+    -fx-background-color: #1a1a2e;
+}
+
+.dark-theme .network-panel .panel-header {
+    -fx-background-color: #16213e;
+    -fx-border-color: #2a2a4a;
+}
+
+.dark-theme .network-panel .stat-card {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 4, 0, 0, 2);
+}
+
+.dark-theme .network-panel .table-view {
+    -fx-background-color: #16213e;
+    -fx-border-color: #2a2a4a;
+}
+
+.dark-theme .network-panel .table-view .column-header {
+    -fx-background-color: #1a1a2e;
+}
+
+.dark-theme .network-panel .table-view .column-header .label {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .network-panel .table-row-cell {
+    -fx-background-color: #16213e;
+    -fx-border-color: transparent transparent #2a2a4a transparent;
+}
+
+.dark-theme .network-panel .table-row-cell:hover {
+    -fx-background-color: #1f2b47;
+}
+
+.dark-theme .network-panel .table-row-cell:selected {
+    -fx-background-color: #0f3460;
+}
+
+.dark-theme .network-panel .tool-section {
+    -fx-background-color: #16213e;
+}
+
+.dark-theme .network-panel .form-section {
+    -fx-background-color: #16213e;
+}
+
+.dark-theme .network-panel .chart-container {
+    -fx-background-color: #16213e;
+}
+
+.dark-theme .network-panel .panel-footer {
+    -fx-background-color: #1a1a2e;
+    -fx-border-color: #2a2a4a;
+}
+
+.dark-theme .network-panel .panel-footer .label {
+    -fx-text-fill: #9e9e9e;
+}

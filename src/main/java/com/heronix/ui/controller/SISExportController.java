@@ -4,6 +4,7 @@ import com.heronix.dto.SISExportResult;
 import com.heronix.repository.CourseSectionRepository;
 import com.heronix.repository.StudentRepository;
 import com.heronix.repository.TeacherRepository;
+import com.heronix.security.SecurityContext;
 import com.heronix.service.NotificationService;
 import com.heronix.service.SISExportService;
 import javafx.application.Platform;
@@ -204,7 +205,7 @@ public class SISExportController {
 
                 // Notify via notification service
                 if (notificationService != null) {
-                    notificationService.notifyExportComplete(1L, format.getDisplayName(),
+                    notificationService.notifyExportComplete(SecurityContext.getCurrentStaffId(), format.getDisplayName(),
                             result.getFileName());
                 }
 

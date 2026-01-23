@@ -40,8 +40,9 @@ import java.util.*;
  * - Academic alerts and warnings
  *
  * @author Heronix Development Team
- * @version 1.0
+ * @version 2.0
  * @since December 30, 2025
+ * @updated January 20, 2026 - Full implementation
  */
 @RestController
 @RequestMapping("/api/student-grades")
@@ -64,8 +65,6 @@ public class StudentGradeApiController {
      * - Overall GPA
      * - Grade distribution
      * - Academic standing
-     *
-     * TODO: Implement getStudentAllGrades in GradebookService
      */
     @GetMapping("/students/{studentId}/all-grades")
     public ResponseEntity<Map<String, Object>> getAllGrades(@PathVariable Long studentId) {
@@ -79,6 +78,11 @@ public class StudentGradeApiController {
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -105,7 +109,6 @@ public class StudentGradeApiController {
             @PathVariable Long courseId) {
 
         try {
-            // Use existing calculateCourseGrade method
             var courseGrade = gradebookService.calculateCourseGrade(studentId, courseId);
 
             Map<String, Object> response = new HashMap<>();
@@ -143,8 +146,6 @@ public class StudentGradeApiController {
      * - Have no grade recorded
      * - Are past due date
      * - Are impacting the student's grade
-     *
-     * TODO: Implement getStudentMissingAssignments in GradebookService
      */
     @GetMapping("/students/{studentId}/missing-assignments")
     public ResponseEntity<Map<String, Object>> getMissingAssignments(@PathVariable Long studentId) {
@@ -159,6 +160,11 @@ public class StudentGradeApiController {
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -191,6 +197,11 @@ public class StudentGradeApiController {
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -226,6 +237,11 @@ public class StudentGradeApiController {
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -257,6 +273,11 @@ public class StudentGradeApiController {
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -285,18 +306,21 @@ public class StudentGradeApiController {
             @PathVariable Long courseId) {
 
         try {
-            // TODO: Implement getStudentCourseGradeHistory in GradebookService
-            List<Map<String, Object>> history = new ArrayList<>();
+            var history = gradebookService.getStudentCourseGradeHistory(studentId, courseId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("studentId", studentId);
             response.put("courseId", courseId);
-            response.put("history", history);
-            response.put("message", "This endpoint is under development");
+            response.put("gradeHistory", history);
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -327,6 +351,11 @@ public class StudentGradeApiController {
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -354,9 +383,7 @@ public class StudentGradeApiController {
     @GetMapping("/students/{studentId}/progress-report")
     public ResponseEntity<Map<String, Object>> getProgressReport(@PathVariable Long studentId) {
         try {
-            // TODO: Implement generateProgressReport in GradebookService
-            Map<String, Object> progressReport = new HashMap<>();
-            progressReport.put("message", "This endpoint is under development");
+            var progressReport = gradebookService.generateProgressReport(studentId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
@@ -365,6 +392,11 @@ public class StudentGradeApiController {
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -391,12 +423,9 @@ public class StudentGradeApiController {
             @RequestParam(required = false) Long termId) {
 
         try {
-            // TODO: Implement generateReportCard and generateCurrentReportCard in GradebookService
-            Map<String, Object> reportCard = new HashMap<>();
-            reportCard.put("message", "This endpoint is under development");
-            if (termId != null) {
-                reportCard.put("termId", termId);
-            }
+            var reportCard = termId != null
+                    ? gradebookService.generateReportCard(studentId, termId)
+                    : gradebookService.generateCurrentReportCard(studentId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
@@ -405,6 +434,11 @@ public class StudentGradeApiController {
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -439,14 +473,19 @@ public class StudentGradeApiController {
             @RequestBody Map<String, Object> requestBody) {
 
         try {
-            // TODO: Implement calculateWhatIfGrade in GradebookService
             @SuppressWarnings("unchecked")
-            List<Map<String, Object>> hypotheticalAssignments =
+            List<Map<String, Object>> hypotheticalAssignmentsRaw =
                 (List<Map<String, Object>>) requestBody.get("hypotheticalAssignments");
 
-            Map<String, Object> whatIfResult = new HashMap<>();
-            whatIfResult.put("message", "This endpoint is under development");
-            whatIfResult.put("hypotheticalAssignments", hypotheticalAssignments);
+            // Convert to HypotheticalAssignment objects
+            List<GradebookService.HypotheticalAssignment> hypotheticalAssignments = hypotheticalAssignmentsRaw.stream()
+                    .map(map -> GradebookService.HypotheticalAssignment.builder()
+                            .assignmentId(((Number) map.get("assignmentId")).longValue())
+                            .hypotheticalScore(((Number) map.get("hypotheticalScore")).doubleValue())
+                            .build())
+                    .toList();
+
+            var whatIfResult = gradebookService.calculateWhatIfGrade(studentId, courseId, hypotheticalAssignments);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
@@ -456,6 +495,11 @@ public class StudentGradeApiController {
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -486,10 +530,7 @@ public class StudentGradeApiController {
             @PathVariable Long assignmentId) {
 
         try {
-            // TODO: Implement getStudentAssignmentGrade in GradebookService
-            Map<String, Object> assignmentGrade = new HashMap<>();
-            assignmentGrade.put("message", "This endpoint is under development");
-            assignmentGrade.put("note", "Use the existing gradebook API for grade retrieval");
+            var assignmentGrade = gradebookService.getStudentAssignmentGrade(studentId, assignmentId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);

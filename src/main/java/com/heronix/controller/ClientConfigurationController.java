@@ -26,7 +26,7 @@ import java.util.Map;
  * @version 1.0.0
  * @since December 13, 2025 - Enterprise Deployment System
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/config")
 @Slf4j
 @CrossOrigin(origins = "*")

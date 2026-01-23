@@ -120,4 +120,71 @@ public interface SubstituteRepository extends JpaRepository<Substitute, Long> {
      */
     @Query("SELECT DISTINCT s FROM Substitute s LEFT JOIN FETCH s.certifications WHERE s.id = :id")
     Optional<Substitute> findByIdWithCertifications(@Param("id") Long id);
+
+    // ========================================================================
+    // THIRD-PARTY IMPORT QUERIES
+    // ========================================================================
+
+    /**
+     * Find substitutes by import reference (batch identifier)
+     */
+    List<Substitute> findByImportReference(String importReference);
+
+    /**
+     * Find substitutes by agency name
+     */
+    List<Substitute> findByAgencyName(String agencyName);
+
+    /**
+     * Find active third-party substitutes by agency name
+     */
+    @Query("SELECT s FROM Substitute s WHERE s.agencyName = :agencyName AND s.active = true")
+    List<Substitute> findActiveByAgencyName(@Param("agencyName") String agencyName);
+
+    /**
+     * Find all third-party substitutes (source = THIRD_PARTY)
+     */
+    @Query("SELECT s FROM Substitute s WHERE s.source = com.heronix.model.enums.SubstituteSource.THIRD_PARTY")
+    List<Substitute> findAllThirdParty();
+
+    /**
+     * Find active third-party substitutes
+     */
+    @Query("SELECT s FROM Substitute s WHERE s.source = com.heronix.model.enums.SubstituteSource.THIRD_PARTY AND s.active = true")
+    List<Substitute> findActiveThirdParty();
+
+    /**
+     * Find all internal substitutes (source = INTERNAL)
+     */
+    @Query("SELECT s FROM Substitute s WHERE s.source = com.heronix.model.enums.SubstituteSource.INTERNAL")
+    List<Substitute> findAllInternal();
+
+    /**
+     * Find active internal substitutes
+     */
+    @Query("SELECT s FROM Substitute s WHERE s.source = com.heronix.model.enums.SubstituteSource.INTERNAL AND s.active = true")
+    List<Substitute> findActiveInternal();
+
+    /**
+     * Count substitutes by agency
+     */
+    long countByAgencyName(String agencyName);
+
+    /**
+     * Count active third-party substitutes
+     */
+    @Query("SELECT COUNT(s) FROM Substitute s WHERE s.source = com.heronix.model.enums.SubstituteSource.THIRD_PARTY AND s.active = true")
+    long countActiveThirdParty();
+
+    /**
+     * Count active internal substitutes
+     */
+    @Query("SELECT COUNT(s) FROM Substitute s WHERE s.source = com.heronix.model.enums.SubstituteSource.INTERNAL AND s.active = true")
+    long countActiveInternal();
+
+    /**
+     * Get distinct agency names
+     */
+    @Query("SELECT DISTINCT s.agencyName FROM Substitute s WHERE s.agencyName IS NOT NULL ORDER BY s.agencyName")
+    List<String> findDistinctAgencyNames();
 }

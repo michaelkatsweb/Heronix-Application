@@ -1,11 +1,15 @@
 package com.heronix.model.enums;
 
 /**
- * Enum representing different roles a teacher can have
+ * Enum representing different roles for instructional staff (Teachers)
+ *
+ * NOTE: Non-instructional roles (Counselor, Administrator, Principal)
+ * are now handled via the Staff entity with StaffOccupation enum.
  *
  * @author Heronix Scheduling System Team
- * @version 1.0.1
+ * @version 2.0.0
  * @since 2025-11-16
+ * @updated Phase 59 - Staff/Teacher Separation
  */
 public enum TeacherRole {
 
@@ -21,24 +25,42 @@ public enum TeacherRole {
     CO_TEACHER("Co-Teacher", "IEP support teacher following assigned students"),
 
     /**
-     * Specialist - Counselors, reading specialists, etc.
+     * Specialist - Reading specialists, math specialists, etc.
+     * Teachers who provide specialized instruction
      */
-    SPECIALIST("Specialist", "Specialized support role"),
+    SPECIALIST("Specialist", "Specialized instruction provider"),
 
     /**
-     * Administrator - School administrators, assistant principals
+     * Substitute teacher - Temporary replacement for absent teachers
      */
-    ADMINISTRATOR("Administrator", "School administration"),
+    SUBSTITUTE("Substitute", "Temporary replacement teacher"),
 
     /**
-     * Principal - School principal
+     * Instructional Coach - Supports other teachers with instruction
+     * May also teach demonstration lessons
      */
-    PRINCIPAL("Principal", "School principal"),
+    INSTRUCTIONAL_COACH("Instructional Coach", "Teacher support and coaching"),
+
+    // Legacy roles - kept for backwards compatibility but deprecated
+    // Use Staff entity with appropriate StaffOccupation instead
 
     /**
-     * Counselor - School counselor
+     * @deprecated Use Staff entity with StaffOccupation.ADMINISTRATIVE_ASSISTANT or similar
      */
-    COUNSELOR("Counselor", "School counseling staff");
+    @Deprecated
+    ADMINISTRATOR("Administrator", "School administration - use Staff entity"),
+
+    /**
+     * @deprecated Use Staff entity with StaffOccupation.COUNSELOR
+     */
+    @Deprecated
+    PRINCIPAL("Principal", "School principal - use Staff entity"),
+
+    /**
+     * @deprecated Use Staff entity with StaffOccupation.COUNSELOR or GUIDANCE_COUNSELOR
+     */
+    @Deprecated
+    COUNSELOR("Counselor", "School counseling staff - use Staff entity");
 
     private final String displayName;
     private final String description;

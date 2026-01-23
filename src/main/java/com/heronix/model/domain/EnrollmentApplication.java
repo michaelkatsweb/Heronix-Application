@@ -88,7 +88,7 @@ public class EnrollmentApplication {
     private LocalDate studentDateOfBirth;
 
     @Column(length = 20)
-    private String studentGender; // "Male", "Female", "Non-binary", "Prefer not to say"
+    private String studentGender; // "Male", "Female"
 
     @Column(length = 50)
     private String studentRace;

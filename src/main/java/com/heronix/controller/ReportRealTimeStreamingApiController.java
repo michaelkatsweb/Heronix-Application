@@ -23,7 +23,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 130 - Report Real-Time Streaming & Processing
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/real-time-streaming")
 @RequiredArgsConstructor
 @Slf4j

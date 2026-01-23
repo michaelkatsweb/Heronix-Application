@@ -81,4 +81,160 @@ public interface BehaviorIncidentRepository extends JpaRepository<BehaviorIncide
            "AND b.behaviorType = 'NEGATIVE' AND b.parentContacted = false " +
            "ORDER BY b.incidentDate DESC")
     List<BehaviorIncident> findUncontactedParentIncidents(@Param("student") Student student);
+
+    // ========================================================================
+    // ANALYTICS QUERIES - Phase 59
+    // ========================================================================
+
+    /**
+     * Get daily incident counts for trend analysis
+     */
+    @Query("SELECT b.incidentDate, COUNT(b) FROM BehaviorIncident b " +
+           "WHERE b.incidentDate BETWEEN :startDate AND :endDate " +
+           "AND (:campusId IS NULL OR b.campus.id = :campusId) " +
+           "GROUP BY b.incidentDate " +
+           "ORDER BY b.incidentDate")
+    List<Object[]> getDailyIncidentCounts(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("campusId") Long campusId);
+
+    /**
+     * Get incident counts by category
+     */
+    @Query("SELECT b.behaviorCategory, COUNT(b) FROM BehaviorIncident b " +
+           "WHERE b.incidentDate BETWEEN :startDate AND :endDate " +
+           "AND (:campusId IS NULL OR b.campus.id = :campusId) " +
+           "GROUP BY b.behaviorCategory " +
+           "ORDER BY COUNT(b) DESC")
+    List<Object[]> getIncidentCountsByCategory(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("campusId") Long campusId);
+
+    /**
+     * Get incident counts by location
+     */
+    @Query("SELECT b.incidentLocation, COUNT(b) FROM BehaviorIncident b " +
+           "WHERE b.incidentDate BETWEEN :startDate AND :endDate " +
+           "AND (:campusId IS NULL OR b.campus.id = :campusId) " +
+           "GROUP BY b.incidentLocation " +
+           "ORDER BY COUNT(b) DESC")
+    List<Object[]> getIncidentCountsByLocation(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("campusId") Long campusId);
+
+    /**
+     * Get incident counts by type (positive/negative)
+     */
+    @Query("SELECT b.behaviorType, COUNT(b) FROM BehaviorIncident b " +
+           "WHERE b.incidentDate BETWEEN :startDate AND :endDate " +
+           "AND (:campusId IS NULL OR b.campus.id = :campusId) " +
+           "GROUP BY b.behaviorType")
+    List<Object[]> getIncidentCountsByType(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("campusId") Long campusId);
+
+    /**
+     * Get incident counts by severity
+     */
+    @Query("SELECT b.severityLevel, COUNT(b) FROM BehaviorIncident b " +
+           "WHERE b.incidentDate BETWEEN :startDate AND :endDate " +
+           "AND (:campusId IS NULL OR b.campus.id = :campusId) " +
+           "GROUP BY b.severityLevel")
+    List<Object[]> getIncidentCountsBySeverity(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("campusId") Long campusId);
+
+    /**
+     * Find repeat offenders (students with multiple negative incidents)
+     */
+    @Query("SELECT b.student.id, b.student.studentId, b.student.firstName, b.student.lastName, " +
+           "b.student.gradeLevel, COUNT(b) " +
+           "FROM BehaviorIncident b " +
+           "WHERE b.behaviorType = 'NEGATIVE' " +
+           "AND b.incidentDate >= :sinceDate " +
+           "AND (:campusId IS NULL OR b.campus.id = :campusId) " +
+           "GROUP BY b.student.id, b.student.studentId, b.student.firstName, b.student.lastName, b.student.gradeLevel " +
+           "HAVING COUNT(b) >= :threshold " +
+           "ORDER BY COUNT(b) DESC")
+    List<Object[]> findRepeatOffenders(
+            @Param("sinceDate") LocalDate sinceDate,
+            @Param("campusId") Long campusId,
+            @Param("threshold") Long threshold);
+
+    /**
+     * Get total incidents summary
+     */
+    @Query("SELECT " +
+           "COUNT(b), " +
+           "SUM(CASE WHEN b.behaviorType = 'POSITIVE' THEN 1 ELSE 0 END), " +
+           "SUM(CASE WHEN b.behaviorType = 'NEGATIVE' THEN 1 ELSE 0 END), " +
+           "SUM(CASE WHEN b.severityLevel = 'MINOR' THEN 1 ELSE 0 END), " +
+           "SUM(CASE WHEN b.severityLevel = 'MODERATE' THEN 1 ELSE 0 END), " +
+           "SUM(CASE WHEN b.severityLevel = 'MAJOR' THEN 1 ELSE 0 END), " +
+           "SUM(CASE WHEN b.severityLevel = 'SEVERE' THEN 1 ELSE 0 END) " +
+           "FROM BehaviorIncident b " +
+           "WHERE b.incidentDate BETWEEN :startDate AND :endDate " +
+           "AND (:campusId IS NULL OR b.campus.id = :campusId)")
+    List<Object[]> getIncidentSummary(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("campusId") Long campusId);
+
+    /**
+     * Get incidents by grade level
+     */
+    @Query("SELECT b.student.gradeLevel, b.behaviorType, COUNT(b) " +
+           "FROM BehaviorIncident b " +
+           "WHERE b.incidentDate BETWEEN :startDate AND :endDate " +
+           "AND (:campusId IS NULL OR b.campus.id = :campusId) " +
+           "GROUP BY b.student.gradeLevel, b.behaviorType " +
+           "ORDER BY b.student.gradeLevel")
+    List<Object[]> getIncidentsByGradeLevel(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("campusId") Long campusId);
+
+    /**
+     * Get incidents by campus (district-wide view)
+     */
+    @Query("SELECT b.campus.id, b.campus.name, b.behaviorType, COUNT(b) " +
+           "FROM BehaviorIncident b " +
+           "WHERE b.incidentDate BETWEEN :startDate AND :endDate " +
+           "AND b.campus IS NOT NULL " +
+           "GROUP BY b.campus.id, b.campus.name, b.behaviorType")
+    List<Object[]> getIncidentsByCampus(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
+    /**
+     * Count total incidents for date range
+     */
+    @Query("SELECT COUNT(b) FROM BehaviorIncident b " +
+           "WHERE b.incidentDate BETWEEN :startDate AND :endDate " +
+           "AND (:campusId IS NULL OR b.campus.id = :campusId)")
+    Long countIncidents(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("campusId") Long campusId);
+
+    /**
+     * Find students with highest positive behavior counts
+     */
+    @Query("SELECT b.student.id, b.student.studentId, b.student.firstName, b.student.lastName, " +
+           "b.student.gradeLevel, COUNT(b) " +
+           "FROM BehaviorIncident b " +
+           "WHERE b.behaviorType = 'POSITIVE' " +
+           "AND b.incidentDate BETWEEN :startDate AND :endDate " +
+           "AND (:campusId IS NULL OR b.campus.id = :campusId) " +
+           "GROUP BY b.student.id, b.student.studentId, b.student.firstName, b.student.lastName, b.student.gradeLevel " +
+           "ORDER BY COUNT(b) DESC")
+    List<Object[]> findTopPositiveBehaviorStudents(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("campusId") Long campusId);
 }

@@ -9,11 +9,11 @@
       fx:controller="com.heronix.ui.controller.SectionEditDialogController"
       prefWidth="500"
       prefHeight="550"
-      style="-fx-background-color: white; -fx-padding: 20;">
+      styleClass="wizard-card">
 
     <!-- Header -->
     <Label fx:id="dialogTitle" text="Add Section"
-           style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-padding: 0 0 20 0;"/>
+           styleClass="dialog-title-18-slate"/>
 
     <!-- Form -->
     <GridPane hgap="15" vgap="15" VBox.vgrow="ALWAYS">
@@ -24,13 +24,13 @@
 
         <!-- Section Number -->
         <Label text="* Section Number:" GridPane.columnIndex="0" GridPane.rowIndex="0"
-               style="-fx-font-weight: bold;"/>
+               styleClass="form-label"/>
         <TextField fx:id="sectionNumberField" GridPane.columnIndex="1" GridPane.rowIndex="0"
                    promptText="e.g., 1, 2, 3..."/>
 
         <!-- Teacher -->
         <Label text="Teacher:" GridPane.columnIndex="0" GridPane.rowIndex="1"
-               style="-fx-font-weight: bold;"/>
+               styleClass="form-label"/>
         <ComboBox fx:id="teacherCombo" GridPane.columnIndex="1" GridPane.rowIndex="1"
                   promptText="Select teacher..." maxWidth="Infinity">
             <tooltip>
@@ -40,7 +40,7 @@
 
         <!-- Room -->
         <Label text="Room:" GridPane.columnIndex="0" GridPane.rowIndex="2"
-               style="-fx-font-weight: bold;"/>
+               styleClass="form-label"/>
         <ComboBox fx:id="roomCombo" GridPane.columnIndex="1" GridPane.rowIndex="2"
                   promptText="Select room..." maxWidth="Infinity">
             <tooltip>
@@ -50,7 +50,7 @@
 
         <!-- Period -->
         <Label text="Period:" GridPane.columnIndex="0" GridPane.rowIndex="3"
-               style="-fx-font-weight: bold;"/>
+               styleClass="form-label"/>
         <ComboBox fx:id="periodCombo" GridPane.columnIndex="1" GridPane.rowIndex="3"
                   promptText="Select period..." maxWidth="Infinity">
             <tooltip>
@@ -60,7 +60,7 @@
 
         <!-- Max Enrollment -->
         <Label text="* Max Enrollment:" GridPane.columnIndex="0" GridPane.rowIndex="4"
-               style="-fx-font-weight: bold;"/>
+               styleClass="form-label"/>
         <Spinner fx:id="maxEnrollmentSpinner" GridPane.columnIndex="1" GridPane.rowIndex="4"
                  editable="true" initialValue="30" min="1" max="100" maxWidth="Infinity">
             <tooltip>
@@ -88,7 +88,7 @@
 
         <!-- Section Status -->
         <Label text="* Status:" GridPane.columnIndex="0" GridPane.rowIndex="7"
-               style="-fx-font-weight: bold;"/>
+               styleClass="form-label"/>
         <ComboBox fx:id="statusCombo" GridPane.columnIndex="1" GridPane.rowIndex="7"
                   maxWidth="Infinity">
             <tooltip>
@@ -105,11 +105,11 @@
 
         <!-- Validation Error -->
         <Label fx:id="errorLabel" GridPane.columnIndex="0" GridPane.rowIndex="9" GridPane.columnSpan="2"
-               style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;" wrapText="true" managed="false" visible="false"/>
+               styleClass="text-muted" wrapText="true" managed="false" visible="false"/>
 
         <!-- Info Note -->
         <VBox GridPane.columnIndex="0" GridPane.rowIndex="10" GridPane.columnSpan="2"
-              style="-fx-background-color: #e8f8f5; -fx-padding: 10; -fx-background-radius: 5;">
+              styleClass="card">
             <Label text="Note: Conflicts will be checked automatically:" style="-fx-font-size: 11px; -fx-font-weight: bold;"/>
             <Label text="• Teacher cannot be assigned to multiple sections at the same period" style="-fx-font-size: 10px;"/>
             <Label text="• Room cannot host multiple sections at the same period" style="-fx-font-size: 10px;"/>
@@ -120,9 +120,9 @@
     <ButtonBar style="-fx-padding: 20 0 0 0;">
         <buttons>
             <Button text="Cancel" onAction="#handleCancel"
-                    style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 8 25; -fx-background-radius: 5;"/>
+                    styleClass="button-primary"/>
             <Button fx:id="saveButton" text="Save Section" onAction="#handleSave"
-                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 25; -fx-background-radius: 5;"/>
+                    styleClass="button-primary"/>
         </buttons>
     </ButtonBar>
 

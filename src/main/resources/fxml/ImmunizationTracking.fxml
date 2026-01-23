@@ -10,6 +10,7 @@
             fx:controller="com.heronix.ui.controller.ImmunizationTrackingController"
             styleClass="content-pane">
 
+
     <top>
         <VBox styleClass="header-section">
             <padding>
@@ -59,7 +60,7 @@
                         </GridPane>
 
                         <Button text="View Student's Immunization Record" onAction="#handleViewRecord"
-                                style="-fx-font-weight: bold;"/>
+                                styleClass="form-label"/>
                     </VBox>
 
                     <!-- Vaccine Information -->
@@ -166,7 +167,7 @@
 
                     <!-- Verification -->
                     <VBox spacing="15" styleClass="form-section"
-                          style="-fx-background-color: #e8f5e9; -fx-padding: 15;">
+                          styleClass="card, metric-success">
                         <Label text="Verification & Documentation" styleClass="section-header"/>
 
                         <GridPane hgap="15" vgap="15">
@@ -207,10 +208,10 @@
                                   GridPane.columnSpan="2">
                                 <HBox spacing="20">
                                     <CheckBox fx:id="verifiedCheckBox" text="Record Verified"
-                                              style="-fx-font-weight: bold;"/>
+                                              styleClass="form-label"/>
                                     <CheckBox fx:id="documentationOnFileCheckBox"
                                               text="Documentation on File"
-                                              style="-fx-font-weight: bold;"/>
+                                              styleClass="form-label"/>
                                     <CheckBox fx:id="meetsStateRequirementCheckBox"
                                               text="Meets State Requirement"/>
                                 </HBox>
@@ -231,7 +232,7 @@
 
                     <!-- Exemptions -->
                     <VBox spacing="15" styleClass="form-section"
-                          style="-fx-background-color: #fff9c4; -fx-padding: 15;">
+                          styleClass="card">
                         <Label text="Exemptions (if applicable)" styleClass="section-header"/>
 
                         <GridPane hgap="20" vgap="10">
@@ -259,7 +260,7 @@
                                     <Label text=" " styleClass="field-label"/>
                                     <CheckBox fx:id="exemptionDocumentationCheckBox"
                                               text="Exemption Documentation on File"
-                                              style="-fx-font-weight: bold;"/>
+                                              styleClass="form-label"/>
                                 </VBox>
                             </HBox>
                         </VBox>
@@ -292,13 +293,13 @@
                         <Label text="Adverse Reactions" styleClass="section-header"/>
 
                         <CheckBox fx:id="adverseReactionCheckBox" text="⚠ Adverse Reaction Reported"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"/>
+                                  styleClass="form-label"/>
 
                         <VBox spacing="15" fx:id="adverseReactionBox" visible="false" managed="false"
-                              style="-fx-background-color: #ffebee; -fx-padding: 15;">
+                              styleClass="card, metric-danger">
                             <VBox spacing="5">
                                 <Label text="Reaction Severity" styleClass="field-label"
-                                       style="-fx-text-fill: #d32f2f;"/>
+                                       styleClass="text-muted"/>
                                 <ComboBox fx:id="reactionSeverityComboBox" promptText="Select Severity"
                                           maxWidth="Infinity">
                                     <items>
@@ -315,11 +316,11 @@
 
                             <VBox spacing="5">
                                 <Label text="Reaction Description *" styleClass="field-label"
-                                       style="-fx-text-fill: #d32f2f;"/>
+                                       styleClass="text-muted"/>
                                 <TextArea fx:id="adverseReactionDescriptionTextArea"
                                           promptText="Describe reaction symptoms, onset, duration..."
                                           wrapText="true" prefRowCount="3"
-                                          style="-fx-border-color: #d32f2f; -fx-border-width: 2;"/>
+                                          styleClass="border-danger"/>
                             </VBox>
                         </VBox>
                     </VBox>
@@ -347,15 +348,15 @@
 
                     <!-- Compliance Status -->
                     <VBox spacing="10" styleClass="sidebar-section"
-                          style="-fx-background-color: #e3f2fd; -fx-padding: 10;">
-                        <Label text="Compliance Status" style="-fx-font-weight: bold;"/>
+                          styleClass="card, metric-info">
+                        <Label text="Compliance Status" styleClass="form-label"/>
                         <Label fx:id="complianceStatusLabel" text="--"
                                style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
                     </VBox>
 
                     <!-- Required Vaccines Status -->
                     <VBox spacing="10" styleClass="sidebar-section">
-                        <Label text="Required Vaccines" style="-fx-font-weight: bold;"/>
+                        <Label text="Required Vaccines" styleClass="form-label"/>
                         <ListView fx:id="requiredVaccinesListView" prefHeight="200">
                             <placeholder>
                                 <Label text="Select a student"/>
@@ -365,9 +366,9 @@
 
                     <!-- Incomplete Series -->
                     <VBox spacing="10" styleClass="sidebar-section"
-                          style="-fx-background-color: #fff3e0; -fx-padding: 10;">
+                          styleClass="card, metric-warning">
                         <Label text="⚠ Incomplete Series"
-                               style="-fx-font-weight: bold; -fx-text-fill: #f57c00;"/>
+                               styleClass="form-label"/>
                         <ListView fx:id="incompleteSeriesListView" prefHeight="120">
                             <placeholder>
                                 <Label text="No incomplete series"/>
@@ -377,9 +378,9 @@
 
                     <!-- Overdue Doses -->
                     <VBox spacing="10" styleClass="sidebar-section"
-                          style="-fx-background-color: #ffebee; -fx-padding: 10;">
+                          styleClass="card, metric-danger">
                         <Label text="⚠ Overdue Doses"
-                               style="-fx-font-weight: bold; -fx-text-fill: #d32f2f;"/>
+                               styleClass="form-label"/>
                         <ListView fx:id="overdueListView" prefHeight="100">
                             <placeholder>
                                 <Label text="No overdue doses"/>
@@ -389,7 +390,7 @@
 
                     <!-- Exemptions -->
                     <VBox spacing="10" styleClass="sidebar-section">
-                        <Label text="Exemptions" style="-fx-font-weight: bold;"/>
+                        <Label text="Exemptions" styleClass="form-label"/>
                         <Label fx:id="exemptionsLabel" text="None" wrapText="true"/>
                     </VBox>
 

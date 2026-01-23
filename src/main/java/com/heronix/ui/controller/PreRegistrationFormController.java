@@ -1,17 +1,46 @@
 package com.heronix.ui.controller;
 
+import com.heronix.model.DistrictSettings;
 import com.heronix.model.domain.Student;
 import com.heronix.model.domain.PreRegistration;
 import com.heronix.model.domain.PreRegistration.RegistrationStatus;
 import com.heronix.repository.StudentRepository;
+import com.heronix.security.SecurityContext;
+import com.heronix.service.DistrictSettingsService;
 import com.heronix.service.PreRegistrationService;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -42,6 +71,9 @@ public class PreRegistrationFormController {
 
     @Autowired
     private PreRegistrationService preRegistrationService;
+
+    @Autowired
+    private DistrictSettingsService districtSettingsService;
 
     // ========================================================================
     // HEADER SECTION
@@ -327,7 +359,7 @@ public class PreRegistrationFormController {
             currentPreRegistration = preRegistrationService.createPreRegistration(
                 currentStudent.getId(),
                 targetSchoolYear.getValue(),
-                1L  // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             registrationNumberField.setText(currentPreRegistration.getRegistrationNumber());
@@ -1034,7 +1066,7 @@ public class PreRegistrationFormController {
             // Save to database
             currentPreRegistration = preRegistrationService.updatePreRegistration(
                 currentPreRegistration,
-                1L  // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             isDirty = false;
@@ -1078,7 +1110,7 @@ public class PreRegistrationFormController {
             // Submit to database
             currentPreRegistration = preRegistrationService.submitForReview(
                 currentPreRegistration.getId(),
-                1L  // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             if (statusLabel != null) {
@@ -1138,8 +1170,197 @@ public class PreRegistrationFormController {
 
     @FXML
     private void handlePrint() {
-        showNotImplemented("Print Confirmation");
-        // TODO: Generate PDF confirmation
+        if (currentPreRegistration == null || currentStudent == null) {
+            showError("No pre-registration data to print. Please save first.");
+            return;
+        }
+
+        // Show file save dialog
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Pre-Registration Confirmation");
+        fileChooser.setInitialFileName("PreRegistration_" + currentStudent.getStudentId() + "_" +
+                LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".pdf");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+
+        Stage stage = (Stage) submitButton.getScene().getWindow();
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            try {
+                generatePreRegistrationPDF(file);
+                showInfo("Pre-registration confirmation saved to:\n" + file.getAbsolutePath());
+            } catch (Exception e) {
+                log.error("Failed to generate PDF", e);
+                showError("Failed to generate PDF: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Generate PDF confirmation for pre-registration
+     */
+    private void generatePreRegistrationPDF(File outputFile) throws Exception {
+        Document document = new Document(PageSize.LETTER);
+        PdfWriter.getInstance(document, new FileOutputStream(outputFile));
+        document.open();
+
+        // Get district settings
+        DistrictSettings settings = districtSettingsService.getOrCreateDistrictSettings();
+
+        // Fonts
+        Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
+        Font headerFont = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD);
+        Font labelFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
+        Font valueFont = new Font(Font.FontFamily.HELVETICA, 10);
+        Font smallFont = new Font(Font.FontFamily.HELVETICA, 8);
+        BaseColor headerColor = new BaseColor(60, 100, 150);
+
+        // Title
+        Paragraph title = new Paragraph("Pre-Registration Confirmation", titleFont);
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+
+        // School info
+        Paragraph schoolInfo = new Paragraph(settings.getDistrictNameOrDefault(), headerFont);
+        schoolInfo.setAlignment(Element.ALIGN_CENTER);
+        document.add(schoolInfo);
+
+        // Registration number
+        Paragraph regNum = new Paragraph("Registration #: " +
+                (currentPreRegistration.getRegistrationNumber() != null ?
+                        currentPreRegistration.getRegistrationNumber() : "PENDING"), valueFont);
+        regNum.setAlignment(Element.ALIGN_CENTER);
+        regNum.setSpacingAfter(15);
+        document.add(regNum);
+
+        // Student Information Section
+        addSectionHeader(document, "Student Information", headerFont, headerColor);
+
+        PdfPTable studentTable = new PdfPTable(4);
+        studentTable.setWidthPercentage(100);
+        studentTable.setWidths(new float[]{20, 30, 20, 30});
+
+        addTableRow(studentTable, "Student Name:", currentStudent.getFullName(), labelFont, valueFont);
+        addTableRow(studentTable, "Student ID:", currentStudent.getStudentId(), labelFont, valueFont);
+        addTableRow(studentTable, "Current Grade:", currentStudent.getGradeLevel(), labelFont, valueFont);
+        addTableRow(studentTable, "Next Grade:", currentPreRegistration.getNextGrade(), labelFont, valueFont);
+        addTableRow(studentTable, "Date of Birth:", currentStudent.getDateOfBirth() != null ?
+                currentStudent.getDateOfBirth().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")) : "N/A", labelFont, valueFont);
+        addTableRow(studentTable, "School Year:", currentPreRegistration.getTargetSchoolYear(), labelFont, valueFont);
+
+        document.add(studentTable);
+        document.add(new Paragraph(" "));
+
+        // Parent/Guardian Section
+        addSectionHeader(document, "Parent/Guardian Information", headerFont, headerColor);
+
+        PdfPTable parentTable = new PdfPTable(4);
+        parentTable.setWidthPercentage(100);
+        parentTable.setWidths(new float[]{20, 30, 20, 30});
+
+        addTableRow(parentTable, "Parent Name:", currentPreRegistration.getParentName(), labelFont, valueFont);
+        addTableRow(parentTable, "Phone:", currentPreRegistration.getParentPhone(), labelFont, valueFont);
+        addTableRow(parentTable, "Email:", currentPreRegistration.getParentEmail(), labelFont, valueFont);
+        addTableRow(parentTable, "Address Verified:", currentPreRegistration.getAddressChanged() != null &&
+                currentPreRegistration.getAddressChanged() ? "Changed" : "Confirmed", labelFont, valueFont);
+
+        document.add(parentTable);
+        document.add(new Paragraph(" "));
+
+        // Course Interests Section
+        addSectionHeader(document, "Course Interests", headerFont, headerColor);
+
+        StringBuilder interests = new StringBuilder();
+        if (Boolean.TRUE.equals(currentPreRegistration.getInterestedInAPHonors())) interests.append("• AP/Honors Courses\n");
+        if (Boolean.TRUE.equals(currentPreRegistration.getInterestedInDualEnrollment())) interests.append("• Dual Enrollment\n");
+        if (Boolean.TRUE.equals(currentPreRegistration.getInterestedInCTE())) interests.append("• Career & Technical Education\n");
+        if (Boolean.TRUE.equals(currentPreRegistration.getInterestedInAthletics())) interests.append("• Athletics\n");
+        if (Boolean.TRUE.equals(currentPreRegistration.getInterestedInFineArts())) interests.append("• Fine Arts\n");
+        if (Boolean.TRUE.equals(currentPreRegistration.getInterestedInSTEM())) interests.append("• STEM Programs\n");
+
+        if (interests.length() == 0) interests.append("No specific interests selected");
+
+        Paragraph interestsPara = new Paragraph(interests.toString(), valueFont);
+        interestsPara.setIndentationLeft(20);
+        document.add(interestsPara);
+        document.add(new Paragraph(" "));
+
+        // Special Services Section
+        addSectionHeader(document, "Special Services Continuation", headerFont, headerColor);
+
+        StringBuilder services = new StringBuilder();
+        if (Boolean.TRUE.equals(currentPreRegistration.getContinueIEP())) services.append("• IEP Services\n");
+        if (Boolean.TRUE.equals(currentPreRegistration.getContinue504Plan())) services.append("• 504 Plan\n");
+        if (Boolean.TRUE.equals(currentPreRegistration.getContinueESL())) services.append("• ESL/ELL Services\n");
+        if (Boolean.TRUE.equals(currentPreRegistration.getContinueGiftedProgram())) services.append("• Gifted Program\n");
+        if (Boolean.TRUE.equals(currentPreRegistration.getNeedsSpecialTransportation())) services.append("• Special Transportation\n");
+
+        if (services.length() == 0) services.append("No special services requested");
+
+        Paragraph servicesPara = new Paragraph(services.toString(), valueFont);
+        servicesPara.setIndentationLeft(20);
+        document.add(servicesPara);
+        document.add(new Paragraph(" "));
+
+        // Status and Submission Info
+        addSectionHeader(document, "Registration Status", headerFont, headerColor);
+
+        PdfPTable statusTable = new PdfPTable(4);
+        statusTable.setWidthPercentage(100);
+        statusTable.setWidths(new float[]{20, 30, 20, 30});
+
+        addTableRow(statusTable, "Status:", currentPreRegistration.getStatus() != null ?
+                currentPreRegistration.getStatus().name() : "DRAFT", labelFont, valueFont);
+        addTableRow(statusTable, "Submitted:", currentPreRegistration.getSubmittedAt() != null ?
+                currentPreRegistration.getSubmittedAt().format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm")) : "Not yet submitted", labelFont, valueFont);
+
+        document.add(statusTable);
+
+        // Footer
+        document.add(new Paragraph(" "));
+        document.add(new Paragraph(" "));
+
+        Paragraph footer = new Paragraph(
+                "This document confirms your pre-registration submission. Please retain for your records.\n" +
+                "Generated on " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a")) +
+                " | Heronix Student Information System",
+                smallFont);
+        footer.setAlignment(Element.ALIGN_CENTER);
+        document.add(footer);
+
+        document.close();
+        log.info("Generated pre-registration PDF for student {}", currentStudent.getStudentId());
+    }
+
+    /**
+     * Add a section header to the PDF
+     */
+    private void addSectionHeader(Document document, String text, Font font, BaseColor bgColor) throws DocumentException {
+        PdfPTable headerTable = new PdfPTable(1);
+        headerTable.setWidthPercentage(100);
+        PdfPCell cell = new PdfPCell(new Phrase(text, new Font(font.getFamily(), font.getSize(), Font.BOLD, BaseColor.WHITE)));
+        cell.setBackgroundColor(bgColor);
+        cell.setPadding(8);
+        cell.setBorder(Rectangle.NO_BORDER);
+        headerTable.addCell(cell);
+        headerTable.setSpacingAfter(5);
+        document.add(headerTable);
+    }
+
+    /**
+     * Add a label-value row to a table
+     */
+    private void addTableRow(PdfPTable table, String label, String value, Font labelFont, Font valueFont) {
+        PdfPCell labelCell = new PdfPCell(new Phrase(label, labelFont));
+        labelCell.setBorder(Rectangle.NO_BORDER);
+        labelCell.setPadding(3);
+        table.addCell(labelCell);
+
+        PdfPCell valueCell = new PdfPCell(new Phrase(value != null ? value : "N/A", valueFont));
+        valueCell.setBorder(Rectangle.NO_BORDER);
+        valueCell.setPadding(3);
+        table.addCell(valueCell);
     }
 
     @FXML

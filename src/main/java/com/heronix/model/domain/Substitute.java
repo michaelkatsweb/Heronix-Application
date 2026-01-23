@@ -324,6 +324,62 @@ public class Substitute {
         this.assignments = assignments;
     }
 
+    // ==================== THIRD-PARTY WORKFLOW GETTERS/SETTERS ====================
+
+    public SubstituteSource getSource() {
+        return source;
+    }
+
+    public void setSource(SubstituteSource source) {
+        this.source = source;
+        this.lastUpdated = LocalDateTime.now();
+    }
+
+    public String getAgencyName() {
+        return agencyName;
+    }
+
+    public void setAgencyName(String agencyName) {
+        this.agencyName = agencyName;
+        this.lastUpdated = LocalDateTime.now();
+    }
+
+    public Boolean getTemporary() {
+        return temporary;
+    }
+
+    public void setTemporary(Boolean temporary) {
+        this.temporary = temporary;
+        this.lastUpdated = LocalDateTime.now();
+    }
+
+    public LocalDate getValidFrom() {
+        return validFrom;
+    }
+
+    public void setValidFrom(LocalDate validFrom) {
+        this.validFrom = validFrom;
+        this.lastUpdated = LocalDateTime.now();
+    }
+
+    public LocalDate getValidUntil() {
+        return validUntil;
+    }
+
+    public void setValidUntil(LocalDate validUntil) {
+        this.validUntil = validUntil;
+        this.lastUpdated = LocalDateTime.now();
+    }
+
+    public String getImportReference() {
+        return importReference;
+    }
+
+    public void setImportReference(String importReference) {
+        this.importReference = importReference;
+        this.lastUpdated = LocalDateTime.now();
+    }
+
     // ==================== UTILITY METHODS ====================
 
     /**

@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<!--
+    Sidebar Navigation Component
+    Modern collapsible sidebar with grouped navigation items
+
+    @author Heronix SIS Team
+    @version 1.0.0
+    @since 2026-01
+-->
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:id="sidebarContainer"
+      fx:controller="com.heronix.ui.controller.SidebarNavigationController"
+      styleClass="sidebar"
+      minWidth="260" maxWidth="260"
+      VBox.vgrow="ALWAYS">
+
+
+    <!-- Sidebar Header with Logo -->
+    <HBox fx:id="sidebarHeader" styleClass="sidebar-header" alignment="CENTER_LEFT" spacing="12">
+        <Text fx:id="logoIcon" text="H" styleClass="sidebar-logo-icon"/>
+        <VBox fx:id="logoTextContainer" spacing="0">
+            <Label fx:id="logoText" text="Heronix" styleClass="sidebar-logo"/>
+            <Label text="Student Information System" styleClass="sidebar-subtitle"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="collapseBtn" text="⟨" styleClass="sidebar-toggle-btn" onAction="#handleToggleSidebar">
+            <tooltip><Tooltip text="Collapse Sidebar (Ctrl+B)"/></tooltip>
+        </Button>
+    </HBox>
+
+    <!-- Quick Search Button -->
+    <HBox styleClass="sidebar-section" style="-fx-padding: 12 16;">
+        <Button fx:id="quickSearchBtn" text="Quick Search..."
+                styleClass="btn-ghost" style="-fx-alignment: CENTER_LEFT; -fx-pref-width: 228;"
+                onAction="#handleQuickSearch">
+            <tooltip><Tooltip text="Ctrl+K"/></tooltip>
+        </Button>
+    </HBox>
+
+    <!-- Scrollable Navigation Area -->
+    <ScrollPane fx:id="navScrollPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                style="-fx-background-color: transparent; -fx-border-color: transparent;"
+                VBox.vgrow="ALWAYS">
+        <VBox fx:id="navContainer" spacing="4" style="-fx-padding: 8 0;">
+
+            <!-- MAIN Section -->
+            <Label text="MAIN" styleClass="sidebar-section-title"/>
+
+            <HBox fx:id="navDashboard" styleClass="sidebar-nav-item, sidebar-nav-item-active"
+                  onMouseClicked="#handleNavDashboard">
+                <Label fx:id="navDashboardLabel" text="Dashboard"/>
+            </HBox>
+
+            <!-- PEOPLE Section -->
+            <Label text="PEOPLE" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
+
+            <HBox fx:id="navStudents" styleClass="sidebar-nav-item" onMouseClicked="#handleNavStudents">
+                <Label fx:id="navStudentsLabel" text="Student Roster"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="studentCount" text="" styleClass="sidebar-count"/>
+            </HBox>
+
+            <HBox fx:id="navTeachers" styleClass="sidebar-nav-item" onMouseClicked="#handleNavTeachers">
+                <Label fx:id="navTeachersLabel" text="Teachers"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="teacherCount" text="" styleClass="sidebar-count"/>
+            </HBox>
+
+            <HBox fx:id="navStaff" styleClass="sidebar-nav-item" onMouseClicked="#handleNavStaff">
+                <Label fx:id="navStaffLabel" text="Staff"/>
+            </HBox>
+
+            <HBox fx:id="navSubstitutes" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSubstitutes">
+                <Label fx:id="navSubstitutesLabel" text="Substitutes"/>
+            </HBox>
+
+            <!-- ACADEMICS Section -->
+            <Label text="ACADEMICS" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
+
+            <HBox fx:id="navCourses" styleClass="sidebar-nav-item" onMouseClicked="#handleNavCourses">
+                <Label fx:id="navCoursesLabel" text="Courses"/>
+            </HBox>
+
+            <HBox fx:id="navSchedules" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSchedules">
+                <Label fx:id="navSchedulesLabel" text="Schedules"/>
+            </HBox>
+
+            <HBox fx:id="navGradebook" styleClass="sidebar-nav-item" onMouseClicked="#handleNavGradebook">
+                <Label fx:id="navGradebookLabel" text="Gradebook"/>
+            </HBox>
+
+            <HBox fx:id="navAttendance" styleClass="sidebar-nav-item" onMouseClicked="#handleNavAttendance">
+                <Label fx:id="navAttendanceLabel" text="Attendance"/>
+            </HBox>
+
+            <HBox fx:id="navTranscripts" styleClass="sidebar-nav-item" onMouseClicked="#handleNavTranscripts">
+                <Label fx:id="navTranscriptsLabel" text="Transcripts"/>
+            </HBox>
+
+            <HBox fx:id="navAthletics" styleClass="sidebar-nav-item" onMouseClicked="#handleNavAthletics">
+                <Label fx:id="navAthleticsLabel" text="Athletics"/>
+            </HBox>
+
+            <!-- BEHAVIOR Section -->
+            <Label text="BEHAVIOR" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
+
+            <HBox fx:id="navDiscipline" styleClass="sidebar-nav-item" onMouseClicked="#handleNavDiscipline">
+                <Label fx:id="navDisciplineLabel" text="Discipline"/>
+            </HBox>
+
+            <HBox fx:id="navSuspensions" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSuspensions">
+                <Label fx:id="navSuspensionsLabel" text="Suspensions"/>
+            </HBox>
+
+            <HBox fx:id="navHallPass" styleClass="sidebar-nav-item" onMouseClicked="#handleNavHallPass">
+                <Label fx:id="navHallPassLabel" text="Hall Pass"/>
+            </HBox>
+
+            <HBox fx:id="navCounseling" styleClass="sidebar-nav-item" onMouseClicked="#handleNavCounseling">
+                <Label fx:id="navCounselingLabel" text="Counseling"/>
+            </HBox>
+
+            <!-- REGISTRATION Section -->
+            <Label text="REGISTRATION" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
+
+            <HBox fx:id="navNewStudentReg" styleClass="sidebar-nav-item" onMouseClicked="#handleNavNewStudentReg">
+                <Label fx:id="navNewStudentRegLabel" text="New Student Registration"/>
+            </HBox>
+
+            <HBox fx:id="navIncompleteRegs" styleClass="sidebar-nav-item" onMouseClicked="#handleNavIncompleteRegs">
+                <Label fx:id="navIncompleteRegsLabel" text="Incomplete Registrations"/>
+            </HBox>
+
+            <HBox fx:id="navCourseEnrollment" styleClass="sidebar-nav-item" onMouseClicked="#handleNavCourseEnrollment">
+                <Label fx:id="navCourseEnrollmentLabel" text="Course Enrollment"/>
+            </HBox>
+
+            <!-- FACILITIES Section -->
+            <Label text="FACILITIES" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
+
+            <HBox fx:id="navRooms" styleClass="sidebar-nav-item" onMouseClicked="#handleNavRooms">
+                <Label fx:id="navRoomsLabel" text="Rooms"/>
+            </HBox>
+
+            <HBox fx:id="navEvents" styleClass="sidebar-nav-item" onMouseClicked="#handleNavEvents">
+                <Label fx:id="navEventsLabel" text="Events"/>
+            </HBox>
+
+            <!-- SPECIAL PROGRAMS Section -->
+            <Label text="SPECIAL PROGRAMS" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
+
+            <HBox fx:id="navIEP" styleClass="sidebar-nav-item" onMouseClicked="#handleNavIEP">
+                <Label fx:id="navIEPLabel" text="IEP Management"/>
+            </HBox>
+
+            <HBox fx:id="nav504" styleClass="sidebar-nav-item" onMouseClicked="#handleNav504">
+                <Label fx:id="nav504Label" text="504 Plans"/>
+            </HBox>
+
+            <HBox fx:id="navSPED" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSPED">
+                <Label fx:id="navSPEDLabel" text="SPED Dashboard"/>
+            </HBox>
+
+            <HBox fx:id="navELL" styleClass="sidebar-nav-item" onMouseClicked="#handleNavELL">
+                <Label fx:id="navELLLabel" text="ELL Dashboard"/>
+            </HBox>
+
+            <HBox fx:id="navGifted" styleClass="sidebar-nav-item" onMouseClicked="#handleNavGifted">
+                <Label fx:id="navGiftedLabel" text="Gifted &amp; Talented"/>
+            </HBox>
+
+            <!-- HEALTH & SERVICES Section -->
+            <Label text="HEALTH &amp; SERVICES" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
+
+            <HBox fx:id="navHealthOffice" styleClass="sidebar-nav-item" onMouseClicked="#handleNavHealthOffice">
+                <Label fx:id="navHealthOfficeLabel" text="Health Office"/>
+            </HBox>
+
+            <HBox fx:id="navMedications" styleClass="sidebar-nav-item" onMouseClicked="#handleNavMedications">
+                <Label fx:id="navMedicationsLabel" text="Medications"/>
+            </HBox>
+
+            <HBox fx:id="navImmunizations" styleClass="sidebar-nav-item" onMouseClicked="#handleNavImmunizations">
+                <Label fx:id="navImmunizationsLabel" text="Immunizations"/>
+            </HBox>
+
+            <!-- OPERATIONS Section -->
+            <Label text="OPERATIONS" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
+
+            <HBox fx:id="navTransportation" styleClass="sidebar-nav-item" onMouseClicked="#handleNavTransportation">
+                <Label fx:id="navTransportationLabel" text="Transportation"/>
+            </HBox>
+
+            <HBox fx:id="navCafeteria" styleClass="sidebar-nav-item" onMouseClicked="#handleNavCafeteria">
+                <Label fx:id="navCafeteriaLabel" text="Cafeteria"/>
+            </HBox>
+
+            <HBox fx:id="navLibrary" styleClass="sidebar-nav-item" onMouseClicked="#handleNavLibrary">
+                <Label fx:id="navLibraryLabel" text="Library"/>
+            </HBox>
+
+            <!-- COMMUNICATION Section -->
+            <Label text="COMMUNICATION" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
+
+            <HBox fx:id="navNotifications" styleClass="sidebar-nav-item" onMouseClicked="#handleNavNotifications">
+                <Label fx:id="navNotificationsLabel" text="Notifications"/>
+            </HBox>
+
+            <HBox fx:id="navCommunication" styleClass="sidebar-nav-item" onMouseClicked="#handleNavCommunication">
+                <Label fx:id="navCommunicationLabel" text="Communication Center"/>
+            </HBox>
+
+            <!-- REPORTS Section -->
+            <Label text="REPORTS" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
+
+            <HBox fx:id="navReports" styleClass="sidebar-nav-item" onMouseClicked="#handleNavReports">
+                <Label fx:id="navReportsLabel" text="Reports"/>
+            </HBox>
+
+            <HBox fx:id="navAnalytics" styleClass="sidebar-nav-item" onMouseClicked="#handleNavAnalytics">
+                <Label fx:id="navAnalyticsLabel" text="Analytics"/>
+            </HBox>
+
+            <!-- SYSTEM Section -->
+            <Label text="SYSTEM" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
+
+            <HBox fx:id="navImport" styleClass="sidebar-nav-item" onMouseClicked="#handleNavImport">
+                <Label fx:id="navImportLabel" text="Import Data"/>
+            </HBox>
+
+            <HBox fx:id="navDataGenerator" styleClass="sidebar-nav-item" onMouseClicked="#handleNavDataGenerator">
+                <Label fx:id="navDataGeneratorLabel" text="Generate Sample Data"/>
+            </HBox>
+
+            <HBox fx:id="navSettings" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSettings">
+                <Label fx:id="navSettingsLabel" text="Settings"/>
+            </HBox>
+
+            <!-- ADMINISTRATION Section -->
+            <Label text="ADMINISTRATION" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
+
+            <HBox fx:id="navUserManagement" styleClass="sidebar-nav-item" onMouseClicked="#handleNavUserManagement">
+                <Label fx:id="navUserManagementLabel" text="User Management"/>
+            </HBox>
+
+            <HBox fx:id="navAuditLog" styleClass="sidebar-nav-item" onMouseClicked="#handleNavAuditLog">
+                <Label fx:id="navAuditLogLabel" text="Audit Log"/>
+            </HBox>
+
+            <HBox fx:id="navDatabase" styleClass="sidebar-nav-item" onMouseClicked="#handleNavDatabase">
+                <Label fx:id="navDatabaseLabel" text="Database"/>
+            </HBox>
+
+            <HBox fx:id="navNetworkPanel" styleClass="sidebar-nav-item" onMouseClicked="#handleNavNetworkPanel">
+                <Label fx:id="navNetworkPanelLabel" text="Network Panel"/>
+            </HBox>
+
+            <HBox fx:id="navSecureSync" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSecureSync">
+                <Label fx:id="navSecureSyncLabel" text="Secure Sync"/>
+            </HBox>
+
+        </VBox>
+    </ScrollPane>
+
+    <!-- Sidebar Footer -->
+    <VBox fx:id="sidebarFooter" styleClass="sidebar-footer" spacing="12">
+        <!-- User Info -->
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <VBox fx:id="avatarContainer" styleClass="sidebar-avatar" alignment="CENTER">
+                <Label fx:id="userInitials" text="AD" styleClass="sidebar-avatar-text"/>
+            </VBox>
+            <VBox fx:id="userInfoContainer" spacing="2" HBox.hgrow="ALWAYS">
+                <Label fx:id="userName" text="Admin User" styleClass="sidebar-user-name"/>
+                <Label fx:id="userRole" text="Administrator" styleClass="sidebar-user-role"/>
+            </VBox>
+        </HBox>
+
+        <!-- Help & Logout Buttons -->
+        <HBox spacing="10" alignment="CENTER">
+            <Button fx:id="helpBtn" text="Help" styleClass="sidebar-help-btn" onAction="#handleHelp"
+                    HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <tooltip><Tooltip text="Get Help &amp; Documentation"/></tooltip>
+            </Button>
+            <Button fx:id="logoutBtn" text="Logout" styleClass="sidebar-logout-btn" onAction="#handleLogout"
+                    HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <tooltip><Tooltip text="Sign Out of Your Account"/></tooltip>
+            </Button>
+        </HBox>
+    </VBox>
+
+</VBox>

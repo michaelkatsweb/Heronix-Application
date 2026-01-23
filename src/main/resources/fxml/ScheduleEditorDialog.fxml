@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -13,6 +15,7 @@ Location: src/main/resources/fxml/ScheduleEditorDialog.fxml
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.ScheduleEditorController"
             styleClass="dialog-container" prefWidth="1100" prefHeight="700">
+
     
     <top>
         <VBox spacing="10" BorderPane.alignment="CENTER">
@@ -52,14 +55,14 @@ Location: src/main/resources/fxml/ScheduleEditorDialog.fxml
                 </TableView>
                 
                 <Label fx:id="conflictLabel" wrapText="true" 
-                       style="-fx-padding: 10; -fx-background-color: #f3f4f6; -fx-background-radius: 5;"/>
+                       styleClass="card"/>
             </VBox>
             
             <!-- Right: Edit Form -->
             <VBox spacing="15">
                 <Label text="Edit Selected Slot:" styleClass="section-label"/>
                 
-                <VBox spacing="10" style="-fx-background-color: #f8fafc; -fx-padding: 15; -fx-background-radius: 8;">
+                <VBox spacing="10" styleClass="card">
                     <GridPane hgap="10" vgap="12">
                         <Label text="Teacher:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                         <ComboBox fx:id="teacherCombo" GridPane.columnIndex="1" GridPane.rowIndex="0" 
@@ -83,7 +86,7 @@ Location: src/main/resources/fxml/ScheduleEditorDialog.fxml
                     <Button fx:id="advancedEditButton" text="✏️ Advanced Edit"
                             onAction="#handleAdvancedEdit" maxWidth="Infinity"
                             styleClass="primary-button"
-                            style="-fx-font-weight: bold;"/>
+                            styleClass="form-label"/>
 
                     <Separator/>
 
@@ -102,8 +105,8 @@ Location: src/main/resources/fxml/ScheduleEditorDialog.fxml
                 
                 <Separator/>
                 
-                <VBox spacing="5" style="-fx-background-color: #fef3c7; -fx-padding: 10; -fx-background-radius: 5;">
-                    <Label text="💡 Tips:" style="-fx-font-weight: bold;"/>
+                <VBox spacing="5" styleClass="card">
+                    <Label text="💡 Tips:" styleClass="form-label"/>
                     <Label text="• Select a slot to edit" wrapText="true"/>
                     <Label text="• Double-click for advanced edit" wrapText="true"/>
                     <Label text="• Advanced Edit: Change course type, add co-teacher, special events" wrapText="true"/>

@@ -37,7 +37,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 105 - Report Natural Language Processing & Understanding
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/nlp")
 @RequiredArgsConstructor
 @Slf4j

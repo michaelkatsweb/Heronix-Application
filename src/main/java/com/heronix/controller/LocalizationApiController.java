@@ -38,7 +38,7 @@ import java.util.*;
  * @version 1.0
  * @since Phase 70 - Report Internationalization & Localization
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/locales")
 @RequiredArgsConstructor
 @Slf4j

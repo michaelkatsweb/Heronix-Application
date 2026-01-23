@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0 - Complete Student Portal API
  * @since December 13, 2025
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/students")
 @CrossOrigin(origins = "*")
 public class StudentController {

@@ -101,7 +101,7 @@
 
                 <!-- Basic Information Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Basic Information" styleClass="section-header" style="-fx-background-color: #E3F2FD; -fx-padding: 5;">
+                    <Label text="Basic Information" styleClass="section-header-info">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -126,7 +126,7 @@
 
                 <!-- Allergies Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Allergies" styleClass="section-header" style="-fx-background-color: #FFEBEE; -fx-padding: 5;">
+                    <Label text="Allergies" styleClass="section-header-danger">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -157,7 +157,7 @@
 
                 <!-- Chronic Conditions Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Chronic Conditions" styleClass="section-header" style="-fx-background-color: #FFF3E0; -fx-padding: 5;">
+                    <Label text="Chronic Conditions" styleClass="section-header-warning">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -182,7 +182,7 @@
 
                 <!-- Current Medications Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Current Medications" styleClass="section-header" style="-fx-background-color: #F3E5F5; -fx-padding: 5;">
+                    <Label text="Current Medications" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -210,7 +210,7 @@
 
                 <!-- Medical Alerts Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Medical Alerts" styleClass="section-header" style="-fx-background-color: #FFCDD2; -fx-padding: 5;">
+                    <Label text="Medical Alerts" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -238,7 +238,7 @@
 
                 <!-- Physician Information Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Physician Information" styleClass="section-header" style="-fx-background-color: #E8F5E9; -fx-padding: 5;">
+                    <Label text="Physician Information" styleClass="section-header-success">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -263,7 +263,7 @@
 
                 <!-- Insurance Information Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Insurance Information" styleClass="section-header" style="-fx-background-color: #E1F5FE; -fx-padding: 5;">
+                    <Label text="Insurance Information" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -288,7 +288,7 @@
 
                 <!-- Health Screenings & Compliance Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Health Screenings &amp; Compliance" styleClass="section-header" style="-fx-background-color: #FFF9C4; -fx-padding: 5;">
+                    <Label text="Health Screenings &amp; Compliance" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -322,7 +322,7 @@
 
                 <!-- Emergency Authorization Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Emergency Authorization" styleClass="section-header" style="-fx-background-color: #FCE4EC; -fx-padding: 5;">
+                    <Label text="Emergency Authorization" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -347,7 +347,7 @@
 
                 <!-- Review and Notes Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Review and Notes" styleClass="section-header" style="-fx-background-color: #F5F5F5; -fx-padding: 5;">
+                    <Label text="Review and Notes" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>

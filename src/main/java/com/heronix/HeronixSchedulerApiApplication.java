@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 
 /**
  * Heronix Scheduling System - REST API Server Entry Point
@@ -33,6 +35,17 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 @EnableConfigurationProperties(ApplicationProperties.class)
 @EnableCaching
+@ComponentScan(
+    basePackages = "com.heronix",
+    excludeFilters = {
+        // Exclude non-API controllers (com.heronix.controller package only, NOT subpackages)
+        // Keep only com.heronix.controller.api.* for REST API mode
+        // REGEX pattern: matches class names directly in com.heronix.controller (no dot after controller)
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com\\.heronix\\.controller\\.[A-Z][a-zA-Z0-9]*"),
+        // Exclude UI controllers (JavaFX specific) - matches com.heronix.ui and all subpackages
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com\\.heronix\\.ui\\..*")
+    }
+)
 public class HeronixSchedulerApiApplication {
 
     public static void main(String[] args) {

@@ -39,7 +39,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 80 - Report Workflows & Automation
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/workflows")
 @RequiredArgsConstructor
 @Slf4j

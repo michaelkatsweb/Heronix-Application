@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.analytics.StudentAnalyticsController"
+            styleClass="analytics-view"
+            stylesheets="@../../css/analytics-module.css">
+
+    <!-- Header Section -->
+    <top>
+        <VBox styleClass="header-section">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+
+            <!-- Navigation and Title Row -->
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Button fx:id="backBtn" text="< Back to Hub" styleClass="button-secondary"
+                        onAction="#handleBackToHub"/>
+
+                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                    <Label text="Student Analytics" styleClass="page-title"/>
+                    <Label text="Enrollment, demographics, and academic performance analysis"
+                           styleClass="page-subtitle"/>
+                </VBox>
+
+                <!-- Filter Controls -->
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <VBox spacing="2">
+                        <Label text="Campus" styleClass="filter-label"/>
+                        <ComboBox fx:id="campusFilter" prefWidth="180" promptText="All Campuses"/>
+                    </VBox>
+
+                    <VBox spacing="2">
+                        <Label text="School Year" styleClass="filter-label"/>
+                        <ComboBox fx:id="yearFilter" prefWidth="120" promptText="2025-26"/>
+                    </VBox>
+
+                    <Button fx:id="refreshBtn" text="Refresh" styleClass="button-secondary"
+                            onAction="#handleRefresh"/>
+
+                    <MenuButton fx:id="exportBtn" text="Export" styleClass="button-primary">
+                        <items>
+                            <MenuItem text="Export Summary (PDF)" onAction="#handleExportPDF"/>
+                            <MenuItem text="Export Data (Excel)" onAction="#handleExportExcel"/>
+                            <MenuItem text="Export Data (CSV)" onAction="#handleExportCSV"/>
+                        </items>
+                    </MenuButton>
+                </HBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Main Content - TabPane with 5 tabs -->
+    <center>
+        <TabPane fx:id="analyticsTabs" styleClass="analytics-tabs" tabClosingPolicy="UNAVAILABLE">
+
+            <!-- Tab 1: Enrollment Trends -->
+            <Tab text="Enrollment">
+                <ScrollPane fitToWidth="true" styleClass="content-scroll">
+                    <VBox spacing="20">
+                        <padding>
+                            <Insets topRightBottomLeft="20"/>
+                        </padding>
+
+                        <!-- Quick Stats Row -->
+                        <HBox spacing="15" styleClass="quick-stats-grid">
+                            <VBox fx:id="enrollmentTotalCard" styleClass="metric-card, metric-primary"
+                                  HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="TOTAL ENROLLMENT" styleClass="metric-label"/>
+                                <Label fx:id="totalEnrollmentValue" text="--" styleClass="metric-value"/>
+                                <Label fx:id="enrollmentChangeLabel" text="vs. last year" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-success" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="NEW STUDENTS" styleClass="metric-label"/>
+                                <Label fx:id="newStudentsValue" text="--" styleClass="metric-value"/>
+                                <Label text="this year" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-info" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="PROJECTED" styleClass="metric-label"/>
+                                <Label fx:id="projectedValue" text="--" styleClass="metric-value"/>
+                                <Label text="next year" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-warning" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="CAPACITY" styleClass="metric-label"/>
+                                <Label fx:id="capacityValue" text="--%" styleClass="metric-value"/>
+                                <Label text="utilization" styleClass="metric-trend"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Charts Row -->
+                        <HBox spacing="20">
+                            <!-- Enrollment by Grade Bar Chart -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Enrollment by Grade Level" styleClass="tile-title"/>
+                                <BarChart fx:id="enrollmentByGradeChart" legendVisible="false"
+                                          VBox.vgrow="ALWAYS" prefHeight="300">
+                                    <xAxis>
+                                        <CategoryAxis label="Grade Level"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Students"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+
+                            <!-- Enrollment Trend Line Chart -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Enrollment Trend (5 Years)" styleClass="tile-title"/>
+                                <LineChart fx:id="enrollmentTrendChart" legendVisible="false"
+                                           VBox.vgrow="ALWAYS" prefHeight="300">
+                                    <xAxis>
+                                        <CategoryAxis label="Year"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Students"/>
+                                    </yAxis>
+                                </LineChart>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Tab 2: Demographics -->
+            <Tab text="Demographics">
+                <ScrollPane fitToWidth="true" styleClass="content-scroll">
+                    <VBox spacing="20">
+                        <padding>
+                            <Insets topRightBottomLeft="20"/>
+                        </padding>
+
+                        <!-- Demographics Charts Grid -->
+                        <HBox spacing="20">
+                            <!-- Gender Distribution -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Gender Distribution" styleClass="tile-title"/>
+                                <PieChart fx:id="genderChart" legendSide="BOTTOM"
+                                          VBox.vgrow="ALWAYS" prefHeight="280"/>
+                            </VBox>
+
+                            <!-- Ethnicity Distribution -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Ethnicity Distribution" styleClass="tile-title"/>
+                                <PieChart fx:id="ethnicityChart" legendSide="BOTTOM"
+                                          VBox.vgrow="ALWAYS" prefHeight="280"/>
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="20">
+                            <!-- Race Distribution -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Race Distribution" styleClass="tile-title"/>
+                                <PieChart fx:id="raceChart" legendSide="BOTTOM"
+                                          VBox.vgrow="ALWAYS" prefHeight="280"/>
+                            </VBox>
+
+                            <!-- Home Language Distribution -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Home Language Distribution" styleClass="tile-title"/>
+                                <PieChart fx:id="languageChart" legendSide="BOTTOM"
+                                          VBox.vgrow="ALWAYS" prefHeight="280"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Demographics Summary Table -->
+                        <VBox styleClass="analytics-tile" spacing="10">
+                            <padding><Insets topRightBottomLeft="15"/></padding>
+                            <Label text="Demographics Summary" styleClass="tile-title"/>
+                            <TableView fx:id="demographicsTable" VBox.vgrow="ALWAYS" prefHeight="200"
+                                       styleClass="analytics-table">
+                                <columns>
+                                    <TableColumn fx:id="categoryCol" text="Category" prefWidth="200"/>
+                                    <TableColumn fx:id="countCol" text="Count" prefWidth="100"/>
+                                    <TableColumn fx:id="percentCol" text="%" prefWidth="80"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Tab 3: Special Needs -->
+            <Tab text="Special Needs">
+                <ScrollPane fitToWidth="true" styleClass="content-scroll">
+                    <VBox spacing="20">
+                        <padding>
+                            <Insets topRightBottomLeft="20"/>
+                        </padding>
+
+                        <!-- Special Needs Stats -->
+                        <HBox spacing="15" styleClass="quick-stats-grid">
+                            <VBox styleClass="metric-card, metric-purple" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="IEP STUDENTS" styleClass="metric-label"/>
+                                <Label fx:id="iepCountValue" text="--" styleClass="metric-value"/>
+                                <Label fx:id="iepPercentLabel" text="% of total" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-info" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="504 PLAN" styleClass="metric-label"/>
+                                <Label fx:id="plan504CountValue" text="--" styleClass="metric-value"/>
+                                <Label fx:id="plan504PercentLabel" text="% of total" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-success" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="GIFTED" styleClass="metric-label"/>
+                                <Label fx:id="giftedCountValue" text="--" styleClass="metric-value"/>
+                                <Label fx:id="giftedPercentLabel" text="% of total" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-warning" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="ELL/ESL" styleClass="metric-label"/>
+                                <Label fx:id="ellCountValue" text="--" styleClass="metric-value"/>
+                                <Label fx:id="ellPercentLabel" text="% of total" styleClass="metric-trend"/>
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="20">
+                            <!-- Special Needs Distribution Pie Chart -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Special Needs Distribution" styleClass="tile-title"/>
+                                <PieChart fx:id="specialNeedsChart" legendSide="BOTTOM"
+                                          VBox.vgrow="ALWAYS" prefHeight="300"/>
+                            </VBox>
+
+                            <!-- Special Needs by Grade -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Special Needs by Grade Level" styleClass="tile-title"/>
+                                <StackedBarChart fx:id="specialNeedsByGradeChart"
+                                                 VBox.vgrow="ALWAYS" prefHeight="300">
+                                    <xAxis>
+                                        <CategoryAxis label="Grade"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Students"/>
+                                    </yAxis>
+                                </StackedBarChart>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Special Needs Students Table -->
+                        <VBox styleClass="analytics-tile" spacing="10">
+                            <padding><Insets topRightBottomLeft="15"/></padding>
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="Special Needs Students" styleClass="tile-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <ComboBox fx:id="specialNeedsTypeFilter" promptText="All Types"/>
+                                <Button text="View All" styleClass="button-secondary"
+                                        onAction="#handleViewAllSpecialNeeds"/>
+                            </HBox>
+                            <TableView fx:id="specialNeedsTable" VBox.vgrow="ALWAYS" prefHeight="200"
+                                       styleClass="analytics-table">
+                                <columns>
+                                    <TableColumn fx:id="snStudentIdCol" text="Student ID" prefWidth="100"/>
+                                    <TableColumn fx:id="snStudentNameCol" text="Name" prefWidth="180"/>
+                                    <TableColumn fx:id="snGradeCol" text="Grade" prefWidth="80"/>
+                                    <TableColumn fx:id="snTypeCol" text="Type" prefWidth="100"/>
+                                    <TableColumn fx:id="snStatusCol" text="Status" prefWidth="100"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Tab 4: At-Risk -->
+            <Tab text="At-Risk">
+                <ScrollPane fitToWidth="true" styleClass="content-scroll">
+                    <VBox spacing="20">
+                        <padding>
+                            <Insets topRightBottomLeft="20"/>
+                        </padding>
+
+                        <!-- At-Risk Stats -->
+                        <HBox spacing="15" styleClass="quick-stats-grid">
+                            <VBox styleClass="metric-card, metric-danger" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="CRITICAL RISK" styleClass="metric-label"/>
+                                <Label fx:id="criticalRiskValue" text="--" styleClass="metric-value"/>
+                                <Label text="GPA below 1.5" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-warning" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="HIGH RISK" styleClass="metric-label"/>
+                                <Label fx:id="highRiskValue" text="--" styleClass="metric-value"/>
+                                <Label text="GPA 1.5-2.0" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-info" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="MODERATE RISK" styleClass="metric-label"/>
+                                <Label fx:id="moderateRiskValue" text="--" styleClass="metric-value"/>
+                                <Label text="GPA 2.0-2.5" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-primary" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="TOTAL AT-RISK" styleClass="metric-label"/>
+                                <Label fx:id="totalAtRiskValue" text="--" styleClass="metric-value"/>
+                                <Label fx:id="atRiskPercentLabel" text="% of total" styleClass="metric-trend"/>
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="20">
+                            <!-- At-Risk Distribution Bar Chart -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="At-Risk Distribution by Grade" styleClass="tile-title"/>
+                                <BarChart fx:id="atRiskByGradeChart" legendVisible="false"
+                                          VBox.vgrow="ALWAYS" prefHeight="300">
+                                    <xAxis>
+                                        <CategoryAxis label="Grade"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Students"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+
+                            <!-- Risk Factors Pie Chart -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Risk Level Distribution" styleClass="tile-title"/>
+                                <PieChart fx:id="riskLevelChart" legendSide="BOTTOM"
+                                          VBox.vgrow="ALWAYS" prefHeight="300"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- At-Risk Students Table -->
+                        <VBox styleClass="analytics-tile" spacing="10">
+                            <padding><Insets topRightBottomLeft="15"/></padding>
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="At-Risk Students" styleClass="tile-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <ComboBox fx:id="riskLevelFilter" promptText="All Risk Levels"/>
+                                <Button text="Export List" styleClass="button-secondary"
+                                        onAction="#handleExportAtRiskList"/>
+                            </HBox>
+                            <TableView fx:id="atRiskTable" VBox.vgrow="ALWAYS" prefHeight="250"
+                                       styleClass="analytics-table">
+                                <columns>
+                                    <TableColumn fx:id="arStudentIdCol" text="Student ID" prefWidth="100"/>
+                                    <TableColumn fx:id="arStudentNameCol" text="Name" prefWidth="180"/>
+                                    <TableColumn fx:id="arGradeCol" text="Grade" prefWidth="80"/>
+                                    <TableColumn fx:id="arGpaCol" text="GPA" prefWidth="80"/>
+                                    <TableColumn fx:id="arRiskLevelCol" text="Risk Level" prefWidth="100"/>
+                                    <TableColumn fx:id="arInterventionsCol" text="Interventions" prefWidth="120"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Tab 5: GPA Analytics -->
+            <Tab text="GPA Analytics">
+                <ScrollPane fitToWidth="true" styleClass="content-scroll">
+                    <VBox spacing="20">
+                        <padding>
+                            <Insets topRightBottomLeft="20"/>
+                        </padding>
+
+                        <!-- GPA Stats -->
+                        <HBox spacing="15" styleClass="quick-stats-grid">
+                            <VBox styleClass="metric-card, metric-primary" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="AVERAGE GPA" styleClass="metric-label"/>
+                                <Label fx:id="avgGpaValue" text="--" styleClass="metric-value"/>
+                                <Label text="school-wide" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-success" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="HIGH HONORS" styleClass="metric-label"/>
+                                <Label fx:id="highHonorsValue" text="--" styleClass="metric-value"/>
+                                <Label text="GPA 3.75+" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-info" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="HONORS" styleClass="metric-label"/>
+                                <Label fx:id="honorsValue" text="--" styleClass="metric-value"/>
+                                <Label text="GPA 3.5-3.74" styleClass="metric-trend"/>
+                            </VBox>
+
+                            <VBox styleClass="metric-card, metric-warning" HBox.hgrow="ALWAYS" spacing="5">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="HONORABLE MENTION" styleClass="metric-label"/>
+                                <Label fx:id="honorableMentionValue" text="--" styleClass="metric-value"/>
+                                <Label text="GPA 3.25-3.49" styleClass="metric-trend"/>
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="20">
+                            <!-- GPA Distribution Bar Chart -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="GPA Distribution" styleClass="tile-title"/>
+                                <BarChart fx:id="gpaDistributionChart" legendVisible="false"
+                                          VBox.vgrow="ALWAYS" prefHeight="300">
+                                    <xAxis>
+                                        <CategoryAxis label="GPA Range"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Students"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+
+                            <!-- Average GPA by Grade Line Chart -->
+                            <VBox styleClass="analytics-tile" HBox.hgrow="ALWAYS" spacing="10">
+                                <padding><Insets topRightBottomLeft="15"/></padding>
+                                <Label text="Average GPA by Grade Level" styleClass="tile-title"/>
+                                <LineChart fx:id="avgGpaByGradeChart" legendVisible="false"
+                                           VBox.vgrow="ALWAYS" prefHeight="300">
+                                    <xAxis>
+                                        <CategoryAxis label="Grade"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Average GPA" lowerBound="0" upperBound="4.0"/>
+                                    </yAxis>
+                                </LineChart>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Honor Roll Students Table -->
+                        <VBox styleClass="analytics-tile" spacing="10">
+                            <padding><Insets topRightBottomLeft="15"/></padding>
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="Honor Roll Students" styleClass="tile-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <ComboBox fx:id="honorRollTierFilter" promptText="All Tiers"/>
+                                <Button text="Export Honor Roll" styleClass="button-secondary"
+                                        onAction="#handleExportHonorRoll"/>
+                            </HBox>
+                            <TableView fx:id="honorRollTable" VBox.vgrow="ALWAYS" prefHeight="250"
+                                       styleClass="analytics-table">
+                                <columns>
+                                    <TableColumn fx:id="hrStudentIdCol" text="Student ID" prefWidth="100"/>
+                                    <TableColumn fx:id="hrStudentNameCol" text="Name" prefWidth="180"/>
+                                    <TableColumn fx:id="hrGradeCol" text="Grade" prefWidth="80"/>
+                                    <TableColumn fx:id="hrGpaCol" text="GPA" prefWidth="80"/>
+                                    <TableColumn fx:id="hrTierCol" text="Tier" prefWidth="120"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+        </TabPane>
+    </center>
+
+    <!-- Status Bar -->
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets topRightBottomLeft="8"/>
+            </padding>
+            <Label fx:id="statusLabel" text="Ready" styleClass="status-text"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lastUpdatedLabel" text="Last updated: --" styleClass="status-text"/>
+        </HBox>
+    </bottom>
+</BorderPane>

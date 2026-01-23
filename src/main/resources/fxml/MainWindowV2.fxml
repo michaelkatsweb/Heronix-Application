@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+    Main Window V2 FXML - Modern Sidebar Navigation Layout
+    Location: src/main/resources/fxml/MainWindowV2.fxml
+
+    New layout with:
+    - Collapsible sidebar navigation (left)
+    - Breadcrumb navigation (top)
+    - Main content area (center)
+    - Status bar (bottom)
+
+    @author Heronix SIS Team
+    @version 2.0.0
+    @since 2026-01
+-->
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:id="mainBorderPane"
+            fx:controller="com.heronix.ui.controller.MainControllerV2"
+            prefWidth="1400" prefHeight="900"
+            minWidth="1200" minHeight="700"
+            styleClass="root">
+
+
+    <!-- Left: Sidebar Navigation (loaded programmatically with Spring) -->
+    <!-- Note: Width constraints are managed by SidebarNavigationController for collapse/expand -->
+    <left>
+        <VBox fx:id="sidebarPlaceholder" styleClass="sidebar-container"/>
+    </left>
+
+    <!-- Center: Main Content Area -->
+    <center>
+        <VBox fx:id="mainContentArea" VBox.vgrow="ALWAYS" styleClass="content-area">
+
+            <!-- Top Bar: Breadcrumb + Actions -->
+            <HBox fx:id="topBar" alignment="CENTER_LEFT" spacing="16" styleClass="top-bar">
+                <padding>
+                    <Insets top="12" right="24" bottom="12" left="24"/>
+                </padding>
+
+                <!-- Breadcrumb Navigation -->
+                <HBox fx:id="breadcrumbContainer" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                    <!-- BreadcrumbNavigation will be added programmatically -->
+                </HBox>
+
+                <!-- Quick Actions -->
+                <HBox alignment="CENTER_RIGHT" spacing="8">
+                    <!-- Quick Add Button -->
+                    <MenuButton fx:id="quickAddBtn" text="+ Add" styleClass="button-primary">
+                        <items>
+                            <MenuItem text="New Student" onAction="#handleQuickAddStudent"/>
+                            <MenuItem text="New Teacher" onAction="#handleQuickAddTeacher"/>
+                            <MenuItem text="New Course" onAction="#handleQuickAddCourse"/>
+                            <SeparatorMenuItem/>
+                            <MenuItem text="New Event" onAction="#handleQuickAddEvent"/>
+                            <MenuItem text="New IEP" onAction="#handleQuickAddIEP"/>
+                        </items>
+                    </MenuButton>
+
+                    <!-- Notifications -->
+                    <Button fx:id="notificationBtn" text="&#128276;" styleClass="btn-icon"
+                            onAction="#handleNotifications">
+                        <tooltip><Tooltip text="Notifications"/></tooltip>
+                    </Button>
+
+                    <!-- Help -->
+                    <Button fx:id="helpShortcutsBtn" text="?" styleClass="btn-icon"
+                            onAction="#handleShowShortcuts">
+                        <tooltip><Tooltip text="Keyboard Shortcuts (?)"/></tooltip>
+                    </Button>
+                </HBox>
+            </HBox>
+
+            <!-- Page Header (dynamic) -->
+            <HBox fx:id="pageHeader" alignment="CENTER_LEFT" spacing="16" styleClass="page-header"
+                  visible="false" managed="false">
+                <padding>
+                    <Insets top="20" right="24" bottom="20" left="24"/>
+                </padding>
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label fx:id="pageTitle" text="Dashboard" styleClass="label-title"/>
+                    <Label fx:id="pageSubtitle" text="Overview of your school data" styleClass="label-subtitle"/>
+                </VBox>
+                <HBox fx:id="pageActions" alignment="CENTER_RIGHT" spacing="8">
+                    <!-- Dynamic page-specific actions -->
+                </HBox>
+            </HBox>
+
+            <!-- Main Content (views loaded here) -->
+            <ScrollPane fx:id="contentScrollPane" fitToWidth="true" fitToHeight="true"
+                        hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+                        VBox.vgrow="ALWAYS">
+                <StackPane fx:id="contentContainer" styleClass="content-area">
+                    <padding>
+                        <Insets top="24" right="24" bottom="24" left="24"/>
+                    </padding>
+                    <!-- Dynamic content loaded here -->
+                </StackPane>
+            </ScrollPane>
+
+        </VBox>
+    </center>
+
+    <!-- Bottom: Status Bar -->
+    <bottom>
+        <HBox fx:id="statusBar" alignment="CENTER_LEFT" spacing="16" styleClass="status-bar">
+            <padding>
+                <Insets top="8" right="24" bottom="8" left="24"/>
+            </padding>
+
+            <!-- Connection Status -->
+            <HBox alignment="CENTER_LEFT" spacing="6">
+                <Label fx:id="connectionIndicator" text="&#9679;" styleClass="text-success" style="-fx-font-size: 10px;"/>
+                <Label fx:id="connectionStatus" text="Connected" styleClass="status-label"/>
+            </HBox>
+
+            <Separator orientation="VERTICAL"/>
+
+            <!-- Status Message -->
+            <Label fx:id="statusLabel" text="Ready" styleClass="status-label" HBox.hgrow="ALWAYS"/>
+
+            <Separator orientation="VERTICAL"/>
+
+            <!-- Last Sync -->
+            <HBox alignment="CENTER_LEFT" spacing="6">
+                <Label text="Last sync:" styleClass="label-caption"/>
+                <Label fx:id="lastSyncTime" text="Just now" styleClass="status-label"/>
+            </HBox>
+
+            <Separator orientation="VERTICAL"/>
+
+            <!-- User Info -->
+            <HBox alignment="CENTER_LEFT" spacing="6">
+                <Label fx:id="currentUserLabel" text="Admin User" styleClass="status-label"/>
+                <Label text="&#8226;" styleClass="label-caption"/>
+                <Label fx:id="currentRoleLabel" text="Administrator" styleClass="label-caption"/>
+            </HBox>
+
+            <Separator orientation="VERTICAL"/>
+
+            <!-- Version -->
+            <Label text="Heronix SIS v2.0" styleClass="label-caption"/>
+
+        </HBox>
+    </bottom>
+
+</BorderPane>

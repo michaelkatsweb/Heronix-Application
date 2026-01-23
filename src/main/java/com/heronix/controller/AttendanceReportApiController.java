@@ -50,7 +50,7 @@ import java.time.format.DateTimeFormatter;
  * @version 1.0
  * @since Phase 50 - Report API Endpoints
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/reports/attendance")
 @RequiredArgsConstructor
 @Slf4j

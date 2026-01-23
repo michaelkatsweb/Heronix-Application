@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 143 - DevSecOps & Security Automation
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/devsecops")
 @RequiredArgsConstructor
 public class ReportDevSecOpsApiController {

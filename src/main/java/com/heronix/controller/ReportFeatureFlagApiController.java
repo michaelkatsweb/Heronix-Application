@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 145 - Feature Flags & A/B Testing
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/feature-flags")
 @RequiredArgsConstructor
 public class ReportFeatureFlagApiController {

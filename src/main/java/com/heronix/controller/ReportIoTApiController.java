@@ -37,7 +37,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 103 - Report IoT Integration & Sensor Data
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/iot")
 @RequiredArgsConstructor
 @Slf4j

@@ -23,7 +23,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 129 - Report Distributed Ledger Technology
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/distributed-ledger")
 @RequiredArgsConstructor
 @Slf4j

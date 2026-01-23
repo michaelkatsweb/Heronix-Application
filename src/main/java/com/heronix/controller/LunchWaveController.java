@@ -44,7 +44,7 @@ import java.util.Map;
  * @since 2025-12-01
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/lunch-waves")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor

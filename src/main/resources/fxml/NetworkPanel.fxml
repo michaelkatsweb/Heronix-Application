@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.NetworkPanelController"
+            stylesheets="@../css/network-panel.css"
+            styleClass="network-panel">
+
+    <!-- Header -->
+    <top>
+        <VBox styleClass="panel-header" spacing="10">
+            <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <!-- Title and Status -->
+                <VBox spacing="5">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label fx:id="panelTitleLabel" text="Network Panel"
+                               style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                        <Circle fx:id="networkHealthIndicator" radius="8" fill="#4caf50"/>
+                        <Label fx:id="networkHealthLabel" text="Network Healthy"
+                               style="-fx-font-size: 12px; -fx-text-fill: #666;"/>
+                    </HBox>
+                    <Label text="Monitor and manage network devices across your infrastructure"
+                           style="-fx-font-size: 12px; -fx-text-fill: #888;"/>
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Refresh and Auto-Refresh -->
+                <VBox alignment="CENTER_RIGHT" spacing="5">
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <CheckBox fx:id="autoRefreshCheckbox" text="Auto Refresh"
+                                  selected="true"/>
+                        <Button fx:id="refreshAllButton" text="Refresh All"
+                                onAction="#handleRefreshAll"
+                                style="-fx-background-color: #2196f3; -fx-text-fill: white;"/>
+                    </HBox>
+                    <Label fx:id="lastRefreshLabel" text="Last refresh: --"
+                           style="-fx-font-size: 10px; -fx-text-fill: #888;"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Main Content - Tab Pane -->
+    <center>
+        <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+            <!-- ==================== Dashboard Tab ==================== -->
+            <Tab text="Dashboard" closable="false">
+                <ScrollPane fitToWidth="true">
+                    <VBox spacing="20">
+                        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                        <!-- Statistics Cards Row -->
+                        <HBox spacing="15" alignment="CENTER">
+                            <!-- Total Devices -->
+                            <VBox styleClass="stat-card" spacing="5" alignment="CENTER"
+                                  style="-fx-background-color: #e3f2fd; -fx-padding: 15; -fx-background-radius: 8; -fx-pref-width: 140;">
+                                <Label text="Total Devices" style="-fx-font-size: 11px; -fx-text-fill: #1565c0;"/>
+                                <Label fx:id="totalDevicesLabel" text="0"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1565c0;"/>
+                            </VBox>
+
+                            <!-- Online -->
+                            <VBox styleClass="stat-card" spacing="5" alignment="CENTER"
+                                  style="-fx-background-color: #e8f5e9; -fx-padding: 15; -fx-background-radius: 8; -fx-pref-width: 140;">
+                                <Label text="Online" style="-fx-font-size: 11px; -fx-text-fill: #2e7d32;"/>
+                                <Label fx:id="onlineDevicesLabel" text="0"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                            </VBox>
+
+                            <!-- Offline -->
+                            <VBox styleClass="stat-card" spacing="5" alignment="CENTER"
+                                  style="-fx-background-color: #ffebee; -fx-padding: 15; -fx-background-radius: 8; -fx-pref-width: 140;">
+                                <Label text="Offline" style="-fx-font-size: 11px; -fx-text-fill: #c62828;"/>
+                                <Label fx:id="offlineDevicesLabel" text="0"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                            </VBox>
+
+                            <!-- Warning -->
+                            <VBox styleClass="stat-card" spacing="5" alignment="CENTER"
+                                  style="-fx-background-color: #fff3e0; -fx-padding: 15; -fx-background-radius: 8; -fx-pref-width: 140;">
+                                <Label text="Warning" style="-fx-font-size: 11px; -fx-text-fill: #e65100;"/>
+                                <Label fx:id="warningDevicesLabel" text="0"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+                            </VBox>
+
+                            <!-- Maintenance -->
+                            <VBox styleClass="stat-card" spacing="5" alignment="CENTER"
+                                  style="-fx-background-color: #e0f7fa; -fx-padding: 15; -fx-background-radius: 8; -fx-pref-width: 140;">
+                                <Label text="Maintenance" style="-fx-font-size: 11px; -fx-text-fill: #00838f;"/>
+                                <Label fx:id="maintenanceDevicesLabel" text="0"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #00838f;"/>
+                            </VBox>
+
+                            <!-- Avg Latency -->
+                            <VBox styleClass="stat-card" spacing="5" alignment="CENTER"
+                                  style="-fx-background-color: #f3e5f5; -fx-padding: 15; -fx-background-radius: 8; -fx-pref-width: 140;">
+                                <Label text="Avg Latency" style="-fx-font-size: 11px; -fx-text-fill: #6a1b9a;"/>
+                                <Label fx:id="avgLatencyLabel" text="-- ms"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #6a1b9a;"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Charts Row -->
+                        <HBox spacing="20" HBox.hgrow="ALWAYS">
+                            <!-- Status Distribution Chart -->
+                            <VBox spacing="10" HBox.hgrow="ALWAYS"
+                                  style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                                <Label text="Status Distribution" style="-fx-font-weight: bold;"/>
+                                <PieChart fx:id="statusPieChart" prefHeight="200" legendVisible="true"/>
+                            </VBox>
+
+                            <!-- Device Type Distribution Chart -->
+                            <VBox spacing="10" HBox.hgrow="ALWAYS"
+                                  style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                                <Label text="Device Types" style="-fx-font-weight: bold;"/>
+                                <PieChart fx:id="typePieChart" prefHeight="200" legendVisible="true"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Devices Requiring Attention -->
+                        <VBox spacing="10"
+                              style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="Devices Requiring Attention" style="-fx-font-weight: bold;"/>
+                                <Label fx:id="attentionCountLabel" text="(0)"
+                                       style="-fx-text-fill: #e65100;"/>
+                            </HBox>
+                            <TableView fx:id="attentionTable" prefHeight="150">
+                                <columns>
+                                    <TableColumn fx:id="attentionNameColumn" text="Device Name" prefWidth="150"/>
+                                    <TableColumn fx:id="attentionIpColumn" text="IP Address" prefWidth="120"/>
+                                    <TableColumn fx:id="attentionTypeColumn" text="Type" prefWidth="100"/>
+                                    <TableColumn fx:id="attentionStatusColumn" text="Status" prefWidth="80"/>
+                                    <TableColumn fx:id="attentionLocationColumn" text="Location" prefWidth="150"/>
+                                    <TableColumn fx:id="attentionLastPingColumn" text="Last Ping" prefWidth="140"/>
+                                </columns>
+                                <placeholder>
+                                    <Label text="All devices are operating normally"/>
+                                </placeholder>
+                            </TableView>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- ==================== Device Management Tab ==================== -->
+            <Tab text="Device Management" closable="false">
+                <VBox spacing="15">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                    <!-- Toolbar -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <TextField fx:id="searchField" promptText="Search devices..."
+                                   prefWidth="200" onKeyReleased="#handleSearch"/>
+                        <ComboBox fx:id="typeFilterCombo" promptText="All Types" prefWidth="130"
+                                  onAction="#handleFilterChange"/>
+                        <ComboBox fx:id="statusFilterCombo" promptText="All Statuses" prefWidth="130"
+                                  onAction="#handleFilterChange"/>
+                        <ComboBox fx:id="locationFilterCombo" promptText="All Locations" prefWidth="150"
+                                  onAction="#handleFilterChange"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Button fx:id="addDeviceButton" text="+ Add Device"
+                                onAction="#handleAddDevice"
+                                style="-fx-background-color: #4caf50; -fx-text-fill: white;"/>
+                        <Button fx:id="pingSelectedButton" text="Ping Selected"
+                                onAction="#handlePingSelected"
+                                style="-fx-background-color: #2196f3; -fx-text-fill: white;"/>
+                        <Button fx:id="exportButton" text="Export"
+                                onAction="#handleExport"/>
+                    </HBox>
+
+                    <!-- Device Table -->
+                    <TableView fx:id="deviceTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="selectColumn" text="" prefWidth="30"/>
+                            <TableColumn fx:id="statusIndicatorColumn" text="" prefWidth="30"/>
+                            <TableColumn fx:id="deviceNameColumn" text="Device Name" prefWidth="150"/>
+                            <TableColumn fx:id="ipAddressColumn" text="IP Address" prefWidth="120"/>
+                            <TableColumn fx:id="macAddressColumn" text="MAC Address" prefWidth="130"/>
+                            <TableColumn fx:id="deviceTypeColumn" text="Type" prefWidth="100"/>
+                            <TableColumn fx:id="statusColumn" text="Status" prefWidth="90"/>
+                            <TableColumn fx:id="locationColumn" text="Location" prefWidth="150"/>
+                            <TableColumn fx:id="latencyColumn" text="Latency" prefWidth="80"/>
+                            <TableColumn fx:id="lastPingColumn" text="Last Ping" prefWidth="140"/>
+                            <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No devices found. Click 'Add Device' to add your first network device."/>
+                        </placeholder>
+                    </TableView>
+
+                    <!-- Footer -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label fx:id="deviceCountLabel" text="0 devices"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="selectAllButton" text="Select All" onAction="#handleSelectAll"/>
+                        <Button fx:id="deselectAllButton" text="Deselect All" onAction="#handleDeselectAll"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- ==================== Network Tools Tab ==================== -->
+            <Tab text="Network Tools" closable="false">
+                <HBox spacing="15">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                    <!-- Left Panel - Tools -->
+                    <VBox spacing="15" prefWidth="400">
+                        <!-- Ping Tool -->
+                        <TitledPane text="Ping Tool" expanded="true">
+                            <VBox spacing="10">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <Label text="IP Address:" prefWidth="80"/>
+                                    <TextField fx:id="pingIpField" promptText="192.168.1.1"
+                                               HBox.hgrow="ALWAYS"/>
+                                </HBox>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <Label text="Timeout (ms):" prefWidth="80"/>
+                                    <Spinner fx:id="pingTimeoutSpinner" prefWidth="100"/>
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Button fx:id="singlePingButton" text="Ping Once"
+                                            onAction="#handleSinglePing"
+                                            style="-fx-background-color: #4caf50; -fx-text-fill: white;"/>
+                                    <Button fx:id="continuousPingButton" text="Continuous Ping"
+                                            onAction="#handleContinuousPing"
+                                            style="-fx-background-color: #2196f3; -fx-text-fill: white;"/>
+                                    <Button fx:id="stopPingButton" text="Stop" disable="true"
+                                            onAction="#handleStopPing"/>
+                                </HBox>
+                                <Label fx:id="pingResultLabel" text="Ready to ping..."
+                                       style="-fx-font-family: monospace;"/>
+                            </VBox>
+                        </TitledPane>
+
+                        <!-- Port Scanner -->
+                        <TitledPane text="Port Scanner" expanded="false">
+                            <VBox spacing="10">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <Label text="IP Address:" prefWidth="80"/>
+                                    <TextField fx:id="portScanIpField" promptText="192.168.1.1"
+                                               HBox.hgrow="ALWAYS"/>
+                                </HBox>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <Label text="Port Range:" prefWidth="80"/>
+                                    <Spinner fx:id="startPortSpinner" prefWidth="80"/>
+                                    <Label text="to"/>
+                                    <Spinner fx:id="endPortSpinner" prefWidth="80"/>
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Button fx:id="scanCommonButton" text="Scan Common Ports"
+                                            onAction="#handleScanCommonPorts"
+                                            style="-fx-background-color: #ff9800; -fx-text-fill: white;"/>
+                                    <Button fx:id="scanRangeButton" text="Scan Range"
+                                            onAction="#handleScanPortRange"/>
+                                </HBox>
+                            </VBox>
+                        </TitledPane>
+
+                        <!-- Quick Actions -->
+                        <TitledPane text="Quick Actions" expanded="true">
+                            <VBox spacing="10">
+                                <Button text="Ping All Devices" prefWidth="360"
+                                        onAction="#handlePingAllDevices"
+                                        style="-fx-background-color: #4caf50; -fx-text-fill: white;"/>
+                                <Button text="Check Offline Devices" prefWidth="360"
+                                        onAction="#handleCheckOfflineDevices"
+                                        style="-fx-background-color: #ff9800; -fx-text-fill: white;"/>
+                                <Button text="Generate Network Report" prefWidth="360"
+                                        onAction="#handleGenerateReport"
+                                        style="-fx-background-color: #2196f3; -fx-text-fill: white;"/>
+                            </VBox>
+                        </TitledPane>
+                    </VBox>
+
+                    <!-- Right Panel - Results -->
+                    <VBox spacing="10" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: #263238; -fx-padding: 15; -fx-background-radius: 8;">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="Output" style="-fx-font-weight: bold; -fx-text-fill: #90a4ae;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="clearOutputButton" text="Clear"
+                                    onAction="#handleClearOutput"
+                                    style="-fx-background-color: transparent; -fx-text-fill: #90a4ae;"/>
+                        </HBox>
+                        <TextArea fx:id="outputArea" VBox.vgrow="ALWAYS"
+                                  style="-fx-control-inner-background: #263238; -fx-text-fill: #b0bec5; -fx-font-family: 'Consolas', monospace; -fx-font-size: 12px;"
+                                  wrapText="true" editable="false"/>
+                    </VBox>
+                </HBox>
+            </Tab>
+
+            <!-- ==================== Add/Edit Device Dialog (in a separate tab for simplicity) ==================== -->
+            <Tab text="Add/Edit Device" closable="false" fx:id="addEditTab">
+                <ScrollPane fitToWidth="true">
+                    <VBox spacing="20">
+                        <padding><Insets top="20" right="40" bottom="20" left="40"/></padding>
+
+                        <Label fx:id="formTitleLabel" text="Add New Device"
+                               style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+                        <!-- Basic Information -->
+                        <TitledPane text="Basic Information" expanded="true" collapsible="false">
+                            <GridPane hgap="15" vgap="10">
+                                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+                                <Label text="Device Name:*" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <TextField fx:id="formDeviceName" promptText="e.g., Main Office Printer"
+                                           GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="300"/>
+
+                                <Label text="IP Address:*" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <TextField fx:id="formIpAddress" promptText="e.g., 192.168.1.100"
+                                           GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                <Label text="MAC Address:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                <TextField fx:id="formMacAddress" promptText="e.g., AA:BB:CC:DD:EE:FF"
+                                           GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                                <Label text="Device Type:*" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                <ComboBox fx:id="formDeviceType" prefWidth="300"
+                                          GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                                <Label text="Location:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                                <TextField fx:id="formLocation" promptText="e.g., Building A, Room 101"
+                                           GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                                <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                                <TextArea fx:id="formDescription" promptText="Optional description..."
+                                          prefRowCount="2" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                            </GridPane>
+                        </TitledPane>
+
+                        <!-- Hardware Details -->
+                        <TitledPane text="Hardware Details" expanded="false">
+                            <GridPane hgap="15" vgap="10">
+                                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+                                <Label text="Manufacturer:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <TextField fx:id="formManufacturer" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="300"/>
+
+                                <Label text="Model:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <TextField fx:id="formModel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                <Label text="Serial Number:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                <TextField fx:id="formSerialNumber" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                                <Label text="Hostname:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                <TextField fx:id="formHostname" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                            </GridPane>
+                        </TitledPane>
+
+                        <!-- Monitoring Settings -->
+                        <TitledPane text="Monitoring Settings" expanded="false">
+                            <GridPane hgap="15" vgap="10">
+                                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+                                <Label text="Enable Monitoring:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <CheckBox fx:id="formMonitoringEnabled" selected="true"
+                                          GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                <Label text="Ping Interval (sec):" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <Spinner fx:id="formPingInterval" prefWidth="100"
+                                         GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                <Label text="Ping Timeout (ms):" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                <Spinner fx:id="formPingTimeout" prefWidth="100"
+                                         GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                                <Label text="Port to Check:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                <Spinner fx:id="formPort" prefWidth="100"
+                                         GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                                <Label text="Alert on Offline:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                                <CheckBox fx:id="formAlertOnOffline" selected="true"
+                                          GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                                <Label text="Alert Email:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                                <TextField fx:id="formAlertEmail" promptText="admin@school.edu"
+                                           GridPane.columnIndex="1" GridPane.rowIndex="5" prefWidth="300"/>
+                            </GridPane>
+                        </TitledPane>
+
+                        <!-- Notes -->
+                        <TitledPane text="Notes" expanded="false">
+                            <TextArea fx:id="formNotes" promptText="Additional notes about this device..."
+                                      prefRowCount="4"/>
+                        </TitledPane>
+
+                        <!-- Form Actions -->
+                        <HBox spacing="10" alignment="CENTER_RIGHT">
+                            <Button fx:id="formCancelButton" text="Cancel"
+                                    onAction="#handleFormCancel"/>
+                            <Button fx:id="formTestButton" text="Test Connection"
+                                    onAction="#handleFormTestConnection"
+                                    style="-fx-background-color: #ff9800; -fx-text-fill: white;"/>
+                            <Button fx:id="formSaveButton" text="Save Device"
+                                    onAction="#handleFormSave"
+                                    style="-fx-background-color: #4caf50; -fx-text-fill: white;"/>
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+        </TabPane>
+    </center>
+
+    <!-- Footer -->
+    <bottom>
+        <HBox alignment="CENTER" spacing="20"
+              style="-fx-background-color: #f5f5f5; -fx-padding: 10;">
+            <Label fx:id="footerStatusLabel" text="Ready"
+                   style="-fx-font-size: 10px; -fx-text-fill: #666;"/>
+            <Label text="|" style="-fx-text-fill: #ccc;"/>
+            <Label fx:id="footerHealthLabel" text="Network Health: --"
+                   style="-fx-font-size: 10px; -fx-text-fill: #666;"/>
+            <Label text="|" style="-fx-text-fill: #ccc;"/>
+            <Label text="Network Panel v1.0.0"
+                   style="-fx-font-size: 10px; -fx-text-fill: #888;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

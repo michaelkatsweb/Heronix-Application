@@ -25,7 +25,7 @@ import java.util.Map;
  * - GET /api/teachers/department/{dept} - Get by department
  * - GET /api/teachers/employee/{empId} - Get by employee ID
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/teachers")
 @CrossOrigin(origins = "*")
 public class TeacherController {

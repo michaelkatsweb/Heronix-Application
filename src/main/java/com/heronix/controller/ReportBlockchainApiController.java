@@ -37,7 +37,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 99 - Report Blockchain Integration & Verification
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/blockchain")
 @RequiredArgsConstructor
 @Slf4j

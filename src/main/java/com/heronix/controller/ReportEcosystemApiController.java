@@ -39,7 +39,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 90 - Report Ecosystem & Integration Hub
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/ecosystem")
 @RequiredArgsConstructor
 @Slf4j

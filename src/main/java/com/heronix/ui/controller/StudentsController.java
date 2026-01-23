@@ -5,9 +5,9 @@ import com.heronix.model.domain.ParentGuardian;
 import com.heronix.model.domain.EmergencyContact;
 import com.heronix.model.domain.Course;
 import com.heronix.model.domain.StudentGrade;
-import com.heronix.repository.StudentRepository;
 import com.heronix.repository.MedicalRecordRepository;
 import com.heronix.repository.CourseRepository;
+import com.heronix.service.StudentService;
 import com.heronix.service.GradeService;
 import com.heronix.service.StudentPlacementService;
 import com.heronix.ui.component.EditableTableCell;
@@ -65,7 +65,7 @@ import java.io.File;
 public class StudentsController {
 
     @Autowired
-    private StudentRepository studentRepository;
+    private StudentService studentService;
 
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
@@ -123,8 +123,8 @@ public class StudentsController {
                 log.error("studentsTable is NULL!");
                 return;
             }
-            if (studentRepository == null) {
-                log.error("studentRepository is NULL!");
+            if (studentService == null) {
+                log.error("studentService is NULL!");
                 return;
             }
 
@@ -269,7 +269,7 @@ public class StudentsController {
             gradeColumn.setEditable(true);
             gradeColumn.setCellFactory(col -> EditableTableCell.forStringColumn((student, newGrade) -> {
                 student.setGradeLevel(newGrade);
-                studentRepository.save(student);
+                studentService.save(student);
                 log.info("Updated student {} grade to: {}", student.getStudentId(), newGrade);
             }));
 
@@ -279,7 +279,7 @@ public class StudentsController {
             emailColumn.setEditable(true);
             emailColumn.setCellFactory(col -> EditableTableCell.forEmailColumn((student, newEmail) -> {
                 student.setEmail(newEmail);
-                studentRepository.save(student);
+                studentService.save(student);
                 log.info("Updated student {} email to: {}", student.getStudentId(), newEmail);
             }));
 
@@ -581,7 +581,7 @@ public class StudentsController {
             log.debug("Loading students from database...");
 
             // Use findAllWithEnrolledCourses() to eagerly load courses for course count display
-            List<Student> students = studentRepository.findAllWithEnrolledCourses();
+            List<Student> students = studentService.findAllWithEnrolledCourses();
             log.info("Found {} students", students.size());
 
             studentsList.clear();
@@ -609,42 +609,42 @@ public class StudentsController {
      */
     @FXML
     private void handleNavigateToEnrollment() {
-        log.info("Opening Enrollment module for new student registration");
+        log.info("Opening Student Registration module for new student");
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/StudentEnrollment.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/StudentRegistrationEnrollment.fxml"));
             loader.setControllerFactory(applicationContext::getBean);
 
             javafx.scene.Parent root = loader.load();
 
-            // Create new window for enrollment (keeps main SIS window open)
-            javafx.stage.Stage enrollmentStage = new javafx.stage.Stage();
-            enrollmentStage.setTitle("Student Enrollment & Registration");
-            enrollmentStage.setScene(new javafx.scene.Scene(root));
+            // Create new window for registration (keeps main SIS window open)
+            javafx.stage.Stage registrationStage = new javafx.stage.Stage();
+            registrationStage.setTitle("New Student Registration");
+            registrationStage.setScene(new javafx.scene.Scene(root));
 
-            // Make it modal (user must complete or cancel enrollment before returning)
-            enrollmentStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            // Make it modal (user must complete or cancel registration before returning)
+            registrationStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
 
             // Set owner to current window
-            enrollmentStage.initOwner(studentsTable.getScene().getWindow());
+            registrationStage.initOwner(studentsTable.getScene().getWindow());
 
-            // Set reasonable size
-            enrollmentStage.setWidth(1200);
-            enrollmentStage.setHeight(800);
+            // Set reasonable size for the 5-step wizard
+            registrationStage.setWidth(1400);
+            registrationStage.setHeight(900);
 
-            log.info("Successfully opened Enrollment module in new window");
+            log.info("Successfully opened Student Registration wizard");
 
-            // Show and wait (blocks until enrollment window is closed)
-            enrollmentStage.showAndWait();
+            // Show and wait (blocks until registration window is closed)
+            registrationStage.showAndWait();
 
-            // Refresh student list after enrollment window closes
-            log.info("Enrollment window closed - refreshing student list");
+            // Refresh student list after registration window closes
+            log.info("Registration window closed - refreshing student list");
             handleRefresh();
 
         } catch (java.io.IOException e) {
-            log.error("Failed to load enrollment module", e);
+            log.error("Failed to load student registration module", e);
             showError("Navigation Error",
-                "Could not open Student Enrollment module.\n\n" +
-                "Please ensure the Enrollment module is properly configured.\n\n" +
+                "Could not open Student Registration module.\n\n" +
+                "Please ensure the Registration module is properly configured.\n\n" +
                 "Error: " + e.getMessage());
         }
     }
@@ -802,7 +802,7 @@ public class StudentsController {
                 // Update student record
                 String relativePath = photoDir + "/" + newFileName;
                 selectedStudent.setPhotoPath(relativePath);
-                studentRepository.save(selectedStudent);
+                studentService.save(selectedStudent);
 
                 log.info("Photo uploaded for student: {} -> {}",
                     selectedStudent.getStudentId(), relativePath);
@@ -843,7 +843,7 @@ public class StudentsController {
         Optional<ButtonType> result = confirmAlert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
-                studentRepository.delete(student);
+                studentService.delete(student);
                 log.info("Student deleted: {} {} (ID: {})",
                         student.getFirstName(), student.getLastName(), student.getStudentId());
 
@@ -1158,13 +1158,13 @@ public class StudentsController {
             try {
                 // Check for duplicate student ID (only when adding or changing ID)
                 if (!isEdit || !student.getStudentId().equals(existingStudent.getStudentId())) {
-                    if (studentRepository.findByStudentId(student.getStudentId()).isPresent()) {
+                    if (studentService.findByStudentId(student.getStudentId()) != null) {
                         showError("Duplicate Student ID", "A student with ID '" + student.getStudentId() + "' already exists.");
                         return;
                     }
                 }
 
-                Student saved = studentRepository.save(student);
+                Student saved = studentService.save(student);
                 log.info("{} student: {} {} (ID: {})",
                         isEdit ? "Updated" : "Added",
                         saved.getFirstName(), saved.getLastName(), saved.getStudentId());
@@ -2700,7 +2700,7 @@ public class StudentsController {
         String sped = spedFilter != null ? spedFilter.getValue() : "All";
 
         try {
-            List<Student> filtered = studentRepository.findAll().stream()
+            List<Student> filtered = studentService.getAllStudents().stream()
                 // Apply search filter
                 .filter(s -> {
                     if (query.isEmpty()) {
@@ -2786,7 +2786,7 @@ public class StudentsController {
 
         try {
             // Reload student with enrolled courses to avoid LazyInitializationException
-            Student studentWithCourses = studentRepository.findByIdWithEnrolledCourses(student.getId())
+            Student studentWithCourses = studentService.findByIdWithEnrolledCourses(student.getId())
                     .orElse(student);
 
             // Create dialog
@@ -2872,7 +2872,7 @@ public class StudentsController {
                         studentWithCourses.setEnrolledCourses(new java.util.ArrayList<>());
                     }
                     studentWithCourses.getEnrolledCourses().add(selected);
-                    studentRepository.save(studentWithCourses);
+                    studentService.save(studentWithCourses);
                     enrolledListView.getItems().add(selected);
                     availableListView.getItems().remove(selected);
                     showInfo("Success", "Course added successfully");
@@ -2889,7 +2889,7 @@ public class StudentsController {
                 if (selected != null) {
                     if (studentWithCourses.getEnrolledCourses() != null) {
                         studentWithCourses.getEnrolledCourses().remove(selected);
-                        studentRepository.save(studentWithCourses);
+                        studentService.save(studentWithCourses);
                         enrolledListView.getItems().remove(selected);
                         availableListView.getItems().add(selected);
                         showInfo("Success", "Course dropped successfully");
@@ -3078,8 +3078,10 @@ public class StudentsController {
 
         try {
             // Reload student to get grade history
-            Student studentWithGrades = studentRepository.findById(student.getId())
-                .orElse(student);
+            Student studentWithGrades = studentService.findById(student.getId());
+            if (studentWithGrades == null) {
+                studentWithGrades = student;
+            }
 
             // Create dialog
             Dialog<ButtonType> dialog = new Dialog<>();

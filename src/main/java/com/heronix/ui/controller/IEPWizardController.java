@@ -10,6 +10,7 @@ import com.heronix.model.enums.ServiceStatus;
 import com.heronix.model.enums.ServiceType;
 import com.heronix.repository.StudentRepository;
 import com.heronix.repository.TeacherRepository;
+import com.heronix.security.SecurityContext;
 import com.heronix.service.IEPManagementService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -741,7 +742,7 @@ public class IEPWizardController {
         notes.append(notesArea.getText());
         iep.setNotes(notes.toString());
 
-        iep.setCreatedBy("IEP Wizard"); // TODO: Get current user
+        iep.setCreatedBy(SecurityContext.getCurrentUsername().orElse("IEP Wizard"));
 
         return iep;
     }

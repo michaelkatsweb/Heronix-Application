@@ -74,10 +74,28 @@ public class DistrictSettingsServiceImpl implements DistrictSettingsService {
                     .autoGenerateTeacherId(true)
                     .autoGenerateStudentId(true)
                     .autoGenerateRoomPhone(true)
+                    // Scheduler configuration defaults
+                    .campusName("Main Campus")
+                    .periodsPerDay(7)
+                    .instructionalDaysPerWeek(5)
+                    .defaultScheduleType("TRADITIONAL")
+                    .maxOptimizationTimeSeconds(120)
+                    .optimizationThreads(4)
+                    .enableAdvancedOptimization(true)
+                    // Academic configuration defaults
                     .defaultPeriodDuration(50)
                     .defaultPassingPeriod(5)
                     .defaultLunchDuration(30)
                     .includeDistrictInfoOnPrint(true)
+                    // Constraint weight defaults
+                    .studentPreferenceWeight(100)
+                    .teacherTravelWeight(50)
+                    .scheduleCompactnessWeight(30)
+                    .sectionBalanceWeight(70)
+                    .teacherPreferenceWeight(60)
+                    .gradeLevelClusteringWeight(40)
+                    .departmentClusteringWeight(40)
+                    .lunchContinuityWeight(50)
                     .build();
 
                 return districtSettingsRepository.save(defaultSettings);

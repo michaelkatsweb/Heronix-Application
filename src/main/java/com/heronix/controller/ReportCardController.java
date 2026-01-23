@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2025-12-28
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/report-cards")
 @CrossOrigin(origins = "*")
 public class ReportCardController {

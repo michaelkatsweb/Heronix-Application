@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 150 - Data Mesh & Distributed Data Architecture
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/data-mesh")
 @RequiredArgsConstructor
 public class ReportDataMeshApiController {

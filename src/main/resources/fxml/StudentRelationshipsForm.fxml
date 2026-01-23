@@ -88,7 +88,7 @@
 
                 <!-- Selected Student Info -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Selected Student" styleClass="section-header" style="-fx-background-color: #E3F2FD; -fx-padding: 5;">
+                    <Label text="Selected Student" styleClass="section-header-info">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -116,7 +116,7 @@
 
                 <!-- Siblings Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Siblings" styleClass="section-header" style="-fx-background-color: #E8F5E9; -fx-padding: 5;">
+                    <Label text="Siblings" styleClass="section-header-success">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -144,7 +144,7 @@
 
                 <!-- Family Group Information Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Family Group Information" styleClass="section-header" style="-fx-background-color: #FFF3E0; -fx-padding: 5;">
+                    <Label text="Family Group Information" styleClass="section-header-warning">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -177,7 +177,7 @@
 
                 <!-- Household Management Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Household Management" styleClass="section-header" style="-fx-background-color: #F3E5F5; -fx-padding: 5;">
+                    <Label text="Household Management" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -208,7 +208,7 @@
 
                 <!-- Carpool Coordination Section -->
                 <VBox spacing="8" styleClass="info-section">
-                    <Label text="Carpool Coordination" styleClass="section-header" style="-fx-background-color: #E1F5FE; -fx-padding: 5;">
+                    <Label text="Carpool Coordination" styleClass="section-header">
                         <font>
                             <Font name="System Bold" size="13"/>
                         </font>
@@ -263,7 +263,7 @@
             <Separator/>
 
             <VBox spacing="5">
-                <Label text="Shared Parents/Guardians" style="-fx-font-weight: bold;"/>
+                <Label text="Shared Parents/Guardians" styleClass="form-label"/>
                 <ListView fx:id="lstSharedParents" prefHeight="150">
                     <placeholder>
                         <Label text="No shared parents found"/>
@@ -274,7 +274,7 @@
             <Separator/>
 
             <VBox spacing="5">
-                <Label text="Quick Stats" style="-fx-font-weight: bold;"/>
+                <Label text="Quick Stats" styleClass="form-label"/>
 
                 <GridPane hgap="10" vgap="5">
                     <columnConstraints>
@@ -283,16 +283,16 @@
                     </columnConstraints>
 
                     <Label text="Total Siblings:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblTotalSiblings" text="0" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label fx:id="lblTotalSiblings" text="0" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
                     <Label text="Same Household:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblSameHousehold" text="0" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label fx:id="lblSameHousehold" text="0" styleClass="form-label" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
                     <Label text="In Carpool:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblInCarpool" text="0" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Label fx:id="lblInCarpool" text="0" styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
                     <Label text="Shared Parents:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblSharedParents" text="0" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <Label fx:id="lblSharedParents" text="0" styleClass="form-label" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
                 </GridPane>
             </VBox>
         </VBox>

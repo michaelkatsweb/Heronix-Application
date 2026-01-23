@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -12,15 +14,20 @@ Location: src/main/resources/fxml/Students.fxml
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.heronix.ui.controller.StudentsController"
-            styleClass="root"
-            style="-fx-background-color: derive(-fx-base, 26.4%);">
+            styleClass="root">
+
 
     <top>
-        <VBox spacing="15" style="-fx-padding: 20;">
+        <VBox spacing="15">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
             <!-- Header Section -->
             <HBox alignment="CENTER_LEFT" spacing="10" styleClass="card">
                 <Label text="👨‍🎓 Students Management" styleClass="label-title"/>
                 <Region HBox.hgrow="ALWAYS"/>
+                <Button text="➕ Add New Student" onAction="#handleNavigateToEnrollment" styleClass="button-success"/>
+                <Separator orientation="VERTICAL"/>
                 <Button text="📝 Add Grade" onAction="#handleAddGrade" styleClass="button-primary"/>
                 <Button text="📊 View Grades" onAction="#handleViewGrades" styleClass="button-primary"/>
                 <Button text="📥 Import Grades" onAction="#handleImportGrades" styleClass="button-primary"/>

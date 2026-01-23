@@ -22,7 +22,7 @@ import java.util.Map;
  * - Check database status
  * - Generate bulk data for testing
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/admin")
 @CrossOrigin(origins = "*") // Configure properly in production
 public class AdminController {

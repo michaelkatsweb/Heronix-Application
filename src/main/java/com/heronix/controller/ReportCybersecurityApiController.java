@@ -39,7 +39,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 116 - Report Cybersecurity & Threat Intelligence
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/cybersecurity")
 @RequiredArgsConstructor
 @Slf4j

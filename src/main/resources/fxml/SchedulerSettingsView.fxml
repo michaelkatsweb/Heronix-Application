@@ -10,25 +10,25 @@
 
     <!-- Header -->
     <top>
-        <VBox style="-fx-background-color: #1976D2; -fx-padding: 20;">
-            <Label text="Scheduler Configuration" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;"/>
+        <VBox styleClass="card">
+            <Label text="Scheduler Configuration" styleClass="text-white"/>
             <Label text="Configure constraints, weights, and special conditions for optimal scheduling"
-                   style="-fx-text-fill: #E3F2FD; -fx-font-size: 12;"/>
+                   styleClass="text-muted"/>
         </VBox>
     </top>
 
     <!-- Main Content -->
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: #f5f5f5;">
+        <ScrollPane fitToWidth="true" styleClass="main-container">
             <VBox spacing="15" style="-fx-padding: 20;">
 
                 <!-- Configuration Selector -->
-                <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 5;">
+                <HBox spacing="15" alignment="CENTER_LEFT" styleClass="form-panel">
                     <Label text="Active Configuration:" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
                     <ComboBox fx:id="configComboBox" prefWidth="250" promptText="Select configuration..."/>
-                    <Button text="New" onAction="#handleNewConfig" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-                    <Button text="Save" onAction="#handleSaveConfig" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-                    <Button text="Delete" onAction="#handleDeleteConfig" style="-fx-background-color: #F44336; -fx-text-fill: white;"/>
+                    <Button text="New" onAction="#handleNewConfig" styleClass="button-success"/>
+                    <Button text="Save" onAction="#handleSaveConfig" styleClass="button-primary"/>
+                    <Button text="Delete" onAction="#handleDeleteConfig" styleClass="button-danger"/>
                 </HBox>
 
                 <!-- Tabs for Different Settings -->
@@ -164,7 +164,7 @@
                         <ScrollPane fitToWidth="true">
                             <VBox spacing="10" style="-fx-padding: 15;">
                                 <Label text="Optimization Weights" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
-                                <Label text="Higher values = stronger constraint" style="-fx-font-size: 11; -fx-text-fill: #666;"/>
+                                <Label text="Higher values = stronger constraint" styleClass="text-muted-11"/>
                                 <Separator/>
 
                                 <GridPane hgap="15" vgap="10">
@@ -208,7 +208,7 @@
                             <HBox spacing="10" alignment="CENTER_LEFT">
                                 <Label text="Custom Rules &amp; Conditions" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
                                 <Button text="Add New Condition" onAction="#handleAddCondition"
-                                        style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                                        styleClass="button-success"/>
                             </HBox>
                             <Separator/>
 
@@ -233,10 +233,10 @@
 
     <!-- Bottom Buttons -->
     <bottom>
-        <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-background-color: #f5f5f5; -fx-padding: 15;">
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="card">
             <Button text="Reset to Defaults" onAction="#handleResetDefaults" prefWidth="130"/>
             <Button text="Apply Changes" onAction="#handleApplyChanges" prefWidth="120"
-                    style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                    styleClass="button-primary"/>
         </HBox>
     </bottom>
 

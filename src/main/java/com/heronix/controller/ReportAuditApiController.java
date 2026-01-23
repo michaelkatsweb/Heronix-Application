@@ -20,7 +20,7 @@ import java.util.Map;
  * @since Phase 64 - Report Audit Trail & Compliance Logging
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/audit")
 @RequiredArgsConstructor
 public class ReportAuditApiController {

@@ -3118,6 +3118,7 @@ public class MainController {
     @FXML private void handleAuditLogs() { loadView("Audit Logs", "/fxml/DatabaseManagement.fxml"); }
     @FXML private void handleSystemMonitoring() { loadView("System Monitoring", "/fxml/DatabaseManagement.fxml"); }
     @FXML private void handleDatabaseHealth() { loadView("Database Health", "/fxml/DatabaseManagement.fxml"); }
+    @FXML private void loadNetworkPanel() { loadView("Network Panel", "/fxml/NetworkPanel.fxml"); }
     @FXML private void handleDatabaseCleanup() { loadView("Database Cleanup", "/fxml/DatabaseCleanupDialog.fxml"); }
     @FXML private void handleDocumentation() { loadView("Documentation", "/fxml/Settings.fxml"); }
     @FXML private void handleVideoTutorials() { loadView("Video Tutorials", "/fxml/Settings.fxml"); }

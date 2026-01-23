@@ -1,10 +1,13 @@
 package com.heronix.model;
 
+import com.heronix.model.domain.StateConfiguration;
+import com.heronix.model.enums.USState;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -48,6 +51,43 @@ public class DistrictSettings {
 
     @Column(name = "district_state", length = 50)
     private String districtState;
+
+    // ========================================================================
+    // STATE CONFIGURATION LINK
+    // Phase 57: State Configuration Feature - January 2026
+    // ========================================================================
+
+    /**
+     * The US state this district operates in (enum for type safety)
+     * This is the primary state selector used during initial setup
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "us_state", length = 20)
+    private USState usState;
+
+    /**
+     * Link to the full state configuration
+     * Contains state-specific graduation requirements, terminology, etc.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "state_configuration_id")
+    @ToString.Exclude
+    private StateConfiguration stateConfiguration;
+
+    /**
+     * Has the initial state setup been completed?
+     * Used to determine if setup wizard should be shown
+     */
+    @Column(name = "state_setup_completed")
+    @Builder.Default
+    private Boolean stateSetupCompleted = false;
+
+    /**
+     * District's state-assigned ID
+     * Examples: District ID (TX), LEA Code (CA), BEDS District Code (NY)
+     */
+    @Column(name = "state_district_id", length = 30)
+    private String stateDistrictId;
 
     @Column(name = "district_zip", length = 20)
     private String districtZip;
@@ -268,6 +308,62 @@ public class DistrictSettings {
     private String printFooterText;
 
     // ========================================================================
+    // CAMPUS/SCHEDULER CONFIGURATION
+    // ========================================================================
+
+    /**
+     * Primary campus name for scheduling exports
+     * Example: "Main Campus", "North High School", etc.
+     */
+    @Column(name = "campus_name", length = 255)
+    private String campusName;
+
+    /**
+     * Number of instructional periods per day
+     * Example: 7 for traditional, 4 for block schedule
+     */
+    @Column(name = "periods_per_day")
+    @Builder.Default
+    private Integer periodsPerDay = 7;
+
+    /**
+     * Number of instructional days per week
+     * Typically 5 for Mon-Fri schedule
+     */
+    @Column(name = "instructional_days_per_week")
+    @Builder.Default
+    private Integer instructionalDaysPerWeek = 5;
+
+    /**
+     * Default schedule type for new schedules
+     * Values: TRADITIONAL, BLOCK, ROTATING, HYBRID
+     */
+    @Column(name = "default_schedule_type", length = 50)
+    @Builder.Default
+    private String defaultScheduleType = "TRADITIONAL";
+
+    /**
+     * Maximum optimization time in seconds for scheduler
+     */
+    @Column(name = "max_optimization_time_seconds")
+    @Builder.Default
+    private Integer maxOptimizationTimeSeconds = 120;
+
+    /**
+     * Number of threads for parallel optimization
+     */
+    @Column(name = "optimization_threads")
+    @Builder.Default
+    private Integer optimizationThreads = 4;
+
+    /**
+     * Enable advanced optimization algorithms
+     */
+    @Column(name = "enable_advanced_optimization")
+    @Builder.Default
+    private Boolean enableAdvancedOptimization = true;
+
+    // ========================================================================
     // ACADEMIC YEAR CONFIGURATION
     // ========================================================================
 
@@ -291,6 +387,66 @@ public class DistrictSettings {
     @Column(name = "default_lunch_duration")
     @Builder.Default
     private Integer defaultLunchDuration = 30;
+
+    // ========================================================================
+    // SCHEDULER CONSTRAINT WEIGHTS
+    // ========================================================================
+
+    /**
+     * Weight for student course preference satisfaction (0-100)
+     */
+    @Column(name = "student_preference_weight")
+    @Builder.Default
+    private Integer studentPreferenceWeight = 100;
+
+    /**
+     * Weight for minimizing teacher travel between rooms (0-100)
+     */
+    @Column(name = "teacher_travel_weight")
+    @Builder.Default
+    private Integer teacherTravelWeight = 50;
+
+    /**
+     * Weight for schedule compactness - minimizing gaps (0-100)
+     */
+    @Column(name = "schedule_compactness_weight")
+    @Builder.Default
+    private Integer scheduleCompactnessWeight = 30;
+
+    /**
+     * Weight for balancing section sizes (0-100)
+     */
+    @Column(name = "section_balance_weight")
+    @Builder.Default
+    private Integer sectionBalanceWeight = 70;
+
+    /**
+     * Weight for teacher preferences - room, time (0-100)
+     */
+    @Column(name = "teacher_preference_weight")
+    @Builder.Default
+    private Integer teacherPreferenceWeight = 60;
+
+    /**
+     * Weight for clustering students by grade level (0-100)
+     */
+    @Column(name = "grade_level_clustering_weight")
+    @Builder.Default
+    private Integer gradeLevelClusteringWeight = 40;
+
+    /**
+     * Weight for clustering courses by department (0-100)
+     */
+    @Column(name = "department_clustering_weight")
+    @Builder.Default
+    private Integer departmentClusteringWeight = 40;
+
+    /**
+     * Weight for keeping lunch periods continuous (0-100)
+     */
+    @Column(name = "lunch_continuity_weight")
+    @Builder.Default
+    private Integer lunchContinuityWeight = 50;
 
     // ========================================================================
     // AUDIT FIELDS
@@ -347,5 +503,38 @@ public class DistrictSettings {
     public boolean isIdGenerationConfigured() {
         return (teacherIdPrefix != null && !teacherIdPrefix.trim().isEmpty()) &&
                (studentIdFormat != null && !studentIdFormat.trim().isEmpty());
+    }
+
+    /**
+     * Check if scheduler configuration is fully configured
+     */
+    public boolean isSchedulerConfigured() {
+        return campusName != null && !campusName.trim().isEmpty() &&
+               periodsPerDay != null && periodsPerDay > 0;
+    }
+
+    /**
+     * Get campus name with fallback
+     * @return Campus name or "Main Campus" if not configured
+     */
+    public String getCampusNameOrDefault() {
+        return (campusName != null && !campusName.trim().isEmpty()) ? campusName : "Main Campus";
+    }
+
+    /**
+     * Get district name with fallback
+     * @return District name or "District" if not configured
+     */
+    public String getDistrictNameOrDefault() {
+        return (districtName != null && !districtName.trim().isEmpty()) ? districtName : "District";
+    }
+
+    /**
+     * Get schedule type with fallback
+     * @return Schedule type or "TRADITIONAL" if not configured
+     */
+    public String getScheduleTypeOrDefault() {
+        return (defaultScheduleType != null && !defaultScheduleType.trim().isEmpty())
+               ? defaultScheduleType : "TRADITIONAL";
     }
 }

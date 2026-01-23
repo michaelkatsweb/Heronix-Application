@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.chart.*?>
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.FinancialAidManagementController" prefWidth="1500" prefHeight="900">
+
     <top>
-        <VBox spacing="10" style="-fx-background-color: #00796b; -fx-padding: 20;">
-            <Label text="Financial Aid Management" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <VBox spacing="10" styleClass="card">
+            <Label text="Financial Aid Management" styleClass="page-title-white"/>
             <HBox spacing="30" style="-fx-padding: 10 0 0 0;">
                 <VBox spacing="5">
-                    <Label text="Total Applications" style="-fx-text-fill: #b2dfdb; -fx-font-size: 12px;"/>
-                    <Label fx:id="totalApplicationsLabel" text="245" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                    <Label text="Total Applications" styleClass="text-muted"/>
+                    <Label fx:id="totalApplicationsLabel" text="245" styleClass="text-white"/>
                 </VBox>
                 <VBox spacing="5">
-                    <Label text="Approved" style="-fx-text-fill: #b2dfdb; -fx-font-size: 12px;"/>
-                    <Label fx:id="approvedLabel" text="187" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                    <Label text="Approved" styleClass="text-muted"/>
+                    <Label fx:id="approvedLabel" text="187" styleClass="text-white"/>
                 </VBox>
                 <VBox spacing="5">
-                    <Label text="Pending Review" style="-fx-text-fill: #b2dfdb; -fx-font-size: 12px;"/>
-                    <Label fx:id="pendingLabel" text="42" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                    <Label text="Pending Review" styleClass="text-muted"/>
+                    <Label fx:id="pendingLabel" text="42" styleClass="text-white"/>
                 </VBox>
                 <VBox spacing="5">
-                    <Label text="Total Aid Awarded" style="-fx-text-fill: #b2dfdb; -fx-font-size: 12px;"/>
-                    <Label fx:id="totalAidLabel" text="$842,350" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                    <Label text="Total Aid Awarded" styleClass="text-muted"/>
+                    <Label fx:id="totalAidLabel" text="$842,350" styleClass="text-white"/>
                 </VBox>
             </HBox>
         </VBox>
@@ -37,7 +40,7 @@
                         <Button text="Search" onAction="#handleSearchApplications"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <ComboBox fx:id="statusFilterCombo" promptText="Filter by status" prefWidth="150"/>
-                        <Button text="New Application" onAction="#handleNewApplication" style="-fx-background-color: #00796b; -fx-text-fill: white;"/>
+                        <Button text="New Application" onAction="#handleNewApplication" styleClass="button-teal"/>
                     </HBox>
 
                     <TableView fx:id="applicationsTableView" VBox.vgrow="ALWAYS">
@@ -60,7 +63,7 @@
             <Tab text="Aid Programs">
                 <VBox spacing="10" style="-fx-padding: 10;">
                     <HBox spacing="10">
-                        <Button text="Create Program" onAction="#handleCreateProgram" style="-fx-background-color: #00796b; -fx-text-fill: white;"/>
+                        <Button text="Create Program" onAction="#handleCreateProgram" styleClass="button-teal"/>
                         <Button text="Edit Program" onAction="#handleEditProgram"/>
                         <Button text="Deactivate Program" onAction="#handleDeactivateProgram"/>
                     </HBox>
@@ -89,7 +92,7 @@
                         <Label text="Semester:"/>
                         <ComboBox fx:id="semesterCombo" prefWidth="150"/>
                         <Region HBox.hgrow="ALWAYS"/>
-                        <Button text="Process Disbursements" onAction="#handleProcessDisbursements" style="-fx-background-color: #00796b; -fx-text-fill: white;"/>
+                        <Button text="Process Disbursements" onAction="#handleProcessDisbursements" styleClass="button-teal"/>
                     </HBox>
 
                     <TableView fx:id="disbursementsTableView" VBox.vgrow="ALWAYS">
@@ -111,26 +114,26 @@
             <Tab text="Reports & Analytics">
                 <SplitPane dividerPositions="0.5" orientation="VERTICAL" style="-fx-padding: 10;">
                     <VBox spacing="10">
-                        <Label text="Aid Distribution by Type" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        <Label text="Aid Distribution by Type" styleClass="section-title"/>
                         <PieChart fx:id="aidDistributionChart" VBox.vgrow="ALWAYS"/>
                     </VBox>
 
                     <VBox spacing="10">
                         <HBox spacing="20" alignment="CENTER_LEFT">
-                            <VBox spacing="5" style="-fx-padding: 15; -fx-background-color: #e0f2f1; -fx-border-color: #00796b; -fx-border-width: 2;">
-                                <Label text="FAFSA Completion Rate" style="-fx-font-size: 12px; -fx-text-fill: #00796b;"/>
+                            <VBox spacing="5" styleClass="card">
+                                <Label text="FAFSA Completion Rate" styleClass="text-muted"/>
                                 <Label fx:id="fafsaRateLabel" text="78.5%" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
                             </VBox>
-                            <VBox spacing="5" style="-fx-padding: 15; -fx-background-color: #fff3e0; -fx-border-color: #f57c00; -fx-border-width: 2;">
-                                <Label text="Average Award" style="-fx-font-size: 12px; -fx-text-fill: #f57c00;"/>
+                            <VBox spacing="5" styleClass="card">
+                                <Label text="Average Award" styleClass="text-muted"/>
                                 <Label fx:id="avgAwardLabel" text="$4,506" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
                             </VBox>
-                            <VBox spacing="5" style="-fx-padding: 15; -fx-background-color: #f3e5f5; -fx-border-color: #7b1fa2; -fx-border-width: 2;">
-                                <Label text="Renewal Rate" style="-fx-font-size: 12px; -fx-text-fill: #7b1fa2;"/>
+                            <VBox spacing="5" styleClass="card">
+                                <Label text="Renewal Rate" styleClass="text-muted"/>
                                 <Label fx:id="renewalRateLabel" text="92.3%" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
                             </VBox>
-                            <VBox spacing="5" style="-fx-padding: 15; -fx-background-color: #e8f5e9; -fx-border-color: #388e3c; -fx-border-width: 2;">
-                                <Label text="Need Met %" style="-fx-font-size: 12px; -fx-text-fill: #388e3c;"/>
+                            <VBox spacing="5" styleClass="card">
+                                <Label text="Need Met %" styleClass="text-muted"/>
                                 <Label fx:id="needMetLabel" text="85.2%" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
                             </VBox>
                         </HBox>

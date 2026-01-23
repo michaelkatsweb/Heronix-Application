@@ -130,7 +130,7 @@
 
                 <!-- Student Info -->
                 <VBox spacing="5">
-                    <Label text="Student Information" styleClass="label-small" style="-fx-font-weight: bold;"/>
+                    <Label text="Student Information" styleClass="form-label"/>
                     <GridPane hgap="10" vgap="5">
                         <columnConstraints>
                             <ColumnConstraints percentWidth="35"/>
@@ -152,7 +152,7 @@
 
                 <!-- Recommended Course -->
                 <VBox spacing="5">
-                    <Label text="Recommended Course" styleClass="label-small" style="-fx-font-weight: bold;"/>
+                    <Label text="Recommended Course" styleClass="form-label"/>
                     <GridPane hgap="10" vgap="5">
                         <columnConstraints>
                             <ColumnConstraints percentWidth="35"/>
@@ -177,7 +177,7 @@
 
                 <!-- Recommendation Details -->
                 <VBox spacing="5">
-                    <Label text="Recommendation Analysis" styleClass="label-small" style="-fx-font-weight: bold;"/>
+                    <Label text="Recommendation Analysis" styleClass="form-label"/>
                     <GridPane hgap="10" vgap="5">
                         <columnConstraints>
                             <ColumnConstraints percentWidth="35"/>
@@ -211,7 +211,7 @@
 
                 <!-- Reasoning -->
                 <VBox spacing="5" VBox.vgrow="ALWAYS">
-                    <Label text="Reasoning" styleClass="label-small" style="-fx-font-weight: bold;"/>
+                    <Label text="Reasoning" styleClass="form-label"/>
                     <TextArea fx:id="detailReasoningText" wrapText="true" editable="false" VBox.vgrow="ALWAYS" promptText="No recommendation selected"/>
                 </VBox>
 
@@ -219,7 +219,7 @@
 
                 <!-- Alternative Recommendations -->
                 <VBox spacing="5">
-                    <Label text="Alternative Recommendations" styleClass="label-small" style="-fx-font-weight: bold;"/>
+                    <Label text="Alternative Recommendations" styleClass="form-label"/>
                     <ListView fx:id="alternativesListView" prefHeight="100"/>
                 </VBox>
 

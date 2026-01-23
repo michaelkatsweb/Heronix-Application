@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 138 - Zero Trust Architecture
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/zero-trust")
 @RequiredArgsConstructor
 public class ReportZeroTrustApiController {

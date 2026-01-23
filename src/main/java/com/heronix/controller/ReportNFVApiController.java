@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 152 - Network Function Virtualization & Software-Defined Networking
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/nfv")
 @RequiredArgsConstructor
 public class ReportNFVApiController {

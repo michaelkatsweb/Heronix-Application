@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -8,8 +10,8 @@
 <DialogPane xmlns="http://javafx.com/javafx/21"
     xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.heronix.ui.controller.ScheduleGenerationDialogController"
-    stylesheets="@../css/modern-theme.css"
     prefWidth="700" prefHeight="600">
+
 
     <headerText>Generate Schedule</headerText>
 
@@ -22,7 +24,7 @@
                 <Label text="Select Schedule:" styleClass="section-header" />
                 <ComboBox fx:id="scheduleComboBox" prefWidth="400" promptText="Choose schedule to generate..." />
                 <Text fx:id="scheduleInfoText" wrappingWidth="650"
-                    style="-fx-fill: #7f8c8d; -fx-font-size: 12px;" />
+                    styleClass="text-muted-12-fill" />
             </VBox>
 
             <Separator />
@@ -40,17 +42,17 @@
                     <VBox.margin><Insets top="5" /></VBox.margin>
                 </RadioButton>
                 <VBox fx:id="manualModeInfo" spacing="5"
-                    style="-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-padding: 10;">
+                    styleClass="card">
                     <Label text="Build schedule manually with drag-and-drop interface"
-                        style="-fx-font-size: 13px; -fx-text-fill: #34495e;" wrapText="true" />
+                        styleClass="text-muted" wrapText="true" />
                     <HBox spacing="10">
-                        <Label text="✓ Full control over every assignment" style="-fx-text-fill: #27ae60;" />
+                        <Label text="✓ Full control over every assignment" styleClass="text-muted" />
                     </HBox>
                     <HBox spacing="10">
-                        <Label text="✓ Best for small schools or custom schedules" style="-fx-text-fill: #27ae60;" />
+                        <Label text="✓ Best for small schools or custom schedules" styleClass="text-muted" />
                     </HBox>
                     <HBox spacing="10">
-                        <Label text="⚠ Time-consuming for large schedules" style="-fx-text-fill: #e67e22;" />
+                        <Label text="⚠ Time-consuming for large schedules" styleClass="text-muted" />
                     </HBox>
                 </VBox>
 
@@ -62,17 +64,17 @@
                     <VBox.margin><Insets top="5" /></VBox.margin>
                 </RadioButton>
                 <VBox fx:id="aiAssistedModeInfo" spacing="5"
-                    style="-fx-background-color: #e8f4f8; -fx-background-radius: 5; -fx-padding: 10;">
+                    styleClass="card">
                     <Label text="AI generates initial schedule, then manual refinement allowed"
-                        style="-fx-font-size: 13px; -fx-text-fill: #34495e;" wrapText="true" />
+                        styleClass="text-muted" wrapText="true" />
                     <HBox spacing="10">
-                        <Label text="✓ AI handles bulk assignments, you fine-tune" style="-fx-text-fill: #27ae60;" />
+                        <Label text="✓ AI handles bulk assignments, you fine-tune" styleClass="text-muted" />
                     </HBox>
                     <HBox spacing="10">
-                        <Label text="✓ Faster than manual, more control than full AI" style="-fx-text-fill: #27ae60;" />
+                        <Label text="✓ Faster than manual, more control than full AI" styleClass="text-muted" />
                     </HBox>
                     <HBox spacing="10">
-                        <Label text="⚠ Requires SchedulerV2 service running" style="-fx-text-fill: #e67e22;" />
+                        <Label text="⚠ Requires SchedulerV2 service running" styleClass="text-muted" />
                     </HBox>
                 </VBox>
 
@@ -84,20 +86,20 @@
                     <VBox.margin><Insets top="5" /></VBox.margin>
                 </RadioButton>
                 <VBox fx:id="fullyAutomatedModeInfo" spacing="5"
-                    style="-fx-background-color: #e8f8f5; -fx-background-radius: 5; -fx-padding: 10;">
+                    styleClass="card">
                     <Label text="AI-powered OptaPlanner optimization (Recommended)"
-                        style="-fx-font-size: 13px; -fx-text-fill: #34495e; -fx-font-weight: bold;" wrapText="true" />
+                        styleClass="text-muted" wrapText="true" />
                     <HBox spacing="10">
-                        <Label text="✓ Optimizes 50+ constraints automatically" style="-fx-text-fill: #27ae60;" />
+                        <Label text="✓ Optimizes 50+ constraints automatically" styleClass="text-muted" />
                     </HBox>
                     <HBox spacing="10">
-                        <Label text="✓ Minimizes conflicts and maximizes quality" style="-fx-text-fill: #27ae60;" />
+                        <Label text="✓ Minimizes conflicts and maximizes quality" styleClass="text-muted" />
                     </HBox>
                     <HBox spacing="10">
-                        <Label text="✓ Handles complex multi-campus schedules" style="-fx-text-fill: #27ae60;" />
+                        <Label text="✓ Handles complex multi-campus schedules" styleClass="text-muted" />
                     </HBox>
                     <HBox spacing="10">
-                        <Label text="⚠ Requires SchedulerV2 service running" style="-fx-text-fill: #e67e22;" />
+                        <Label text="⚠ Requires SchedulerV2 service running" styleClass="text-muted" />
                     </HBox>
                 </VBox>
             </VBox>
@@ -121,20 +123,20 @@
                     selected="false" />
 
                 <Text text="Note: Longer optimization time generally produces better schedules but takes more time."
-                    wrappingWidth="650" style="-fx-fill: #7f8c8d; -fx-font-size: 11px;" />
+                    wrappingWidth="650" styleClass="text-muted-11-fill" />
             </VBox>
 
             <Separator />
 
             <!-- AI AVAILABILITY STATUS -->
             <HBox fx:id="aiStatusBox" spacing="10" alignment="CENTER_LEFT"
-                style="-fx-background-color: #fff3cd; -fx-background-radius: 5; -fx-padding: 10;">
-                <Label fx:id="aiStatusIcon" text="●" style="-fx-font-size: 20; -fx-text-fill: #856404;" />
+                styleClass="card">
+                <Label fx:id="aiStatusIcon" text="●" styleClass="text-muted" />
                 <VBox spacing="3">
                     <Label fx:id="aiStatusLabel" text="Checking SchedulerV2 availability..."
-                        style="-fx-font-weight: bold; -fx-text-fill: #856404;" />
+                        styleClass="form-label" />
                     <Label fx:id="aiStatusMessage" text="Please wait..."
-                        style="-fx-text-fill: #856404; -fx-font-size: 12px;" wrapText="true" />
+                        styleClass="text-muted" wrapText="true" />
                 </VBox>
             </HBox>
 

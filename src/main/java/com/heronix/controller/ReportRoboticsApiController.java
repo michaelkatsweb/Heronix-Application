@@ -38,7 +38,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 118 - Report Robotics & Automation
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/robotics")
 @RequiredArgsConstructor
 @Slf4j

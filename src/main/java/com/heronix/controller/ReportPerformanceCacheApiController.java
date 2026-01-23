@@ -23,7 +23,7 @@ import java.util.Optional;
  * @since Phase 78 - Report Caching & Performance Optimization
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/cache")
 @RequiredArgsConstructor
 public class ReportPerformanceCacheApiController {

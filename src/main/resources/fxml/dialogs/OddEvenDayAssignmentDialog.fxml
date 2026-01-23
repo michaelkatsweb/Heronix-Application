@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -15,6 +17,7 @@ Purpose: Assign courses to students for ODD and EVEN days in block scheduling
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.heronix.ui.controller.dialogs.OddEvenDayAssignmentDialogController"
             styleClass="dialog-pane">
+
 
     <content>
         <VBox spacing="15" style="-fx-padding: 20; -fx-min-width: 900; -fx-min-height: 600;">
@@ -35,14 +38,14 @@ Purpose: Assign courses to students for ODD and EVEN days in block scheduling
             </VBox>
 
             <!-- Day Type Info Panel -->
-            <HBox spacing="10" style="-fx-padding: 10; -fx-background-color: #2a2a4a; -fx-background-radius: 5;">
+            <HBox spacing="10" styleClass="card">
                 <VBox spacing="3" HBox.hgrow="ALWAYS">
-                    <Label text="📆 ODD Days" styleClass="label-subtitle" style="-fx-text-fill: #00aaff;"/>
+                    <Label text="📆 ODD Days" styleClass="label-subtitle"/>
                     <Label text="Monday, Wednesday, Friday" styleClass="label-caption" wrapText="true"/>
                 </VBox>
                 <Separator orientation="VERTICAL"/>
                 <VBox spacing="3" HBox.hgrow="ALWAYS">
-                    <Label text="📆 EVEN Days" styleClass="label-subtitle" style="-fx-text-fill: #ff8800;"/>
+                    <Label text="📆 EVEN Days" styleClass="label-subtitle"/>
                     <Label text="Tuesday, Thursday" styleClass="label-caption" wrapText="true"/>
                 </VBox>
             </HBox>
@@ -58,7 +61,7 @@ Purpose: Assign courses to students for ODD and EVEN days in block scheduling
                 <!-- ODD Day Courses Column -->
                 <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="5">
                     <HBox alignment="CENTER_LEFT" spacing="10">
-                        <Label text="🔵 ODD Day Courses" styleClass="label-subtitle" style="-fx-text-fill: #00aaff;"/>
+                        <Label text="🔵 ODD Day Courses" styleClass="label-subtitle"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <Label fx:id="oddDayCountLabel" text="0 selected" styleClass="label-caption"/>
                     </HBox>
@@ -88,7 +91,7 @@ Purpose: Assign courses to students for ODD and EVEN days in block scheduling
                 <!-- EVEN Day Courses Column -->
                 <VBox GridPane.columnIndex="2" GridPane.rowIndex="0" spacing="5">
                     <HBox alignment="CENTER_LEFT" spacing="10">
-                        <Label text="🟠 EVEN Day Courses" styleClass="label-subtitle" style="-fx-text-fill: #ff8800;"/>
+                        <Label text="🟠 EVEN Day Courses" styleClass="label-subtitle"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <Label fx:id="evenDayCountLabel" text="0 selected" styleClass="label-caption"/>
                     </HBox>
@@ -105,15 +108,15 @@ Purpose: Assign courses to students for ODD and EVEN days in block scheduling
             </GridPane>
 
             <!-- Info Panel -->
-            <VBox spacing="5" styleClass="card" style="-fx-padding: 10; -fx-background-color: #2a2a4a;">
-                <Label text="ℹ️ Tips:" styleClass="label-subtitle" style="-fx-text-fill: #00aaff;"/>
+            <VBox spacing="5" styleClass="card">
+                <Label text="ℹ️ Tips:" styleClass="label-subtitle"/>
                 <Label text="• Students typically take 3-4 courses on ODD days and 3-4 on EVEN days" styleClass="label-caption" wrapText="true"/>
                 <Label text="• Balance course load evenly between ODD and EVEN days" styleClass="label-caption" wrapText="true"/>
                 <Label text="• Longer class periods (90 min) allow for more in-depth learning" styleClass="label-caption" wrapText="true"/>
             </VBox>
 
             <!-- Status Label -->
-            <Label fx:id="statusLabel" styleClass="label-caption" style="-fx-text-fill: #888;" wrapText="true"/>
+            <Label fx:id="statusLabel" styleClass="label-caption" wrapText="true"/>
         </VBox>
     </content>
 

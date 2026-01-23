@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -9,6 +11,7 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.ModuleLauncherController"
             styleClass="module-launcher-root">
+
 
     <!-- Header -->
     <top>
@@ -169,30 +172,77 @@
                 <VBox spacing="15">
                     <Label text="System Administration" styleClass="section-title"/>
                     <GridPane hgap="20" vgap="20" fx:id="adminModulesGrid">
-                        <VBox styleClass="module-tile, tile-gray" onMouseClicked="#handleSystemAdmin"
+                        <!-- Row 1 -->
+                        <VBox styleClass="module-tile, tile-gray" onMouseClicked="#handleSystemSettings"
                               GridPane.columnIndex="0" GridPane.rowIndex="0">
                             <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
                             <Label text="⚙" styleClass="tile-icon"/>
                             <Label text="System Settings" styleClass="tile-title"/>
-                            <Label text="Configuration, users, roles, integrations"
+                            <Label text="District configuration, school setup, preferences"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-blue" onMouseClicked="#handleUserManagement"
+                              GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="👤" styleClass="tile-icon"/>
+                            <Label text="User Management" styleClass="tile-title"/>
+                            <Label text="Users, roles, permissions, security"
                                    styleClass="tile-description" wrapText="true"/>
                         </VBox>
 
                         <VBox styleClass="module-tile, tile-slate" onMouseClicked="#handleDataTools"
-                              GridPane.columnIndex="1" GridPane.rowIndex="0">
+                              GridPane.columnIndex="2" GridPane.rowIndex="0">
                             <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
                             <Label text="🔧" styleClass="tile-icon"/>
                             <Label text="Data Tools" styleClass="tile-title"/>
-                            <Label text="Import, export, database management, backup"
+                            <Label text="Import, export, sample data generation"
                                    styleClass="tile-description" wrapText="true"/>
                         </VBox>
 
                         <VBox styleClass="module-tile, tile-brown" onMouseClicked="#handleAuditSecurity"
-                              GridPane.columnIndex="2" GridPane.rowIndex="0">
+                              GridPane.columnIndex="3" GridPane.rowIndex="0">
                             <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
                             <Label text="🔒" styleClass="tile-icon"/>
-                            <Label text="Audit &amp;Security" styleClass="tile-title"/>
-                            <Label text="Audit logs, security settings, compliance"
+                            <Label text="Audit &amp; Security" styleClass="tile-title"/>
+                            <Label text="Audit logs, compliance, access history"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <!-- Row 2 -->
+                        <VBox styleClass="module-tile, tile-teal" onMouseClicked="#handleNetworkPanel"
+                              GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="🌐" styleClass="tile-icon"/>
+                            <Label text="Network Panel" styleClass="tile-title"/>
+                            <Label text="Monitor devices, ping, port scan, connectivity"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-purple" onMouseClicked="#handleSecureSync"
+                              GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="🔐" styleClass="tile-icon"/>
+                            <Label text="Secure Sync" styleClass="tile-title"/>
+                            <Label text="Tokenization, device registration, sync"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-orange" onMouseClicked="#handleDatabaseAdmin"
+                              GridPane.columnIndex="2" GridPane.rowIndex="1">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="🗄" styleClass="tile-icon"/>
+                            <Label text="Database Admin" styleClass="tile-title"/>
+                            <Label text="Backup, restore, cleanup, maintenance"
+                                   styleClass="tile-description" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="module-tile, tile-red" onMouseClicked="#handleAPIManagement"
+                              GridPane.columnIndex="3" GridPane.rowIndex="1">
+                            <padding><Insets top="25" right="20" bottom="25" left="20"/></padding>
+                            <Label text="🔌" styleClass="tile-icon"/>
+                            <Label text="API Management" styleClass="tile-title"/>
+                            <Label text="API keys, integrations, external services"
                                    styleClass="tile-description" wrapText="true"/>
                         </VBox>
                     </GridPane>

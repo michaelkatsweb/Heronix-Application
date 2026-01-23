@@ -36,7 +36,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 73 - Report Analytics & Insights
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/usage-analytics")
 @RequiredArgsConstructor
 @Slf4j

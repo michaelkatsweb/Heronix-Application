@@ -38,7 +38,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 114 - Report Blockchain & Distributed Ledger
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/blockchain-ledger")
 @RequiredArgsConstructor
 @Slf4j

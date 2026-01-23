@@ -10,23 +10,23 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.HealthScreeningController"
             prefWidth="1200" prefHeight="900"
-            style="-fx-background-color: #f5f5f5;">
+            styleClass="main-container">
+
 
     <!-- Top: Header -->
     <top>
-        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
-            <Label text="Health Screening" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+        <VBox spacing="10" styleClass="header-container">
+            <Label text="Health Screening" styleClass="text-blue-header"/>
             <Label text="Document mandated health screenings including vision, hearing, scoliosis, BMI, and dental assessments"
-                   style="-fx-font-size: 13px; -fx-text-fill: #666;" wrapText="true"/>
+                   styleClass="text-subtitle" wrapText="true"/>
 
             <!-- State Compliance Banner -->
-            <HBox spacing="10" style="-fx-background-color: #e3f2fd; -fx-padding: 12; -fx-border-radius: 5; -fx-background-radius: 5;">
-                <Label text="📋" style="-fx-font-size: 16px;"/>
+            <HBox spacing="10" styleClass="card, metric-info">
+                <Label text="📋" styleClass="icon-16"/>
                 <VBox spacing="5">
-                    <Label text="State-Mandated Health Screenings"
-                           style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #1565c0;"/>
+                    <Label text="State-Mandated Health Screenings" styleClass="text-blue-dark"/>
                     <Label text="Required for grades K, 1, 3, 5, 7, 9, and 11. Results must be documented and reported to state health department."
-                           style="-fx-font-size: 12px; -fx-text-fill: #424242;" wrapText="true"/>
+                           styleClass="text-muted" wrapText="true"/>
                 </VBox>
             </HBox>
         </VBox>
@@ -34,13 +34,12 @@
 
     <!-- Center: Main Form -->
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
-            <VBox spacing="20" style="-fx-padding: 20;">
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane-transparent">
+            <VBox spacing="20" styleClass="content-padding">
 
                 <!-- Student Selection -->
-                <VBox spacing="15" styleClass="form-section" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;">
-                    <Label text="Student Information" styleClass="section-header"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                <VBox spacing="15" styleClass="form-section, form-section-white">
+                    <Label text="Student Information" styleClass="section-header, section-title-dark"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -51,31 +50,30 @@
                         </columnConstraints>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <Label text="Student *" style="-fx-font-weight: bold;"/>
+                            <Label text="Student *" styleClass="form-label"/>
                             <ComboBox fx:id="studentComboBox" prefWidth="Infinity" promptText="Select student"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <Label text="Grade" style="-fx-font-weight: bold;"/>
+                            <Label text="Grade" styleClass="form-label"/>
                             <TextField fx:id="gradeField" editable="false" promptText="Auto-filled"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
-                            <Label text="Date of Birth" style="-fx-font-weight: bold;"/>
+                            <Label text="Date of Birth" styleClass="form-label"/>
                             <TextField fx:id="dateOfBirthField" editable="false" promptText="Auto-filled"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="0">
-                            <Label text="Age" style="-fx-font-weight: bold;"/>
+                            <Label text="Age" styleClass="form-label"/>
                             <TextField fx:id="ageField" editable="false" promptText="Auto-filled"/>
                         </VBox>
                     </GridPane>
                 </VBox>
 
                 <!-- Screening Details -->
-                <VBox spacing="15" styleClass="form-section" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;">
-                    <Label text="Screening Details" styleClass="section-header"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                <VBox spacing="15" styleClass="form-section, form-section-white">
+                    <Label text="Screening Details" styleClass="section-header, section-title-dark"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -85,7 +83,7 @@
                         </columnConstraints>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <Label text="Screening Type *" style="-fx-font-weight: bold;"/>
+                            <Label text="Screening Type *" styleClass="form-label"/>
                             <ComboBox fx:id="screeningTypeComboBox" prefWidth="Infinity">
                                 <items>
                                     <FXCollections fx:factory="observableArrayList">
@@ -103,33 +101,31 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <Label text="Screening Date *" style="-fx-font-weight: bold;"/>
+                            <Label text="Screening Date *" styleClass="form-label"/>
                             <DatePicker fx:id="screeningDatePicker" prefWidth="Infinity"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
-                            <Label text="Screened By *" style="-fx-font-weight: bold;"/>
+                            <Label text="Screened By *" styleClass="form-label"/>
                             <ComboBox fx:id="screenedByComboBox" prefWidth="Infinity" promptText="Select staff member"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
-                            <Label text="Location" style="-fx-font-weight: bold;"/>
+                            <Label text="Location" styleClass="form-label"/>
                             <TextField fx:id="locationField" promptText="e.g., School Health Office, Gymnasium"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                            <Label text="Grade Level at Screening" style="-fx-font-weight: bold;"/>
+                            <Label text="Grade Level at Screening" styleClass="form-label"/>
                             <TextField fx:id="gradeLevelField" editable="false" promptText="Auto-filled"/>
                         </VBox>
                     </GridPane>
                 </VBox>
 
                 <!-- Vision Screening (Conditional) -->
-                <VBox fx:id="visionScreeningBox" spacing="15" styleClass="form-section"
-                      style="-fx-background-color: #e8f5e9; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                <VBox fx:id="visionScreeningBox" spacing="15" styleClass="form-section, card, metric-success"
                       visible="false" managed="false">
-                    <Label text="👁 Vision Screening Results" styleClass="section-header"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                    <Label text="👁 Vision Screening Results" styleClass="section-header, section-title-success"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -139,17 +135,17 @@
                         </columnConstraints>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <Label text="Right Eye Vision (20/_)" style="-fx-font-weight: bold;"/>
+                            <Label text="Right Eye Vision (20/_)" styleClass="form-label"/>
                             <TextField fx:id="rightEyeVisionField" promptText="e.g., 20, 30, 40"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <Label text="Left Eye Vision (20/_)" style="-fx-font-weight: bold;"/>
+                            <Label text="Left Eye Vision (20/_)" styleClass="form-label"/>
                             <TextField fx:id="leftEyeVisionField" promptText="e.g., 20, 30, 40"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
-                            <Label text="Both Eyes Vision (20/_)" style="-fx-font-weight: bold;"/>
+                            <Label text="Both Eyes Vision (20/_)" styleClass="form-label"/>
                             <TextField fx:id="bothEyesVisionField" promptText="e.g., 20, 30, 40"/>
                         </VBox>
 
@@ -159,7 +155,7 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="3">
-                            <Label text="Vision Notes" style="-fx-font-weight: bold;"/>
+                            <Label text="Vision Notes" styleClass="form-label"/>
                             <TextArea fx:id="visionNotesArea" prefRowCount="3" wrapText="true"
                                       promptText="Document any vision concerns, difficulties, or observations"/>
                         </VBox>
@@ -167,11 +163,9 @@
                 </VBox>
 
                 <!-- Hearing Screening (Conditional) -->
-                <VBox fx:id="hearingScreeningBox" spacing="15" styleClass="form-section"
-                      style="-fx-background-color: #e1f5fe; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                <VBox fx:id="hearingScreeningBox" spacing="15" styleClass="form-section, card"
                       visible="false" managed="false">
-                    <Label text="👂 Hearing Screening Results" styleClass="section-header"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0277bd;"/>
+                    <Label text="👂 Hearing Screening Results" styleClass="section-header, section-title-cyan"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -180,7 +174,7 @@
                         </columnConstraints>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <Label text="Right Ear Result" style="-fx-font-weight: bold;"/>
+                            <Label text="Right Ear Result" styleClass="form-label"/>
                             <ComboBox fx:id="rightEarResultComboBox" prefWidth="Infinity">
                                 <items>
                                     <FXCollections fx:factory="observableArrayList">
@@ -193,7 +187,7 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <Label text="Left Ear Result" style="-fx-font-weight: bold;"/>
+                            <Label text="Left Ear Result" styleClass="form-label"/>
                             <ComboBox fx:id="leftEarResultComboBox" prefWidth="Infinity">
                                 <items>
                                     <FXCollections fx:factory="observableArrayList">
@@ -206,12 +200,12 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                            <Label text="Right Ear Frequencies Tested" style="-fx-font-weight: bold;"/>
+                            <Label text="Right Ear Frequencies Tested" styleClass="form-label"/>
                             <TextField fx:id="rightEarFrequenciesField" promptText="e.g., 500, 1000, 2000, 4000 Hz"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                            <Label text="Left Ear Frequencies Tested" style="-fx-font-weight: bold;"/>
+                            <Label text="Left Ear Frequencies Tested" styleClass="form-label"/>
                             <TextField fx:id="leftEarFrequenciesField" promptText="e.g., 500, 1000, 2000, 4000 Hz"/>
                         </VBox>
 
@@ -221,7 +215,7 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2">
-                            <Label text="Hearing Notes" style="-fx-font-weight: bold;"/>
+                            <Label text="Hearing Notes" styleClass="form-label"/>
                             <TextArea fx:id="hearingNotesArea" prefRowCount="3" wrapText="true"
                                       promptText="Document any hearing concerns, difficulties, or observations"/>
                         </VBox>
@@ -229,11 +223,9 @@
                 </VBox>
 
                 <!-- Scoliosis Screening (Conditional) -->
-                <VBox fx:id="scoliosisScreeningBox" spacing="15" styleClass="form-section"
-                      style="-fx-background-color: #fce4ec; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                <VBox fx:id="scoliosisScreeningBox" spacing="15" styleClass="form-section, card"
                       visible="false" managed="false">
-                    <Label text="🏥 Scoliosis Screening Results" styleClass="section-header"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #c2185b;"/>
+                    <Label text="🏥 Scoliosis Screening Results" styleClass="section-header, section-title-pink"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -242,7 +234,7 @@
                         </columnConstraints>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <Label text="Adam's Forward Bend Test" style="-fx-font-weight: bold;"/>
+                            <Label text="Adam's Forward Bend Test" styleClass="form-label"/>
                             <ComboBox fx:id="adamsBendTestComboBox" prefWidth="Infinity">
                                 <items>
                                     <FXCollections fx:factory="observableArrayList">
@@ -255,7 +247,7 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <Label text="Rib Hump Observed" style="-fx-font-weight: bold;"/>
+                            <Label text="Rib Hump Observed" styleClass="form-label"/>
                             <ComboBox fx:id="ribHumpComboBox" prefWidth="Infinity">
                                 <items>
                                     <FXCollections fx:factory="observableArrayList">
@@ -275,7 +267,7 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
-                            <Label text="Scoliosis Findings" style="-fx-font-weight: bold;"/>
+                            <Label text="Scoliosis Findings" styleClass="form-label"/>
                             <TextArea fx:id="scoliosisFindingsArea" prefRowCount="3" wrapText="true"
                                       promptText="Document any structural abnormalities or concerns"/>
                         </VBox>
@@ -283,11 +275,9 @@
                 </VBox>
 
                 <!-- BMI Screening (Conditional) -->
-                <VBox fx:id="bmiScreeningBox" spacing="15" styleClass="form-section"
-                      style="-fx-background-color: #fff3e0; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                <VBox fx:id="bmiScreeningBox" spacing="15" styleClass="form-section, card, metric-warning"
                       visible="false" managed="false">
-                    <Label text="📊 BMI Screening Results" styleClass="section-header"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ef6c00;"/>
+                    <Label text="📊 BMI Screening Results" styleClass="section-header, section-title-orange-deep"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -298,27 +288,27 @@
                         </columnConstraints>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <Label text="Height (inches)" style="-fx-font-weight: bold;"/>
+                            <Label text="Height (inches)" styleClass="form-label"/>
                             <TextField fx:id="heightField" promptText="e.g., 60.5"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <Label text="Weight (pounds)" style="-fx-font-weight: bold;"/>
+                            <Label text="Weight (pounds)" styleClass="form-label"/>
                             <TextField fx:id="weightField" promptText="e.g., 120.5"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
-                            <Label text="BMI" style="-fx-font-weight: bold;"/>
+                            <Label text="BMI" styleClass="form-label"/>
                             <TextField fx:id="bmiField" editable="false" promptText="Auto-calculated"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="0">
-                            <Label text="BMI Percentile" style="-fx-font-weight: bold;"/>
+                            <Label text="BMI Percentile" styleClass="form-label"/>
                             <TextField fx:id="bmiPercentileField" promptText="e.g., 75th"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
-                            <Label text="BMI Category" style="-fx-font-weight: bold;"/>
+                            <Label text="BMI Category" styleClass="form-label"/>
                             <ComboBox fx:id="bmiCategoryComboBox" prefWidth="Infinity">
                                 <items>
                                     <FXCollections fx:factory="observableArrayList">
@@ -332,7 +322,7 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="4">
-                            <Label text="BMI Notes" style="-fx-font-weight: bold;"/>
+                            <Label text="BMI Notes" styleClass="form-label"/>
                             <TextArea fx:id="bmiNotesArea" prefRowCount="2" wrapText="true"
                                       promptText="Document any weight/growth concerns or recommendations"/>
                         </VBox>
@@ -340,11 +330,9 @@
                 </VBox>
 
                 <!-- Dental Screening (Conditional) -->
-                <VBox fx:id="dentalScreeningBox" spacing="15" styleClass="form-section"
-                      style="-fx-background-color: #f3e5f5; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                <VBox fx:id="dentalScreeningBox" spacing="15" styleClass="form-section, card"
                       visible="false" managed="false">
-                    <Label text="🦷 Dental Screening Results" styleClass="section-header"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #7b1fa2;"/>
+                    <Label text="🦷 Dental Screening Results" styleClass="section-header, section-title-purple"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -360,7 +348,7 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
-                            <Label text="Dental Findings" style="-fx-font-weight: bold;"/>
+                            <Label text="Dental Findings" styleClass="form-label"/>
                             <TextArea fx:id="dentalFindingsArea" prefRowCount="3" wrapText="true"
                                       promptText="Document any dental concerns or observations"/>
                         </VBox>
@@ -368,9 +356,8 @@
                 </VBox>
 
                 <!-- Overall Results -->
-                <VBox spacing="15" styleClass="form-section" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;">
-                    <Label text="Overall Screening Results" styleClass="section-header"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                <VBox spacing="15" styleClass="form-section, form-section-white">
+                    <Label text="Overall Screening Results" styleClass="section-header, section-title-dark"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -379,7 +366,7 @@
                         </columnConstraints>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <Label text="Overall Result *" style="-fx-font-weight: bold;"/>
+                            <Label text="Overall Result *" styleClass="form-label"/>
                             <ComboBox fx:id="overallResultComboBox" prefWidth="Infinity">
                                 <items>
                                     <FXCollections fx:factory="observableArrayList">
@@ -393,17 +380,15 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <Label text="Meets State Requirements" style="-fx-font-weight: bold;"/>
+                            <Label text="Meets State Requirements" styleClass="form-label"/>
                             <CheckBox fx:id="meetsStateRequirementsCheckBox" text="Screening meets state requirements" selected="true"/>
                         </VBox>
                     </GridPane>
                 </VBox>
 
                 <!-- Parent Notification (Yellow Highlighted) -->
-                <VBox spacing="15" styleClass="form-section"
-                      style="-fx-background-color: #fff9c4; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;">
-                    <Label text="Parent/Guardian Notification" styleClass="section-header"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                <VBox spacing="15" styleClass="form-section, card">
+                    <Label text="Parent/Guardian Notification" styleClass="section-header, section-title-dark"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -418,12 +403,12 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                            <Label text="Notification Date" style="-fx-font-weight: bold;"/>
+                            <Label text="Notification Date" styleClass="form-label"/>
                             <DatePicker fx:id="notificationDatePicker" prefWidth="Infinity"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                            <Label text="Notification Method" style="-fx-font-weight: bold;"/>
+                            <Label text="Notification Method" styleClass="form-label"/>
                             <ComboBox fx:id="notificationMethodComboBox" prefWidth="Infinity">
                                 <items>
                                     <FXCollections fx:factory="observableArrayList">
@@ -438,19 +423,17 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="3">
-                            <Label text="Parent Notification Notes" style="-fx-font-weight: bold;"/>
+                            <Label text="Parent Notification Notes" styleClass="form-label"/>
                             <TextArea fx:id="parentNotificationNotesArea" prefRowCount="2" wrapText="true"
                                       promptText="Document parent communication, concerns, or follow-up actions"/>
                         </VBox>
                     </GridPane>
                 </VBox>
 
-                <!-- Follow-Up & Referrals (Conditional) -->
-                <VBox fx:id="followUpBox" spacing="15" styleClass="form-section"
-                      style="-fx-background-color: #ffebee; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                <!-- Follow-Up &amp; Referrals (Conditional) -->
+                <VBox fx:id="followUpBox" spacing="15" styleClass="form-section, card, metric-danger"
                       visible="false" managed="false">
-                    <Label text="⚠ Follow-Up Required" styleClass="section-header"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                    <Label text="⚠ Follow-Up Required" styleClass="section-header, section-title-danger"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -459,7 +442,7 @@
                         </columnConstraints>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <Label text="Referral Type" style="-fx-font-weight: bold;"/>
+                            <Label text="Referral Type" styleClass="form-label"/>
                             <ComboBox fx:id="referralTypeComboBox" prefWidth="Infinity">
                                 <items>
                                     <FXCollections fx:factory="observableArrayList">
@@ -477,18 +460,18 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <Label text="Follow-Up Date" style="-fx-font-weight: bold;"/>
+                            <Label text="Follow-Up Date" styleClass="form-label"/>
                             <DatePicker fx:id="followUpDatePicker" prefWidth="Infinity"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
-                            <Label text="Referral Reason" style="-fx-font-weight: bold;"/>
+                            <Label text="Referral Reason" styleClass="form-label"/>
                             <TextArea fx:id="referralReasonArea" prefRowCount="3" wrapText="true"
                                       promptText="Explain why student is being referred for professional evaluation"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
-                            <Label text="Follow-Up Instructions" style="-fx-font-weight: bold;"/>
+                            <Label text="Follow-Up Instructions" styleClass="form-label"/>
                             <TextArea fx:id="followUpInstructionsArea" prefRowCount="2" wrapText="true"
                                       promptText="Instructions for parent, student, or school staff"/>
                         </VBox>
@@ -496,9 +479,8 @@
                 </VBox>
 
                 <!-- Additional Notes -->
-                <VBox spacing="15" styleClass="form-section" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;">
-                    <Label text="Additional Notes" styleClass="section-header"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                <VBox spacing="15" styleClass="form-section, form-section-white">
+                    <Label text="Additional Notes" styleClass="section-header, section-title-dark"/>
 
                     <TextArea fx:id="notesArea" prefRowCount="4" wrapText="true"
                               promptText="Document any additional observations, concerns, or relevant information"/>
@@ -510,13 +492,13 @@
 
     <!-- Bottom: Button Bar -->
     <bottom>
-        <HBox spacing="10" style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;" alignment="CENTER_RIGHT">
+        <HBox spacing="10" styleClass="footer-padded" alignment="CENTER_RIGHT">
             <Button text="Save Screening" onAction="#handleSave"
-                    style="-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 30; -fx-cursor: hand;"/>
+                    styleClass="button-primary"/>
             <Button text="Clear Form" onAction="#handleClear"
-                    style="-fx-background-color: #757575; -fx-text-fill: white; -fx-padding: 10 30; -fx-cursor: hand;"/>
+                    styleClass="button-primary"/>
             <Button text="Close" onAction="#handleClose"
-                    style="-fx-background-color: #616161; -fx-text-fill: white; -fx-padding: 10 30; -fx-cursor: hand;"/>
+                    styleClass="button-primary"/>
         </HBox>
     </bottom>
 

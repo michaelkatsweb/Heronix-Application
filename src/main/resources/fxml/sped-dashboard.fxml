@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -10,6 +12,7 @@
             fx:controller="com.heronix.ui.controller.SPEDDashboardController"
             styleClass="main-container"
             prefWidth="1400" prefHeight="900">
+
 
     <!-- Top: Header -->
     <top>

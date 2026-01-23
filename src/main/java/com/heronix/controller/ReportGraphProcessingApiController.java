@@ -24,7 +24,7 @@ import java.util.Map;
  * @since Phase 131 - Report Graph Processing & Analytics
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/graph-processing")
 @RequiredArgsConstructor
 public class ReportGraphProcessingApiController {

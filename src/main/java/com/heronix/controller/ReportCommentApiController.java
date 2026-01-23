@@ -24,7 +24,7 @@ import java.util.Map;
  * @since Phase 71 - Report Collaboration & Sharing
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/report-comments")
 @RequiredArgsConstructor
 public class ReportCommentApiController {

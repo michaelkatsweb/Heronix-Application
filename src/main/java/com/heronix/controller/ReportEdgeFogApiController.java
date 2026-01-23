@@ -37,7 +37,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 117 - Report Edge & Fog Computing
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/edge-fog")
 @RequiredArgsConstructor
 @Slf4j

@@ -38,7 +38,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 123 - Report Containerization & Orchestration
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/orchestration")
 @RequiredArgsConstructor
 @Slf4j

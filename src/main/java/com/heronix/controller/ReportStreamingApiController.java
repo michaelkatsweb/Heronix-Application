@@ -40,7 +40,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 92 - Report Streaming & Real-time Updates
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/streaming")
 @RequiredArgsConstructor
 @Slf4j

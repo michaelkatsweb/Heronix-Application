@@ -11,19 +11,20 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.DisciplineReportsController"
             prefWidth="1500" prefHeight="950"
-            style="-fx-background-color: #f5f5f5;">
+            styleClass="main-container">
+
 
     <!-- Top: Header & Filters -->
     <top>
-        <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
-            <Label text="Discipline Reports & Analytics" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+        <VBox spacing="15" styleClass="header-container">
+            <Label text="Discipline Reports &amp; Analytics" styleClass="text-blue-header"/>
             <Label text="Comprehensive behavior incident reporting, trend analysis, and data-driven insights for intervention planning"
-                   style="-fx-font-size: 13px; -fx-text-fill: #666;" wrapText="true"/>
+                   styleClass="text-subtitle" wrapText="true"/>
 
             <!-- Filters -->
-            <HBox spacing="15" style="-fx-padding: 15 0 0 0;">
+            <HBox spacing="15" styleClass="filter-bar-top">
                 <VBox spacing="5">
-                    <Label text="Report Type" style="-fx-font-weight: bold;"/>
+                    <Label text="Report Type" styleClass="form-label"/>
                     <ComboBox fx:id="reportTypeComboBox" prefWidth="200">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
@@ -39,22 +40,22 @@
                 </VBox>
 
                 <VBox spacing="5">
-                    <Label text="Student (Optional)" style="-fx-font-weight: bold;"/>
+                    <Label text="Student (Optional)" styleClass="form-label"/>
                     <ComboBox fx:id="studentFilterComboBox" prefWidth="250" promptText="All students"/>
                 </VBox>
 
                 <VBox spacing="5">
-                    <Label text="Start Date" style="-fx-font-weight: bold;"/>
+                    <Label text="Start Date" styleClass="form-label"/>
                     <DatePicker fx:id="startDatePicker" prefWidth="150"/>
                 </VBox>
 
                 <VBox spacing="5">
-                    <Label text="End Date" style="-fx-font-weight: bold;"/>
+                    <Label text="End Date" styleClass="form-label"/>
                     <DatePicker fx:id="endDatePicker" prefWidth="150"/>
                 </VBox>
 
                 <VBox spacing="5">
-                    <Label text="Behavior Type" style="-fx-font-weight: bold;"/>
+                    <Label text="Behavior Type" styleClass="form-label"/>
                     <ComboBox fx:id="behaviorTypeFilterComboBox" prefWidth="150">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
@@ -70,11 +71,11 @@
                     <Label text=" "/>
                     <HBox spacing="10">
                         <Button text="Generate Report" onAction="#handleGenerateReport"
-                                style="-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20; -fx-cursor: hand;"/>
+                                styleClass="button-primary"/>
                         <Button text="Export PDF" onAction="#handleExportPDF"
-                                style="-fx-background-color: #d32f2f; -fx-text-fill: white; -fx-padding: 8 20; -fx-cursor: hand;"/>
+                                styleClass="button-primary"/>
                         <Button text="Export Excel" onAction="#handleExportExcel"
-                                style="-fx-background-color: #388e3c; -fx-text-fill: white; -fx-padding: 8 20; -fx-cursor: hand;"/>
+                                styleClass="button-primary"/>
                     </HBox>
                 </VBox>
             </HBox>
@@ -83,8 +84,8 @@
 
     <!-- Center: Report Content -->
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
-            <VBox spacing="20" style="-fx-padding: 20;">
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane-transparent">
+            <VBox spacing="20" styleClass="content-padding">
 
                 <!-- Summary Statistics Cards -->
                 <GridPane hgap="15" vgap="15">
@@ -97,48 +98,43 @@
                     </columnConstraints>
 
                     <!-- Total Incidents Card -->
-                    <VBox spacing="10" styleClass="stat-card"
-                          style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5; -fx-border-color: #e0e0e0; -fx-border-width: 1;"
+                    <VBox spacing="10" styleClass="stat-card, card"
                           GridPane.columnIndex="0" GridPane.rowIndex="0">
-                        <Label text="Total Incidents" style="-fx-font-size: 12px; -fx-text-fill: #757575;"/>
-                        <Label fx:id="totalIncidentsLabel" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
-                        <Label fx:id="totalIncidentsChangeLabel" text="+0% from previous period" style="-fx-font-size: 11px; -fx-text-fill: #757575;"/>
+                        <Label text="Total Incidents" styleClass="text-muted"/>
+                        <Label fx:id="totalIncidentsLabel" text="0" styleClass="stat-value-primary-large"/>
+                        <Label fx:id="totalIncidentsChangeLabel" text="+0% from previous period" styleClass="text-muted"/>
                     </VBox>
 
                     <!-- Positive Incidents Card -->
-                    <VBox spacing="10" styleClass="stat-card"
-                          style="-fx-background-color: #e8f5e9; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                    <VBox spacing="10" styleClass="stat-card, card, metric-success"
                           GridPane.columnIndex="1" GridPane.rowIndex="0">
-                        <Label text="Positive Incidents" style="-fx-font-size: 12px; -fx-text-fill: #2e7d32;"/>
-                        <Label fx:id="positiveIncidentsLabel" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
-                        <Label fx:id="positivePercentLabel" text="0% of total" style="-fx-font-size: 11px; -fx-text-fill: #2e7d32;"/>
+                        <Label text="Positive Incidents" styleClass="text-muted"/>
+                        <Label fx:id="positiveIncidentsLabel" text="0" styleClass="stat-value-success-large"/>
+                        <Label fx:id="positivePercentLabel" text="0% of total" styleClass="text-muted"/>
                     </VBox>
 
                     <!-- Negative Incidents Card -->
-                    <VBox spacing="10" styleClass="stat-card"
-                          style="-fx-background-color: #ffebee; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                    <VBox spacing="10" styleClass="stat-card, card, metric-danger"
                           GridPane.columnIndex="2" GridPane.rowIndex="0">
-                        <Label text="Negative Incidents" style="-fx-font-size: 12px; -fx-text-fill: #c62828;"/>
-                        <Label fx:id="negativeIncidentsLabel" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
-                        <Label fx:id="negativePercentLabel" text="0% of total" style="-fx-font-size: 11px; -fx-text-fill: #c62828;"/>
+                        <Label text="Negative Incidents" styleClass="text-muted"/>
+                        <Label fx:id="negativeIncidentsLabel" text="0" styleClass="stat-value-danger-large"/>
+                        <Label fx:id="negativePercentLabel" text="0% of total" styleClass="text-muted"/>
                     </VBox>
 
                     <!-- Admin Referrals Card -->
-                    <VBox spacing="10" styleClass="stat-card"
-                          style="-fx-background-color: #fff3e0; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                    <VBox spacing="10" styleClass="stat-card, card, metric-warning"
                           GridPane.columnIndex="3" GridPane.rowIndex="0">
-                        <Label text="Admin Referrals" style="-fx-font-size: 12px; -fx-text-fill: #e65100;"/>
-                        <Label fx:id="adminReferralsLabel" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
-                        <Label fx:id="adminReferralsPercentLabel" text="0% of negative" style="-fx-font-size: 11px; -fx-text-fill: #e65100;"/>
+                        <Label text="Admin Referrals" styleClass="text-muted"/>
+                        <Label fx:id="adminReferralsLabel" text="0" styleClass="stat-value-warning-large"/>
+                        <Label fx:id="adminReferralsPercentLabel" text="0% of negative" styleClass="text-muted"/>
                     </VBox>
 
                     <!-- Students Affected Card -->
-                    <VBox spacing="10" styleClass="stat-card"
-                          style="-fx-background-color: #f3e5f5; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                    <VBox spacing="10" styleClass="stat-card, card"
                           GridPane.columnIndex="4" GridPane.rowIndex="0">
-                        <Label text="Students Affected" style="-fx-font-size: 12px; -fx-text-fill: #6a1b9a;"/>
-                        <Label fx:id="studentsAffectedLabel" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #6a1b9a;"/>
-                        <Label fx:id="avgIncidentsPerStudentLabel" text="0.0 avg per student" style="-fx-font-size: 11px; -fx-text-fill: #6a1b9a;"/>
+                        <Label text="Students Affected" styleClass="text-muted"/>
+                        <Label fx:id="studentsAffectedLabel" text="0" styleClass="stat-value-purple-large"/>
+                        <Label fx:id="avgIncidentsPerStudentLabel" text="0.0 avg per student" styleClass="text-muted"/>
                     </VBox>
                 </GridPane>
 
@@ -150,23 +146,23 @@
                     </columnConstraints>
 
                     <!-- Category Breakdown Chart -->
-                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                    <VBox spacing="15" styleClass="chart-section"
                           GridPane.columnIndex="0" GridPane.rowIndex="0">
-                        <Label text="Incidents by Category" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <Label text="Incidents by Category" styleClass="chart-section-title"/>
                         <PieChart fx:id="categoryPieChart" legendVisible="true" prefHeight="300"/>
                     </VBox>
 
                     <!-- Severity Breakdown Chart -->
-                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                    <VBox spacing="15" styleClass="chart-section"
                           GridPane.columnIndex="1" GridPane.rowIndex="0">
-                        <Label text="Incidents by Severity" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <Label text="Incidents by Severity" styleClass="chart-section-title"/>
                         <PieChart fx:id="severityPieChart" legendVisible="true" prefHeight="300"/>
                     </VBox>
 
                     <!-- Trend Line Chart -->
-                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                    <VBox spacing="15" styleClass="chart-section"
                           GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
-                        <Label text="Monthly Behavior Trend" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <Label text="Monthly Behavior Trend" styleClass="chart-section-title"/>
                         <LineChart fx:id="trendLineChart" legendVisible="true" prefHeight="250">
                             <xAxis>
                                 <CategoryAxis label="Month" fx:id="trendXAxis"/>
@@ -179,9 +175,9 @@
                 </GridPane>
 
                 <!-- Top Students - Positive Recognition -->
-                <VBox fx:id="topPositiveStudentsBox" spacing="15" style="-fx-background-color: #e8f5e9; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                <VBox fx:id="topPositiveStudentsBox" spacing="15" styleClass="card, metric-success"
                       visible="false" managed="false">
-                    <Label text="🌟 Top Students - Positive Recognition" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                    <Label text="🌟 Top Students - Positive Recognition" styleClass="section-title-success"/>
                     <TableView fx:id="topPositiveStudentsTable" prefHeight="300">
                         <columns>
                             <TableColumn fx:id="topPositiveRankColumn" text="Rank" prefWidth="80"/>
@@ -194,9 +190,9 @@
                 </VBox>
 
                 <!-- Students Requiring Intervention -->
-                <VBox fx:id="interventionStudentsBox" spacing="15" style="-fx-background-color: #ffebee; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                <VBox fx:id="interventionStudentsBox" spacing="15" styleClass="card, metric-danger"
                       visible="false" managed="false">
-                    <Label text="⚠ Students Requiring Intervention" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                    <Label text="⚠ Students Requiring Intervention" styleClass="section-title-danger"/>
                     <TableView fx:id="interventionStudentsTable" prefHeight="300">
                         <columns>
                             <TableColumn fx:id="interventionRankColumn" text="Priority" prefWidth="80"/>
@@ -210,12 +206,12 @@
                 </VBox>
 
                 <!-- Detailed Incident List -->
-                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;">
+                <VBox spacing="15" styleClass="chart-section">
                     <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="Detailed Incident List" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <Label text="Detailed Incident List" styleClass="chart-section-title"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <TextField fx:id="searchField" promptText="Search incidents..." prefWidth="250"
-                                   style="-fx-padding: 8;"/>
+                                   styleClass="search-field-padded"/>
                     </HBox>
 
                     <TableView fx:id="incidentsTable" prefHeight="400">
@@ -239,9 +235,9 @@
                 </VBox>
 
                 <!-- Student-Specific Summary (Conditional) -->
-                <VBox fx:id="studentSummaryBox" spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 5; -fx-background-radius: 5;"
+                <VBox fx:id="studentSummaryBox" spacing="15" styleClass="chart-section"
                       visible="false" managed="false">
-                    <Label text="Student Behavior Summary" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                    <Label text="Student Behavior Summary" styleClass="chart-section-title"/>
 
                     <GridPane hgap="20" vgap="15">
                         <columnConstraints>
@@ -250,34 +246,34 @@
                         </columnConstraints>
 
                         <VBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <Label text="Student Information" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                            <Label text="Student Information" styleClass="section-header"/>
                             <HBox spacing="10">
-                                <Label text="Name:" style="-fx-font-weight: bold;"/>
+                                <Label text="Name:" styleClass="form-label"/>
                                 <Label fx:id="studentNameLabel" text="--"/>
                             </HBox>
                             <HBox spacing="10">
-                                <Label text="Grade:" style="-fx-font-weight: bold;"/>
+                                <Label text="Grade:" styleClass="form-label"/>
                                 <Label fx:id="studentGradeLabel" text="--"/>
                             </HBox>
                             <HBox spacing="10">
-                                <Label text="Student ID:" style="-fx-font-weight: bold;"/>
+                                <Label text="Student ID:" styleClass="form-label"/>
                                 <Label fx:id="studentIdLabel" text="--"/>
                             </HBox>
                         </VBox>
 
                         <VBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <Label text="Behavior Metrics" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                            <Label text="Behavior Metrics" styleClass="section-header"/>
                             <HBox spacing="10">
-                                <Label text="Positive:Negative Ratio:" style="-fx-font-weight: bold;"/>
-                                <Label fx:id="behaviorRatioLabel" text="--" style="-fx-text-fill: #1976d2;"/>
+                                <Label text="Positive:Negative Ratio:" styleClass="form-label"/>
+                                <Label fx:id="behaviorRatioLabel" text="--" styleClass="text-muted"/>
                             </HBox>
                             <HBox spacing="10">
-                                <Label text="Most Common Category:" style="-fx-font-weight: bold;"/>
+                                <Label text="Most Common Category:" styleClass="form-label"/>
                                 <Label fx:id="mostCommonCategoryLabel" text="--"/>
                             </HBox>
                             <HBox spacing="10">
-                                <Label text="Uncontacted Parent Incidents:" style="-fx-font-weight: bold;"/>
-                                <Label fx:id="uncontactedParentLabel" text="--" style="-fx-text-fill: #d32f2f;"/>
+                                <Label text="Uncontacted Parent Incidents:" styleClass="form-label"/>
+                                <Label fx:id="uncontactedParentLabel" text="--" styleClass="text-muted"/>
                             </HBox>
                         </VBox>
                     </GridPane>
@@ -289,11 +285,11 @@
 
     <!-- Bottom: Status Bar -->
     <bottom>
-        <HBox spacing="15" style="-fx-background-color: white; -fx-padding: 12; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;" alignment="CENTER_LEFT">
-            <Label text="Report Date Range:" style="-fx-font-weight: bold;"/>
+        <HBox spacing="15" styleClass="footer-bar" alignment="CENTER_LEFT">
+            <Label text="Report Date Range:" styleClass="form-label"/>
             <Label fx:id="dateRangeLabel" text="--"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="statusLabel" text="Ready" style="-fx-text-fill: #757575;"/>
+            <Label fx:id="statusLabel" text="Ready" styleClass="text-muted"/>
         </HBox>
     </bottom>
 

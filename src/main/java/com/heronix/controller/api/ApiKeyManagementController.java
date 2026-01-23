@@ -43,8 +43,8 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @since Phase 44 - API Key Management Endpoints & Rate Limiting
  */
-@RestController
-@RequestMapping("/api/api-keys")
+// @RestController  // Disabled - duplicate of ApiKeyManagementApiController
+// @RequestMapping("/api/api-keys")
 @RequiredArgsConstructor
 @Validated
 @Slf4j

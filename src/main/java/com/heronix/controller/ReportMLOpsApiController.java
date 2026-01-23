@@ -38,7 +38,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 120 - Report Machine Learning Operations (MLOps)
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/mlops")
 @RequiredArgsConstructor
 @Slf4j

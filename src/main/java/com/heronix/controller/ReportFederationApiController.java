@@ -41,7 +41,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 87 - Report Federation & Multi-Tenant
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/federation")
 @RequiredArgsConstructor
 @Slf4j

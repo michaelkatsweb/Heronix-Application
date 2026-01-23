@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -9,9 +11,10 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.ScheduleGenerationDialogController"
             prefWidth="600" prefHeight="550">
+
     
     <top>
-        <VBox spacing="10" style="-fx-background-color: #27ae60;">
+        <VBox spacing="10" styleClass="card">
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
@@ -29,7 +32,7 @@
     </top>
     
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: white;">
+        <ScrollPane fitToWidth="true" styleClass="card">
             <VBox spacing="15">
                 <padding>
                     <Insets top="20" right="20" bottom="20" left="20"/>
@@ -37,30 +40,30 @@
                 
                 <!-- Schedule Name -->
                 <VBox spacing="5">
-                    <Label text="Schedule Name *" style="-fx-font-weight: bold;"/>
+                    <Label text="Schedule Name *" styleClass="form-label"/>
                     <TextField fx:id="scheduleNameField" promptText="e.g., Fall 2025 Master Schedule"/>
                 </VBox>
                 
                 <!-- Schedule Type -->
                 <VBox spacing="5">
-                    <Label text="Schedule Type *" style="-fx-font-weight: bold;"/>
+                    <Label text="Schedule Type *" styleClass="form-label"/>
                     <ComboBox fx:id="scheduleTypeCombo" prefWidth="560"/>
                 </VBox>
                 
                 <!-- Period -->
                 <VBox spacing="5">
-                    <Label text="Period *" style="-fx-font-weight: bold;"/>
+                    <Label text="Period *" styleClass="form-label"/>
                     <ComboBox fx:id="periodCombo" prefWidth="560"/>
                 </VBox>
                 
                 <!-- Date Range -->
                 <HBox spacing="10">
                     <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Start Date *" style="-fx-font-weight: bold;"/>
+                        <Label text="Start Date *" styleClass="form-label"/>
                         <DatePicker fx:id="startDatePicker" prefWidth="270"/>
                     </VBox>
                     <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="End Date *" style="-fx-font-weight: bold;"/>
+                        <Label text="End Date *" styleClass="form-label"/>
                         <DatePicker fx:id="endDatePicker" prefWidth="270"/>
                     </VBox>
                 </HBox>
@@ -92,22 +95,22 @@
                 <Separator/>
                 
                 <!-- Estimated Time -->
-                <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #ecf0f1; -fx-padding: 10;">
-                    <Label text="⏱️ Estimated Time: 2-5 minutes" style="-fx-font-weight: bold;"/>
+                <HBox spacing="10" alignment="CENTER_LEFT" styleClass="card">
+                    <Label text="⏱️ Estimated Time: 2-5 minutes" styleClass="form-label"/>
                 </HBox>
             </VBox>
         </ScrollPane>
     </center>
     
     <bottom>
-        <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-background-color: #f5f5f5;">
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="main-container">
             <padding>
                 <Insets top="15" right="15" bottom="15" left="15"/>
             </padding>
             <Button text="Cancel" onAction="#handleCancel" prefWidth="100" 
-                    style="-fx-background-color: #95a5a6; -fx-text-fill: white;"/>
+                    styleClass="button-secondary"/>
             <Button text="Generate Schedule" onAction="#handleGenerate" prefWidth="150" 
-                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                    styleClass="button-primary"/>
         </HBox>
     </bottom>
     

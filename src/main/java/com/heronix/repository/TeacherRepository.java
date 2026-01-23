@@ -197,4 +197,121 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     @Query("SELECT COUNT(t) FROM Teacher t WHERE t.active = true AND (t.deleted = false OR t.deleted IS NULL)")
     long countActiveNonDeletedTeachers();
 
+    // ========================================================================
+    // ANALYTICS QUERIES - Phase 59
+    // ========================================================================
+
+    /**
+     * Find teachers with expiring certifications
+     */
+    @Query("SELECT t FROM Teacher t " +
+           "WHERE t.active = true AND (t.deleted = false OR t.deleted IS NULL) " +
+           "AND t.certificationExpirationDate IS NOT NULL " +
+           "AND t.certificationExpirationDate BETWEEN :today AND :futureDate " +
+           "AND (:campusId IS NULL OR t.primaryCampus.id = :campusId) " +
+           "ORDER BY t.certificationExpirationDate ASC")
+    List<Teacher> findTeachersWithExpiringCertifications(
+            @Param("today") java.time.LocalDate today,
+            @Param("futureDate") java.time.LocalDate futureDate,
+            @Param("campusId") Long campusId);
+
+    /**
+     * Find teachers with expired certifications
+     */
+    @Query("SELECT t FROM Teacher t " +
+           "WHERE t.active = true AND (t.deleted = false OR t.deleted IS NULL) " +
+           "AND t.certificationExpirationDate IS NOT NULL " +
+           "AND t.certificationExpirationDate < :today " +
+           "AND (:campusId IS NULL OR t.primaryCampus.id = :campusId)")
+    List<Teacher> findTeachersWithExpiredCertifications(
+            @Param("today") java.time.LocalDate today,
+            @Param("campusId") Long campusId);
+
+    /**
+     * Get teacher workload distribution
+     */
+    @Query("SELECT t.id, t.name, SIZE(t.courses) as courseCount " +
+           "FROM Teacher t " +
+           "WHERE t.active = true AND (t.deleted = false OR t.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR t.primaryCampus.id = :campusId) " +
+           "ORDER BY SIZE(t.courses) DESC")
+    List<Object[]> getTeacherWorkloadDistribution(@Param("campusId") Long campusId);
+
+    /**
+     * Get experience distribution (years of experience ranges)
+     */
+    @Query("SELECT CASE " +
+           "  WHEN t.yearsOfExperience < 3 THEN '0-2 Years' " +
+           "  WHEN t.yearsOfExperience < 6 THEN '3-5 Years' " +
+           "  WHEN t.yearsOfExperience < 11 THEN '6-10 Years' " +
+           "  WHEN t.yearsOfExperience < 21 THEN '11-20 Years' " +
+           "  ELSE '20+ Years' END, COUNT(t) " +
+           "FROM Teacher t " +
+           "WHERE t.active = true AND (t.deleted = false OR t.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR t.primaryCampus.id = :campusId) " +
+           "GROUP BY CASE " +
+           "  WHEN t.yearsOfExperience < 3 THEN '0-2 Years' " +
+           "  WHEN t.yearsOfExperience < 6 THEN '3-5 Years' " +
+           "  WHEN t.yearsOfExperience < 11 THEN '6-10 Years' " +
+           "  WHEN t.yearsOfExperience < 21 THEN '11-20 Years' " +
+           "  ELSE '20+ Years' END")
+    List<Object[]> getExperienceDistribution(@Param("campusId") Long campusId);
+
+    /**
+     * Get certification status distribution
+     */
+    @Query("SELECT t.certificationStatus, COUNT(t) " +
+           "FROM Teacher t " +
+           "WHERE t.active = true AND (t.deleted = false OR t.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR t.primaryCampus.id = :campusId) " +
+           "GROUP BY t.certificationStatus")
+    List<Object[]> getCertificationStatusDistribution(@Param("campusId") Long campusId);
+
+    /**
+     * Get staff counts by department
+     */
+    @Query("SELECT t.department, COUNT(t) " +
+           "FROM Teacher t " +
+           "WHERE t.active = true AND (t.deleted = false OR t.deleted IS NULL) " +
+           "AND t.department IS NOT NULL " +
+           "AND (:campusId IS NULL OR t.primaryCampus.id = :campusId) " +
+           "GROUP BY t.department " +
+           "ORDER BY COUNT(t) DESC")
+    List<Object[]> getStaffCountsByDepartment(@Param("campusId") Long campusId);
+
+    /**
+     * Count teachers with valid certifications
+     */
+    @Query("SELECT COUNT(t) FROM Teacher t " +
+           "WHERE t.active = true AND (t.deleted = false OR t.deleted IS NULL) " +
+           "AND (t.certificationExpirationDate IS NULL OR t.certificationExpirationDate >= :today) " +
+           "AND (:campusId IS NULL OR t.primaryCampus.id = :campusId)")
+    Long countCertifiedTeachers(
+            @Param("today") java.time.LocalDate today,
+            @Param("campusId") Long campusId);
+
+    /**
+     * Get average years of experience
+     */
+    @Query("SELECT AVG(t.yearsOfExperience) FROM Teacher t " +
+           "WHERE t.active = true AND (t.deleted = false OR t.deleted IS NULL) " +
+           "AND t.yearsOfExperience IS NOT NULL " +
+           "AND (:campusId IS NULL OR t.primaryCampus.id = :campusId)")
+    Double getAverageYearsExperience(@Param("campusId") Long campusId);
+
+    /**
+     * Find teachers by campus
+     */
+    @Query("SELECT t FROM Teacher t " +
+           "WHERE t.active = true AND (t.deleted = false OR t.deleted IS NULL) " +
+           "AND t.primaryCampus.id = :campusId")
+    List<Teacher> findByCampusId(@Param("campusId") Long campusId);
+
+    /**
+     * Count active teachers for a campus
+     */
+    @Query("SELECT COUNT(t) FROM Teacher t " +
+           "WHERE t.active = true AND (t.deleted = false OR t.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR t.primaryCampus.id = :campusId)")
+    Long countActiveTeachers(@Param("campusId") Long campusId);
 }

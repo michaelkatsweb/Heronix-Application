@@ -35,7 +35,7 @@ import java.util.List;
  * @version 1.0
  * @since Phase 64 - Report Audit Trail & Compliance Logging
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/audit")
 @RequiredArgsConstructor
 @Slf4j

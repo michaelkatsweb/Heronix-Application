@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -210,7 +212,7 @@
 
                 <!-- Risk Assessment Indicators -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Risk Assessment Indicators" styleClass="section-header" style="-fx-text-fill: #d32f2f;"/>
+                    <Label text="Risk Assessment Indicators" styleClass="section-header"/>
 
                     <GridPane hgap="20" vgap="10">
                         <columnConstraints>
@@ -220,13 +222,13 @@
                         </columnConstraints>
 
                         <CheckBox fx:id="suicideRiskCheckBox" text="Suicide Risk Indicated"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                         <CheckBox fx:id="harmToOthersCheckBox" text="Harm to Others Indicated"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
                         <CheckBox fx:id="immediateSafetyCheckBox" text="Immediate Safety Concerns"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="2" GridPane.rowIndex="0"/>
 
                         <CheckBox fx:id="crisisInterventionCheckBox" text="Crisis Intervention Needed"
@@ -238,11 +240,11 @@
                     </GridPane>
 
                     <VBox spacing="5" fx:id="riskDetailsBox" visible="false">
-                        <Label text="Risk Details *" styleClass="field-label" style="-fx-text-fill: #d32f2f;"/>
+                        <Label text="Risk Details *" styleClass="field-label"/>
                         <TextArea fx:id="riskDetailsTextArea"
                                   promptText="REQUIRED: Describe specific risk factors, immediate interventions taken, and safety measures in place..."
                                   wrapText="true" prefRowCount="4"
-                                  style="-fx-border-color: #d32f2f; -fx-border-width: 2;"/>
+                                  styleClass="border-danger"/>
                     </VBox>
                 </VBox>
 
@@ -323,7 +325,7 @@
             <padding>
                 <Insets top="15" right="20" bottom="15" left="20"/>
             </padding>
-            <Label fx:id="urgencyIndicator" text="" style="-fx-font-weight: bold; -fx-text-fill: #d32f2f;"/>
+            <Label fx:id="urgencyIndicator" text="" styleClass="form-label"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button fx:id="submitButton" text="Submit Referral" onAction="#handleSubmit" styleClass="primary-button"/>
             <Button fx:id="saveDraftButton" text="Save Draft" onAction="#handleSaveDraft"/>

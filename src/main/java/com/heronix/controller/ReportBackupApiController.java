@@ -32,7 +32,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 74 - Report Backup & Recovery
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/backups")
 @RequiredArgsConstructor
 @Slf4j

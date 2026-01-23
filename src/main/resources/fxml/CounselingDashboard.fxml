@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -58,9 +60,9 @@
                         <Label text="Awaiting Review" styleClass="stat-label"/>
                     </VBox>
 
-                    <VBox spacing="10" styleClass="stat-card" style="-fx-background-color: #ffebee;" GridPane.columnIndex="2">
-                        <Label text="High Risk" styleClass="stat-label" style="-fx-text-fill: #d32f2f;"/>
-                        <Label fx:id="highRiskLabel" text="0" styleClass="stat-value" style="-fx-text-fill: #d32f2f;"/>
+                    <VBox spacing="10" styleClass="stat-card card metric-danger" GridPane.columnIndex="2">
+                        <Label text="High Risk" styleClass="stat-label"/>
+                        <Label fx:id="highRiskLabel" text="0" styleClass="stat-value-danger"/>
                         <Label text="Urgent Attention" styleClass="stat-label"/>
                     </VBox>
 
@@ -70,9 +72,9 @@
                         <Label text="In Progress" styleClass="stat-label"/>
                     </VBox>
 
-                    <VBox spacing="10" styleClass="stat-card" style="-fx-background-color: #fff3e0;" GridPane.columnIndex="4">
-                        <Label text="Overdue" styleClass="stat-label" style="-fx-text-fill: #f57c00;"/>
-                        <Label fx:id="overdueLabel" text="0" styleClass="stat-value" style="-fx-text-fill: #f57c00;"/>
+                    <VBox spacing="10" styleClass="stat-card card metric-warning" GridPane.columnIndex="4">
+                        <Label text="Overdue" styleClass="stat-label"/>
+                        <Label fx:id="overdueLabel" text="0" styleClass="stat-value-warning"/>
                         <Label text="Needs Follow-up" styleClass="stat-label"/>
                     </VBox>
 
@@ -242,7 +244,7 @@
             </VBox>
 
             <!-- Right Sidebar -->
-            <VBox spacing="15" style="-fx-background-color: #f5f5f5; -fx-padding: 20;">
+            <VBox spacing="15" styleClass="card">
                 <Label text="Quick Actions" styleClass="section-header"/>
 
                 <!-- Overdue Referrals -->
@@ -251,7 +253,7 @@
                         <Label text="Overdue Referrals" styleClass="sidebar-header"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <Label fx:id="overdueCountLabel" text="0"
-                               style="-fx-text-fill: #f57c00; -fx-font-weight: bold;"/>
+                               styleClass="form-label"/>
                     </HBox>
                     <ListView fx:id="overdueListView" prefHeight="150" styleClass="compact-list"/>
                 </VBox>
@@ -262,7 +264,7 @@
                         <Label text="High-Risk Active Cases" styleClass="sidebar-header"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <Label fx:id="highRiskCountLabel" text="0"
-                               style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"/>
+                               styleClass="form-label"/>
                     </HBox>
                     <ListView fx:id="highRiskListView" prefHeight="150" styleClass="compact-list"/>
                 </VBox>
@@ -273,7 +275,7 @@
                         <Label text="Crisis Interventions (30d)" styleClass="sidebar-header"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <Label fx:id="crisisCountLabel" text="0"
-                               style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"/>
+                               styleClass="form-label"/>
                     </HBox>
                     <ListView fx:id="crisisListView" prefHeight="100" styleClass="compact-list"/>
                 </VBox>

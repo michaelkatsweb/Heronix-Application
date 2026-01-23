@@ -279,6 +279,26 @@ public class AuditService {
             null, true, AuditSeverity.WARNING);
     }
 
+    /**
+     * Log an attendance adjustment (Phase 58 - Attendance Enhancement)
+     *
+     * @param adjustment the attendance adjustment
+     * @param action the action taken (EXCUSE_CREATED, APPROVED, REJECTED, etc.)
+     */
+    public void logAttendanceAdjustment(com.heronix.model.domain.AttendanceAdjustment adjustment, String action) {
+        String details = String.format(
+            "{\"adjustment_id\":%d,\"student_id\":%d,\"date\":\"%s\",\"type\":\"%s\",\"action\":\"%s\",\"status\":\"%s\"}",
+            adjustment.getId(),
+            adjustment.getStudent().getId(),
+            adjustment.getAttendanceDate(),
+            adjustment.getAdjustmentType(),
+            action,
+            adjustment.getNewStatus()
+        );
+        log(AuditAction.ATTENDANCE_UPDATE, "AttendanceAdjustment", adjustment.getId(),
+            details, true, AuditSeverity.INFO);
+    }
+
     // ============================================================
     // User Management Event Logging
     // ============================================================

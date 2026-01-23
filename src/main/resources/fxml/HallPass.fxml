@@ -32,13 +32,13 @@ Location: src/main/resources/fxml/HallPass.fxml
         <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
             <Label text="✅ Active Passes" styleClass="label"/>
             <Label fx:id="activeCountLabel" text="0"
-                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
+                   styleClass="stat-value-32-green-material"/>
         </VBox>
 
         <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
             <Label text="⚠️ Overdue Passes" styleClass="label"/>
             <Label fx:id="overdueCountLabel" text="0"
-                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #F44336;"/>
+                   styleClass="stat-value-32-red"/>
         </VBox>
     </HBox>
 
@@ -100,13 +100,13 @@ Location: src/main/resources/fxml/HallPass.fxml
 
                         <HBox spacing="15">
                             <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <Label text="Student:" style="-fx-font-weight: bold;"/>
+                                <Label text="Student:" styleClass="form-label"/>
                                 <ComboBox fx:id="studentComboBox" promptText="Select Student"
                                           prefWidth="Infinity" maxWidth="Infinity"/>
                             </VBox>
 
                             <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <Label text="Destination:" style="-fx-font-weight: bold;"/>
+                                <Label text="Destination:" styleClass="form-label"/>
                                 <ComboBox fx:id="destinationComboBox" promptText="Select Destination"
                                           prefWidth="Infinity" maxWidth="Infinity"/>
                             </VBox>
@@ -114,24 +114,24 @@ Location: src/main/resources/fxml/HallPass.fxml
 
                         <HBox spacing="15">
                             <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <Label text="Approving Teacher:" style="-fx-font-weight: bold;"/>
+                                <Label text="Approving Teacher:" styleClass="form-label"/>
                                 <ComboBox fx:id="teacherComboBox" promptText="Select Teacher"
                                           prefWidth="Infinity" maxWidth="Infinity"/>
                             </VBox>
 
                             <VBox spacing="5">
-                                <Label text="Period:" style="-fx-font-weight: bold;"/>
+                                <Label text="Period:" styleClass="form-label"/>
                                 <Spinner fx:id="periodSpinner" prefWidth="100" editable="true"/>
                             </VBox>
                         </HBox>
 
                         <VBox spacing="5">
-                            <Label text="Departure Room:" style="-fx-font-weight: bold;"/>
+                            <Label text="Departure Room:" styleClass="form-label"/>
                             <TextField fx:id="departureRoomField" promptText="e.g., Room 205"/>
                         </VBox>
 
                         <VBox spacing="5">
-                            <Label text="Notes (Optional):" style="-fx-font-weight: bold;"/>
+                            <Label text="Notes (Optional):" styleClass="form-label"/>
                             <TextArea fx:id="notesArea" prefHeight="80" wrapText="true"
                                       promptText="Enter any additional notes..."/>
                         </VBox>
@@ -168,7 +168,7 @@ Location: src/main/resources/fxml/HallPass.fxml
 
                     <HBox spacing="15" alignment="CENTER_LEFT">
                         <VBox spacing="5" HBox.hgrow="ALWAYS">
-                            <Label text="Student:" style="-fx-font-weight: bold;"/>
+                            <Label text="Student:" styleClass="form-label"/>
                             <ComboBox fx:id="historyStudentComboBox" promptText="Select Student"
                                       prefWidth="Infinity" maxWidth="Infinity"/>
                         </VBox>

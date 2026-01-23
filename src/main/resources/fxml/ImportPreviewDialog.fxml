@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -11,6 +13,7 @@
       prefWidth="900" prefHeight="700"
       spacing="15"
       styleClass="dialog-root">
+
 
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
@@ -33,30 +36,30 @@
     <Separator/>
 
     <!-- Import Information -->
-    <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-background-color: #f5f5f5; -fx-padding: 10; -fx-background-radius: 5;">
+    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="card">
         <VBox spacing="5">
             <HBox spacing="10">
-                <Label text="📄 File:" style="-fx-font-weight: bold;"/>
+                <Label text="📄 File:" styleClass="form-label"/>
                 <Label fx:id="fileNameLabel" text="file.csv"/>
             </HBox>
             <HBox spacing="10">
-                <Label text="📊 Entity Type:" style="-fx-font-weight: bold;"/>
+                <Label text="📊 Entity Type:" styleClass="form-label"/>
                 <Label fx:id="entityTypeLabel" text="Student"/>
             </HBox>
         </VBox>
         <Region HBox.hgrow="ALWAYS"/>
         <VBox spacing="5" alignment="CENTER_RIGHT">
             <HBox spacing="10">
-                <Label text="Total Rows:" style="-fx-font-weight: bold;"/>
-                <Label fx:id="totalRowsLabel" text="0" style="-fx-text-fill: #2196F3;"/>
+                <Label text="Total Rows:" styleClass="form-label"/>
+                <Label fx:id="totalRowsLabel" text="0" styleClass="text-info"/>
             </HBox>
             <HBox spacing="10">
-                <Label text="Valid Rows:" style="-fx-font-weight: bold;"/>
-                <Label fx:id="validRowsLabel" text="0" style="-fx-text-fill: #4CAF50;"/>
+                <Label text="Valid Rows:" styleClass="form-label"/>
+                <Label fx:id="validRowsLabel" text="0" styleClass="text-success"/>
             </HBox>
             <HBox spacing="10">
-                <Label text="Error Rows:" style="-fx-font-weight: bold;"/>
-                <Label fx:id="errorRowsLabel" text="0" style="-fx-text-fill: #F44336;"/>
+                <Label text="Error Rows:" styleClass="form-label"/>
+                <Label fx:id="errorRowsLabel" text="0" styleClass="text-danger"/>
             </HBox>
         </VBox>
     </HBox>
@@ -74,7 +77,7 @@
 
     <!-- Preview Table -->
     <VBox VBox.vgrow="ALWAYS" spacing="5">
-        <Label text="Data Preview:" style="-fx-font-weight: bold;"/>
+        <Label text="Data Preview:" styleClass="form-label"/>
 
         <TableView fx:id="previewTable" VBox.vgrow="ALWAYS">
             <placeholder>
@@ -83,13 +86,13 @@
         </TableView>
 
         <!-- Row count indicator -->
-        <Label fx:id="rowCountLabel" text="Showing 0 of 0 rows" style="-fx-text-fill: #666;"/>
+        <Label fx:id="rowCountLabel" text="Showing 0 of 0 rows" styleClass="text-muted"/>
     </VBox>
 
     <!-- Validation Issues -->
     <VBox fx:id="validationIssuesBox" spacing="5" managed="false" visible="false">
-        <Label text="⚠ Validation Issues:" style="-fx-font-weight: bold; -fx-text-fill: #ff9800;"/>
-        <VBox spacing="5" style="-fx-background-color: #fff3cd; -fx-padding: 10; -fx-background-radius: 5; -fx-max-height: 150;">
+        <Label text="⚠ Validation Issues:" styleClass="form-label"/>
+        <VBox spacing="5" styleClass="card">
             <ScrollPane fitToWidth="true" prefHeight="150">
                 <VBox fx:id="issuesContainer" spacing="5"/>
             </ScrollPane>
@@ -97,8 +100,8 @@
     </VBox>
 
     <!-- Import Options -->
-    <VBox spacing="10" style="-fx-background-color: #e3f2fd; -fx-padding: 10; -fx-background-radius: 5;">
-        <Label text="Import Options:" style="-fx-font-weight: bold;"/>
+    <VBox spacing="10" styleClass="card, metric-info">
+        <Label text="Import Options:" styleClass="form-label"/>
         <HBox spacing="20">
             <CheckBox fx:id="skipErrorsCheckBox" text="Skip rows with errors" selected="true"/>
             <CheckBox fx:id="createBackupCheckBox" text="Create backup before import" selected="true"/>
@@ -113,7 +116,7 @@
         <Region HBox.hgrow="ALWAYS"/>
         <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel" prefWidth="100"/>
         <Button fx:id="importButton" text="✓ Start Import" onAction="#handleImport" prefWidth="120"
-                style="-fx-background-color: #4CAF50; -fx-text-fill: white;" disable="true"/>
+                styleClass="button-success" disable="true"/>
     </HBox>
 
 </VBox>

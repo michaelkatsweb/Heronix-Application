@@ -24,7 +24,7 @@ import java.util.Map;
  * @since 2025-12-23
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/enrollment-verifications")
 @CrossOrigin(origins = "*")
 public class EnrollmentVerificationController {

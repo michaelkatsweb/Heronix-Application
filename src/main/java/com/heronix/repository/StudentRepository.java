@@ -108,4 +108,164 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
      * Count students by student status
      */
     long countByStudentStatus(Student.StudentStatus status);
+
+    // ========================================================================
+    // ANALYTICS QUERIES - Phase 59
+    // ========================================================================
+
+    /**
+     * Count students by gender for demographics analysis
+     */
+    @Query("SELECT s.gender, COUNT(s) FROM Student s " +
+           "WHERE s.active = true AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId) " +
+           "GROUP BY s.gender")
+    List<Object[]> countByGender(@org.springframework.data.repository.query.Param("campusId") Long campusId);
+
+    /**
+     * Count students by ethnicity for demographics analysis
+     */
+    @Query("SELECT s.ethnicity, COUNT(s) FROM Student s " +
+           "WHERE s.active = true AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId) " +
+           "GROUP BY s.ethnicity")
+    List<Object[]> countByEthnicity(@org.springframework.data.repository.query.Param("campusId") Long campusId);
+
+    /**
+     * Count students by race for demographics analysis
+     */
+    @Query("SELECT s.race, COUNT(s) FROM Student s " +
+           "WHERE s.active = true AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId) " +
+           "GROUP BY s.race")
+    List<Object[]> countByRace(@org.springframework.data.repository.query.Param("campusId") Long campusId);
+
+    /**
+     * Count students by home language for demographics analysis
+     */
+    @Query("SELECT s.homeLanguage, COUNT(s) FROM Student s " +
+           "WHERE s.active = true AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId) " +
+           "GROUP BY s.homeLanguage")
+    List<Object[]> countByLanguage(@org.springframework.data.repository.query.Param("campusId") Long campusId);
+
+    /**
+     * Count IEP students
+     */
+    @Query("SELECT COUNT(s) FROM Student s " +
+           "WHERE s.hasIEP = true AND s.active = true AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId)")
+    Long countIEPStudents(@org.springframework.data.repository.query.Param("campusId") Long campusId);
+
+    /**
+     * Count 504 Plan students
+     */
+    @Query("SELECT COUNT(s) FROM Student s " +
+           "WHERE s.has504Plan = true AND s.active = true AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId)")
+    Long count504Students(@org.springframework.data.repository.query.Param("campusId") Long campusId);
+
+    /**
+     * Count Gifted students
+     */
+    @Query("SELECT COUNT(s) FROM Student s " +
+           "WHERE s.isGifted = true AND s.active = true AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId)")
+    Long countGiftedStudents(@org.springframework.data.repository.query.Param("campusId") Long campusId);
+
+    /**
+     * Count English Language Learner students
+     */
+    @Query("SELECT COUNT(s) FROM Student s " +
+           "WHERE s.isEnglishLearner = true AND s.active = true AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId)")
+    Long countELLStudents(@org.springframework.data.repository.query.Param("campusId") Long campusId);
+
+    /**
+     * Get average GPA by grade level
+     */
+    @Query("SELECT s.gradeLevel, AVG(s.currentGPA) FROM Student s " +
+           "WHERE s.active = true AND s.currentGPA IS NOT NULL AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId) " +
+           "GROUP BY s.gradeLevel ORDER BY s.gradeLevel")
+    List<Object[]> getAverageGPAByGrade(@org.springframework.data.repository.query.Param("campusId") Long campusId);
+
+    /**
+     * Count students by grade level for enrollment analytics
+     */
+    @Query("SELECT s.gradeLevel, COUNT(s) FROM Student s " +
+           "WHERE s.active = true AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId) " +
+           "GROUP BY s.gradeLevel ORDER BY s.gradeLevel")
+    List<Object[]> countByGradeLevelForAnalytics(@org.springframework.data.repository.query.Param("campusId") Long campusId);
+
+    /**
+     * Find at-risk students based on GPA threshold
+     */
+    @Query("SELECT s FROM Student s " +
+           "WHERE s.active = true AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND s.currentGPA IS NOT NULL AND s.currentGPA < :gpaThreshold " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId) " +
+           "ORDER BY s.currentGPA ASC")
+    List<Student> findAtRiskStudentsByGPA(
+            @org.springframework.data.repository.query.Param("campusId") Long campusId,
+            @org.springframework.data.repository.query.Param("gpaThreshold") Double gpaThreshold);
+
+    /**
+     * Find honor roll students above GPA threshold
+     */
+    @Query("SELECT s FROM Student s " +
+           "WHERE s.active = true AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND s.currentGPA IS NOT NULL AND s.currentGPA >= :gpaThreshold " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId) " +
+           "ORDER BY s.currentGPA DESC")
+    List<Student> findHonorRollStudents(
+            @org.springframework.data.repository.query.Param("campusId") Long campusId,
+            @org.springframework.data.repository.query.Param("gpaThreshold") Double gpaThreshold);
+
+    /**
+     * Count total active students for a campus
+     */
+    @Query("SELECT COUNT(s) FROM Student s " +
+           "WHERE s.active = true AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId)")
+    Long countActiveStudents(@org.springframework.data.repository.query.Param("campusId") Long campusId);
+
+    /**
+     * Get GPA distribution (ranges)
+     */
+    @Query("SELECT CASE " +
+           "  WHEN s.currentGPA >= 3.5 THEN '3.5-4.0' " +
+           "  WHEN s.currentGPA >= 3.0 THEN '3.0-3.49' " +
+           "  WHEN s.currentGPA >= 2.5 THEN '2.5-2.99' " +
+           "  WHEN s.currentGPA >= 2.0 THEN '2.0-2.49' " +
+           "  WHEN s.currentGPA >= 1.0 THEN '1.0-1.99' " +
+           "  ELSE 'Below 1.0' END, COUNT(s) " +
+           "FROM Student s " +
+           "WHERE s.active = true AND s.currentGPA IS NOT NULL AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId) " +
+           "GROUP BY CASE " +
+           "  WHEN s.currentGPA >= 3.5 THEN '3.5-4.0' " +
+           "  WHEN s.currentGPA >= 3.0 THEN '3.0-3.49' " +
+           "  WHEN s.currentGPA >= 2.5 THEN '2.5-2.99' " +
+           "  WHEN s.currentGPA >= 2.0 THEN '2.0-2.49' " +
+           "  WHEN s.currentGPA >= 1.0 THEN '1.0-1.99' " +
+           "  ELSE 'Below 1.0' END")
+    List<Object[]> getGPADistribution(@org.springframework.data.repository.query.Param("campusId") Long campusId);
+
+    /**
+     * Find students by campus
+     */
+    @Query("SELECT s FROM Student s " +
+           "WHERE s.active = true AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND s.campus.id = :campusId")
+    List<Student> findByCampusId(@org.springframework.data.repository.query.Param("campusId") Long campusId);
+
+    /**
+     * Get overall average GPA
+     */
+    @Query("SELECT AVG(s.currentGPA) FROM Student s " +
+           "WHERE s.active = true AND s.currentGPA IS NOT NULL AND (s.deleted = false OR s.deleted IS NULL) " +
+           "AND (:campusId IS NULL OR s.campus.id = :campusId)")
+    Double getAverageGPA(@org.springframework.data.repository.query.Param("campusId") Long campusId);
 }

@@ -24,8 +24,8 @@ import java.util.List;
  * @version 1.0.0
  * @since 2025-12-24
  */
-@RestController
-@RequestMapping("/api/emergency-contacts")
+// @RestController  // Disabled - duplicate of EmergencyContactApiController
+// @RequestMapping("/api/emergency-contacts")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @Slf4j

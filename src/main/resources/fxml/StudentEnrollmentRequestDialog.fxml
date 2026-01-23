@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -8,6 +10,7 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.heronix.ui.controller.StudentEnrollmentRequestController"
             prefWidth="1400" prefHeight="800">
+
 
     <!-- Top: Header -->
     <top>
@@ -97,28 +100,28 @@
                 <!-- Preference 1 -->
                 <VBox spacing="5">
                     <Label text="1st Choice (Highest Priority)" styleClass="preference-label"/>
-                    <ListView fx:id="preference1List" prefHeight="80" styleClass="preference-list" style="-fx-border-color: #4CAF50; -fx-border-width: 2;"/>
+                    <ListView fx:id="preference1List" prefHeight="80" styleClass="preference-list, border-success"/>
                     <Label fx:id="priority1Label" text="Priority: -" styleClass="priority-label"/>
                 </VBox>
 
                 <!-- Preference 2 -->
                 <VBox spacing="5">
                     <Label text="2nd Choice" styleClass="preference-label"/>
-                    <ListView fx:id="preference2List" prefHeight="80" styleClass="preference-list" style="-fx-border-color: #2196F3; -fx-border-width: 2;"/>
+                    <ListView fx:id="preference2List" prefHeight="80" styleClass="preference-list, border-primary"/>
                     <Label fx:id="priority2Label" text="Priority: -" styleClass="priority-label"/>
                 </VBox>
 
                 <!-- Preference 3 -->
                 <VBox spacing="5">
                     <Label text="3rd Choice" styleClass="preference-label"/>
-                    <ListView fx:id="preference3List" prefHeight="80" styleClass="preference-list" style="-fx-border-color: #FF9800; -fx-border-width: 2;"/>
+                    <ListView fx:id="preference3List" prefHeight="80" styleClass="preference-list, border-warning"/>
                     <Label fx:id="priority3Label" text="Priority: -" styleClass="priority-label"/>
                 </VBox>
 
                 <!-- Preference 4 -->
                 <VBox spacing="5">
                     <Label text="4th Choice (Alternate)" styleClass="preference-label"/>
-                    <ListView fx:id="preference4List" prefHeight="80" styleClass="preference-list" style="-fx-border-color: #9E9E9E; -fx-border-width: 2;"/>
+                    <ListView fx:id="preference4List" prefHeight="80" styleClass="preference-list, border-secondary"/>
                     <Label fx:id="priority4Label" text="Priority: -" styleClass="priority-label"/>
                 </VBox>
 

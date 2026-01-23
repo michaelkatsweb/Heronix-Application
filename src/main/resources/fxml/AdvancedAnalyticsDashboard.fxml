@@ -57,13 +57,13 @@ Location: src/main/resources/fxml/AdvancedAnalyticsDashboard.fxml
                         <VBox spacing="15" style="-fx-padding: 15;">
                             <Label text="Teacher Burnout Risk Assessment" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
                             <Label text="Multi-factor analysis of teacher workload, stress indicators, and burnout risk."
-                                   style="-fx-text-fill: #666666;"/>
+                                   styleClass="text-muted"/>
 
                             <!-- Summary Cards -->
                             <HBox spacing="15">
                                 <VBox styleClass="metric-card alert-card" HBox.hgrow="ALWAYS">
                                     <Label text="High Risk" styleClass="metric-label"/>
-                                    <Label fx:id="highRiskCountLabel" text="0" styleClass="metric-value" style="-fx-text-fill: #dc3545;">
+                                    <Label fx:id="highRiskCountLabel" text="0" styleClass="metric-value-danger">
                                         <font><Font size="32"/></font>
                                     </Label>
                                     <Label text="teachers at high risk" styleClass="metric-subtitle"/>
@@ -71,7 +71,7 @@ Location: src/main/resources/fxml/AdvancedAnalyticsDashboard.fxml
 
                                 <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
                                     <Label text="Moderate Risk" styleClass="metric-label"/>
-                                    <Label fx:id="moderateRiskCountLabel" text="0" styleClass="metric-value" style="-fx-text-fill: #ffc107;">
+                                    <Label fx:id="moderateRiskCountLabel" text="0" styleClass="metric-value-warning">
                                         <font><Font size="32"/></font>
                                     </Label>
                                     <Label text="teachers at moderate risk" styleClass="metric-subtitle"/>
@@ -79,7 +79,7 @@ Location: src/main/resources/fxml/AdvancedAnalyticsDashboard.fxml
 
                                 <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
                                     <Label text="Low Risk" styleClass="metric-label"/>
-                                    <Label fx:id="lowRiskCountLabel" text="0" styleClass="metric-value" style="-fx-text-fill: #28a745;">
+                                    <Label fx:id="lowRiskCountLabel" text="0" styleClass="metric-value-success">
                                         <font><Font size="32"/></font>
                                     </Label>
                                     <Label text="teachers healthy" styleClass="metric-subtitle"/>
@@ -115,7 +115,7 @@ Location: src/main/resources/fxml/AdvancedAnalyticsDashboard.fxml
                         <VBox spacing="15" style="-fx-padding: 15;">
                             <Label text="SPED Minutes Compliance Tracker" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
                             <Label text="Track scheduled vs IEP-required service minutes for special education students."
-                                   style="-fx-text-fill: #666666;"/>
+                                   styleClass="text-muted"/>
 
                             <!-- Compliance Summary -->
                             <HBox spacing="15">
@@ -128,7 +128,7 @@ Location: src/main/resources/fxml/AdvancedAnalyticsDashboard.fxml
 
                                 <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
                                     <Label text="Compliant" styleClass="metric-label"/>
-                                    <Label fx:id="compliantStudentsLabel" text="0" styleClass="metric-value" style="-fx-text-fill: #28a745;">
+                                    <Label fx:id="compliantStudentsLabel" text="0" styleClass="metric-value-success">
                                         <font><Font size="32"/></font>
                                     </Label>
                                     <Label text="students meeting requirements" styleClass="metric-subtitle"/>
@@ -136,7 +136,7 @@ Location: src/main/resources/fxml/AdvancedAnalyticsDashboard.fxml
 
                                 <VBox styleClass="metric-card alert-card" HBox.hgrow="ALWAYS">
                                     <Label text="Non-Compliant" styleClass="metric-label"/>
-                                    <Label fx:id="nonCompliantStudentsLabel" text="0" styleClass="metric-value" style="-fx-text-fill: #dc3545;">
+                                    <Label fx:id="nonCompliantStudentsLabel" text="0" styleClass="metric-value-danger">
                                         <font><Font size="32"/></font>
                                     </Label>
                                     <Label text="students below requirements" styleClass="metric-subtitle"/>
@@ -171,12 +171,12 @@ Location: src/main/resources/fxml/AdvancedAnalyticsDashboard.fxml
                         <VBox spacing="15" style="-fx-padding: 15;">
                             <Label text="What-If Scenario Simulator" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
                             <Label text="Simulate schedule changes and analyze their impact before implementation."
-                                   style="-fx-text-fill: #666666;"/>
+                                   styleClass="text-muted"/>
 
                             <HBox spacing="20">
                                 <!-- Scenario Builder -->
                                 <VBox spacing="10" prefWidth="350">
-                                    <Label text="Build Scenario" style="-fx-font-weight: bold;"/>
+                                    <Label text="Build Scenario" styleClass="form-label"/>
 
                                     <GridPane hgap="10" vgap="10">
                                         <Label text="Scenario Type:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
@@ -198,7 +198,7 @@ Location: src/main/resources/fxml/AdvancedAnalyticsDashboard.fxml
 
                                 <!-- Simulation Results -->
                                 <VBox spacing="10" HBox.hgrow="ALWAYS">
-                                    <Label text="Simulation Results" style="-fx-font-weight: bold;"/>
+                                    <Label text="Simulation Results" styleClass="form-label"/>
 
                                     <GridPane fx:id="simulationResultsGrid" hgap="20" vgap="10">
                                         <Label text="Impact Score:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
@@ -214,7 +214,7 @@ Location: src/main/resources/fxml/AdvancedAnalyticsDashboard.fxml
                                         <Label fx:id="feasibilityLabel" text="--" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                                     </GridPane>
 
-                                    <Label text="Recommendations:" style="-fx-font-weight: bold;"/>
+                                    <Label text="Recommendations:" styleClass="form-label"/>
                                     <ListView fx:id="whatIfRecommendationsList" prefHeight="150"/>
                                 </VBox>
                             </HBox>
@@ -226,7 +226,7 @@ Location: src/main/resources/fxml/AdvancedAnalyticsDashboard.fxml
                         <VBox spacing="15" style="-fx-padding: 15;">
                             <Label text="Prep Time Equity Dashboard" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
                             <Label text="Analyze preparation time distribution across teachers for equitable workloads."
-                                   style="-fx-text-fill: #666666;"/>
+                                   styleClass="text-muted"/>
 
                             <!-- Equity Summary -->
                             <HBox spacing="15">
@@ -249,7 +249,7 @@ Location: src/main/resources/fxml/AdvancedAnalyticsDashboard.fxml
 
                                 <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
                                     <Label text="Below Average" styleClass="metric-label"/>
-                                    <Label fx:id="belowAvgCountLabel" text="0" styleClass="metric-value" style="-fx-text-fill: #dc3545;">
+                                    <Label fx:id="belowAvgCountLabel" text="0" styleClass="metric-value-warning">
                                         <font><Font size="32"/></font>
                                     </Label>
                                     <Label text="teachers need more prep" styleClass="metric-subtitle"/>
@@ -293,7 +293,4 @@ Location: src/main/resources/fxml/AdvancedAnalyticsDashboard.fxml
         </ScrollPane>
     </center>
 
-    <stylesheets>
-        <String fx:value="@../css/main.css"/>
-    </stylesheets>
 </BorderPane>

@@ -37,7 +37,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 122 - Report Digital Twin & Simulation
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/digital-twin")
 @RequiredArgsConstructor
 @Slf4j

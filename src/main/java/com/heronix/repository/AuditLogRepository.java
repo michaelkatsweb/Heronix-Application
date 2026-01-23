@@ -217,6 +217,21 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
     List<AuditLog> findByTimestampBetweenOrderByTimestampDesc(
         LocalDateTime startDate, LocalDateTime endDate);
 
+    /**
+     * Find all audit logs within a date range (alias without ordering).
+     */
+    List<AuditLog> findByTimestampBetween(LocalDateTime startDate, LocalDateTime endDate);
+
+    /**
+     * Find audit logs for a user within a date range.
+     */
+    List<AuditLog> findByUsernameAndTimestampBetween(String username, LocalDateTime startDate, LocalDateTime endDate);
+
+    /**
+     * Find recent audit logs after a specific timestamp.
+     */
+    List<AuditLog> findByTimestampAfterOrderByTimestampDesc(LocalDateTime timestamp);
+
     // ============================================================
     // Query by Severity
     // ============================================================

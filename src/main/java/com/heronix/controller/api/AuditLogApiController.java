@@ -4,14 +4,21 @@ import com.heronix.model.domain.AuditLog;
 import com.heronix.model.domain.AuditLog.AuditAction;
 import com.heronix.model.domain.AuditLog.AuditSeverity;
 import com.heronix.repository.AuditLogRepository;
+import com.heronix.service.AuditLogExportService;
+import com.heronix.service.AuditLogExportService.ExportFormat;
 import com.heronix.service.AuditService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +34,7 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since December 29, 2025
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/audit-logs")
 @RequiredArgsConstructor
@@ -34,6 +42,7 @@ public class AuditLogApiController {
 
     private final AuditService auditService;
     private final AuditLogRepository auditLogRepository;
+    private final AuditLogExportService auditLogExportService;
 
     // ==================== Query Audit Logs ====================
 
@@ -436,5 +445,150 @@ public class AuditLogApiController {
         report.put("securityEvents", securityEvents);
 
         return ResponseEntity.ok(report);
+    }
+
+    // ==================== Export Endpoints ====================
+
+    /**
+     * Export audit logs to CSV format
+     */
+    @GetMapping("/export/csv")
+    public ResponseEntity<byte[]> exportToCSV(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String action,
+            @RequestParam(required = false) String severity) {
+        try {
+            LocalDateTime start = parseDate(startDate, true);
+            LocalDateTime end = parseDate(endDate, false);
+            AuditAction auditAction = action != null && !action.isEmpty() ? AuditAction.valueOf(action) : null;
+            AuditSeverity auditSeverity = severity != null && !severity.isEmpty() ? AuditSeverity.valueOf(severity) : null;
+
+            byte[] data = auditLogExportService.exportWithFilters(start, end, username, auditAction, auditSeverity, ExportFormat.CSV);
+            String filename = auditLogExportService.generateFilename(ExportFormat.CSV);
+
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(data);
+        } catch (Exception e) {
+            log.error("Failed to export audit logs to CSV", e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Export audit logs to JSON format
+     */
+    @GetMapping("/export/json")
+    public ResponseEntity<byte[]> exportToJSON(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String action,
+            @RequestParam(required = false) String severity) {
+        try {
+            LocalDateTime start = parseDate(startDate, true);
+            LocalDateTime end = parseDate(endDate, false);
+            AuditAction auditAction = action != null && !action.isEmpty() ? AuditAction.valueOf(action) : null;
+            AuditSeverity auditSeverity = severity != null && !severity.isEmpty() ? AuditSeverity.valueOf(severity) : null;
+
+            byte[] data = auditLogExportService.exportWithFilters(start, end, username, auditAction, auditSeverity, ExportFormat.JSON);
+            String filename = auditLogExportService.generateFilename(ExportFormat.JSON);
+
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(data);
+        } catch (Exception e) {
+            log.error("Failed to export audit logs to JSON", e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Export audit logs to PDF format
+     */
+    @GetMapping("/export/pdf")
+    public ResponseEntity<byte[]> exportToPDF(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String action,
+            @RequestParam(required = false) String severity) {
+        try {
+            LocalDateTime start = parseDate(startDate, true);
+            LocalDateTime end = parseDate(endDate, false);
+            AuditAction auditAction = action != null && !action.isEmpty() ? AuditAction.valueOf(action) : null;
+            AuditSeverity auditSeverity = severity != null && !severity.isEmpty() ? AuditSeverity.valueOf(severity) : null;
+
+            byte[] data = auditLogExportService.exportWithFilters(start, end, username, auditAction, auditSeverity, ExportFormat.PDF);
+            String filename = auditLogExportService.generateFilename(ExportFormat.PDF);
+
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(data);
+        } catch (Exception e) {
+            log.error("Failed to export audit logs to PDF", e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Get export preview (count of records that would be exported)
+     */
+    @GetMapping("/export/preview")
+    public ResponseEntity<Map<String, Object>> getExportPreview(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String action,
+            @RequestParam(required = false) String severity) {
+        try {
+            LocalDateTime start = parseDate(startDate, true);
+            LocalDateTime end = parseDate(endDate, false);
+            AuditAction auditAction = action != null && !action.isEmpty() ? AuditAction.valueOf(action) : null;
+            AuditSeverity auditSeverity = severity != null && !severity.isEmpty() ? AuditSeverity.valueOf(severity) : null;
+
+            long count = auditLogExportService.getFilteredCount(start, end, username, auditAction, auditSeverity);
+
+            Map<String, Object> preview = new HashMap<>();
+            preview.put("recordCount", count);
+            preview.put("filters", Map.of(
+                "startDate", start != null ? start.toString() : "none",
+                "endDate", end != null ? end.toString() : "none",
+                "username", username != null ? username : "all",
+                "action", action != null ? action : "all",
+                "severity", severity != null ? severity : "all"
+            ));
+
+            return ResponseEntity.ok(preview);
+        } catch (Exception e) {
+            log.error("Failed to get export preview", e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Helper method to parse date strings
+     */
+    private LocalDateTime parseDate(String dateStr, boolean isStartDate) {
+        if (dateStr == null || dateStr.isEmpty()) {
+            return isStartDate ? LocalDateTime.now().minusDays(30) : LocalDateTime.now();
+        }
+        try {
+            // Try full datetime format first
+            return LocalDateTime.parse(dateStr);
+        } catch (Exception e) {
+            try {
+                // Try date-only format
+                java.time.LocalDate date = java.time.LocalDate.parse(dateStr);
+                return isStartDate ? date.atStartOfDay() : date.atTime(LocalTime.MAX);
+            } catch (Exception e2) {
+                return isStartDate ? LocalDateTime.now().minusDays(30) : LocalDateTime.now();
+            }
+        }
     }
 }

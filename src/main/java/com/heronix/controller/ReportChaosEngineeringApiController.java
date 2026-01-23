@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 147 - Chaos Engineering & Resilience Testing
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/chaos-engineering")
 @RequiredArgsConstructor
 public class ReportChaosEngineeringApiController {

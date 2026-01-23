@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.analytics.BehaviorAnalyticsController"
+            styleClass="analytics-view">
+
+    <!-- Header Section -->
+    <top>
+        <VBox styleClass="header-section" spacing="5">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Button fx:id="backButton" text="← Back to Hub" styleClass="button-secondary"
+                        onAction="#handleBackToHub"/>
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Behavior Analytics" styleClass="page-title"/>
+                    <Label text="Incident trends, categories, locations, and at-risk student tracking" styleClass="page-subtitle"/>
+                </VBox>
+
+                <!-- Date Range Filter -->
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Label text="From:" styleClass="filter-label"/>
+                    <DatePicker fx:id="startDatePicker" promptText="Start Date"/>
+                    <Label text="To:" styleClass="filter-label"/>
+                    <DatePicker fx:id="endDatePicker" promptText="End Date"/>
+                    <Button text="Apply" styleClass="button-primary" onAction="#handleApplyFilter"/>
+                </HBox>
+
+                <Button text="Export Report" styleClass="button-primary" onAction="#handleExportReport"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Main Content - TabPane with 4 Tabs -->
+    <center>
+        <TabPane fx:id="mainTabPane" styleClass="analytics-tabs" tabClosingPolicy="UNAVAILABLE">
+
+            <!-- Tab 1: Overview -->
+            <Tab text="Overview" closable="false">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- Quick Stats Row -->
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="quick-stats-grid">
+                        <VBox styleClass="metric-card, metric-primary" spacing="5" minWidth="180">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="TOTAL INCIDENTS" styleClass="metric-label"/>
+                            <Label fx:id="totalIncidentsValue" text="0" styleClass="metric-value"/>
+                            <Label fx:id="incidentPeriodLabel" text="last 30 days" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-success" spacing="5" minWidth="180">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="POSITIVE" styleClass="metric-label"/>
+                            <Label fx:id="positiveValue" text="0" styleClass="metric-value"/>
+                            <Label text="recognitions" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-danger" spacing="5" minWidth="180">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="NEGATIVE" styleClass="metric-label"/>
+                            <Label fx:id="negativeValue" text="0" styleClass="metric-value"/>
+                            <Label text="incidents" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-warning" spacing="5" minWidth="180">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="TODAY" styleClass="metric-label"/>
+                            <Label fx:id="todayValue" text="0" styleClass="metric-value"/>
+                            <Label text="incidents today" styleClass="metric-trend"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Charts Row -->
+                    <HBox spacing="20" VBox.vgrow="ALWAYS">
+                        <!-- Daily Trend Line Chart -->
+                        <VBox styleClass="chart-container" HBox.hgrow="ALWAYS" spacing="10">
+                            <padding>
+                                <Insets top="15" right="15" bottom="15" left="15"/>
+                            </padding>
+                            <Label text="Daily Incident Trend" styleClass="section-header"/>
+                            <LineChart fx:id="dailyTrendChart" VBox.vgrow="ALWAYS"
+                                       legendVisible="false" animated="true">
+                                <xAxis>
+                                    <CategoryAxis label="Date"/>
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="Incidents"/>
+                                </yAxis>
+                            </LineChart>
+                        </VBox>
+
+                        <!-- Type Distribution Pie Chart -->
+                        <VBox styleClass="chart-container" minWidth="350" spacing="10">
+                            <padding>
+                                <Insets top="15" right="15" bottom="15" left="15"/>
+                            </padding>
+                            <Label text="Positive vs Negative" styleClass="section-header"/>
+                            <PieChart fx:id="typeDistributionChart" VBox.vgrow="ALWAYS"
+                                      legendSide="BOTTOM" labelsVisible="true"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 2: Categories -->
+            <Tab text="Categories" closable="false">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- Category Distribution Chart -->
+                    <VBox styleClass="chart-container" VBox.vgrow="ALWAYS" spacing="10">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Incidents by Category" styleClass="section-header"/>
+                        <BarChart fx:id="categoryChart" VBox.vgrow="ALWAYS"
+                                  legendVisible="false" animated="true">
+                            <xAxis>
+                                <CategoryAxis label="Category"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Incidents"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+
+                    <!-- Severity Distribution -->
+                    <HBox spacing="20">
+                        <VBox styleClass="chart-container" HBox.hgrow="ALWAYS" spacing="10">
+                            <padding>
+                                <Insets top="15" right="15" bottom="15" left="15"/>
+                            </padding>
+                            <Label text="Severity Breakdown" styleClass="section-header"/>
+                            <BarChart fx:id="severityChart" VBox.vgrow="ALWAYS"
+                                      legendVisible="false" animated="true">
+                                <xAxis>
+                                    <CategoryAxis label="Severity"/>
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="Incidents"/>
+                                </yAxis>
+                            </BarChart>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 3: Locations -->
+            <Tab text="Locations" closable="false">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- Location Hotspot Chart -->
+                    <VBox styleClass="chart-container" VBox.vgrow="ALWAYS" spacing="10">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Incident Hotspots by Location" styleClass="section-header"/>
+                        <BarChart fx:id="locationChart" VBox.vgrow="ALWAYS"
+                                  legendVisible="false" animated="true">
+                            <xAxis>
+                                <CategoryAxis label="Location"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Incidents"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+
+                    <!-- Top Locations Table -->
+                    <VBox styleClass="chart-container" spacing="10" VBox.vgrow="SOMETIMES">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Top Incident Locations" styleClass="section-header"/>
+                        <TableView fx:id="locationTable" VBox.vgrow="ALWAYS" maxHeight="200" styleClass="analytics-table">
+                            <placeholder>
+                                <Label text="No location data available"/>
+                            </placeholder>
+                            <columns>
+                                <TableColumn fx:id="locNameCol" text="Location" prefWidth="200"/>
+                                <TableColumn fx:id="locCountCol" text="Incidents" prefWidth="100"/>
+                                <TableColumn fx:id="locPercentCol" text="%" prefWidth="80"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 4: At-Risk Students -->
+            <Tab text="At-Risk Students" closable="false">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- At-Risk Stats -->
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="quick-stats-grid">
+                        <VBox styleClass="metric-card, metric-danger" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="REPEAT OFFENDERS" styleClass="metric-label"/>
+                            <Label fx:id="repeatOffendersValue" text="0" styleClass="metric-value"/>
+                            <Label text="3+ incidents" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-warning" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="SEVERE INCIDENTS" styleClass="metric-label"/>
+                            <Label fx:id="severeIncidentsValue" text="0" styleClass="metric-value"/>
+                            <Label text="this period" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-info" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="UNIQUE STUDENTS" styleClass="metric-label"/>
+                            <Label fx:id="uniqueStudentsValue" text="0" styleClass="metric-value"/>
+                            <Label text="involved in incidents" styleClass="metric-trend"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Repeat Offenders Table -->
+                    <VBox styleClass="chart-container" spacing="10" VBox.vgrow="ALWAYS">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Repeat Offenders (3+ Incidents)" styleClass="section-header"/>
+                        <TableView fx:id="repeatOffendersTable" VBox.vgrow="ALWAYS" styleClass="analytics-table">
+                            <placeholder>
+                                <Label text="No repeat offenders found"/>
+                            </placeholder>
+                            <columns>
+                                <TableColumn fx:id="roStudentIdCol" text="Student ID" prefWidth="100"/>
+                                <TableColumn fx:id="roNameCol" text="Name" prefWidth="200"/>
+                                <TableColumn fx:id="roIncidentCountCol" text="Incidents" prefWidth="100"/>
+                                <TableColumn fx:id="roLastIncidentCol" text="Most Recent" prefWidth="150"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+
+                    <!-- Top Positive Students -->
+                    <VBox styleClass="chart-container" spacing="10" VBox.vgrow="SOMETIMES">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Top Students with Positive Behavior" styleClass="section-header"/>
+                        <TableView fx:id="positiveStudentsTable" VBox.vgrow="ALWAYS" maxHeight="200" styleClass="analytics-table">
+                            <placeholder>
+                                <Label text="No positive behavior data available"/>
+                            </placeholder>
+                            <columns>
+                                <TableColumn fx:id="psStudentIdCol" text="Student ID" prefWidth="100"/>
+                                <TableColumn fx:id="psNameCol" text="Name" prefWidth="200"/>
+                                <TableColumn fx:id="psPositiveCountCol" text="Recognitions" prefWidth="120"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+
+    <!-- Status Bar -->
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets top="8" right="20" bottom="8" left="20"/>
+            </padding>
+            <Label fx:id="statusLabel" text="Ready" styleClass="status-text"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lastUpdatedLabel" text="Last updated: --" styleClass="status-text"/>
+        </HBox>
+    </bottom>
+</BorderPane>

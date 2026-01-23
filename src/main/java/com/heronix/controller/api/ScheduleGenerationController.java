@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
  * @since December 25, 2025
  */
 @Slf4j
-@RestController
-@RequestMapping("/api/schedule-generation")
+// @RestController  // Disabled - duplicate of ScheduleGenerationApiController
+// @RequestMapping("/api/schedule-generation")
 @RequiredArgsConstructor
 public class ScheduleGenerationController {
 

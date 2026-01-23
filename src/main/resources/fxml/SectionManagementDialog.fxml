@@ -10,40 +10,40 @@
       fx:controller="com.heronix.ui.controller.SectionManagementDialogController"
       prefWidth="900"
       prefHeight="700"
-      style="-fx-background-color: white; -fx-padding: 20;">
+      styleClass="wizard-card">
 
     <!-- Header -->
     <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-padding: 0 0 20 0;">
         <Label fx:id="titleLabel" text="Manage Course Sections"
-               style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+               styleClass="dialog-title-20-slate"/>
         <Region HBox.hgrow="ALWAYS"/>
         <Label fx:id="courseInfoLabel" text="Course: Loading..."
-               style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+               styleClass="text-muted"/>
     </HBox>
 
     <!-- Summary Bar -->
-    <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 10; -fx-background-color: #ecf0f1; -fx-background-radius: 5;">
+    <HBox alignment="CENTER_LEFT" spacing="20" styleClass="card">
         <VBox alignment="CENTER_LEFT" spacing="3">
-            <Label text="Total Sections:" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
-            <Label fx:id="totalSectionsLabel" text="0" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <Label text="Total Sections:" styleClass="text-muted"/>
+            <Label fx:id="totalSectionsLabel" text="0" styleClass="section-title"/>
         </VBox>
         <Separator orientation="VERTICAL"/>
         <VBox alignment="CENTER_LEFT" spacing="3">
-            <Label text="Total Enrollment:" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
-            <Label fx:id="totalEnrollmentLabel" text="0/0" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <Label text="Total Enrollment:" styleClass="text-muted"/>
+            <Label fx:id="totalEnrollmentLabel" text="0/0" styleClass="section-title"/>
         </VBox>
         <Separator orientation="VERTICAL"/>
         <VBox alignment="CENTER_LEFT" spacing="3">
-            <Label text="Available Seats:" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
-            <Label fx:id="availableSeatsLabel" text="0" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+            <Label text="Available Seats:" styleClass="text-muted"/>
+            <Label fx:id="availableSeatsLabel" text="0" styleClass="stat-value-16-green-accent"/>
         </VBox>
         <Region HBox.hgrow="ALWAYS"/>
         <Button fx:id="addSectionButton" text="+ Add Section" onAction="#handleAddSection"
-                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20; -fx-background-radius: 5;"/>
+                styleClass="button-primary"/>
     </HBox>
 
     <!-- Sections Table -->
-    <TableView fx:id="sectionsTable" VBox.vgrow="ALWAYS" style="-fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5;">
+    <TableView fx:id="sectionsTable" VBox.vgrow="ALWAYS" styleClass="border-light-gray">
         <columns>
             <TableColumn fx:id="sectionNumberColumn" text="Section #" prefWidth="80" minWidth="60"/>
             <TableColumn fx:id="teacherColumn" text="Teacher" prefWidth="180" minWidth="150"/>
@@ -56,8 +56,8 @@
         </columns>
         <placeholder>
             <VBox alignment="CENTER" spacing="10" style="-fx-padding: 40;">
-                <Label text="No sections created yet" style="-fx-font-size: 16px; -fx-text-fill: #95a5a6;"/>
-                <Label text="Click 'Add Section' to create the first section" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                <Label text="No sections created yet" styleClass="text-muted"/>
+                <Label text="Click 'Add Section' to create the first section" styleClass="text-muted"/>
             </VBox>
         </placeholder>
     </TableView>
@@ -66,7 +66,7 @@
     <ButtonBar style="-fx-padding: 15 0 0 0;">
         <buttons>
             <Button text="Close" onAction="#handleClose"
-                    style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 8 25; -fx-background-radius: 5;"/>
+                    styleClass="button-primary"/>
         </buttons>
     </ButtonBar>
 

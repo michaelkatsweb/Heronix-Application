@@ -39,7 +39,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 94 - Report API Gateway & Integration
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/api-gateway")
 @RequiredArgsConstructor
 @Slf4j

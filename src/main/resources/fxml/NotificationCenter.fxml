@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -16,6 +18,7 @@ Location: src/main/resources/fxml/NotificationCenter.fxml
             fx:controller="com.heronix.ui.controller.NotificationCenterController"
             styleClass="main-container">
 
+
     <!-- HEADER -->
     <top>
         <VBox styleClass="header-section">
@@ -25,8 +28,7 @@ Location: src/main/resources/fxml/NotificationCenter.fxml
 
                 <!-- Unread Count Badge -->
                 <HBox spacing="5" alignment="CENTER">
-                    <Label fx:id="unreadCountLabel" text="0 Unread" styleClass="badge-warning"
-                           style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 12;"/>
+                    <Label fx:id="unreadCountLabel" text="0 Unread" styleClass="badge-warning, button-primary"/>
                 </HBox>
 
                 <Separator orientation="VERTICAL"/>
@@ -38,8 +40,7 @@ Location: src/main/resources/fxml/NotificationCenter.fxml
             </HBox>
 
             <!-- Filter Bar -->
-            <HBox spacing="15" alignment="CENTER_LEFT" styleClass="filter-bar"
-                  style="-fx-background-color: #f5f5f5; -fx-padding: 10;">
+            <HBox spacing="15" alignment="CENTER_LEFT" styleClass="filter-bar, card">
                 <Label text="Filter:" styleClass="filter-label"/>
 
                 <!-- Type Filter -->
@@ -89,14 +90,13 @@ Location: src/main/resources/fxml/NotificationCenter.fxml
                     <VBox fx:id="notificationList" spacing="8">
                         <!-- Dynamic notification items -->
                         <Label fx:id="emptyStateLabel" text="No notifications to display"
-                               styleClass="empty-state"
-                               style="-fx-text-fill: #999; -fx-font-size: 14; -fx-padding: 40 0;"/>
+                               styleClass="empty-state, text-muted-light"/>
                     </VBox>
                 </VBox>
             </ScrollPane>
 
             <!-- RIGHT: Details & Summary -->
-            <VBox spacing="15" styleClass="details-panel" style="-fx-background-color: #fafafa; -fx-padding: 15;">
+            <VBox spacing="15" styleClass="details-panel, card">
 
                 <!-- Summary Stats -->
                 <VBox spacing="10" styleClass="card">
@@ -114,18 +114,15 @@ Location: src/main/resources/fxml/NotificationCenter.fxml
 
                         <!-- Row 1: Unread -->
                         <Label text="Unread:" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                        <Label fx:id="unreadStatLabel" text="0" styleClass="stat-value"
-                               style="-fx-text-fill: #ff9800;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <Label fx:id="unreadStatLabel" text="0" styleClass="stat-value, text-muted" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
                         <!-- Row 2: Critical -->
                         <Label text="Critical:" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                        <Label fx:id="criticalCountLabel" text="0" styleClass="stat-value"
-                               style="-fx-text-fill: #f44336;" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <Label fx:id="criticalCountLabel" text="0" styleClass="stat-value, text-muted" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
                         <!-- Row 3: Warnings -->
                         <Label text="Warnings:" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                        <Label fx:id="warningCountLabel" text="0" styleClass="stat-value"
-                               style="-fx-text-fill: #ff9800;" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <Label fx:id="warningCountLabel" text="0" styleClass="stat-value, text-muted" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                     </GridPane>
                 </VBox>
 
@@ -146,7 +143,7 @@ Location: src/main/resources/fxml/NotificationCenter.fxml
                 </VBox>
 
                 <!-- Notification Type Legend -->
-                <VBox spacing="10" styleClass="card" style="-fx-background-color: #e3f2fd;">
+                <VBox spacing="10" styleClass="card, metric-info">
                     <Label text="ℹ️ Notification Types" styleClass="section-title"/>
 
                     <VBox spacing="5">
@@ -170,11 +167,10 @@ Location: src/main/resources/fxml/NotificationCenter.fxml
                 </VBox>
 
                 <!-- Auto-Cleanup Info -->
-                <VBox spacing="8" styleClass="card" style="-fx-background-color: #fff3cd;">
+                <VBox spacing="8" styleClass="card">
                     <Label text="🗑️ Auto-Cleanup" styleClass="section-title"/>
                     <Label text="Dismissed notifications older than 30 days are automatically removed."
-                           wrapText="true" styleClass="stat-description"
-                           style="-fx-font-size: 11; -fx-text-fill: #666;"/>
+                           wrapText="true" styleClass="stat-description, text-muted-light"/>
                     <Button text="Run Cleanup Now" onAction="#handleRunCleanup"
                             prefWidth="180" styleClass="button-secondary"/>
                 </VBox>
@@ -186,8 +182,7 @@ Location: src/main/resources/fxml/NotificationCenter.fxml
 
     <!-- BOTTOM: Pagination (if needed) -->
     <bottom>
-        <HBox spacing="10" alignment="CENTER" styleClass="footer-section"
-              style="-fx-background-color: #f8f9fa; -fx-padding: 10;">
+        <HBox spacing="10" alignment="CENTER" styleClass="footer-section, card">
             <Label fx:id="statusLabel" text="All notifications loaded" styleClass="status-label"/>
         </HBox>
     </bottom>

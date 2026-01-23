@@ -41,7 +41,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 88 - Report Governance & Lifecycle
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/governance")
 @RequiredArgsConstructor
 @Slf4j

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+
+<!--
+School Setup Wizard - First-Time Installation Configuration
+Location: src/main/resources/fxml/SchoolSetupWizard.fxml
+
+This wizard appears on first launch to configure:
+- School type (Elementary, Middle, High School, K-8, K-12)
+- Grade levels served
+- School identification and contact information
+- Feature enablement
+
+@author Heronix SIS Team
+@version 1.0.0
+@since 2026-01
+-->
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.SchoolSetupWizardController"
+            prefWidth="900" prefHeight="700"
+            styleClass="wizard-root">
+
+
+    <!-- Top: Header -->
+    <top>
+        <VBox spacing="10" styleClass="header-gradient">
+            <Label text="Welcome to Heronix SIS"
+                   styleClass="page-title-white"/>
+            <Label text="Let's set up your school's Student Information System"
+                   styleClass="text-muted"/>
+        </VBox>
+    </top>
+
+    <!-- Center: Wizard Steps -->
+    <center>
+        <VBox spacing="20" styleClass="card">
+
+            <!-- Step Indicator -->
+            <HBox spacing="0" alignment="CENTER" style="-fx-padding: 0 0 20 0;">
+                <VBox spacing="5" alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <Label fx:id="step1Circle" text="1" styleClass="step-circle-active"/>
+                    <Label text="School Type" style="-fx-font-size: 11px;"/>
+                </VBox>
+                <Separator orientation="HORIZONTAL" HBox.hgrow="ALWAYS"/>
+                <VBox spacing="5" alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <Label fx:id="step2Circle" text="2" styleClass="step-circle-inactive"/>
+                    <Label text="School Info" style="-fx-font-size: 11px;"/>
+                </VBox>
+                <Separator orientation="HORIZONTAL" HBox.hgrow="ALWAYS"/>
+                <VBox spacing="5" alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <Label fx:id="step3Circle" text="3" styleClass="step-circle-inactive"/>
+                    <Label text="Features" style="-fx-font-size: 11px;"/>
+                </VBox>
+                <Separator orientation="HORIZONTAL" HBox.hgrow="ALWAYS"/>
+                <VBox spacing="5" alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <Label fx:id="step4Circle" text="4" styleClass="step-circle-inactive"/>
+                    <Label text="Complete" style="-fx-font-size: 11px;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Step Content -->
+            <StackPane VBox.vgrow="ALWAYS">
+
+                <!-- Step 1: School Type Selection -->
+                <VBox fx:id="step1Panel" spacing="20" styleClass="wizard-step-panel">
+                    <Label text="What type of school is this?" styleClass="header-20-bold"/>
+                    <Label text="This determines which grade levels, courses, and features will be available." styleClass="text-muted" wrapText="true"/>
+
+                    <VBox spacing="15" style="-fx-padding: 20 0;">
+                        <RadioButton fx:id="elementaryRadio" text="Elementary School (Pre-K - 5th Grade)" style="-fx-font-size: 14px;"/>
+                        <Label text="Ages 3-11 • Foundational academics, specials (art, music, PE)" styleClass="text-muted"/>
+
+                        <RadioButton fx:id="middleRadio" text="Middle School (6th - 8th Grade)" style="-fx-font-size: 14px;"/>
+                        <Label text="Ages 11-14 • Pre-algebra, exploratory electives, world languages" styleClass="text-muted"/>
+
+                        <RadioButton fx:id="highSchoolRadio" text="High School (9th - 12th Grade)" style="-fx-font-size: 14px;"/>
+                        <Label text="Ages 14-18 • College prep, AP courses, CTE pathways, graduation tracking" styleClass="text-muted"/>
+
+                        <RadioButton fx:id="k8Radio" text="K-8 School (Kindergarten - 8th Grade)" style="-fx-font-size: 14px;"/>
+                        <Label text="Ages 5-14 • Combined elementary and middle school" styleClass="text-muted"/>
+
+                        <RadioButton fx:id="k12Radio" text="K-12 School (All Grades)" style="-fx-font-size: 14px;"/>
+                        <Label text="Ages 5-18 • Full spectrum, all features enabled" styleClass="text-muted"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Step 2: School Information -->
+                <VBox fx:id="step2Panel" spacing="20" managed="false" visible="false" styleClass="wizard-step-panel">
+                    <Label text="School Information" styleClass="header-20-bold"/>
+                    <Label text="Enter your school's official information." styleClass="text-muted"/>
+
+                    <GridPane hgap="15" vgap="12">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <Label text="School Name:*" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="schoolNameField" promptText="Official school name" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3"/>
+
+                        <Label text="District:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="districtField" promptText="School district name" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3"/>
+
+                        <Label text="Address:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="addressField" promptText="Street address" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3"/>
+
+                        <Label text="City:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <TextField fx:id="cityField" promptText="City" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="State:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                        <ComboBox fx:id="stateComboBox" promptText="State" GridPane.columnIndex="3" GridPane.rowIndex="3" maxWidth="Infinity"/>
+
+                        <Label text="ZIP Code:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <TextField fx:id="zipField" promptText="ZIP" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                        <Label text="Phone:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
+                        <TextField fx:id="phoneField" promptText="(555) 555-5555" GridPane.columnIndex="3" GridPane.rowIndex="4"/>
+
+                        <Label text="Principal:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                        <TextField fx:id="principalField" promptText="Principal name" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                        <Label text="Email:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="5"/>
+                        <TextField fx:id="principalEmailField" promptText="principal@school.edu" GridPane.columnIndex="3" GridPane.rowIndex="5"/>
+
+                        <Label text="Academic Year:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                        <TextField fx:id="academicYearField" promptText="2025-2026" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Step 3: Feature Configuration -->
+                <VBox fx:id="step3Panel" spacing="20" managed="false" visible="false" styleClass="wizard-step-panel">
+                    <Label text="Enable Features" styleClass="header-20-bold"/>
+                    <Label text="Select which features to enable for your school." styleClass="text-muted"/>
+
+                    <VBox spacing="15" style="-fx-padding: 10 0;">
+                        <CheckBox fx:id="attendanceCheckBox" text="Attendance Tracking" selected="true"/>
+                        <Label text="Track daily/period attendance, chronic absence alerts, truancy reports" styleClass="text-muted"/>
+
+                        <CheckBox fx:id="gradebookCheckBox" text="Gradebook &amp; Report Cards" selected="true"/>
+                        <Label text="Grade management, GPA calculation, report card generation" styleClass="text-muted"/>
+
+                        <CheckBox fx:id="photoCheckBox" text="Student Photos &amp; QR Codes" selected="true"/>
+                        <Label text="Student ID photos, QR code generation for check-in" styleClass="text-muted"/>
+
+                        <CheckBox fx:id="medicalCheckBox" text="Medical Records" selected="true"/>
+                        <Label text="Health conditions, allergies, medications, nurse visits" styleClass="text-muted"/>
+
+                        <CheckBox fx:id="spedCheckBox" text="Special Education (IEP/504)" selected="true"/>
+                        <Label text="IEP management, 504 plans, accommodations tracking" styleClass="text-muted"/>
+
+                        <CheckBox fx:id="schedulingCheckBox" text="Advanced Scheduling" selected="true"/>
+                        <Label text="Master schedule generation, conflict resolution, room assignment" styleClass="text-muted"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Step 4: Complete -->
+                <VBox fx:id="step4Panel" spacing="20" alignment="CENTER" managed="false" visible="false" styleClass="wizard-step-panel">
+                    <Label text="Setup Complete!" styleClass="header-success-large"/>
+                    <Label text="Your school's SIS is configured and ready to use." styleClass="text-muted"/>
+
+                    <VBox spacing="10" styleClass="card, metric-success">
+                        <Label text="Configuration Summary:" styleClass="form-label"/>
+                        <Label fx:id="summarySchoolType" text="School Type: High School (9-12)"/>
+                        <Label fx:id="summarySchoolName" text="School Name: Example High School"/>
+                        <Label fx:id="summaryFeatures" text="Features: All enabled"/>
+                    </VBox>
+
+                    <Label text="Click 'Finish' to start using Heronix SIS" styleClass="text-muted"/>
+                </VBox>
+
+            </StackPane>
+        </VBox>
+    </center>
+
+    <!-- Bottom: Navigation -->
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_RIGHT" styleClass="footer-white-border">
+            <Button fx:id="backButton" text="Back" onAction="#handleBack" disable="true"
+                    styleClass="button-primary"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button fx:id="skipButton" text="Skip Setup" onAction="#handleSkip"
+                    styleClass="button-skip"/>
+
+            <Button fx:id="nextButton" text="Next" onAction="#handleNext"
+                    styleClass="button-primary"/>
+
+            <Button fx:id="finishButton" text="Finish" onAction="#handleFinish" managed="false" visible="false"
+                    styleClass="button-primary"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

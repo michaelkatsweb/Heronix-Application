@@ -24,7 +24,7 @@ import java.util.Map;
  * @since Phase 82 - Report Analytics & Business Intelligence
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/business-intelligence")
 @RequiredArgsConstructor
 public class ReportBusinessIntelligenceApiController {

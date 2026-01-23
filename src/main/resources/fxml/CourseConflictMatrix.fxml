@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.heronix.ui.controller.CourseConflictMatrixController"
-            stylesheets="@../css/style.css">
+            fx:controller="com.heronix.ui.controller.CourseConflictMatrixController">
+
 
     <!-- Top: Title and Controls -->
     <top>
@@ -195,22 +197,22 @@
                 </Label>
 
                 <HBox spacing="5" alignment="CENTER_LEFT">
-                    <Region prefWidth="30" prefHeight="15" style="-fx-background-color: #ffcccc;"/>
+                    <Region prefWidth="30" prefHeight="15" styleClass="card"/>
                     <Label text="Critical (Singleton >10)" styleClass="legend-text"/>
                 </HBox>
 
                 <HBox spacing="5" alignment="CENTER_LEFT">
-                    <Region prefWidth="30" prefHeight="15" style="-fx-background-color: #ffe6cc;"/>
+                    <Region prefWidth="30" prefHeight="15" styleClass="card"/>
                     <Label text="High (Singleton)" styleClass="legend-text"/>
                 </HBox>
 
                 <HBox spacing="5" alignment="CENTER_LEFT">
-                    <Region prefWidth="30" prefHeight="15" style="-fx-background-color: #ffffcc;"/>
+                    <Region prefWidth="30" prefHeight="15" styleClass="card"/>
                     <Label text="Medium (>20 conflicts)" styleClass="legend-text"/>
                 </HBox>
 
                 <HBox spacing="5" alignment="CENTER_LEFT">
-                    <Region prefWidth="30" prefHeight="15" style="-fx-background-color: white; -fx-border-color: #ccc;"/>
+                    <Region prefWidth="30" prefHeight="15" styleClass="legend-empty"/>
                     <Label text="Low" styleClass="legend-text"/>
                 </HBox>
             </HBox>

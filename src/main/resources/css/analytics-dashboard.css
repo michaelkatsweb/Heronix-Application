@@ -1,28 +1,43 @@
-/* ============================================================================
-   Analytics Dashboard Styles
-   ============================================================================ */
+/*
+ * ============================================================================
+ * ANALYTICS DASHBOARD STYLES
+ * ============================================================================
+ *
+ * Analytics-specific styles that extend the base theme.
+ * This file should be loaded AFTER theme-dark.css and base-styles.css
+ *
+ * @version 2.0.0
+ * @since 2025-01-18
+ * ============================================================================
+ */
 
-/* Root Container */
+/* ============================================================================
+ * ROOT CONTAINER
+ * ============================================================================ */
+
 .dashboard-root {
-    -fx-background-color: #f5f7fa;
+    -fx-background-color: var(--bg-primary);
 }
 
-/* Header Section */
+/* ============================================================================
+ * HEADER SECTION
+ * ============================================================================ */
+
 .header-section {
     -fx-padding: 10 0 10 0;
-    -fx-border-color: #e0e6ed;
+    -fx-border-color: var(--border-primary);
     -fx-border-width: 0 0 2 0;
 }
 
 .dashboard-title {
     -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
+    -fx-font-weight: 700;
+    -fx-text-fill: var(--text-primary);
 }
 
 .refresh-button {
-    -fx-background-color: #3498db;
-    -fx-text-fill: white;
+    -fx-background-color: var(--accent-primary);
+    -fx-text-fill: var(--text-primary);
     -fx-font-size: 14px;
     -fx-padding: 8 20 8 20;
     -fx-background-radius: 5;
@@ -30,132 +45,143 @@
 }
 
 .refresh-button:hover {
-    -fx-background-color: #2980b9;
+    -fx-background-color: var(--accent-primary-hover);
 }
 
 .refresh-button:pressed {
-    -fx-background-color: #1c5985;
+    -fx-background-color: var(--accent-primary-active);
 }
 
 .refresh-button:disabled {
-    -fx-background-color: #bdc3c7;
+    -fx-background-color: var(--bg-tertiary);
     -fx-opacity: 0.6;
 }
 
-/* Error Label */
+/* ============================================================================
+ * ERROR LABEL
+ * ============================================================================ */
+
 .error-label {
-    -fx-text-fill: #e74c3c;
+    -fx-text-fill: var(--color-danger);
     -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-background-color: #fadbd8;
+    -fx-font-weight: 700;
+    -fx-background-color: var(--color-danger-bg);
     -fx-padding: 10;
     -fx-background-radius: 5;
-    -fx-border-color: #e74c3c;
+    -fx-border-color: var(--color-danger);
     -fx-border-width: 1;
     -fx-border-radius: 5;
 }
 
-/* Filter Section */
+/* ============================================================================
+ * FILTER SECTION
+ * ============================================================================ */
+
 .filter-section {
     -fx-padding: 15;
-    -fx-background-color: white;
+    -fx-background-color: var(--card-bg);
     -fx-background-radius: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, var(--shadow-sm), 5, 0, 0, 2);
 }
 
 .filter-label {
     -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #34495e;
+    -fx-font-weight: 700;
+    -fx-text-fill: var(--text-secondary);
 }
 
-/* Metric Cards */
+/* ============================================================================
+ * METRIC CARDS
+ * ============================================================================ */
+
 .metrics-grid {
     -fx-padding: 0;
 }
 
 .metric-card {
-    -fx-background-color: white;
+    -fx-background-color: var(--card-bg);
     -fx-background-radius: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 3);
+    -fx-effect: dropshadow(gaussian, var(--shadow-sm), 8, 0, 0, 3);
     -fx-spacing: 8;
 }
 
 .metric-card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, var(--shadow-md), 10, 0, 0, 4);
     -fx-cursor: hand;
 }
 
 .metric-label {
     -fx-font-size: 12px;
-    -fx-text-fill: #7f8c8d;
+    -fx-text-fill: var(--text-tertiary);
     -fx-font-weight: 600;
-    -fx-text-transform: uppercase;
 }
 
 .metric-value {
     -fx-font-size: 32px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
+    -fx-font-weight: 700;
+    -fx-text-fill: var(--text-primary);
 }
 
 /* Metric Card Color Variants */
 .metric-primary {
-    -fx-border-color: #3498db;
+    -fx-border-color: var(--accent-primary);
     -fx-border-width: 0 0 0 4;
 }
 
 .metric-primary .metric-value {
-    -fx-text-fill: #3498db;
+    -fx-text-fill: var(--accent-primary);
 }
 
 .metric-success {
-    -fx-border-color: #27ae60;
+    -fx-border-color: var(--color-success);
     -fx-border-width: 0 0 0 4;
 }
 
 .metric-success .metric-value {
-    -fx-text-fill: #27ae60;
+    -fx-text-fill: var(--color-success);
 }
 
 .metric-danger {
-    -fx-border-color: #e74c3c;
+    -fx-border-color: var(--color-danger);
     -fx-border-width: 0 0 0 4;
 }
 
 .metric-danger .metric-value {
-    -fx-text-fill: #e74c3c;
+    -fx-text-fill: var(--color-danger);
 }
 
 .metric-warning {
-    -fx-border-color: #f39c12;
+    -fx-border-color: var(--color-warning);
     -fx-border-width: 0 0 0 4;
 }
 
 .metric-warning .metric-value {
-    -fx-text-fill: #f39c12;
+    -fx-text-fill: var(--color-warning);
 }
 
 .metric-info {
-    -fx-border-color: #16a085;
+    -fx-border-color: var(--color-info);
     -fx-border-width: 0 0 0 4;
 }
 
 .metric-info .metric-value {
-    -fx-text-fill: #16a085;
+    -fx-text-fill: var(--color-info);
 }
 
-/* Chart Containers */
+/* ============================================================================
+ * CHART CONTAINERS
+ * ============================================================================ */
+
 .chart-container {
-    -fx-background-color: white;
+    -fx-background-color: var(--card-bg);
     -fx-background-radius: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 3);
+    -fx-effect: dropshadow(gaussian, var(--shadow-sm), 8, 0, 0, 3);
 }
 
 .chart-title {
     -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
+    -fx-font-weight: 700;
+    -fx-text-fill: var(--text-primary);
     -fx-padding: 5 0 10 0;
 }
 
@@ -166,33 +192,52 @@
 }
 
 .chart-plot-background {
-    -fx-background-color: #fafbfc;
+    -fx-background-color: var(--bg-tertiary);
 }
 
 .chart-legend {
-    -fx-background-color: #f8f9fa;
-    -fx-border-color: #e0e6ed;
+    -fx-background-color: var(--bg-secondary);
+    -fx-border-color: var(--border-primary);
     -fx-border-width: 1;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
     -fx-padding: 8;
 }
 
-/* Line Chart Specific */
-.chart-series-line {
-    -fx-stroke-width: 3px;
-    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.3), 3, 0, 0, 1);
+.chart-legend-item {
+    -fx-text-fill: var(--text-secondary);
 }
 
-.default-color0.chart-series-line { -fx-stroke: #3498db; }
-.default-color1.chart-series-line { -fx-stroke: #27ae60; }
-.default-color2.chart-series-line { -fx-stroke: #e74c3c; }
-.default-color3.chart-series-line { -fx-stroke: #f39c12; }
+.chart-legend-item-symbol {
+    -fx-background-radius: 3;
+}
 
-.default-color0.chart-line-symbol { -fx-background-color: #3498db, white; }
-.default-color1.chart-line-symbol { -fx-background-color: #27ae60, white; }
-.default-color2.chart-line-symbol { -fx-background-color: #e74c3c, white; }
-.default-color3.chart-line-symbol { -fx-background-color: #f39c12, white; }
+/* ============================================================================
+ * LINE CHART STYLING
+ * ============================================================================ */
+
+.chart-series-line {
+    -fx-stroke-width: 3px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 120, 212, 0.3), 3, 0, 0, 1);
+}
+
+.default-color0.chart-series-line { -fx-stroke: var(--chart-1); }
+.default-color1.chart-series-line { -fx-stroke: var(--chart-2); }
+.default-color2.chart-series-line { -fx-stroke: var(--chart-4); }
+.default-color3.chart-series-line { -fx-stroke: var(--chart-3); }
+.default-color4.chart-series-line { -fx-stroke: var(--chart-5); }
+.default-color5.chart-series-line { -fx-stroke: var(--chart-6); }
+.default-color6.chart-series-line { -fx-stroke: var(--chart-7); }
+.default-color7.chart-series-line { -fx-stroke: var(--chart-8); }
+
+.default-color0.chart-line-symbol { -fx-background-color: var(--chart-1), var(--bg-primary); }
+.default-color1.chart-line-symbol { -fx-background-color: var(--chart-2), var(--bg-primary); }
+.default-color2.chart-line-symbol { -fx-background-color: var(--chart-4), var(--bg-primary); }
+.default-color3.chart-line-symbol { -fx-background-color: var(--chart-3), var(--bg-primary); }
+.default-color4.chart-line-symbol { -fx-background-color: var(--chart-5), var(--bg-primary); }
+.default-color5.chart-line-symbol { -fx-background-color: var(--chart-6), var(--bg-primary); }
+.default-color6.chart-line-symbol { -fx-background-color: var(--chart-7), var(--bg-primary); }
+.default-color7.chart-line-symbol { -fx-background-color: var(--chart-8), var(--bg-primary); }
 
 .chart-line-symbol {
     -fx-background-radius: 5px;
@@ -200,11 +245,18 @@
     -fx-background-insets: 0, 2;
 }
 
-/* Bar Chart Specific */
-.default-color0.chart-bar { -fx-bar-fill: #3498db; }
-.default-color1.chart-bar { -fx-bar-fill: #27ae60; }
-.default-color2.chart-bar { -fx-bar-fill: #e74c3c; }
-.default-color3.chart-bar { -fx-bar-fill: #f39c12; }
+/* ============================================================================
+ * BAR CHART STYLING
+ * ============================================================================ */
+
+.default-color0.chart-bar { -fx-bar-fill: var(--chart-1); }
+.default-color1.chart-bar { -fx-bar-fill: var(--chart-2); }
+.default-color2.chart-bar { -fx-bar-fill: var(--chart-4); }
+.default-color3.chart-bar { -fx-bar-fill: var(--chart-3); }
+.default-color4.chart-bar { -fx-bar-fill: var(--chart-5); }
+.default-color5.chart-bar { -fx-bar-fill: var(--chart-6); }
+.default-color6.chart-bar { -fx-bar-fill: var(--chart-7); }
+.default-color7.chart-bar { -fx-bar-fill: var(--chart-8); }
 
 .chart-bar {
     -fx-background-radius: 3 3 0 0;
@@ -215,74 +267,167 @@
     -fx-cursor: hand;
 }
 
-/* Axis Styling */
+/* ============================================================================
+ * PIE CHART STYLING
+ * ============================================================================ */
+
+.default-color0.chart-pie { -fx-pie-color: var(--chart-1); }
+.default-color1.chart-pie { -fx-pie-color: var(--chart-2); }
+.default-color2.chart-pie { -fx-pie-color: var(--chart-4); }
+.default-color3.chart-pie { -fx-pie-color: var(--chart-3); }
+.default-color4.chart-pie { -fx-pie-color: var(--chart-5); }
+.default-color5.chart-pie { -fx-pie-color: var(--chart-6); }
+.default-color6.chart-pie { -fx-pie-color: var(--chart-7); }
+.default-color7.chart-pie { -fx-pie-color: var(--chart-8); }
+
+.chart-pie-label {
+    -fx-text-fill: var(--text-primary);
+    -fx-font-size: 12px;
+}
+
+.chart-pie-label-line {
+    -fx-stroke: var(--text-tertiary);
+}
+
+/* ============================================================================
+ * AXIS STYLING
+ * ============================================================================ */
+
 .axis {
-    -fx-tick-label-fill: #7f8c8d;
+    -fx-tick-label-fill: var(--chart-label);
     -fx-font-size: 11px;
 }
 
 .axis-label {
-    -fx-text-fill: #34495e;
+    -fx-text-fill: var(--text-secondary);
     -fx-font-size: 12px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 700;
 }
 
 .axis-tick-mark {
-    -fx-stroke: #e0e6ed;
+    -fx-stroke: var(--chart-grid);
 }
 
-/* DatePicker and ComboBox Styling */
-.date-picker,
-.combo-box {
-    -fx-background-color: white;
-    -fx-border-color: #d0d7de;
+.chart-vertical-grid-lines {
+    -fx-stroke: var(--chart-grid);
+    -fx-stroke-dash-array: 4 4;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: var(--chart-grid);
+    -fx-stroke-dash-array: 4 4;
+}
+
+.chart-alternative-row-fill {
+    -fx-fill: transparent;
+}
+
+.chart-alternative-column-fill {
+    -fx-fill: transparent;
+}
+
+/* ============================================================================
+ * DATEPICKER & COMBOBOX (Analytics-specific overrides)
+ * ============================================================================ */
+
+.analytics-date-picker,
+.analytics-combo-box {
+    -fx-background-color: var(--input-bg);
+    -fx-border-color: var(--input-border);
     -fx-border-radius: 5;
     -fx-background-radius: 5;
     -fx-padding: 5 10 5 10;
 }
 
-.date-picker:focused,
-.combo-box:focused {
-    -fx-border-color: #3498db;
+.analytics-date-picker:focused,
+.analytics-combo-box:focused {
+    -fx-border-color: var(--input-border-focus);
     -fx-border-width: 2;
 }
 
-/* Progress Indicator */
-.progress-indicator {
-    -fx-progress-color: #3498db;
+/* ============================================================================
+ * PROGRESS INDICATOR
+ * ============================================================================ */
+
+.analytics-progress-indicator {
+    -fx-progress-color: var(--accent-primary);
 }
 
-/* Scrollbar Styling */
-.scroll-bar {
+/* ============================================================================
+ * SCROLLBAR STYLING (Analytics-specific)
+ * ============================================================================ */
+
+.analytics-scroll-bar {
     -fx-background-color: transparent;
 }
 
-.scroll-bar .thumb {
-    -fx-background-color: #bdc3c7;
+.analytics-scroll-bar .thumb {
+    -fx-background-color: var(--scrollbar-thumb);
     -fx-background-radius: 5;
 }
 
-.scroll-bar .thumb:hover {
-    -fx-background-color: #95a5a6;
+.analytics-scroll-bar .thumb:hover {
+    -fx-background-color: var(--scrollbar-thumb-hover);
 }
 
-.scroll-bar .track {
-    -fx-background-color: #ecf0f1;
+.analytics-scroll-bar .track {
+    -fx-background-color: var(--scrollbar-track);
     -fx-background-radius: 5;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 1200px) {
-    .metric-value {
-        -fx-font-size: 24px;
-    }
+/* ============================================================================
+ * TABLE STYLING (Analytics-specific)
+ * ============================================================================ */
 
-    .chart-title {
-        -fx-font-size: 14px;
-    }
+.analytics-table {
+    -fx-background-color: var(--card-bg);
+    -fx-border-color: var(--table-border);
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
 }
 
-/* Animation Classes */
+.analytics-table .column-header-background {
+    -fx-background-color: var(--table-header-bg);
+}
+
+.analytics-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent var(--table-border) transparent;
+    -fx-padding: 10 12;
+}
+
+.analytics-table .column-header .label {
+    -fx-text-fill: var(--table-header-text);
+    -fx-font-weight: 600;
+    -fx-font-size: 12px;
+}
+
+.analytics-table .table-row-cell {
+    -fx-background-color: var(--table-row-bg);
+}
+
+.analytics-table .table-row-cell:odd {
+    -fx-background-color: var(--table-row-alt-bg);
+}
+
+.analytics-table .table-row-cell:hover {
+    -fx-background-color: var(--table-row-hover);
+}
+
+.analytics-table .table-row-cell:selected {
+    -fx-background-color: var(--table-row-selected);
+}
+
+.analytics-table .table-cell {
+    -fx-text-fill: var(--text-primary);
+    -fx-padding: 8 12;
+    -fx-font-size: 13px;
+}
+
+/* ============================================================================
+ * ANIMATION CLASSES
+ * ============================================================================ */
+
 @keyframes fadeIn {
     from { -fx-opacity: 0; }
     to { -fx-opacity: 1; }
@@ -290,4 +435,94 @@
 
 .fade-in {
     -fx-animation: fadeIn 0.3s ease-in;
+}
+
+/* ============================================================================
+ * ADDITIONAL ANALYTICS COMPONENTS
+ * ============================================================================ */
+
+/* Trend Indicators */
+.trend-up {
+    -fx-text-fill: var(--color-success);
+    -fx-font-weight: 700;
+}
+
+.trend-down {
+    -fx-text-fill: var(--color-danger);
+    -fx-font-weight: 700;
+}
+
+.trend-neutral {
+    -fx-text-fill: var(--text-tertiary);
+}
+
+/* Comparison Cards */
+.comparison-card {
+    -fx-background-color: var(--card-bg);
+    -fx-background-radius: 8;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, var(--shadow-sm), 6, 0, 0, 2);
+}
+
+.comparison-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: var(--text-tertiary);
+    -fx-font-weight: 600;
+}
+
+.comparison-value {
+    -fx-font-size: 20px;
+    -fx-font-weight: 700;
+    -fx-text-fill: var(--text-primary);
+}
+
+/* Time Range Selector */
+.time-range-selector {
+    -fx-background-color: var(--bg-tertiary);
+    -fx-background-radius: 6;
+    -fx-padding: 4;
+}
+
+.time-range-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: var(--text-secondary);
+    -fx-padding: 6 12;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.time-range-button:hover {
+    -fx-background-color: var(--bg-hover);
+}
+
+.time-range-button-active {
+    -fx-background-color: var(--accent-primary);
+    -fx-text-fill: var(--text-primary);
+}
+
+/* Export Button */
+.export-button {
+    -fx-background-color: var(--bg-tertiary);
+    -fx-text-fill: var(--text-secondary);
+    -fx-border-color: var(--border-secondary);
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.export-button:hover {
+    -fx-background-color: var(--bg-hover);
+    -fx-border-color: var(--accent-primary);
+    -fx-text-fill: var(--text-primary);
+}
+
+/* Data Point Tooltip */
+.data-point-tooltip {
+    -fx-background-color: var(--tooltip-bg);
+    -fx-text-fill: var(--tooltip-text);
+    -fx-background-radius: 4;
+    -fx-padding: 8 12;
+    -fx-effect: dropshadow(gaussian, var(--shadow-md), 6, 0, 0, 2);
 }

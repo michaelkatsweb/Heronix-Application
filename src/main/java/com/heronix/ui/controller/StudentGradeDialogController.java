@@ -180,17 +180,33 @@ public class StudentGradeDialogController extends BaseDialogController {
     private void populateFields() {
         if (grade == null) return;
 
-        courseComboBox.setValue(grade.getCourse());
-        letterGradeComboBox.setValue(grade.getLetterGrade());
+        // Course and letter grade (can be null)
+        if (grade.getCourse() != null) {
+            courseComboBox.setValue(grade.getCourse());
+        }
+        if (grade.getLetterGrade() != null) {
+            letterGradeComboBox.setValue(grade.getLetterGrade());
+        }
 
         if (grade.getNumericalGrade() != null) {
             numericalGradeField.setText(String.format("%.1f", grade.getNumericalGrade()));
         }
 
-        creditsField.setText(String.format("%.1f", grade.getCredits()));
-        termComboBox.setValue(grade.getTerm());
-        academicYearField.setText(String.valueOf(grade.getAcademicYear()));
-        gradeTypeComboBox.setValue(grade.getGradeType());
+        // Credits with null check
+        if (grade.getCredits() != null) {
+            creditsField.setText(String.format("%.1f", grade.getCredits()));
+        }
+
+        // Term and academic year
+        if (grade.getTerm() != null) {
+            termComboBox.setValue(grade.getTerm());
+        }
+        if (grade.getAcademicYear() != null) {
+            academicYearField.setText(String.valueOf(grade.getAcademicYear()));
+        }
+        if (grade.getGradeType() != null) {
+            gradeTypeComboBox.setValue(grade.getGradeType());
+        }
 
         if (grade.getIsWeighted() != null) {
             isWeightedCheckBox.setSelected(grade.getIsWeighted());
@@ -200,8 +216,13 @@ public class StudentGradeDialogController extends BaseDialogController {
             isFinalCheckBox.setSelected(grade.getIsFinal());
         }
 
-        gradeDatePicker.setValue(grade.getGradeDate());
-        teacherComboBox.setValue(grade.getTeacher());
+        // Date and teacher
+        if (grade.getGradeDate() != null) {
+            gradeDatePicker.setValue(grade.getGradeDate());
+        }
+        if (grade.getTeacher() != null) {
+            teacherComboBox.setValue(grade.getTeacher());
+        }
 
         if (grade.getAbsences() != null) {
             absencesField.setText(String.valueOf(grade.getAbsences()));

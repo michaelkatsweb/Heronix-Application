@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 154 - Multi-Cloud Management & Cloud Orchestration
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/multi-cloud")
 @RequiredArgsConstructor
 public class ReportMultiCloudApiController {

@@ -36,8 +36,8 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2025-12-28
  */
-@RestController
-@RequestMapping("/api/assignments")
+// @RestController  // Disabled - duplicate of AssignmentApiController in com.heronix.controller.api
+// @RequestMapping("/api/assignments")
 @CrossOrigin(origins = "*")
 public class AssignmentController {
 

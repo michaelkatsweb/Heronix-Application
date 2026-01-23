@@ -27,7 +27,7 @@ import java.util.Optional;
  * @since Phase 50 - Report API Endpoints
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/report-history")
 @RequiredArgsConstructor
 public class ReportHistoryApiController {

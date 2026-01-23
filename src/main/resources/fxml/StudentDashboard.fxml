@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -8,66 +10,66 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.StudentDashboardController"
-            stylesheets="@../css/application.css"
             prefWidth="1600" prefHeight="950">
+
 
     <!-- Top: Header -->
     <top>
-        <VBox spacing="15" style="-fx-background-color: linear-gradient(to right, #9c27b0, #7b1fa2); -fx-padding: 20;">
+        <VBox spacing="15" styleClass="header-gradient">
             <HBox spacing="15" alignment="CENTER_LEFT">
                 <VBox spacing="5" HBox.hgrow="ALWAYS">
                     <Label text="Student Dashboard"
-                           style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                           styleClass="page-title-white"/>
                     <Label fx:id="studentNameLabel" text="Welcome back, Emma Anderson"
-                           style="-fx-font-size: 14px; -fx-text-fill: white;"/>
+                           styleClass="text-white"/>
                     <Label fx:id="studentInfoLabel" text="Grade 10 • Student ID: S002045"
-                           style="-fx-font-size: 12px; -fx-text-fill: rgba(255,255,255,0.8);"/>
+                           styleClass="label-12-white-80"/>
                 </VBox>
 
                 <!-- Current Time & Date -->
-                <VBox spacing="3" alignment="CENTER_RIGHT" style="-fx-background-color: rgba(255,255,255,0.15); -fx-padding: 12; -fx-border-radius: 8;">
+                <VBox spacing="3" alignment="CENTER_RIGHT" styleClass="card-transparent">
                     <Label fx:id="currentTimeLabel" text="10:45 AM"
-                           style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                           styleClass="text-white"/>
                     <Label fx:id="currentDateLabel" text="Friday, December 6, 2024"
-                           style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                           styleClass="text-white"/>
                 </VBox>
             </HBox>
 
             <!-- Quick Stats Bar -->
             <HBox spacing="15">
                 <VBox spacing="3" HBox.hgrow="ALWAYS"
-                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
-                    <Label text="Current GPA" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                      styleClass="card-transparent">
+                    <Label text="Current GPA" styleClass="text-white"/>
                     <Label fx:id="currentGPALabel" text="3.72"
-                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                           styleClass="text-white"/>
                 </VBox>
 
                 <VBox spacing="3" HBox.hgrow="ALWAYS"
-                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
-                    <Label text="Attendance Rate" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                      styleClass="card-transparent">
+                    <Label text="Attendance Rate" styleClass="text-white"/>
                     <Label fx:id="attendanceRateLabel" text="97.2%"
-                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                           styleClass="text-white"/>
                 </VBox>
 
                 <VBox spacing="3" HBox.hgrow="ALWAYS"
-                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
-                    <Label text="Credits Earned" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                      styleClass="card-transparent">
+                    <Label text="Credits Earned" styleClass="text-white"/>
                     <Label fx:id="creditsEarnedLabel" text="18 / 24"
-                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                           styleClass="text-white"/>
                 </VBox>
 
                 <VBox spacing="3" HBox.hgrow="ALWAYS"
-                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
-                    <Label text="Assignments Due" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                      styleClass="card-transparent">
+                    <Label text="Assignments Due" styleClass="text-white"/>
                     <Label fx:id="assignmentsDueLabel" text="3"
-                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                           styleClass="text-white"/>
                 </VBox>
 
                 <VBox spacing="3" HBox.hgrow="ALWAYS"
-                      style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12; -fx-border-radius: 5;">
-                    <Label text="Missing Work" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+                      styleClass="card-transparent">
+                    <Label text="Missing Work" styleClass="text-white"/>
                     <Label fx:id="missingWorkLabel" text="0"
-                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                           styleClass="text-white"/>
                 </VBox>
             </HBox>
         </VBox>
@@ -75,42 +77,42 @@
 
     <!-- Center: Main Dashboard Content -->
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: #f5f5f5;">
-            <VBox spacing="20" style="-fx-padding: 20;">
+        <ScrollPane fitToWidth="true" styleClass="main-container">
+            <VBox spacing="20" styleClass="padding-20">
 
                 <!-- Today's Schedule & Next Class Row -->
                 <HBox spacing="15">
                     <!-- Today's Schedule -->
                     <VBox spacing="10" HBox.hgrow="ALWAYS"
-                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
+                          styleClass="card-white-bordered">
                         <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Label text="📅 Today's Schedule" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Label text="📅 Today's Schedule" styleClass="section-title"/>
                             <Region HBox.hgrow="ALWAYS"/>
                             <Label fx:id="scheduleStatusLabel" text="Period 3 in progress"
-                                   style="-fx-font-size: 11px; -fx-text-fill: #757575;"/>
+                                   styleClass="text-muted"/>
                         </HBox>
 
                         <ListView fx:id="scheduleListView" prefHeight="250">
                             <placeholder>
-                                <Label text="No classes today" style="-fx-text-fill: #9e9e9e;"/>
+                                <Label text="No classes today" styleClass="text-muted"/>
                             </placeholder>
                         </ListView>
                     </VBox>
 
                     <!-- Next Class & Quick Info -->
                     <VBox spacing="15" prefWidth="380"
-                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
+                          styleClass="card-white-bordered">
 
                         <!-- Next Class -->
                         <VBox spacing="8"
-                              style="-fx-background-color: #e8eaf6; -fx-padding: 15; -fx-border-radius: 5; -fx-border-color: #3f51b5; -fx-border-width: 2;">
-                            <Label text="⏰ Next Class" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3f51b5;"/>
+                              styleClass="card">
+                            <Label text="⏰ Next Class" styleClass="label-14-bold-primary"/>
                             <Label fx:id="nextClassNameLabel" text="US History"
-                                   style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                   styleClass="section-title"/>
                             <Label fx:id="nextClassInfoLabel" text="Room 305 • Mr. Davis"
-                                   style="-fx-font-size: 12px; -fx-text-fill: #757575;"/>
+                                   styleClass="text-muted"/>
                             <Label fx:id="nextClassTimeLabel" text="Starts in 15 minutes (11:00 AM)"
-                                   style="-fx-font-size: 13px; -fx-text-fill: #f44336; -fx-font-weight: bold;"/>
+                                   styleClass="text-muted"/>
                         </VBox>
 
                         <!-- Quick Stats -->
@@ -121,31 +123,31 @@
                             </columnConstraints>
 
                             <VBox spacing="3" GridPane.columnIndex="0" GridPane.rowIndex="0"
-                                  style="-fx-background-color: #e8f5e9; -fx-padding: 10; -fx-border-radius: 5;">
-                                <Label text="Class Rank" style="-fx-font-size: 10px; -fx-text-fill: #2e7d32;"/>
+                                  styleClass="card, metric-success">
+                                <Label text="Class Rank" styleClass="text-muted"/>
                                 <Label fx:id="classRankLabel" text="23 / 350"
-                                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                                       styleClass="stat-value-18-green"/>
                             </VBox>
 
                             <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="0"
-                                  style="-fx-background-color: #fff3e0; -fx-padding: 10; -fx-border-radius: 5;">
-                                <Label text="Honor Roll" style="-fx-font-size: 10px; -fx-text-fill: #e65100;"/>
+                                  styleClass="card, metric-warning">
+                                <Label text="Honor Roll" styleClass="text-muted"/>
                                 <Label text="Yes"
-                                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+                                       styleClass="stat-value-18-orange"/>
                             </VBox>
 
                             <VBox spacing="3" GridPane.columnIndex="0" GridPane.rowIndex="1"
-                                  style="-fx-background-color: #e3f2fd; -fx-padding: 10; -fx-border-radius: 5;">
-                                <Label text="Tardy Count" style="-fx-font-size: 10px; -fx-text-fill: #1565c0;"/>
+                                  styleClass="card, metric-info">
+                                <Label text="Tardy Count" styleClass="text-muted"/>
                                 <Label fx:id="tardyCountLabel" text="2"
-                                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1565c0;"/>
+                                       styleClass="stat-value-18-blue"/>
                             </VBox>
 
                             <VBox spacing="3" GridPane.columnIndex="1" GridPane.rowIndex="1"
-                                  style="-fx-background-color: #f3e5f5; -fx-padding: 10; -fx-border-radius: 5;">
-                                <Label text="Clubs" style="-fx-font-size: 10px; -fx-text-fill: #6a1b9a;"/>
+                                  styleClass="card">
+                                <Label text="Clubs" styleClass="text-muted"/>
                                 <Label fx:id="clubsLabel" text="3"
-                                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #6a1b9a;"/>
+                                       styleClass="stat-value-18-purple"/>
                             </VBox>
                         </GridPane>
                     </VBox>
@@ -155,12 +157,12 @@
                 <HBox spacing="15">
                     <!-- Current Grades -->
                     <VBox spacing="10" HBox.hgrow="ALWAYS"
-                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
+                          styleClass="card-white-bordered">
                         <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Label text="📊 Current Grades" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Label text="📊 Current Grades" styleClass="section-title"/>
                             <Region HBox.hgrow="ALWAYS"/>
                             <Button text="View Report Card" onAction="#handleViewReportCard"
-                                    style="-fx-padding: 6 12; -fx-cursor: hand;"/>
+                                    styleClass="button-small-cursor"/>
                         </HBox>
 
                         <TableView fx:id="gradesTableView" prefHeight="250">
@@ -173,15 +175,15 @@
                                 <TableColumn fx:id="creditsColumn" text="Credits" prefWidth="60"/>
                             </columns>
                             <placeholder>
-                                <Label text="No grades available" style="-fx-text-fill: #9e9e9e;"/>
+                                <Label text="No grades available" styleClass="text-muted"/>
                             </placeholder>
                         </TableView>
                     </VBox>
 
                     <!-- Progress Charts -->
                     <VBox spacing="15" prefWidth="400"
-                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
-                        <Label text="📈 Academic Progress" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                          styleClass="card-white-bordered">
+                        <Label text="📈 Academic Progress" styleClass="section-title"/>
 
                         <LineChart fx:id="gpaProgressChart" prefHeight="120" legendVisible="false">
                             <xAxis>
@@ -192,10 +194,10 @@
                             </yAxis>
                         </LineChart>
 
-                        <Label text="Credit Progress" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
-                        <ProgressBar fx:id="creditProgressBar" prefWidth="Infinity" progress="0.75" style="-fx-accent: #4caf50;"/>
+                        <Label text="Credit Progress" styleClass="label-12-bold-progress"/>
+                        <ProgressBar fx:id="creditProgressBar" prefWidth="Infinity" progress="0.75" styleClass="progress-bar-green"/>
                         <Label fx:id="creditProgressLabel" text="18 of 24 credits earned (75%)"
-                               style="-fx-font-size: 11px; -fx-text-fill: #757575;"/>
+                               styleClass="text-muted"/>
                     </VBox>
                 </HBox>
 
@@ -203,9 +205,9 @@
                 <HBox spacing="15">
                     <!-- Upcoming Assignments -->
                     <VBox spacing="10" HBox.hgrow="ALWAYS"
-                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
+                          styleClass="card-white-bordered">
                         <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Label text="📝 Assignments" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Label text="📝 Assignments" styleClass="section-title"/>
                             <Region HBox.hgrow="ALWAYS"/>
                             <ComboBox fx:id="assignmentFilterComboBox" prefWidth="150">
                                 <items>
@@ -227,24 +229,24 @@
                                 <TableColumn fx:id="scoreColumn" text="Score" prefWidth="80"/>
                             </columns>
                             <placeholder>
-                                <Label text="No assignments" style="-fx-text-fill: #9e9e9e;"/>
+                                <Label text="No assignments" styleClass="text-muted"/>
                             </placeholder>
                         </TableView>
                     </VBox>
 
                     <!-- Calendar & Events -->
                     <VBox spacing="10" prefWidth="400"
-                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
+                          styleClass="card-white-bordered">
                         <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Label text="🗓 Upcoming Events" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Label text="🗓 Upcoming Events" styleClass="section-title"/>
                             <Region HBox.hgrow="ALWAYS"/>
                             <Label fx:id="eventsCountLabel" text="5 events"
-                                   style="-fx-font-size: 11px; -fx-text-fill: #757575;"/>
+                                   styleClass="text-muted"/>
                         </HBox>
 
                         <ListView fx:id="eventsListView" prefHeight="220">
                             <placeholder>
-                                <Label text="No upcoming events" style="-fx-text-fill: #9e9e9e;"/>
+                                <Label text="No upcoming events" styleClass="text-muted"/>
                             </placeholder>
                         </ListView>
                     </VBox>
@@ -254,8 +256,8 @@
                 <HBox spacing="15">
                     <!-- My Resources -->
                     <VBox spacing="10" HBox.hgrow="ALWAYS"
-                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
-                        <Label text="📚 My Resources" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                          styleClass="card-white-bordered">
+                        <Label text="📚 My Resources" styleClass="section-title"/>
 
                         <GridPane hgap="15" vgap="15">
                             <columnConstraints>
@@ -267,35 +269,35 @@
 
                             <Button text="📖 Library Account" onAction="#handleLibraryAccount"
                                     GridPane.columnIndex="0" GridPane.rowIndex="0" maxWidth="Infinity"
-                                    style="-fx-background-color: #00bcd4; -fx-text-fill: white; -fx-padding: 15; -fx-cursor: hand;"/>
+                                    styleClass="button-primary"/>
 
                             <Button text="🍽 Meal Balance" onAction="#handleMealBalance"
                                     GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity"
-                                    style="-fx-background-color: #8bc34a; -fx-text-fill: white; -fx-padding: 15; -fx-cursor: hand;"/>
+                                    styleClass="button-primary"/>
 
                             <Button text="🚌 Bus Schedule" onAction="#handleBusSchedule"
                                     GridPane.columnIndex="2" GridPane.rowIndex="0" maxWidth="Infinity"
-                                    style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-padding: 15; -fx-cursor: hand;"/>
+                                    styleClass="button-primary"/>
 
                             <Button text="🏥 Health Records" onAction="#handleHealthRecords"
                                     GridPane.columnIndex="3" GridPane.rowIndex="0" maxWidth="Infinity"
-                                    style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-padding: 15; -fx-cursor: hand;"/>
+                                    styleClass="header-danger"/>
 
                             <Button text="📧 Messages" onAction="#handleMessages"
                                     GridPane.columnIndex="0" GridPane.rowIndex="1" maxWidth="Infinity"
-                                    style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-padding: 15; -fx-cursor: hand;"/>
+                                    styleClass="button-primary"/>
 
                             <Button text="🎓 Transcripts" onAction="#handleTranscripts"
                                     GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="Infinity"
-                                    style="-fx-background-color: #673ab7; -fx-text-fill: white; -fx-padding: 15; -fx-cursor: hand;"/>
+                                    styleClass="button-primary"/>
 
                             <Button text="🎯 Clubs & Activities" onAction="#handleClubsActivities"
                                     GridPane.columnIndex="2" GridPane.rowIndex="1" maxWidth="Infinity"
-                                    style="-fx-background-color: #9c27b0; -fx-text-fill: white; -fx-padding: 15; -fx-cursor: hand;"/>
+                                    styleClass="header-purple"/>
 
                             <Button text="💳 Fees & Payments" onAction="#handleFeesPayments"
                                     GridPane.columnIndex="3" GridPane.rowIndex="1" maxWidth="Infinity"
-                                    style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 15; -fx-cursor: hand;"/>
+                                    styleClass="button-primary"/>
                         </GridPane>
                     </VBox>
                 </HBox>
@@ -304,24 +306,24 @@
                 <HBox spacing="15">
                     <!-- School Announcements -->
                     <VBox spacing="10" HBox.hgrow="ALWAYS"
-                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
-                        <Label text="📢 School Announcements" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                          styleClass="card-white-bordered">
+                        <Label text="📢 School Announcements" styleClass="section-title"/>
 
                         <ListView fx:id="announcementsListView" prefHeight="150">
                             <placeholder>
-                                <Label text="No announcements" style="-fx-text-fill: #9e9e9e;"/>
+                                <Label text="No announcements" styleClass="text-muted"/>
                             </placeholder>
                         </ListView>
                     </VBox>
 
                     <!-- My Achievements -->
                     <VBox spacing="10" prefWidth="450"
-                          style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 5;">
-                        <Label text="🏆 My Achievements" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                          styleClass="card-white-bordered">
+                        <Label text="🏆 My Achievements" styleClass="section-title"/>
 
                         <ListView fx:id="achievementsListView" prefHeight="150">
                             <placeholder>
-                                <Label text="No achievements yet" style="-fx-text-fill: #9e9e9e;"/>
+                                <Label text="No achievements yet" styleClass="text-muted"/>
                             </placeholder>
                         </ListView>
                     </VBox>
@@ -334,17 +336,17 @@
     <!-- Bottom: Footer -->
     <bottom>
         <HBox spacing="15" alignment="CENTER_LEFT"
-              style="-fx-background-color: #fafafa; -fx-padding: 12; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
-            <Label fx:id="statusLabel" text="Dashboard loaded" style="-fx-font-size: 11px;"/>
+              styleClass="card">
+            <Label fx:id="statusLabel" text="Dashboard loaded" styleClass="label-11-status"/>
             <Separator orientation="VERTICAL"/>
-            <Label fx:id="lastUpdatedLabel" text="Last updated: Just now" style="-fx-font-size: 11px; -fx-text-fill: #757575;"/>
+            <Label fx:id="lastUpdatedLabel" text="Last updated: Just now" styleClass="text-muted"/>
 
             <Region HBox.hgrow="ALWAYS"/>
 
             <Button text="🔄 Refresh" onAction="#handleRefresh"
-                    style="-fx-padding: 6 15; -fx-cursor: hand;"/>
+                    styleClass="button-footer"/>
             <Button text="❓ Help" onAction="#handleHelp"
-                    style="-fx-padding: 6 15; -fx-cursor: hand;"/>
+                    styleClass="button-footer"/>
         </HBox>
     </bottom>
 

@@ -38,7 +38,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 107 - Report Recommendation Engine & Personalization
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/recommendation")
 @RequiredArgsConstructor
 @Slf4j

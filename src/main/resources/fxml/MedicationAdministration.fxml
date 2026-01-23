@@ -29,11 +29,11 @@
                 </padding>
 
                 <!-- Legal Compliance Banner -->
-                <VBox style="-fx-background-color: #e3f2fd; -fx-padding: 15; -fx-border-color: #2196f3; -fx-border-width: 2;">
+                <VBox styleClass="card, metric-info">
                     <Label text="⚕ MEDICATION ADMINISTRATION RECORD (MAR)"
-                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+                           styleClass="section-title-14-blue-primary"/>
                     <Label text="This is a legal document. All fields must be accurate and complete."
-                           style="-fx-text-fill: #1976d2;"/>
+                           styleClass="text-muted"/>
                 </VBox>
 
                 <!-- Student & Medication Selection -->
@@ -64,10 +64,10 @@
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="3">
                             <Label text="Medication Details" styleClass="field-label"
-                                   style="-fx-font-weight: bold;"/>
+                                   styleClass="form-label"/>
                             <TextArea fx:id="medicationDetailsTextArea" editable="false"
                                       wrapText="true" prefRowCount="2"
-                                      style="-fx-background-color: #f5f5f5;"/>
+                                      styleClass="main-container"/>
                         </VBox>
                     </GridPane>
                 </VBox>
@@ -183,10 +183,9 @@
                 </VBox>
 
                 <!-- Safety Verification Checklist -->
-                <VBox spacing="15" styleClass="form-section"
-                      style="-fx-background-color: #fff9c4; -fx-padding: 15;">
+                <VBox spacing="15" styleClass="form-section, card">
                     <Label text="⚠ Safety Verification Checklist (5 Rights of Medication Administration)"
-                           styleClass="section-header" style="-fx-text-fill: #f57f17;"/>
+                           styleClass="section-header, text-muted"/>
 
                     <GridPane hgap="20" vgap="10">
                         <columnConstraints>
@@ -197,37 +196,37 @@
                         <CheckBox fx:id="studentIdentifiedCheckBox" text="✓ Right Patient - Student Identity Verified"
                                   selected="true"
                                   GridPane.columnIndex="0" GridPane.rowIndex="0"
-                                  style="-fx-font-weight: bold;"/>
+                                  styleClass="form-label"/>
                         <CheckBox fx:id="medicationVerifiedCheckBox" text="✓ Right Medication - Label Verified"
                                   selected="true"
                                   GridPane.columnIndex="1" GridPane.rowIndex="0"
-                                  style="-fx-font-weight: bold;"/>
+                                  styleClass="form-label"/>
 
                         <CheckBox fx:id="dosageVerifiedCheckBox" text="✓ Right Dose - Dosage Verified"
                                   selected="true"
                                   GridPane.columnIndex="0" GridPane.rowIndex="1"
-                                  style="-fx-font-weight: bold;"/>
+                                  styleClass="form-label"/>
                         <CheckBox fx:id="studentConsentVerifiedCheckBox" text="✓ Right Time - Schedule Verified"
                                   selected="true"
                                   GridPane.columnIndex="1" GridPane.rowIndex="1"
-                                  style="-fx-font-weight: bold;"/>
+                                  styleClass="form-label"/>
 
                         <CheckBox fx:id="routeVerifiedCheckBox" text="✓ Right Route - Administration Route Verified"
                                   selected="true"
                                   GridPane.columnIndex="0" GridPane.rowIndex="2"
-                                  style="-fx-font-weight: bold;"/>
+                                  styleClass="form-label"/>
                     </GridPane>
 
                     <Separator/>
 
                     <HBox spacing="20">
                         <CheckBox fx:id="refusedByStudentCheckBox" text="Student Refused Medication"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"/>
+                                  styleClass="form-label"/>
                     </HBox>
 
                     <VBox spacing="5" fx:id="refusalReasonBox" visible="false" managed="false">
                         <Label text="Refusal Reason *" styleClass="field-label"
-                               style="-fx-text-fill: #d32f2f;"/>
+                               styleClass="text-muted"/>
                         <TextArea fx:id="refusalReasonTextArea"
                                   promptText="Document why student refused medication..."
                                   wrapText="true" prefRowCount="2"/>
@@ -269,13 +268,13 @@
                     </GridPane>
 
                     <CheckBox fx:id="adverseReactionCheckBox" text="⚠ Adverse Reaction Observed"
-                              style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"/>
+                              styleClass="form-label"/>
 
                     <!-- Adverse Reaction Details (conditional) -->
                     <VBox spacing="15" fx:id="adverseReactionBox" visible="false" managed="false"
-                          style="-fx-background-color: #ffebee; -fx-padding: 15;">
+                          styleClass="card, metric-danger">
                         <Label text="⚠ ADVERSE REACTION DOCUMENTATION"
-                               style="-fx-font-weight: bold; -fx-text-fill: #d32f2f; -fx-font-size: 14px;"/>
+                               styleClass="text-muted"/>
 
                         <GridPane hgap="15" vgap="15">
                             <columnConstraints>
@@ -284,8 +283,7 @@
                             </columnConstraints>
 
                             <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                                <Label text="Reaction Severity *" styleClass="field-label"
-                                       style="-fx-text-fill: #d32f2f;"/>
+                                <Label text="Reaction Severity *" styleClass="field-label, text-muted"/>
                                 <ComboBox fx:id="adverseReactionSeverityComboBox" promptText="Select Severity"
                                           maxWidth="Infinity">
                                     <items>
@@ -301,24 +299,23 @@
 
                             <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1"
                                   GridPane.columnSpan="2">
-                                <Label text="Reaction Description *" styleClass="field-label"
-                                       style="-fx-text-fill: #d32f2f;"/>
+                                <Label text="Reaction Description *" styleClass="field-label, text-muted"/>
                                 <TextArea fx:id="adverseReactionDescriptionTextArea"
                                           promptText="Describe adverse reaction in detail (symptoms, onset time, severity)..."
                                           wrapText="true" prefRowCount="3"
-                                          style="-fx-border-color: #d32f2f; -fx-border-width: 2;"/>
+                                          styleClass="border-medical"/>
                             </VBox>
 
                             <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2">
                                 <CheckBox fx:id="parentNotifiedOfReactionCheckBox"
                                           text="Parent Notified of Reaction"
-                                          style="-fx-font-weight: bold;"/>
+                                          styleClass="form-label"/>
                             </VBox>
 
                             <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                 <CheckBox fx:id="physicianNotifiedOfReactionCheckBox"
                                           text="Physician Notified of Reaction"
-                                          style="-fx-font-weight: bold;"/>
+                                          styleClass="form-label"/>
                             </VBox>
                         </GridPane>
                     </VBox>
@@ -346,7 +343,7 @@
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
                             <CheckBox fx:id="inventoryUpdatedCheckBox" text="Inventory Updated"
-                                      selected="true" style="-fx-font-weight: bold;"/>
+                                      selected="true" styleClass="form-label"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">

@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.AthleticsExtracurricularController"
-            stylesheets="@../css/application.css"
             prefWidth="1500" prefHeight="900">
 
+
     <top>
-        <VBox spacing="15" style="-fx-background-color: linear-gradient(to right, #f44336, #d32f2f); -fx-padding: 20;">
-            <Label text="Athletics & Extracurricular Activities" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <VBox spacing="15" styleClass="header-gradient">
+            <Label text="Athletics & Extracurricular Activities" styleClass="page-title-white"/>
             <HBox spacing="15">
-                <VBox spacing="3" HBox.hgrow="ALWAYS" style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12;">
-                    <Label text="Teams/Clubs" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
-                    <Label fx:id="teamsLabel" text="42" style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <VBox spacing="3" HBox.hgrow="ALWAYS" styleClass="card-transparent">
+                    <Label text="Teams/Clubs" styleClass="text-white"/>
+                    <Label fx:id="teamsLabel" text="42" styleClass="text-white"/>
                 </VBox>
-                <VBox spacing="3" HBox.hgrow="ALWAYS" style="-fx-background-color: rgba(255,255,255,0.2); -fx-padding: 12;">
-                    <Label text="Participants" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
-                    <Label fx:id="participantsLabel" text="845" style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <VBox spacing="3" HBox.hgrow="ALWAYS" styleClass="card-transparent">
+                    <Label text="Participants" styleClass="text-white"/>
+                    <Label fx:id="participantsLabel" text="845" styleClass="text-white"/>
                 </VBox>
             </HBox>
         </VBox>

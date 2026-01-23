@@ -41,7 +41,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 124 - Report Event-Driven Architecture
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/event-driven")
 @RequiredArgsConstructor
 @Slf4j

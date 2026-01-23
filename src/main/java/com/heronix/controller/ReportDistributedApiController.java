@@ -35,7 +35,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 102 - Report Distributed Computing & Grid Systems
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/distributed")
 @RequiredArgsConstructor
 @Slf4j

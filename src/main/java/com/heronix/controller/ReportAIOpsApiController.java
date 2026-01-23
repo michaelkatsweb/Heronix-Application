@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 141 - Intelligent Automation & AI Operations (AIOps)
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/aiops")
 @RequiredArgsConstructor
 public class ReportAIOpsApiController {

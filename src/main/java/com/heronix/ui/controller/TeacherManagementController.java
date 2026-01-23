@@ -6,6 +6,7 @@
 package com.heronix.ui.controller;
 
 import com.heronix.model.domain.Teacher;
+import com.heronix.model.enums.TeacherRole;
 import com.heronix.repository.TeacherRepository;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -31,6 +33,10 @@ public class TeacherManagementController {
     private TextField searchField;
     @FXML
     private ComboBox<String> departmentFilter;
+    @FXML
+    private ComboBox<String> roleFilter;
+    @FXML
+    private ComboBox<String> subjectFilter;
     @FXML
     private ComboBox<String> statusFilter;
     @FXML
@@ -48,13 +54,16 @@ public class TeacherManagementController {
     @FXML
     private TableColumn<Teacher, String> employeeIdColumn;
     @FXML
+    private TableColumn<Teacher, String> roleColumn;
+    @FXML
     private TableColumn<Teacher, String> departmentColumn;
+    @FXML
+    private TableColumn<Teacher, String> subjectAreasColumn;
     @FXML
     private TableColumn<Teacher, String> emailColumn;
     @FXML
     private TableColumn<Teacher, String> phoneColumn;
-    @FXML
-    private TableColumn<Teacher, Integer> courseCountColumn;
+    // courseCountColumn removed - using assignedCoursesColumn instead
     @FXML
     private TableColumn<Teacher, String> certificationsColumn;
     @FXML
@@ -140,6 +149,27 @@ public class TeacherManagementController {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         employeeIdColumn.setCellValueFactory(new PropertyValueFactory<>("employeeId"));
+
+        // Role column - display teacher role (Lead Teacher, Co-Teacher, Specialist, etc.)
+        roleColumn.setCellValueFactory(cellData -> {
+            Teacher teacher = cellData.getValue();
+            TeacherRole role = teacher.getRole();
+            String displayName = role != null ? role.getDisplayName() : "Lead Teacher";
+            return new javafx.beans.property.SimpleStringProperty(displayName);
+        });
+        roleColumn.setStyle("-fx-alignment: CENTER-LEFT;");
+
+        // Subject Areas column - display certified subjects
+        subjectAreasColumn.setCellValueFactory(cellData -> {
+            Teacher teacher = cellData.getValue();
+            try {
+                String subjects = teacher.getCertificationsDisplay();
+                return new javafx.beans.property.SimpleStringProperty(subjects);
+            } catch (org.hibernate.LazyInitializationException e) {
+                return new javafx.beans.property.SimpleStringProperty("--");
+            }
+        });
+        subjectAreasColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 
         // Department - EDITABLE TextField for quick updates
         departmentColumn.setCellValueFactory(new PropertyValueFactory<>("department"));
@@ -251,20 +281,19 @@ public class TeacherManagementController {
         });
 
         // Certifications column - show certified subjects (handle lazy loading gracefully)
-        certificationsColumn.setCellValueFactory(cellData -> {
-            Teacher teacher = cellData.getValue();
-            try {
-                String display = teacher.getCertificationsDisplay();
-                return new javafx.beans.property.SimpleStringProperty(display);
-            } catch (org.hibernate.LazyInitializationException e) {
-                return new javafx.beans.property.SimpleStringProperty("--");
-            }
-        });
-        certificationsColumn.setStyle("-fx-alignment: CENTER-LEFT;");
-
-        // Course Count column - numeric display
-        courseCountColumn.setCellValueFactory(new PropertyValueFactory<>("courseCount"));
-        courseCountColumn.setStyle("-fx-alignment: CENTER;");
+        // Note: certificationsColumn may be null if not present in FXML
+        if (certificationsColumn != null) {
+            certificationsColumn.setCellValueFactory(cellData -> {
+                Teacher teacher = cellData.getValue();
+                try {
+                    String display = teacher.getCertificationsDisplay();
+                    return new javafx.beans.property.SimpleStringProperty(display);
+                } catch (org.hibernate.LazyInitializationException e) {
+                    return new javafx.beans.property.SimpleStringProperty("--");
+                }
+            });
+            certificationsColumn.setStyle("-fx-alignment: CENTER-LEFT;");
+        }
 
         // Assigned courses column - show count (handle lazy loading gracefully)
         assignedCoursesColumn.setCellValueFactory(cellData -> {
@@ -282,45 +311,48 @@ public class TeacherManagementController {
         assignedCoursesColumn.setStyle("-fx-alignment: CENTER;");
 
         // Max Hours - EDITABLE TextField for quick updates
-        maxHoursColumn.setCellValueFactory(new PropertyValueFactory<>("maxHoursPerWeek"));
-        maxHoursColumn.setCellFactory(col -> new TableCell<Teacher, Integer>() {
-            private final TextField textField = new TextField();
+        // Note: maxHoursColumn may be null if not present in FXML
+        if (maxHoursColumn != null) {
+            maxHoursColumn.setCellValueFactory(new PropertyValueFactory<>("maxHoursPerWeek"));
+            maxHoursColumn.setCellFactory(col -> new TableCell<Teacher, Integer>() {
+                private final TextField textField = new TextField();
 
-            {
-                textField.setOnAction(e -> {
-                    try {
-                        int hours = Integer.parseInt(textField.getText());
-                        Teacher teacher = getTableRow().getItem();
-                        if (teacher != null) {
-                            teacher.setMaxHoursPerWeek(hours);
-                            teacherRepository.save(teacher);
-                            commitEdit(hours);
-                            log.info("Updated max hours for teacher {} to {}", teacher.getName(), hours);
+                {
+                    textField.setOnAction(e -> {
+                        try {
+                            int hours = Integer.parseInt(textField.getText());
+                            Teacher teacher = getTableRow().getItem();
+                            if (teacher != null) {
+                                teacher.setMaxHoursPerWeek(hours);
+                                teacherRepository.save(teacher);
+                                commitEdit(hours);
+                                log.info("Updated max hours for teacher {} to {}", teacher.getName(), hours);
+                            }
+                        } catch (NumberFormatException ex) {
+                            textField.setText(String.valueOf(getItem()));
                         }
-                    } catch (NumberFormatException ex) {
-                        textField.setText(String.valueOf(getItem()));
-                    }
-                });
+                    });
 
-                textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-                    if (!isNowFocused) {
-                        textField.fireEvent(new javafx.event.ActionEvent());
-                    }
-                });
-            }
-
-            @Override
-            protected void updateItem(Integer item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    textField.setText(item != null ? String.valueOf(item) : "40");
-                    textField.setStyle("-fx-max-width: 50px;");
-                    setGraphic(textField);
+                    textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                        if (!isNowFocused) {
+                            textField.fireEvent(new javafx.event.ActionEvent());
+                        }
+                    });
                 }
-            }
-        });
+
+                @Override
+                protected void updateItem(Integer item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        textField.setText(item != null ? String.valueOf(item) : "40");
+                        textField.setStyle("-fx-max-width: 50px;");
+                        setGraphic(textField);
+                    }
+                }
+            });
+        }
 
         // Active - EDITABLE ComboBox for quick status updates
         activeColumn.setCellValueFactory(new PropertyValueFactory<>("active"));
@@ -356,8 +388,10 @@ public class TeacherManagementController {
     }
 
     private void setupFilters() {
+        // Department filter
         List<String> departments = teacherRepository.findAllActive().stream()
                 .map(Teacher::getDepartment)
+                .filter(d -> d != null && !d.isEmpty())
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
@@ -366,6 +400,37 @@ public class TeacherManagementController {
         departmentFilter.getItems().addAll(departments);
         departmentFilter.setValue("All Departments");
 
+        // Role filter - populated from TeacherRole enum (excluding deprecated roles)
+        List<String> roles = Arrays.stream(TeacherRole.values())
+                .filter(role -> !role.name().equals("ADMINISTRATOR") &&
+                               !role.name().equals("PRINCIPAL") &&
+                               !role.name().equals("COUNSELOR"))
+                .map(TeacherRole::getDisplayName)
+                .collect(Collectors.toList());
+
+        roleFilter.setItems(FXCollections.observableArrayList("All Roles"));
+        roleFilter.getItems().addAll(roles);
+        roleFilter.setValue("All Roles");
+
+        // Subject filter - populated from all teachers' certifications
+        List<String> subjects = teacherRepository.findAllActive().stream()
+                .flatMap(t -> {
+                    try {
+                        return t.getCertifiedSubjects().stream();
+                    } catch (Exception e) {
+                        return java.util.stream.Stream.empty();
+                    }
+                })
+                .filter(s -> s != null && !s.isEmpty())
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+
+        subjectFilter.setItems(FXCollections.observableArrayList("All Subjects"));
+        subjectFilter.getItems().addAll(subjects);
+        subjectFilter.setValue("All Subjects");
+
+        // Status filter
         statusFilter.setItems(FXCollections.observableArrayList("All", "Active", "Inactive"));
         statusFilter.setValue("Active");  // Default to showing only active teachers
     }
@@ -515,6 +580,7 @@ public class TeacherManagementController {
             stage.initOwner(teacherTable.getScene().getWindow());
 
             controller.setDialogStage(stage);
+            controller.prepareForNew();  // Initialize dialog for new teacher
 
             log.debug("Showing dialog...");
             stage.showAndWait();
@@ -543,10 +609,10 @@ public class TeacherManagementController {
         log.info("Export clicked");
 
         try {
-            if (teacherTable.getItems().isEmpty()) {{
+            if (teacherTable.getItems().isEmpty()) {
                 showWarning("No Data", "There are no teachers to export.");
                 return;
-            }}
+            }
 
             javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
             fileChooser.setTitle("Export Teachers");
@@ -884,6 +950,8 @@ public class TeacherManagementController {
     private void filterTeachers() {
         String searchText = searchField.getText().toLowerCase();
         String department = departmentFilter.getValue();
+        String role = roleFilter.getValue();
+        String subject = subjectFilter.getValue();
         String status = statusFilter.getValue();
 
         try {
@@ -892,11 +960,29 @@ public class TeacherManagementController {
             List<Teacher> teachers = teacherService.findAllWithCollectionsForUI();
 
             List<Teacher> filtered = teachers.stream()
+                    // Search filter - name or employee ID
                     .filter(t -> searchText.isEmpty() ||
                             t.getName().toLowerCase().contains(searchText) ||
                             (t.getEmployeeId() != null && t.getEmployeeId().toLowerCase().contains(searchText)))
+                    // Department filter
                     .filter(t -> "All Departments".equals(department) ||
                             department.equals(t.getDepartment()))
+                    // Role filter - match by display name
+                    .filter(t -> "All Roles".equals(role) ||
+                            (t.getRole() != null && t.getRole().getDisplayName().equals(role)))
+                    // Subject filter - check if teacher is certified in selected subject
+                    .filter(t -> {
+                        if ("All Subjects".equals(subject)) {
+                            return true;
+                        }
+                        try {
+                            List<String> certifiedSubjects = t.getCertifiedSubjects();
+                            return certifiedSubjects != null && certifiedSubjects.contains(subject);
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    })
+                    // Status filter
                     .filter(t -> "All".equals(status) ||
                             ("Active".equals(status) && Boolean.TRUE.equals(t.getActive())) ||
                             ("Inactive".equals(status) && !Boolean.TRUE.equals(t.getActive())))
@@ -904,7 +990,8 @@ public class TeacherManagementController {
 
             teacherTable.setItems(FXCollections.observableArrayList(filtered));
             recordCountLabel.setText(filtered.size() + " teachers");
-            log.info("Loaded {} teachers", filtered.size());
+            log.info("Loaded {} teachers (filters: role={}, subject={}, dept={}, status={})",
+                    filtered.size(), role, subject, department, status);
         } catch (Exception e) {
             log.error("Error loading teachers", e);
             showError("Error", "Failed to load teachers: " + e.getMessage());

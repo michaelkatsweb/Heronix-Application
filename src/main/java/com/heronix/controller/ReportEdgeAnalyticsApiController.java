@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 133 - Edge Analytics & IoT Integration
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/edge-analytics")
 @RequiredArgsConstructor
 public class ReportEdgeAnalyticsApiController {

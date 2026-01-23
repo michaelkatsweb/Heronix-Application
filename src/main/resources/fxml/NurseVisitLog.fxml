@@ -10,6 +10,7 @@
             fx:controller="com.heronix.ui.controller.NurseVisitLogController"
             styleClass="content-pane">
 
+
     <top>
         <VBox styleClass="header-section">
             <padding>
@@ -29,7 +30,7 @@
 
                 <!-- Student & Visit Information -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Student & Visit Information" styleClass="section-header"/>
+                    <Label text="Student &amp; Visit Information" styleClass="section-header"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -132,7 +133,7 @@
 
                 <!-- Symptoms & Assessment -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Symptoms & Assessment" styleClass="section-header"/>
+                    <Label text="Symptoms &amp; Assessment" styleClass="section-header"/>
 
                     <GridPane hgap="20" vgap="10">
                         <columnConstraints>
@@ -317,8 +318,8 @@
 
                     <!-- Sent Home Details (conditional) -->
                     <VBox spacing="10" fx:id="sentHomeBox" visible="false" managed="false"
-                          style="-fx-background-color: #ffebee; -fx-padding: 15;">
-                        <Label text="Sent Home Information" style="-fx-font-weight: bold; -fx-text-fill: #d32f2f;"/>
+                          styleClass="card, metric-danger">
+                        <Label text="Sent Home Information" styleClass="form-label"/>
                         <VBox spacing="5">
                             <Label text="Reason for Sending Home *" styleClass="field-label"/>
                             <TextArea fx:id="sentHomeReasonTextArea"
@@ -336,8 +337,7 @@
                 </VBox>
 
                 <!-- Parent Communication -->
-                <VBox spacing="15" styleClass="form-section"
-                      style="-fx-background-color: #fff9c4; -fx-padding: 15;">
+                <VBox spacing="15" styleClass="form-section, card">
                     <Label text="Parent Communication" styleClass="section-header"/>
 
                     <CheckBox fx:id="parentNotifiedCheckBox" text="Parent/Guardian Notified"/>
@@ -383,7 +383,7 @@
 
                 <!-- Follow-Up & Referrals -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Follow-Up & Referrals" styleClass="section-header"/>
+                    <Label text="Follow-Up &amp; Referrals" styleClass="section-header"/>
 
                     <GridPane hgap="20" vgap="10">
                         <columnConstraints>
@@ -433,11 +433,11 @@
 
                     <VBox spacing="5">
                         <Label text="Confidential Notes (HIPAA Protected)"
-                               styleClass="field-label" style="-fx-text-fill: #c2185b;"/>
+                               styleClass="field-label, text-muted"/>
                         <TextArea fx:id="confidentialNotesTextArea"
                                   promptText="Sensitive health information, private discussions..."
                                   wrapText="true" prefRowCount="3"
-                                  style="-fx-border-color: #c2185b; -fx-border-width: 2;"/>
+                                  styleClass="border-health-pink"/>
                     </VBox>
                 </VBox>
 

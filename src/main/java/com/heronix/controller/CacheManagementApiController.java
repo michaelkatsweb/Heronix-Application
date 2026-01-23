@@ -37,7 +37,7 @@ import java.util.Set;
  * @version 1.0
  * @since Phase 67 - Report Performance Optimization & Caching
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/cache")
 @RequiredArgsConstructor
 @Slf4j

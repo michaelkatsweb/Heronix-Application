@@ -1,7 +1,20 @@
 package com.heronix.service;
 
+import com.heronix.model.DistrictSettings;
 import com.heronix.model.domain.*;
 import com.heronix.repository.*;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,8 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Service for printing and generating student schedules in various formats
@@ -31,6 +48,7 @@ public class StudentSchedulePrintService {
     private final ScheduleSlotRepository scheduleSlotRepository;
     private final CourseSectionRepository courseSectionRepository;
     private final PeriodTimerRepository periodTimerRepository;
+    private final DistrictSettingsService districtSettingsService;
 
     // ========================================================================
     // SCHEDULE GENERATION METHODS
@@ -186,95 +204,159 @@ public class StudentSchedulePrintService {
     }
 
     /**
-     * Generate PDF from schedule slots
-     *
-     * STUB IMPLEMENTATION: Returns HTML content as bytes
-     *
-     * Production PDF Generation Setup:
-     * ================================
-     *
-     * Option 1: Flying Saucer (Recommended for HTML-to-PDF)
-     * ------------------------------------------------------
-     * Add to pom.xml:
-     * <dependency>
-     *     <groupId>org.xhtmlrenderer</groupId>
-     *     <artifactId>flying-saucer-pdf</artifactId>
-     *     <version>9.1.22</version>
-     * </dependency>
-     *
-     * Implementation:
-     * import org.xhtmlrenderer.pdf.ITextRenderer;
-     *
-     * ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-     * String html = generateHTMLFromSlots(student, schedule, slots);
-     * ITextRenderer renderer = new ITextRenderer();
-     * renderer.setDocumentFromString(html);
-     * renderer.layout();
-     * renderer.createPDF(outputStream);
-     * return outputStream.toByteArray();
-     *
-     *
-     * Option 2: Apache PDFBox (Low-level PDF creation)
-     * -------------------------------------------------
-     * Add to pom.xml:
-     * <dependency>
-     *     <groupId>org.apache.pdfbox</groupId>
-     *     <artifactId>pdfbox</artifactId>
-     *     <version>2.0.29</version>
-     * </dependency>
-     *
-     * Implementation:
-     * PDDocument document = new PDDocument();
-     * PDPage page = new PDPage();
-     * document.addPage(page);
-     * PDPageContentStream contentStream = new PDPageContentStream(document, page);
-     * // Draw text, tables, etc.
-     * contentStream.close();
-     * ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-     * document.save(outputStream);
-     * document.close();
-     * return outputStream.toByteArray();
-     *
-     *
-     * Option 3: iText 7 (Feature-rich PDF library)
-     * ---------------------------------------------
-     * Add to pom.xml:
-     * <dependency>
-     *     <groupId>com.itextpdf</groupId>
-     *     <artifactId>itext7-core</artifactId>
-     *     <version>7.2.5</version>
-     *     <type>pom</type>
-     * </dependency>
-     *
-     * Implementation:
-     * ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-     * PdfWriter writer = new PdfWriter(outputStream);
-     * PdfDocument pdf = new PdfDocument(writer);
-     * Document document = new Document(pdf);
-     * // Add paragraphs, tables, etc.
-     * document.close();
-     * return outputStream.toByteArray();
-     *
-     *
-     * Option 4: OpenPDF (iText fork, LGPL/MPL)
-     * -----------------------------------------
-     * Add to pom.xml:
-     * <dependency>
-     *     <groupId>com.github.librepdf</groupId>
-     *     <artifactId>openpdf</artifactId>
-     *     <version>1.3.30</version>
-     * </dependency>
+     * Generate PDF from schedule slots using iTextPDF
      */
     private byte[] generatePDFFromSlots(Student student, Schedule schedule, List<ScheduleSlot> slots) {
-        log.info("Generating PDF schedule (stub mode - returning HTML as bytes)");
+        log.info("Generating PDF schedule for student: {}", student.getId());
 
-        String html = generateHTMLFromSlots(student, schedule, slots);
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Document document = new Document(PageSize.LETTER);
+            PdfWriter.getInstance(document, baos);
+            document.open();
 
-        // Stub implementation: Return HTML content as bytes
-        // In production, implement one of the PDF generation options documented above
-        log.debug("PDF generation using HTML stub for student: {}", student.getId());
+            // Get district settings for header
+            DistrictSettings settings = districtSettingsService.getOrCreateDistrictSettings();
 
-        return html.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            // Title
+            Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
+            Paragraph title = new Paragraph("Student Schedule", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+
+            // School/District info
+            Font headerFont = new Font(Font.FontFamily.HELVETICA, 12);
+            Paragraph schoolInfo = new Paragraph(settings.getDistrictNameOrDefault(), headerFont);
+            schoolInfo.setAlignment(Element.ALIGN_CENTER);
+            document.add(schoolInfo);
+
+            document.add(new Paragraph(" ")); // Spacer
+
+            // Student info section
+            Font labelFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
+            Font valueFont = new Font(Font.FontFamily.HELVETICA, 10);
+
+            PdfPTable infoTable = new PdfPTable(4);
+            infoTable.setWidthPercentage(100);
+            infoTable.setWidths(new float[]{15, 35, 15, 35});
+
+            addInfoCell(infoTable, "Student:", labelFont);
+            addInfoCell(infoTable, student.getFullName(), valueFont);
+            addInfoCell(infoTable, "Student ID:", labelFont);
+            addInfoCell(infoTable, student.getStudentId(), valueFont);
+
+            addInfoCell(infoTable, "Grade:", labelFont);
+            addInfoCell(infoTable, student.getGradeLevel(), valueFont);
+            addInfoCell(infoTable, "School Year:", labelFont);
+            addInfoCell(infoTable, schedule.getScheduleName(), valueFont);
+
+            document.add(infoTable);
+            document.add(new Paragraph(" ")); // Spacer
+
+            // Schedule table
+            PdfPTable scheduleTable = new PdfPTable(5);
+            scheduleTable.setWidthPercentage(100);
+            scheduleTable.setWidths(new float[]{12, 18, 30, 22, 12});
+
+            // Table header
+            Font tableHeaderFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, BaseColor.WHITE);
+            BaseColor headerColor = new BaseColor(60, 100, 150); // School blue
+
+            addScheduleHeaderCell(scheduleTable, "Period", tableHeaderFont, headerColor);
+            addScheduleHeaderCell(scheduleTable, "Time", tableHeaderFont, headerColor);
+            addScheduleHeaderCell(scheduleTable, "Course", tableHeaderFont, headerColor);
+            addScheduleHeaderCell(scheduleTable, "Teacher", tableHeaderFont, headerColor);
+            addScheduleHeaderCell(scheduleTable, "Room", tableHeaderFont, headerColor);
+
+            // Table data
+            Font cellFont = new Font(Font.FontFamily.HELVETICA, 9);
+            boolean alternateRow = false;
+
+            for (ScheduleSlot slot : slots) {
+                BaseColor rowColor = alternateRow ? new BaseColor(240, 240, 245) : BaseColor.WHITE;
+
+                // Period
+                String period = slot.getPeriodNumber() != null ? String.valueOf(slot.getPeriodNumber()) : "-";
+                addScheduleDataCell(scheduleTable, period, cellFont, rowColor);
+
+                // Time
+                String time = (slot.getStartTime() != null && slot.getEndTime() != null) ?
+                        slot.getStartTime() + " - " + slot.getEndTime() : "-";
+                addScheduleDataCell(scheduleTable, time, cellFont, rowColor);
+
+                // Course
+                String course = "";
+                if (slot.getCourse() != null) {
+                    Course c = slot.getCourse();
+                    course = c.getCourseCode() + "\n" + c.getCourseName();
+                }
+                addScheduleDataCell(scheduleTable, course, cellFont, rowColor);
+
+                // Teacher
+                String teacher = slot.getTeacher() != null ? slot.getTeacher().getName() : "TBD";
+                addScheduleDataCell(scheduleTable, teacher, cellFont, rowColor);
+
+                // Room
+                String room = slot.getRoom() != null ? slot.getRoom().getRoomNumber() : "TBD";
+                addScheduleDataCell(scheduleTable, room, cellFont, rowColor);
+
+                alternateRow = !alternateRow;
+            }
+
+            document.add(scheduleTable);
+
+            // Footer
+            document.add(new Paragraph(" "));
+            Font footerFont = new Font(Font.FontFamily.HELVETICA, 8, Font.ITALIC, BaseColor.GRAY);
+            Paragraph footer = new Paragraph(
+                    "Generated on " + LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM d, yyyy")) +
+                    " | Heronix Student Information System",
+                    footerFont
+            );
+            footer.setAlignment(Element.ALIGN_CENTER);
+            document.add(footer);
+
+            document.close();
+            return baos.toByteArray();
+
+        } catch (DocumentException e) {
+            log.error("Error generating PDF for student {}: {}", student.getId(), e.getMessage(), e);
+            // Fall back to HTML as bytes
+            return generateHTMLFromSlots(student, schedule, slots).getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        }
+    }
+
+    /**
+     * Add a cell to the info table (no borders)
+     */
+    private void addInfoCell(PdfPTable table, String text, Font font) {
+        PdfPCell cell = new PdfPCell(new Phrase(text != null ? text : "", font));
+        cell.setBorder(Rectangle.NO_BORDER);
+        cell.setPadding(3);
+        table.addCell(cell);
+    }
+
+    /**
+     * Add a header cell to the schedule table
+     */
+    private void addScheduleHeaderCell(PdfPTable table, String text, Font font, BaseColor bgColor) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setBackgroundColor(bgColor);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setPadding(6);
+        cell.setBorderWidth(0.5f);
+        table.addCell(cell);
+    }
+
+    /**
+     * Add a data cell to the schedule table
+     */
+    private void addScheduleDataCell(PdfPTable table, String text, Font font, BaseColor bgColor) {
+        PdfPCell cell = new PdfPCell(new Phrase(text != null ? text : "", font));
+        cell.setBackgroundColor(bgColor);
+        cell.setPadding(5);
+        cell.setBorderWidth(0.5f);
+        table.addCell(cell);
     }
 
     /**

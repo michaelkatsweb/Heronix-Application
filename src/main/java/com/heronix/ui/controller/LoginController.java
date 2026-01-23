@@ -1,13 +1,17 @@
 package com.heronix.ui.controller;
 
 import com.heronix.client.AuthenticationApiService;
+import com.heronix.model.DistrictSettings;
 import com.heronix.model.domain.User;
+import com.heronix.model.enums.USState;
 import com.heronix.security.SecurityContext;
+import com.heronix.service.DistrictSettingsService;
 import com.heronix.service.UserService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +57,28 @@ public class LoginController {
     @FXML private Label sessionInfoLabel;
 
     // ========================================================================
+    // STATE AND DISTRICT DISPLAY FIELDS
+    // Phase 57: State Configuration Feature - January 2026
+    // ========================================================================
+
+    /**
+     * Label to display the configured state name
+     * Shown below the app title (e.g., "Florida", "Texas")
+     */
+    @FXML private Label stateNameLabel;
+
+    /**
+     * Label to display the district/county name
+     * Shown below the state name (e.g., "Hernando County Schools")
+     */
+    @FXML private Label districtNameLabel;
+
+    /**
+     * Container for state/district info (for visibility control)
+     */
+    @FXML private VBox stateInfoContainer;
+
+    // ========================================================================
     // DEPENDENCIES
     // ========================================================================
 
@@ -61,6 +87,9 @@ public class LoginController {
 
     @Autowired
     private AuthenticationApiService authenticationApiService;
+
+    @Autowired
+    private DistrictSettingsService districtSettingsService;
 
     @Value("${api.authentication.enabled:true}")
     private boolean apiAuthenticationEnabled;
@@ -86,6 +115,9 @@ public class LoginController {
         // Load preferences
         prefs = Preferences.userNodeForPackage(LoginController.class);
 
+        // Load and display state/district information
+        loadStateAndDistrictInfo();
+
         // Check if remember me was enabled
         boolean rememberMe = prefs.getBoolean(PREF_REMEMBER_ME, false);
         if (rememberMe) {
@@ -105,6 +137,112 @@ public class LoginController {
         // Clear any error messages when user starts typing
         usernameField.textProperty().addListener((obs, old, newVal) -> clearMessages());
         passwordField.textProperty().addListener((obs, old, newVal) -> clearMessages());
+    }
+
+    // ========================================================================
+    // STATE AND DISTRICT DISPLAY
+    // Phase 57: State Configuration Feature - January 2026
+    // ========================================================================
+
+    /**
+     * Load and display the configured state and district/county name
+     * on the login screen. This provides immediate visual confirmation
+     * that the user is logging into the correct system.
+     */
+    private void loadStateAndDistrictInfo() {
+        try {
+            DistrictSettings settings = districtSettingsService.getOrCreateDistrictSettings();
+
+            // Get state name (use final variables for lambda)
+            final String stateName;
+            if (settings.getUsState() != null) {
+                stateName = settings.getUsState().getDisplayName();
+            } else if (settings.getDistrictState() != null && !settings.getDistrictState().isEmpty()) {
+                stateName = settings.getDistrictState();
+            } else {
+                stateName = null;
+            }
+
+            // Get district/county name
+            final String districtName = settings.getDistrictName();
+
+            // Update UI
+            Platform.runLater(() -> {
+                // Update state label
+                if (stateNameLabel != null) {
+                    if (stateName != null && !stateName.isEmpty()) {
+                        stateNameLabel.setText(stateName);
+                        stateNameLabel.setVisible(true);
+                        stateNameLabel.setManaged(true);
+                    } else {
+                        stateNameLabel.setVisible(false);
+                        stateNameLabel.setManaged(false);
+                    }
+                }
+
+                // Update district label
+                if (districtNameLabel != null) {
+                    if (districtName != null && !districtName.isEmpty()) {
+                        districtNameLabel.setText(districtName);
+                        districtNameLabel.setVisible(true);
+                        districtNameLabel.setManaged(true);
+                    } else {
+                        districtNameLabel.setVisible(false);
+                        districtNameLabel.setManaged(false);
+                    }
+                }
+
+                // Show/hide the container based on whether we have info to display
+                if (stateInfoContainer != null) {
+                    boolean hasInfo = (stateName != null && !stateName.isEmpty()) ||
+                                      (districtName != null && !districtName.isEmpty());
+                    stateInfoContainer.setVisible(hasInfo);
+                    stateInfoContainer.setManaged(hasInfo);
+                }
+
+                log.debug("Login screen displaying: State='{}', District='{}'", stateName, districtName);
+            });
+
+        } catch (Exception e) {
+            log.warn("Could not load district settings for login display", e);
+            // Hide the labels if we can't load settings
+            Platform.runLater(() -> {
+                if (stateNameLabel != null) {
+                    stateNameLabel.setVisible(false);
+                    stateNameLabel.setManaged(false);
+                }
+                if (districtNameLabel != null) {
+                    districtNameLabel.setVisible(false);
+                    districtNameLabel.setManaged(false);
+                }
+                if (stateInfoContainer != null) {
+                    stateInfoContainer.setVisible(false);
+                    stateInfoContainer.setManaged(false);
+                }
+            });
+        }
+    }
+
+    /**
+     * Refresh the state and district display
+     * Call this if settings are updated while login dialog is open
+     */
+    public void refreshStateAndDistrictInfo() {
+        loadStateAndDistrictInfo();
+    }
+
+    /**
+     * Get the currently displayed state name
+     */
+    public String getDisplayedStateName() {
+        return stateNameLabel != null ? stateNameLabel.getText() : null;
+    }
+
+    /**
+     * Get the currently displayed district name
+     */
+    public String getDisplayedDistrictName() {
+        return districtNameLabel != null ? districtNameLabel.getText() : null;
     }
 
     // ========================================================================

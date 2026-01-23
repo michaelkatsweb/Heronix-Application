@@ -34,7 +34,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 77 - Report Notifications & Alerts
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/alerts")
 @RequiredArgsConstructor
 @Slf4j

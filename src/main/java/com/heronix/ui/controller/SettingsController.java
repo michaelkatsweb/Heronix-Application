@@ -160,8 +160,8 @@ public class SettingsController {
      */
     private void setupControls() {
         // Theme combo with live preview
-        themeCombo.getItems().addAll("Light", "Dark", "System");
-        themeCombo.setValue("Light");
+        themeCombo.getItems().addAll("Dark", "Light", "System");
+        themeCombo.setValue("Dark");
 
         // Add listener for immediate theme preview
         themeCombo.valueProperty().addListener((obs, oldValue, newValue) -> {
@@ -176,7 +176,7 @@ public class SettingsController {
                     if (!configDir.exists()) {
                         configDir.mkdirs();
                     }
-                    try (FileOutputStream fos = new FileOutputStream("config/settings.properties")) {
+                    try (FileOutputStream fos = new FileOutputStream("config/app-settings.properties")) {
                         settings.store(fos, "Heronix Scheduler Settings - Theme updated");
                     }
                     log.info("Theme preference saved: {}", newValue);
@@ -260,7 +260,7 @@ public class SettingsController {
     private void setDefaultSettings() {
         settings.setProperty("school.name", "Sample School");
         settings.setProperty("school.year", "2025-2026");
-        settings.setProperty("theme", "Light");
+        settings.setProperty("theme", "Dark");
         settings.setProperty("auto.save", "true");
         settings.setProperty("auto.save.interval", "5");
         settings.setProperty("schedule.type", "Traditional");
@@ -555,30 +555,30 @@ public class SettingsController {
             log.info("========== APPLYING THEME: {} ==========", themeName);
 
             // Determine the CSS file path based on theme
-            String cssFile;
+            String themeFile;
             switch (themeName) {
                 case "Dark":
-                    cssFile = "/css/dark-theme.css";
-                    log.info("Applying Dark theme (dark-theme.css)");
+                    themeFile = "/css/theme-dark.css";
+                    log.info("Applying Dark theme (theme-dark.css)");
                     break;
                 case "Light":
-                    cssFile = "/css/light-theme.css";
-                    log.info("Applying Light theme (light-theme.css)");
+                    themeFile = "/css/theme-light.css";
+                    log.info("Applying Light theme (theme-light.css)");
                     break;
                 case "System":
-                    // System theme defaults to light
-                    cssFile = "/css/light-theme.css";
-                    log.info("System theme applied (defaulting to light-theme.css)");
+                    // Detect system theme preference
+                    themeFile = detectSystemTheme();
+                    log.info("System theme applied ({})", themeFile);
                     break;
                 default:
-                    log.warn("Unknown theme: {}, defaulting to light", themeName);
-                    cssFile = "/css/light-theme.css";
+                    log.warn("Unknown theme: {}, defaulting to dark", themeName);
+                    themeFile = "/css/theme-dark.css";
             }
 
-            log.info("Theme CSS file: {}", cssFile);
+            log.info("Theme CSS file: {}", themeFile);
 
             // Apply theme to all application windows
-            applyThemeToAllWindows(cssFile);
+            applyThemeToAllWindows(themeFile);
 
             log.info("========== THEME APPLICATION COMPLETE ==========");
 
@@ -589,27 +589,72 @@ public class SettingsController {
     }
 
     /**
+     * Detect system theme preference (dark/light mode)
+     * Returns the appropriate theme CSS file path
+     */
+    private String detectSystemTheme() {
+        try {
+            // Try to detect Windows dark mode
+            String os = System.getProperty("os.name", "").toLowerCase();
+            if (os.contains("windows")) {
+                // Check Windows registry for dark mode setting
+                ProcessBuilder pb = new ProcessBuilder(
+                    "reg", "query",
+                    "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                    "/v", "AppsUseLightTheme"
+                );
+                pb.redirectErrorStream(true);
+                Process process = pb.start();
+                java.io.BufferedReader reader = new java.io.BufferedReader(
+                    new java.io.InputStreamReader(process.getInputStream())
+                );
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.contains("AppsUseLightTheme")) {
+                        // Value 0x0 means dark mode, 0x1 means light mode
+                        if (line.contains("0x0")) {
+                            log.info("System theme detected: Dark Mode");
+                            return "/css/theme-dark.css";
+                        } else {
+                            log.info("System theme detected: Light Mode");
+                            return "/css/theme-light.css";
+                        }
+                    }
+                }
+                process.waitFor();
+            }
+        } catch (Exception e) {
+            log.warn("Could not detect system theme, defaulting to dark", e);
+        }
+        // Default to dark theme if detection fails
+        return "/css/theme-dark.css";
+    }
+
+    /**
      * Apply theme to all application windows
      * This method finds all JavaFX windows and updates their stylesheets
+     *
+     * Note: We only load the theme CSS file (theme-dark.css or theme-light.css)
+     * because these files contain complete styling. base-styles.css is NOT loaded
+     * because it uses CSS variables (var()) which JavaFX does not support.
      */
-    private void applyThemeToAllWindows(String cssFilePath) {
+    private void applyThemeToAllWindows(String themeFilePath) {
         try {
-            // Check if resource exists
-            java.net.URL resourceUrl = getClass().getResource(cssFilePath);
-            if (resourceUrl == null) {
-                log.error("Theme stylesheet not found: {}", cssFilePath);
-                log.error("Attempted to load from classpath, resource does not exist");
-                // Try fallback to light theme
-                resourceUrl = getClass().getResource("/css/light-theme.css");
-                if (resourceUrl == null) {
+            // Check if theme resource exists
+            java.net.URL themeUrl = getClass().getResource(themeFilePath);
+            if (themeUrl == null) {
+                log.error("Theme stylesheet not found: {}", themeFilePath);
+                // Try fallback to dark theme
+                themeUrl = getClass().getResource("/css/theme-dark.css");
+                if (themeUrl == null) {
                     log.error("Fallback theme also not found!");
                     return;
                 }
-                log.info("Using fallback light theme instead");
+                log.info("Using fallback dark theme instead");
             }
 
-            String cssUrl = resourceUrl.toExternalForm();
-            log.info("Loading theme stylesheet: {}", cssUrl);
+            String themeCssUrl = themeUrl.toExternalForm();
+            log.info("Loading theme stylesheet: {}", themeCssUrl);
 
             // Get all open windows and apply theme to each
             javafx.application.Platform.runLater(() -> {
@@ -623,10 +668,10 @@ public class SettingsController {
                                 // Clear all existing stylesheets
                                 scene.getStylesheets().clear();
 
-                                // Add the new theme stylesheet
-                                scene.getStylesheets().add(cssUrl);
+                                // Add theme stylesheet (complete styling)
+                                scene.getStylesheets().add(themeCssUrl);
 
-                                log.info("Applied stylesheet to window: {}", stage.getTitle());
+                                log.info("Applied theme to window: {}", stage.getTitle());
                             }
                         }
                     });

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -14,8 +16,12 @@ Location: src/main/resources/fxml/Gradebook.fxml
             fx:controller="com.heronix.ui.controller.GradebookController"
             styleClass="root">
 
+
     <top>
-        <VBox spacing="15" style="-fx-padding: 20;">
+        <VBox spacing="15">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
             <!-- Header Section -->
             <HBox alignment="CENTER_LEFT" spacing="10" styleClass="card">
                 <Label text="Gradebook" styleClass="label-title"/>
@@ -116,11 +122,11 @@ Location: src/main/resources/fxml/Gradebook.fxml
                     </VBox>
                     <VBox alignment="CENTER">
                         <Label text="High" styleClass="label"/>
-                        <Label fx:id="classHighLabel" text="-" style="-fx-font-size: 18; -fx-text-fill: #4CAF50;"/>
+                        <Label fx:id="classHighLabel" text="-" styleClass="text-muted"/>
                     </VBox>
                     <VBox alignment="CENTER">
                         <Label text="Low" styleClass="label"/>
-                        <Label fx:id="classLowLabel" text="-" style="-fx-font-size: 18; -fx-text-fill: #F44336;"/>
+                        <Label fx:id="classLowLabel" text="-" styleClass="text-muted"/>
                     </VBox>
                     <VBox alignment="CENTER">
                         <Label text="Graded" styleClass="label"/>

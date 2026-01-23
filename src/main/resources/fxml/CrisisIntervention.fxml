@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -9,17 +11,16 @@
             fx:controller="com.heronix.ui.controller.CrisisInterventionController"
             styleClass="content-pane">
 
+
     <top>
-        <VBox styleClass="header-section" style="-fx-background-color: #ffebee;">
+        <VBox styleClass="header-section, card, metric-danger">
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
             <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label text="⚠ CRISIS INTERVENTION REPORT" styleClass="page-title"
-                       style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"/>
+                <Label text="⚠ CRISIS INTERVENTION REPORT" styleClass="page-title, form-label"/>
             </HBox>
-            <Label text="Document immediate crisis response and safety protocols" styleClass="page-subtitle"
-                   style="-fx-text-fill: #d32f2f;"/>
+            <Label text="Document immediate crisis response and safety protocols" styleClass="page-subtitle, text-muted"/>
         </VBox>
     </top>
 
@@ -31,16 +32,16 @@
                 </padding>
 
                 <!-- CRITICAL INFORMATION ALERT -->
-                <VBox spacing="10" style="-fx-background-color: #d32f2f; -fx-padding: 15; -fx-background-radius: 5;">
+                <VBox spacing="10" styleClass="card">
                     <Label text="⚠ CRITICAL CRISIS DOCUMENTATION"
-                           style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+                           styleClass="text-white"/>
                     <Text text="This form documents IMMEDIATE crisis interventions. Ensure all safety protocols are followed. Contact emergency services (911) if there is imminent danger."
                           style="-fx-fill: white; -fx-font-size: 12px;" wrappingWidth="900"/>
                 </VBox>
 
                 <!-- Crisis Information -->
-                <VBox spacing="15" styleClass="form-section" style="-fx-border-color: #d32f2f; -fx-border-width: 2;">
-                    <Label text="Crisis Information" styleClass="section-header" style="-fx-text-fill: #d32f2f;"/>
+                <VBox spacing="15" styleClass="form-section, border-danger">
+                    <Label text="Crisis Information" styleClass="section-header, text-muted"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -106,8 +107,8 @@
                 </VBox>
 
                 <!-- Crisis Type & Severity -->
-                <VBox spacing="15" styleClass="form-section" style="-fx-border-color: #d32f2f; -fx-border-width: 2;">
-                    <Label text="Crisis Type & Severity" styleClass="section-header" style="-fx-text-fill: #d32f2f;"/>
+                <VBox spacing="15" styleClass="form-section, border-danger">
+                    <Label text="Crisis Type &amp; Severity" styleClass="section-header, text-muted"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -182,8 +183,8 @@
                 </VBox>
 
                 <!-- Risk Assessment -->
-                <VBox spacing="15" styleClass="form-section" style="-fx-background-color: #ffebee;">
-                    <Label text="Immediate Risk Assessment" styleClass="section-header" style="-fx-text-fill: #d32f2f;"/>
+                <VBox spacing="15" styleClass="form-section, card, metric-danger">
+                    <Label text="Immediate Risk Assessment" styleClass="section-header, text-muted"/>
 
                     <GridPane hgap="20" vgap="10">
                         <columnConstraints>
@@ -192,17 +193,17 @@
                         </columnConstraints>
 
                         <CheckBox fx:id="immediateDangerCheckBox" text="Imminent Danger to Self"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold; -fx-font-size: 14px;"
+                                  styleClass="text-muted"
                                   GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                         <CheckBox fx:id="dangerToOthersCheckBox" text="Imminent Danger to Others"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold; -fx-font-size: 14px;"
+                                  styleClass="text-muted"
                                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
                         <CheckBox fx:id="suicidePlanCheckBox" text="Has Specific Suicide Plan"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                         <CheckBox fx:id="suicideMeansCheckBox" text="Has Access to Means"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
                         <CheckBox fx:id="previousAttemptCheckBox" text="Previous Suicide Attempt(s)"
@@ -217,11 +218,11 @@
                     </GridPane>
 
                     <VBox spacing="5">
-                        <Label text="Risk Assessment Details *" styleClass="field-label" style="-fx-text-fill: #d32f2f;"/>
+                        <Label text="Risk Assessment Details *" styleClass="field-label, text-muted"/>
                         <TextArea fx:id="riskAssessmentTextArea"
                                   promptText="REQUIRED: Document specific risk factors, protective factors, student's mental state, any plans or intent expressed..."
                                   wrapText="true" prefRowCount="5"
-                                  style="-fx-border-color: #d32f2f; -fx-border-width: 2;"/>
+                                  styleClass="border-danger"/>
                     </VBox>
                 </VBox>
 
@@ -237,13 +238,13 @@
                         </columnConstraints>
 
                         <CheckBox fx:id="emergencyServicesCheckBox" text="911/Emergency Services Called"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                         <CheckBox fx:id="hospitalTransportCheckBox" text="Hospital Transport Arranged"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
                         <CheckBox fx:id="parentNotifiedCheckBox" text="Parent/Guardian Notified"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="2" GridPane.rowIndex="0"/>
 
                         <CheckBox fx:id="adminNotifiedCheckBox" text="Administration Notified"
@@ -256,7 +257,7 @@
                         <CheckBox fx:id="safetyPlanCreatedCheckBox" text="Safety Plan Created"
                                   GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                         <CheckBox fx:id="weaponsRemovedCheckBox" text="Weapons/Means Removed"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                         <CheckBox fx:id="oneToOneSupervisionCheckBox" text="1:1 Supervision Implemented"
                                   GridPane.columnIndex="2" GridPane.rowIndex="2"/>
@@ -266,7 +267,7 @@
                         <CheckBox fx:id="isolationCheckBox" text="Student Isolated for Safety"
                                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                         <CheckBox fx:id="restraintCheckBox" text="Physical Restraint Used"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="2" GridPane.rowIndex="3"/>
                     </GridPane>
 
@@ -282,7 +283,7 @@
 
                 <!-- Notifications & Communication -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Notifications & Communication" styleClass="section-header"/>
+                    <Label text="Notifications &amp; Communication" styleClass="section-header"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -318,7 +319,7 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="4">
-                            <Label text="Parent Response & Actions" styleClass="field-label"/>
+                            <Label text="Parent Response &amp; Actions" styleClass="field-label"/>
                             <TextArea fx:id="parentResponseTextArea"
                                       promptText="Parent's response, concerns, actions agreed upon, arrival time if applicable..."
                                       wrapText="true" prefRowCount="3"/>
@@ -335,7 +336,7 @@
 
                 <!-- Outcome & Follow-Up -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Outcome & Follow-Up Plan" styleClass="section-header"/>
+                    <Label text="Outcome &amp; Follow-Up Plan" styleClass="section-header"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -413,7 +414,7 @@
                         <CheckBox fx:id="incidentReportCheckBox" text="Incident Report Filed"
                                   GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                         <CheckBox fx:id="mandatedReportCheckBox" text="Mandated Report Filed"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
                         <CheckBox fx:id="districtNotifiedCheckBox" text="District Office Notified"
                                   GridPane.columnIndex="2" GridPane.rowIndex="0"/>
@@ -439,15 +440,15 @@
     </center>
 
     <bottom>
-        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="button-bar" style="-fx-background-color: #ffebee;">
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="button-bar, card, metric-danger">
             <padding>
                 <Insets top="15" right="20" bottom="15" left="20"/>
             </padding>
             <Label fx:id="crisisIndicator" text="⚠ CRISIS REPORT - ENSURE COMPLETE DOCUMENTATION"
-                   style="-fx-font-weight: bold; -fx-text-fill: #d32f2f; -fx-font-size: 14px;"/>
+                   styleClass="text-muted"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button fx:id="saveButton" text="Save Crisis Report" onAction="#handleSave"
-                    styleClass="primary-button" style="-fx-background-color: #d32f2f;"/>
+                    styleClass="primary-button"/>
             <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"/>
         </HBox>
     </bottom>

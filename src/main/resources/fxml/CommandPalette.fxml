@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -17,6 +19,7 @@ Purpose: VS Code-style global search across all entities and actions
       prefWidth="700"
       prefHeight="500"
       spacing="0">
+
 
     <!-- Search Input Section -->
     <HBox styleClass="command-palette-search-box" alignment="CENTER_LEFT" spacing="10">

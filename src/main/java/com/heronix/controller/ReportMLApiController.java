@@ -32,7 +32,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 84 - Report Machine Learning & AI
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/ml")
 @RequiredArgsConstructor
 @Slf4j

@@ -983,4 +983,513 @@ public class GradebookService {
         private Double average;
         private int assignmentCount;
     }
+
+    // ========================================================================
+    // ADDITIONAL STUDENT GRADE API METHODS (Item 5)
+    // ========================================================================
+
+    /**
+     * Get grade history for a student in a specific course
+     * Shows chronological grade progression
+     */
+    public CourseGradeHistory getStudentCourseGradeHistory(Long studentId, Long courseId) {
+        log.info("Retrieving grade history for student {} in course {}", studentId, courseId);
+
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found: " + studentId));
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Course not found: " + courseId));
+
+        // Get all grades for this student in this course
+        List<AssignmentGrade> grades = gradeRepository.findForGradebookCalculation(studentId, courseId);
+
+        // Sort by date
+        List<AssignmentGrade> sortedGrades = grades.stream()
+                .filter(g -> g.getGradedDate() != null || g.getAssignment().getDueDate() != null)
+                .sorted(Comparator.comparing(g -> {
+                    LocalDate date = g.getGradedDate() != null ? g.getGradedDate() : g.getAssignment().getDueDate();
+                    return date != null ? date : LocalDate.now();
+                }))
+                .toList();
+
+        // Build history entries with running grade calculation
+        List<GradeHistoryEntry> historyEntries = new ArrayList<>();
+        double runningTotal = 0;
+        int runningCount = 0;
+
+        for (AssignmentGrade grade : sortedGrades) {
+            if (grade.getScore() != null) {
+                double percentage = grade.getPercentage();
+                runningTotal += percentage;
+                runningCount++;
+                double runningAverage = runningCount > 0 ? runningTotal / runningCount : 0;
+
+                historyEntries.add(GradeHistoryEntry.builder()
+                        .assignmentId(grade.getAssignment().getId())
+                        .assignmentTitle(grade.getAssignment().getTitle())
+                        .categoryName(grade.getAssignment().getCategory() != null ?
+                                grade.getAssignment().getCategory().getName() : "Uncategorized")
+                        .dueDate(grade.getAssignment().getDueDate())
+                        .gradedDate(grade.getGradedDate())
+                        .score(grade.getScore())
+                        .maxPoints(grade.getAssignment().getMaxPoints())
+                        .percentage(percentage)
+                        .letterGrade(percentageToLetterGrade(percentage))
+                        .runningCourseGrade(runningAverage)
+                        .comments(grade.getComments())
+                        .status(grade.getStatus() != null ? grade.getStatus().name() : "GRADED")
+                        .build());
+            }
+        }
+
+        // Calculate trend
+        String trend = "stable";
+        if (historyEntries.size() >= 3) {
+            int midpoint = historyEntries.size() / 2;
+            double firstHalf = historyEntries.subList(0, midpoint).stream()
+                    .mapToDouble(GradeHistoryEntry::getPercentage)
+                    .average().orElse(0);
+            double secondHalf = historyEntries.subList(midpoint, historyEntries.size()).stream()
+                    .mapToDouble(GradeHistoryEntry::getPercentage)
+                    .average().orElse(0);
+            if (secondHalf - firstHalf > 3) trend = "improving";
+            else if (firstHalf - secondHalf > 3) trend = "declining";
+        }
+
+        StudentCourseGrade currentGrade = calculateCourseGrade(studentId, courseId);
+
+        return CourseGradeHistory.builder()
+                .studentId(studentId)
+                .studentName(student.getFullName())
+                .courseId(courseId)
+                .courseName(course.getCourseName())
+                .gradeHistory(historyEntries)
+                .currentGrade(currentGrade.getFinalPercentage())
+                .currentLetterGrade(currentGrade.getLetterGrade())
+                .trend(trend)
+                .totalAssignments(historyEntries.size())
+                .build();
+    }
+
+    /**
+     * Generate progress report for a student
+     */
+    public ProgressReport generateProgressReport(Long studentId) {
+        log.info("Generating progress report for student {}", studentId);
+
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found: " + studentId));
+
+        // Get all grades data
+        StudentAllGrades allGrades = getStudentAllGrades(studentId);
+        StudentGPAData gpaData = calculateStudentGPA(studentId);
+        AcademicStanding standing = getStudentAcademicStanding(studentId);
+        List<MissingAssignment> missingAssignments = getStudentMissingAssignments(studentId);
+        List<GradeAlert> alerts = getStudentGradeAlerts(studentId);
+
+        // Build course progress details
+        List<CourseProgress> courseProgressList = new ArrayList<>();
+        for (StudentCourseGrade courseGrade : allGrades.getCourseGrades()) {
+            Course course = courseRepository.findById(courseGrade.getCourseId()).orElse(null);
+            if (course == null) continue;
+
+            String status;
+            if (courseGrade.getFinalPercentage() >= 90) status = "EXCELLENT";
+            else if (courseGrade.getFinalPercentage() >= 80) status = "GOOD";
+            else if (courseGrade.getFinalPercentage() >= 70) status = "SATISFACTORY";
+            else if (courseGrade.getFinalPercentage() >= 60) status = "NEEDS_IMPROVEMENT";
+            else status = "AT_RISK";
+
+            courseProgressList.add(CourseProgress.builder()
+                    .courseId(course.getId())
+                    .courseName(course.getCourseName())
+                    .currentGrade(courseGrade.getFinalPercentage())
+                    .letterGrade(courseGrade.getLetterGrade())
+                    .status(status)
+                    .totalAssignments(courseGrade.getTotalAssignments())
+                    .gradedAssignments(courseGrade.getGradedAssignments())
+                    .missingAssignments(courseGrade.getMissingAssignments())
+                    .categoryBreakdown(courseGrade.getCategoryGrades())
+                    .build());
+        }
+
+        return ProgressReport.builder()
+                .studentId(studentId)
+                .studentName(student.getFullName())
+                .gradeLevel(student.getGradeLevel())
+                .generatedDate(LocalDate.now())
+                .reportPeriod("Current Term")
+                .overallGPA(gpaData.getCurrentGPA())
+                .academicStanding(standing.getStanding())
+                .courseProgress(courseProgressList)
+                .totalMissingAssignments(missingAssignments.size())
+                .missingAssignmentDetails(missingAssignments)
+                .alerts(alerts)
+                .strengths(identifyStrengths(courseProgressList))
+                .areasForImprovement(identifyImprovementAreas(courseProgressList))
+                .build();
+    }
+
+    /**
+     * Generate report card for a student
+     */
+    public ReportCard generateReportCard(Long studentId, Long termId) {
+        log.info("Generating report card for student {} term {}", studentId, termId);
+
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found: " + studentId));
+
+        StudentGPAData gpaData = calculateStudentGPA(studentId);
+        AcademicStanding standing = getStudentAcademicStanding(studentId);
+        StudentAllGrades allGrades = getStudentAllGrades(studentId);
+
+        // Build course grade entries for report card
+        List<ReportCardEntry> entries = new ArrayList<>();
+        for (StudentCourseGrade courseGrade : allGrades.getCourseGrades()) {
+            Course course = courseRepository.findById(courseGrade.getCourseId()).orElse(null);
+            if (course == null) continue;
+
+            entries.add(ReportCardEntry.builder()
+                    .courseId(course.getId())
+                    .courseName(course.getCourseName())
+                    .courseCode(course.getCourseCode())
+                    .credits(course.getCredits())
+                    .finalGrade(courseGrade.getFinalPercentage())
+                    .letterGrade(courseGrade.getLetterGrade())
+                    .gpaPoints(courseGrade.getGpaPoints())
+                    .teacher(course.getTeacher() != null ? course.getTeacher().getFullName() : "N/A")
+                    .build());
+        }
+
+        // Calculate credits
+        double totalCredits = entries.stream()
+                .filter(e -> e.getFinalGrade() >= 60)
+                .mapToDouble(ReportCardEntry::getCredits)
+                .sum();
+
+        // Honor roll determination
+        String honorRoll = null;
+        if (gpaData.getCurrentGPA() >= 3.75) honorRoll = "HIGH_HONORS";
+        else if (gpaData.getCurrentGPA() >= 3.5) honorRoll = "HONORS";
+        else if (gpaData.getCurrentGPA() >= 3.0) honorRoll = "MERIT";
+
+        return ReportCard.builder()
+                .studentId(studentId)
+                .studentName(student.getFullName())
+                .studentNumber(student.getStudentId())
+                .gradeLevel(student.getGradeLevel())
+                .termId(termId)
+                .termName(termId != null ? "Term " + termId : "Current Term")
+                .generatedDate(LocalDate.now())
+                .courseGrades(entries)
+                .termGPA(gpaData.getCurrentGPA())
+                .cumulativeGPA(gpaData.getCumulativeGPA())
+                .creditsEarned(totalCredits)
+                .academicStanding(standing.getStanding())
+                .honorRoll(honorRoll)
+                .build();
+    }
+
+    /**
+     * Generate report card for current term
+     */
+    public ReportCard generateCurrentReportCard(Long studentId) {
+        return generateReportCard(studentId, null);
+    }
+
+    /**
+     * Calculate what-if grade scenarios
+     */
+    public WhatIfResult calculateWhatIfGrade(Long studentId, Long courseId,
+                                              List<HypotheticalAssignment> hypotheticalAssignments) {
+        log.info("Calculating what-if grade for student {} in course {}", studentId, courseId);
+
+        // Get current grade
+        StudentCourseGrade currentGrade = calculateCourseGrade(studentId, courseId);
+        double originalGrade = currentGrade.getFinalPercentage();
+
+        // Apply hypothetical scores
+        Map<Long, Double> hypotheticalScores = hypotheticalAssignments.stream()
+                .collect(Collectors.toMap(
+                        HypotheticalAssignment::getAssignmentId,
+                        HypotheticalAssignment::getHypotheticalScore
+                ));
+
+        // Get all grades and categories
+        List<GradingCategory> categories = getCategoriesForCourse(courseId);
+        List<AssignmentGrade> grades = gradeRepository.findForGradebookCalculation(studentId, courseId);
+
+        // Calculate with hypothetical scores
+        Map<Long, List<AssignmentGrade>> gradesByCategory = grades.stream()
+                .filter(AssignmentGrade::countsInGrade)
+                .collect(Collectors.groupingBy(g -> g.getAssignment().getCategory().getId()));
+
+        double totalWeightedScore = 0.0;
+        double totalWeight = 0.0;
+
+        for (GradingCategory category : categories) {
+            List<AssignmentGrade> categoryGrades = gradesByCategory.getOrDefault(category.getId(), List.of());
+            if (categoryGrades.isEmpty()) continue;
+
+            // Apply hypothetical scores
+            List<Double> percentages = new ArrayList<>();
+            for (AssignmentGrade grade : categoryGrades) {
+                Double hypotheticalScore = hypotheticalScores.get(grade.getAssignment().getId());
+                if (hypotheticalScore != null) {
+                    double max = grade.getAssignment().getMaxPoints();
+                    percentages.add(max > 0 ? (hypotheticalScore / max) * 100.0 : 0.0);
+                } else if (grade.getAdjustedScore() != null) {
+                    double max = grade.getAssignment().getMaxPoints();
+                    percentages.add(max > 0 ? (grade.getAdjustedScore() / max) * 100.0 : 0.0);
+                }
+            }
+
+            if (!percentages.isEmpty()) {
+                percentages.sort(Double::compareTo);
+                int toDrop = Math.min(category.getDropLowest() != null ? category.getDropLowest() : 0,
+                                      Math.max(0, percentages.size() - 1));
+                List<Double> remaining = percentages.subList(toDrop, percentages.size());
+                double categoryAvg = remaining.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+
+                totalWeightedScore += (categoryAvg * category.getWeight() / 100.0);
+                totalWeight += category.getWeight();
+            }
+        }
+
+        double hypotheticalGrade = totalWeight > 0 ? (totalWeightedScore / totalWeight) * 100.0 : 0.0;
+        double gradeChange = hypotheticalGrade - originalGrade;
+
+        return WhatIfResult.builder()
+                .studentId(studentId)
+                .courseId(courseId)
+                .originalGrade(originalGrade)
+                .originalLetterGrade(percentageToLetterGrade(originalGrade))
+                .hypotheticalGrade(hypotheticalGrade)
+                .hypotheticalLetterGrade(percentageToLetterGrade(hypotheticalGrade))
+                .gradeChange(gradeChange)
+                .changesApplied(hypotheticalAssignments.size())
+                .wouldImprove(gradeChange > 0)
+                .letterGradeChanged(!percentageToLetterGrade(originalGrade)
+                        .equals(percentageToLetterGrade(hypotheticalGrade)))
+                .build();
+    }
+
+    /**
+     * Get specific assignment grade with detailed feedback
+     */
+    public AssignmentGradeDetail getStudentAssignmentGrade(Long studentId, Long assignmentId) {
+        log.info("Retrieving assignment grade detail for student {} assignment {}", studentId, assignmentId);
+
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found: " + studentId));
+
+        Assignment assignment = assignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Assignment not found: " + assignmentId));
+
+        Optional<AssignmentGrade> gradeOpt = gradeRepository.findByStudentIdAndAssignmentId(studentId, assignmentId);
+
+        AssignmentGradeDetail.AssignmentGradeDetailBuilder builder = AssignmentGradeDetail.builder()
+                .studentId(studentId)
+                .studentName(student.getFullName())
+                .assignmentId(assignmentId)
+                .assignmentTitle(assignment.getTitle())
+                .courseId(assignment.getCourse().getId())
+                .courseName(assignment.getCourse().getCourseName())
+                .categoryName(assignment.getCategory() != null ? assignment.getCategory().getName() : "Uncategorized")
+                .dueDate(assignment.getDueDate())
+                .maxPoints(assignment.getMaxPoints());
+
+        if (gradeOpt.isPresent()) {
+            AssignmentGrade grade = gradeOpt.get();
+            builder.score(grade.getScore())
+                    .percentage(grade.getPercentage())
+                    .letterGrade(percentageToLetterGrade(grade.getPercentage()))
+                    .submittedDate(grade.getSubmittedDate())
+                    .gradedDate(grade.getGradedDate())
+                    .comments(grade.getComments())
+                    .status(grade.getStatus() != null ? grade.getStatus().name() : "NOT_GRADED")
+                    .latePenalty(grade.getLatePenalty())
+                    .isExcused(grade.getExcused() != null && grade.getExcused())
+                    .excuseReason(grade.getExcuseReason());
+        } else {
+            // Assignment exists but no grade yet
+            boolean isPastDue = assignment.getDueDate() != null &&
+                               assignment.getDueDate().isBefore(LocalDate.now());
+
+            builder.status(isPastDue ? "MISSING" : "NOT_SUBMITTED");
+        }
+
+        return builder.build();
+    }
+
+    // ========================================================================
+    // HELPER METHODS
+    // ========================================================================
+
+    private List<String> identifyStrengths(List<CourseProgress> courses) {
+        return courses.stream()
+                .filter(c -> c.getCurrentGrade() >= 85)
+                .map(c -> String.format("%s: %.1f%% (%s)",
+                        c.getCourseName(), c.getCurrentGrade(), c.getLetterGrade()))
+                .limit(3)
+                .toList();
+    }
+
+    private List<String> identifyImprovementAreas(List<CourseProgress> courses) {
+        return courses.stream()
+                .filter(c -> c.getCurrentGrade() < 75 || c.getMissingAssignments() > 0)
+                .map(c -> {
+                    if (c.getMissingAssignments() > 0) {
+                        return String.format("%s: %d missing assignment(s)", c.getCourseName(), c.getMissingAssignments());
+                    }
+                    return String.format("%s: Grade below target (%.1f%%)", c.getCourseName(), c.getCurrentGrade());
+                })
+                .limit(3)
+                .toList();
+    }
+
+    // ========================================================================
+    // ADDITIONAL DTOs FOR ITEM 5
+    // ========================================================================
+
+    @Data
+    @Builder
+    public static class CourseGradeHistory {
+        private Long studentId;
+        private String studentName;
+        private Long courseId;
+        private String courseName;
+        private List<GradeHistoryEntry> gradeHistory;
+        private Double currentGrade;
+        private String currentLetterGrade;
+        private String trend;
+        private int totalAssignments;
+    }
+
+    @Data
+    @Builder
+    public static class GradeHistoryEntry {
+        private Long assignmentId;
+        private String assignmentTitle;
+        private String categoryName;
+        private LocalDate dueDate;
+        private LocalDate gradedDate;
+        private Double score;
+        private Double maxPoints;
+        private Double percentage;
+        private String letterGrade;
+        private Double runningCourseGrade;
+        private String comments;
+        private String status;
+    }
+
+    @Data
+    @Builder
+    public static class ProgressReport {
+        private Long studentId;
+        private String studentName;
+        private String gradeLevel;
+        private LocalDate generatedDate;
+        private String reportPeriod;
+        private Double overallGPA;
+        private String academicStanding;
+        private List<CourseProgress> courseProgress;
+        private int totalMissingAssignments;
+        private List<MissingAssignment> missingAssignmentDetails;
+        private List<GradeAlert> alerts;
+        private List<String> strengths;
+        private List<String> areasForImprovement;
+    }
+
+    @Data
+    @Builder
+    public static class CourseProgress {
+        private Long courseId;
+        private String courseName;
+        private Double currentGrade;
+        private String letterGrade;
+        private String status;
+        private int totalAssignments;
+        private int gradedAssignments;
+        private int missingAssignments;
+        private List<CategoryGrade> categoryBreakdown;
+    }
+
+    @Data
+    @Builder
+    public static class ReportCard {
+        private Long studentId;
+        private String studentName;
+        private String studentNumber;
+        private String gradeLevel;
+        private Long termId;
+        private String termName;
+        private LocalDate generatedDate;
+        private List<ReportCardEntry> courseGrades;
+        private Double termGPA;
+        private Double cumulativeGPA;
+        private Double creditsEarned;
+        private String academicStanding;
+        private String honorRoll;
+    }
+
+    @Data
+    @Builder
+    public static class ReportCardEntry {
+        private Long courseId;
+        private String courseName;
+        private String courseCode;
+        private Double credits;
+        private Double finalGrade;
+        private String letterGrade;
+        private Double gpaPoints;
+        private String teacher;
+    }
+
+    @Data
+    @Builder
+    public static class WhatIfResult {
+        private Long studentId;
+        private Long courseId;
+        private Double originalGrade;
+        private String originalLetterGrade;
+        private Double hypotheticalGrade;
+        private String hypotheticalLetterGrade;
+        private Double gradeChange;
+        private int changesApplied;
+        private boolean wouldImprove;
+        private boolean letterGradeChanged;
+    }
+
+    @Data
+    @Builder
+    public static class HypotheticalAssignment {
+        private Long assignmentId;
+        private Double hypotheticalScore;
+    }
+
+    @Data
+    @Builder
+    public static class AssignmentGradeDetail {
+        private Long studentId;
+        private String studentName;
+        private Long assignmentId;
+        private String assignmentTitle;
+        private Long courseId;
+        private String courseName;
+        private String categoryName;
+        private LocalDate dueDate;
+        private Double maxPoints;
+        private Double score;
+        private Double percentage;
+        private String letterGrade;
+        private LocalDate submittedDate;
+        private LocalDate gradedDate;
+        private String comments;
+        private String status;
+        private Double latePenalty;
+        private boolean isExcused;
+        private String excuseReason;
+    }
 }

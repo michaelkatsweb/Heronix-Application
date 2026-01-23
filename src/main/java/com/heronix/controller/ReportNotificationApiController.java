@@ -39,7 +39,7 @@ import java.util.List;
  * @version 1.0
  * @since Phase 62 - Real-time Report Notifications & Alerts
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/report-notifications")
 @RequiredArgsConstructor
 @Slf4j

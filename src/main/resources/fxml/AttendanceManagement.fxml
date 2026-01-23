@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+    Attendance Management UI
+    For SIS Clerks and Administrators
+
+    Features:
+    - Daily attendance view with filtering
+    - Excuse entry with excuse codes
+    - Pending approvals workflow
+    - Adjustment history/audit trail
+
+    Phase 58: Attendance Enhancement - January 2026
+-->
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.AttendanceManagementController"
+            styleClass="main-container">
+
+    <!-- Header -->
+    <top>
+        <HBox spacing="15" alignment="CENTER_LEFT" styleClass="header-bar">
+            <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+
+            <VBox spacing="2">
+                <Label text="Attendance Management" styleClass="page-title"/>
+                <Label text="View, excuse, and adjust attendance records" styleClass="page-subtitle"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="Refresh" onAction="#handleRefresh" styleClass="secondary-button"/>
+        </HBox>
+    </top>
+
+    <!-- Main Content - Tab Pane -->
+    <center>
+        <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" styleClass="main-tabs">
+            <padding><Insets top="10" right="15" bottom="15" left="15"/></padding>
+
+            <!-- ================================================================ -->
+            <!-- TAB 1: Daily Attendance View -->
+            <!-- ================================================================ -->
+            <Tab text="Daily Attendance">
+                <VBox spacing="15">
+                    <padding><Insets top="15" right="10" bottom="10" left="10"/></padding>
+
+                    <!-- Filters Row -->
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Date:"/>
+                        <DatePicker fx:id="attendanceDatePicker" prefWidth="130"/>
+
+                        <Label text="Period:"/>
+                        <ComboBox fx:id="periodFilter" prefWidth="120"/>
+
+                        <Label text="Status:"/>
+                        <ComboBox fx:id="statusFilter" prefWidth="120"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Label text="Search:"/>
+                        <TextField fx:id="studentSearchField" promptText="Student name or ID..." prefWidth="200"/>
+                    </HBox>
+
+                    <!-- Statistics Cards -->
+                    <HBox spacing="15" alignment="CENTER">
+                        <VBox styleClass="stat-card" alignment="CENTER" spacing="5">
+                            <Label fx:id="statTotalStudents" text="0" styleClass="stat-value"/>
+                            <Label text="Total" styleClass="stat-label"/>
+                        </VBox>
+                        <VBox styleClass="stat-card stat-present" alignment="CENTER" spacing="5">
+                            <Label fx:id="statPresent" text="0" styleClass="stat-value"/>
+                            <Label text="Present" styleClass="stat-label"/>
+                        </VBox>
+                        <VBox styleClass="stat-card stat-absent" alignment="CENTER" spacing="5">
+                            <Label fx:id="statAbsent" text="0" styleClass="stat-value"/>
+                            <Label text="Absent" styleClass="stat-label"/>
+                        </VBox>
+                        <VBox styleClass="stat-card stat-tardy" alignment="CENTER" spacing="5">
+                            <Label fx:id="statTardy" text="0" styleClass="stat-value"/>
+                            <Label text="Tardy" styleClass="stat-label"/>
+                        </VBox>
+                        <VBox styleClass="stat-card stat-excused" alignment="CENTER" spacing="5">
+                            <Label fx:id="statExcused" text="0" styleClass="stat-value"/>
+                            <Label text="Excused" styleClass="stat-label"/>
+                        </VBox>
+                        <VBox styleClass="stat-card stat-unexcused" alignment="CENTER" spacing="5">
+                            <Label fx:id="statUnexcused" text="0" styleClass="stat-value"/>
+                            <Label text="Unexcused" styleClass="stat-label"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Attendance Table -->
+                    <TableView fx:id="attendanceTable" VBox.vgrow="ALWAYS" styleClass="data-table">
+                        <columns>
+                            <TableColumn fx:id="colStudentId" text="Student ID" prefWidth="100"/>
+                            <TableColumn fx:id="colStudentName" text="Student Name" prefWidth="180"/>
+                            <TableColumn fx:id="colGrade" text="Grade" prefWidth="70"/>
+                            <TableColumn fx:id="colPeriod" text="Period" prefWidth="90"/>
+                            <TableColumn fx:id="colStatus" text="Status" prefWidth="120"/>
+                            <TableColumn fx:id="colExcuseCode" text="Excuse Code" prefWidth="100"/>
+                            <TableColumn fx:id="colNotes" text="Notes" prefWidth="200"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No attendance records for selected date"/>
+                        </placeholder>
+                    </TableView>
+
+                    <!-- Quick Actions -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Quick Actions (select rows first):" styleClass="text-muted"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label text="Right-click on selected rows for more options" styleClass="text-hint"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- ================================================================ -->
+            <!-- TAB 2: Excuse Entry -->
+            <!-- ================================================================ -->
+            <Tab text="Enter Excuse">
+                <HBox spacing="20">
+                    <padding><Insets top="15" right="10" bottom="10" left="10"/></padding>
+
+                    <!-- Left: Student Selection -->
+                    <VBox spacing="10" prefWidth="350">
+                        <Label text="1. Select Student(s)" styleClass="section-header"/>
+
+                        <TextField fx:id="excuseStudentSearchField"
+                                   promptText="Search by name or student ID..."/>
+
+                        <ListView fx:id="excuseStudentList" VBox.vgrow="ALWAYS" prefHeight="300">
+                            <placeholder>
+                                <Label text="Search for students above"/>
+                            </placeholder>
+                        </ListView>
+
+                        <Label text="Hold Ctrl/Cmd to select multiple students" styleClass="text-hint"/>
+                    </VBox>
+
+                    <!-- Right: Excuse Details -->
+                    <VBox spacing="15" HBox.hgrow="ALWAYS">
+                        <Label text="2. Enter Excuse Details" styleClass="section-header"/>
+
+                        <GridPane hgap="10" vgap="10">
+                            <!-- Date Range -->
+                            <Label text="Start Date:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="excuseStartDate" prefWidth="150"
+                                        GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label text="End Date:" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                            <DatePicker fx:id="excuseEndDate" prefWidth="150"
+                                        GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+
+                            <!-- Period -->
+                            <Label text="Period:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="excusePeriodCombo" prefWidth="150"
+                                      GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <!-- Source -->
+                            <Label text="Source:" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                            <ComboBox fx:id="excuseSourceCombo" prefWidth="150"
+                                      GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+
+                            <!-- Excuse Code -->
+                            <Label text="Excuse Code:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="excuseCodeCombo" prefWidth="320"
+                                      GridPane.rowIndex="2" GridPane.columnIndex="1"
+                                      GridPane.columnSpan="3"/>
+                        </GridPane>
+
+                        <!-- Reason -->
+                        <Label text="Reason/Notes:"/>
+                        <TextArea fx:id="excuseReasonText" prefRowCount="4"
+                                  promptText="Enter reason for absence..."/>
+
+                        <!-- Documentation -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <CheckBox fx:id="documentationCheckBox" text="Documentation Provided"/>
+                            <TextField fx:id="documentationTypeField" promptText="Type (e.g., Doctor's Note)"
+                                       prefWidth="180" disable="true"/>
+                            <Button fx:id="attachDocumentButton" text="Attach File..."
+                                    onAction="#handleAttachDocument" disable="true"/>
+                            <Label fx:id="attachedDocumentLabel" text="" styleClass="text-muted"/>
+                        </HBox>
+
+                        <Region VBox.vgrow="ALWAYS"/>
+
+                        <!-- Submit Button -->
+                        <HBox alignment="CENTER_RIGHT">
+                            <Button fx:id="submitExcuseButton" text="Submit Excuse"
+                                    onAction="#handleSubmitExcuse" styleClass="primary-button"/>
+                        </HBox>
+                    </VBox>
+                </HBox>
+            </Tab>
+
+            <!-- ================================================================ -->
+            <!-- TAB 3: Pending Approvals -->
+            <!-- ================================================================ -->
+            <Tab text="Pending Approvals">
+                <VBox spacing="15">
+                    <padding><Insets top="15" right="10" bottom="10" left="10"/></padding>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Adjustments Requiring Approval" styleClass="section-header"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="pendingCountLabel" text="0 pending" styleClass="badge-warning"/>
+                    </HBox>
+
+                    <!-- Pending Approvals Table -->
+                    <TableView fx:id="pendingApprovalsTable" VBox.vgrow="ALWAYS" prefHeight="250">
+                        <columns>
+                            <TableColumn fx:id="colApprovalStudent" text="Student" prefWidth="180"/>
+                            <TableColumn fx:id="colApprovalDate" text="Date" prefWidth="100"/>
+                            <TableColumn fx:id="colApprovalType" text="Type" prefWidth="150"/>
+                            <TableColumn fx:id="colApprovalReason" text="Reason" prefWidth="250"/>
+                            <TableColumn fx:id="colApprovalSubmittedBy" text="Submitted By" prefWidth="120"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No pending approvals"/>
+                        </placeholder>
+                    </TableView>
+
+                    <!-- Approval Actions -->
+                    <VBox spacing="10">
+                        <Label text="Approval Notes:"/>
+                        <TextArea fx:id="approvalNotesText" prefRowCount="3"
+                                  promptText="Enter notes (required for rejection)..."/>
+
+                        <HBox spacing="10" alignment="CENTER_RIGHT">
+                            <Button fx:id="rejectButton" text="Reject"
+                                    onAction="#handleReject" styleClass="danger-button"/>
+                            <Button fx:id="approveButton" text="Approve"
+                                    onAction="#handleApprove" styleClass="success-button"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </Tab>
+
+            <!-- ================================================================ -->
+            <!-- TAB 4: Adjustment History -->
+            <!-- ================================================================ -->
+            <Tab text="Adjustment History">
+                <VBox spacing="15">
+                    <padding><Insets top="15" right="10" bottom="10" left="10"/></padding>
+
+                    <!-- Filters -->
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="From:"/>
+                        <DatePicker fx:id="historyStartDate" prefWidth="130"/>
+
+                        <Label text="To:"/>
+                        <DatePicker fx:id="historyEndDate" prefWidth="130"/>
+
+                        <Label text="Type:"/>
+                        <ComboBox fx:id="historyTypeFilter" prefWidth="150"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <TextField fx:id="historyStudentSearch" promptText="Search student..." prefWidth="180"/>
+                    </HBox>
+
+                    <!-- History Table -->
+                    <TableView fx:id="historyTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colHistStudent" text="Student" prefWidth="180"/>
+                            <TableColumn fx:id="colHistDate" text="Attendance Date" prefWidth="110"/>
+                            <TableColumn fx:id="colHistType" text="Adjustment Type" prefWidth="140"/>
+                            <TableColumn fx:id="colHistOriginal" text="Original" prefWidth="100"/>
+                            <TableColumn fx:id="colHistNew" text="New Status" prefWidth="100"/>
+                            <TableColumn fx:id="colHistBy" text="Adjusted By" prefWidth="120"/>
+                            <TableColumn fx:id="colHistStatus" text="Status" prefWidth="100"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No adjustment history for selected criteria"/>
+                        </placeholder>
+                    </TableView>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+
+</BorderPane>

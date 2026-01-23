@@ -73,7 +73,7 @@ public class StudentDTO {
     private LocalDate dateOfBirth;
 
     /**
-     * Gender (Male, Female, Non-binary, Prefer not to say)
+     * Gender (Male, Female)
      */
     private String gender;
 

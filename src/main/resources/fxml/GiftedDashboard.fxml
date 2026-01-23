@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
@@ -9,86 +11,74 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.GiftedDashboardController"
-            stylesheets="@../css/application.css"
             prefWidth="1600" prefHeight="1000">
+
 
     <!-- Top: Header -->
     <top>
-        <VBox spacing="15" style="-fx-background-color: #6a1b9a; -fx-padding: 20;">
+        <VBox spacing="15" styleClass="card">
             <Label text="Gifted &amp; Talented Program Dashboard"
-                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                   styleClass="page-title-white"/>
             <Label text="Monitor identification, program placements, talent development, and academic enrichment"
-                   style="-fx-font-size: 13px; -fx-text-fill: white;"/>
+                   styleClass="text-white"/>
         </VBox>
     </top>
 
     <!-- Center: Main Content -->
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: #f5f5f5;">
-            <VBox spacing="25" style="-fx-padding: 25;">
+        <ScrollPane fitToWidth="true" styleClass="main-container">
+            <VBox spacing="25" styleClass="content-padding-25">
 
                 <!-- Summary Statistics Cards -->
                 <HBox spacing="20">
-                    <VBox spacing="10" styleClass="stat-card"
-                          style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-min-width: 200;">
-                        <Label text="Total Gifted Students" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
-                        <Label fx:id="totalGiftedLabel" text="0"
-                               style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #6a1b9a;"/>
+                    <VBox spacing="10" styleClass="stat-card, stat-card-base">
+                        <Label text="Total Gifted Students" styleClass="stat-card-label"/>
+                        <Label fx:id="totalGiftedLabel" text="0" styleClass="stat-value-purple"/>
                     </VBox>
 
-                    <VBox spacing="10" styleClass="stat-card"
-                          style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-min-width: 200;">
-                        <Label text="Active in Services" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
-                        <Label fx:id="activeServicesLabel" text="0"
-                               style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #388e3c;"/>
+                    <VBox spacing="10" styleClass="stat-card, stat-card-base">
+                        <Label text="Active in Services" styleClass="stat-card-label"/>
+                        <Label fx:id="activeServicesLabel" text="0" styleClass="stat-value-green"/>
                     </VBox>
 
-                    <VBox spacing="10" styleClass="stat-card"
-                          style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-min-width: 200;">
-                        <Label text="Referred/Screening" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
-                        <Label fx:id="screeningLabel" text="0"
-                               style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #f57c00;"/>
+                    <VBox spacing="10" styleClass="stat-card, stat-card-base">
+                        <Label text="Referred/Screening" styleClass="stat-card-label"/>
+                        <Label fx:id="screeningLabel" text="0" styleClass="stat-value-orange"/>
                     </VBox>
 
-                    <VBox spacing="10" styleClass="stat-card"
-                          style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-min-width: 200;">
-                        <Label text="Annual Reviews Due" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
-                        <Label fx:id="reviewsDueLabel" text="0"
-                               style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #d32f2f;"/>
+                    <VBox spacing="10" styleClass="stat-card, stat-card-base">
+                        <Label text="Annual Reviews Due" styleClass="stat-card-label"/>
+                        <Label fx:id="reviewsDueLabel" text="0" styleClass="stat-value-red"/>
                     </VBox>
 
-                    <VBox spacing="10" styleClass="stat-card"
-                          style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-min-width: 200;">
-                        <Label text="Advanced Courses" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
-                        <Label fx:id="advancedCoursesLabel" text="0"
-                               style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+                    <VBox spacing="10" styleClass="stat-card, stat-card-base">
+                        <Label text="Advanced Courses" styleClass="stat-card-label"/>
+                        <Label fx:id="advancedCoursesLabel" text="0" styleClass="stat-value-blue"/>
                     </VBox>
 
-                    <VBox spacing="10" styleClass="stat-card"
-                          style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-min-width: 200;">
-                        <Label text="Multi-Talented" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
-                        <Label fx:id="multiTalentedLabel" text="0"
-                               style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #7b1fa2;"/>
+                    <VBox spacing="10" styleClass="stat-card, stat-card-base">
+                        <Label text="Multi-Talented" styleClass="stat-card-label"/>
+                        <Label fx:id="multiTalentedLabel" text="0" styleClass="stat-value-deep-purple"/>
                     </VBox>
                 </HBox>
 
                 <!-- Charts Row -->
                 <HBox spacing="20">
                     <!-- Gifted Areas Distribution -->
-                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;" HBox.hgrow="ALWAYS">
-                        <Label text="Gifted Areas Distribution" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <VBox spacing="15" styleClass="section-container" HBox.hgrow="ALWAYS">
+                        <Label text="Gifted Areas Distribution" styleClass="section-title"/>
                         <PieChart fx:id="giftedAreasChart" legendVisible="true" prefHeight="300"/>
                     </VBox>
 
                     <!-- Program Type Distribution -->
-                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;" HBox.hgrow="ALWAYS">
-                        <Label text="Program Type Distribution" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <VBox spacing="15" styleClass="section-container" HBox.hgrow="ALWAYS">
+                        <Label text="Program Type Distribution" styleClass="section-title"/>
                         <PieChart fx:id="programTypeChart" legendVisible="true" prefHeight="300"/>
                     </VBox>
 
                     <!-- Status Distribution -->
-                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;" HBox.hgrow="ALWAYS">
-                        <Label text="Status Distribution" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <VBox spacing="15" styleClass="section-container" HBox.hgrow="ALWAYS">
+                        <Label text="Status Distribution" styleClass="section-title"/>
                         <BarChart fx:id="statusChart" prefHeight="300">
                             <xAxis>
                                 <CategoryAxis label="Status"/>
@@ -103,33 +93,33 @@
                 <!-- Alerts & Action Items -->
                 <HBox spacing="20">
                     <!-- Annual Reviews Due -->
-                    <VBox spacing="15" style="-fx-background-color: #fff9c4; -fx-padding: 20; -fx-border-color: #fff176; -fx-border-width: 2;" HBox.hgrow="ALWAYS">
-                        <Label text="⚠ Annual Reviews Due" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #f57f17;"/>
+                    <VBox spacing="15" styleClass="card" HBox.hgrow="ALWAYS">
+                        <Label text="⚠ Annual Reviews Due" styleClass="alert-title-warning"/>
                         <ListView fx:id="annualReviewsDueListView" prefHeight="200"/>
                     </VBox>
 
                     <!-- Parent Consent Needed -->
-                    <VBox spacing="15" style="-fx-background-color: #ffebee; -fx-padding: 20; -fx-border-color: #ef9a9a; -fx-border-width: 2;" HBox.hgrow="ALWAYS">
-                        <Label text="⚠ Parent Consent Needed" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                    <VBox spacing="15" styleClass="card, metric-danger" HBox.hgrow="ALWAYS">
+                        <Label text="⚠ Parent Consent Needed" styleClass="alert-title-danger"/>
                         <ListView fx:id="parentConsentNeededListView" prefHeight="200"/>
                     </VBox>
 
                     <!-- Underperforming Students -->
-                    <VBox spacing="15" style="-fx-background-color: #fce4ec; -fx-padding: 20; -fx-border-color: #f48fb1; -fx-border-width: 2;" HBox.hgrow="ALWAYS">
-                        <Label text="⚠ Underperforming Students" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #880e4f;"/>
+                    <VBox spacing="15" styleClass="card" HBox.hgrow="ALWAYS">
+                        <Label text="⚠ Underperforming Students" styleClass="alert-title-pink"/>
                         <ListView fx:id="underperformingListView" prefHeight="200"/>
                     </VBox>
 
                     <!-- Progress Reviews Overdue -->
-                    <VBox spacing="15" style="-fx-background-color: #fff3e0; -fx-padding: 20; -fx-border-color: #ffcc80; -fx-border-width: 2;" HBox.hgrow="ALWAYS">
-                        <Label text="⚠ Progress Reviews Overdue" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+                    <VBox spacing="15" styleClass="card, metric-warning" HBox.hgrow="ALWAYS">
+                        <Label text="⚠ Progress Reviews Overdue" styleClass="alert-title-orange"/>
                         <ListView fx:id="progressReviewsOverdueListView" prefHeight="200"/>
                     </VBox>
                 </HBox>
 
                 <!-- Filters Section -->
-                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
-                    <Label text="Filter Students" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                <VBox spacing="15" styleClass="section-container">
+                    <Label text="Filter Students" styleClass="section-title"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -141,42 +131,42 @@
                         </columnConstraints>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <Label text="Status:" style="-fx-font-weight: bold;"/>
+                            <Label text="Status:" styleClass="form-label"/>
                             <ComboBox fx:id="statusFilterComboBox" promptText="All Statuses" maxWidth="Infinity"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <Label text="Gifted Area:" style="-fx-font-weight: bold;"/>
+                            <Label text="Gifted Area:" styleClass="form-label"/>
                             <ComboBox fx:id="giftedAreaFilterComboBox" promptText="All Areas" maxWidth="Infinity"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
-                            <Label text="Program Type:" style="-fx-font-weight: bold;"/>
+                            <Label text="Program Type:" styleClass="form-label"/>
                             <ComboBox fx:id="programTypeFilterComboBox" promptText="All Programs" maxWidth="Infinity"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="0">
-                            <Label text="Grade Level:" style="-fx-font-weight: bold;"/>
+                            <Label text="Grade Level:" styleClass="form-label"/>
                             <ComboBox fx:id="gradeFilterComboBox" promptText="All Grades" maxWidth="Infinity"/>
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="4" GridPane.rowIndex="0">
-                            <Label text="Search:" style="-fx-font-weight: bold;"/>
+                            <Label text="Search:" styleClass="form-label"/>
                             <TextField fx:id="searchField" promptText="Student name or ID..."/>
                         </VBox>
 
                         <HBox spacing="10" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.rowIndex="1">
                             <Button text="Apply Filters" onAction="#handleApplyFilters"
-                                    style="-fx-background-color: #6a1b9a; -fx-text-fill: white; -fx-padding: 8 20;"/>
+                                    styleClass="button-primary"/>
                             <Button text="Clear Filters" onAction="#handleClearFilters"
-                                    style="-fx-background-color: #9e9e9e; -fx-text-fill: white; -fx-padding: 8 20;"/>
+                                    styleClass="button-primary"/>
                         </HBox>
                     </GridPane>
                 </VBox>
 
                 <!-- Students Table -->
-                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
-                    <Label text="Gifted Students" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                <VBox spacing="15" styleClass="section-container">
+                    <Label text="Gifted Students" styleClass="section-title"/>
 
                     <TableView fx:id="studentsTableView" VBox.vgrow="ALWAYS" prefHeight="400">
                         <columns>
@@ -201,13 +191,13 @@
 
     <!-- Bottom: Action Buttons -->
     <bottom>
-        <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+        <HBox spacing="15" alignment="CENTER_RIGHT" styleClass="footer-bar">
             <Button text="Add Gifted Student" onAction="#handleAddGiftedStudent"
-                    style="-fx-background-color: #6a1b9a; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30; -fx-cursor: hand;"/>
+                    styleClass="button-primary"/>
             <Button text="Export Report" onAction="#handleExportReport"
-                    style="-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30; -fx-cursor: hand;"/>
+                    styleClass="button-primary"/>
             <Button text="Refresh" onAction="#handleRefresh"
-                    style="-fx-background-color: #388e3c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30; -fx-cursor: hand;"/>
+                    styleClass="button-primary"/>
         </HBox>
     </bottom>
 

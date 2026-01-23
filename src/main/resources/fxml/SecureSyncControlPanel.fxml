@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.SecureSyncControlPanelController"
+            styleClass="secure-sync-panel">
+
+    <!-- Header -->
+    <top>
+        <VBox styleClass="panel-header" spacing="10">
+            <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <!-- Title and Security Status -->
+                <VBox spacing="5">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label fx:id="panelTitleLabel" text="Secure Sync Control Panel"
+                               style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                        <Circle fx:id="securityStatusIndicator" radius="8" fill="#4caf50"/>
+                        <Label fx:id="securityStatusLabel" text="System Secure"
+                               style="-fx-font-size: 12px; -fx-text-fill: #666;"/>
+                    </HBox>
+                    <Label text="Airgapped SIS Security Infrastructure Management"
+                           style="-fx-font-size: 12px; -fx-text-fill: #888;"/>
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Refresh and Status -->
+                <VBox alignment="CENTER_RIGHT" spacing="5">
+                    <Button fx:id="refreshAllButton" text="↻ Refresh All"
+                            onAction="#refreshAllData"
+                            style="-fx-background-color: #2196f3; -fx-text-fill: white;"/>
+                    <Label fx:id="lastRefreshLabel" text="Last refresh: --"
+                           style="-fx-font-size: 10px; -fx-text-fill: #888;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Security Warning Banner -->
+            <HBox alignment="CENTER" spacing="10"
+                  style="-fx-background-color: #fff3e0; -fx-padding: 8; -fx-background-radius: 4;">
+                <Label text="⚠ ADMIN ACCESS ONLY - All operations are logged for audit compliance"
+                       style="-fx-font-size: 11px; -fx-text-fill: #e65100;"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Main Content - Tab Pane -->
+    <center>
+        <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+            <!-- ==================== Dashboard Tab ==================== -->
+            <Tab text="📊 Dashboard" closable="false">
+                <ScrollPane fitToWidth="true">
+                    <VBox spacing="20">
+                        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                        <!-- Statistics Cards Row -->
+                        <HBox spacing="15" alignment="CENTER">
+                            <!-- Tokenization Stats -->
+                            <VBox styleClass="stat-card" spacing="5" alignment="CENTER"
+                                  style="-fx-background-color: #e3f2fd; -fx-padding: 15; -fx-background-radius: 8; -fx-pref-width: 150;">
+                                <Label text="Total Tokens" style="-fx-font-size: 11px; -fx-text-fill: #1565c0;"/>
+                                <Label fx:id="totalTokensLabel" text="0"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1565c0;"/>
+                            </VBox>
+
+                            <VBox styleClass="stat-card" spacing="5" alignment="CENTER"
+                                  style="-fx-background-color: #e8f5e9; -fx-padding: 15; -fx-background-radius: 8; -fx-pref-width: 150;">
+                                <Label text="Active Tokens" style="-fx-font-size: 11px; -fx-text-fill: #2e7d32;"/>
+                                <Label fx:id="activeTokensLabel" text="0"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                            </VBox>
+
+                            <VBox styleClass="stat-card" spacing="5" alignment="CENTER"
+                                  style="-fx-background-color: #fff3e0; -fx-padding: 15; -fx-background-radius: 8; -fx-pref-width: 150;">
+                                <Label text="Pending Devices" style="-fx-font-size: 11px; -fx-text-fill: #e65100;"/>
+                                <Label fx:id="pendingDevicesLabel" text="0"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+                            </VBox>
+
+                            <VBox styleClass="stat-card" spacing="5" alignment="CENTER"
+                                  style="-fx-background-color: #e8f5e9; -fx-padding: 15; -fx-background-radius: 8; -fx-pref-width: 150;">
+                                <Label text="Active Devices" style="-fx-font-size: 11px; -fx-text-fill: #2e7d32;"/>
+                                <Label fx:id="activeDevicesLabel" text="0"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                            </VBox>
+
+                            <VBox styleClass="stat-card" spacing="5" alignment="CENTER"
+                                  style="-fx-background-color: #ffebee; -fx-padding: 15; -fx-background-radius: 8; -fx-pref-width: 150;">
+                                <Label text="Revoked Certs" style="-fx-font-size: 11px; -fx-text-fill: #c62828;"/>
+                                <Label fx:id="revokedCertsLabel" text="0"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                            </VBox>
+
+                            <VBox styleClass="stat-card" spacing="5" alignment="CENTER"
+                                  style="-fx-background-color: #f3e5f5; -fx-padding: 15; -fx-background-radius: 8; -fx-pref-width: 150;">
+                                <Label text="Burst Queue" style="-fx-font-size: 11px; -fx-text-fill: #6a1b9a;"/>
+                                <Label fx:id="burstQueueLabel" text="0"
+                                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #6a1b9a;"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Charts and Activity Row -->
+                        <HBox spacing="20" HBox.hgrow="ALWAYS">
+                            <!-- Token Status Chart -->
+                            <VBox spacing="10" HBox.hgrow="ALWAYS"
+                                  style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                                <Label text="Token Status Distribution" style="-fx-font-weight: bold;"/>
+                                <PieChart fx:id="tokenStatusChart" prefHeight="200" legendVisible="true"/>
+                            </VBox>
+
+                            <!-- Sync Activity Chart -->
+                            <VBox spacing="10" HBox.hgrow="ALWAYS"
+                                  style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                                <Label text="Sync Activity (Last 24 Hours)" style="-fx-font-weight: bold;"/>
+                                <LineChart fx:id="syncActivityChart" prefHeight="200">
+                                    <xAxis><CategoryAxis label="Time"/></xAxis>
+                                    <yAxis><NumberAxis label="Entries"/></yAxis>
+                                </LineChart>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Activity and Alerts Row -->
+                        <HBox spacing="20" HBox.hgrow="ALWAYS">
+                            <!-- Recent Activity -->
+                            <VBox spacing="10" HBox.hgrow="ALWAYS"
+                                  style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                                <Label text="Recent Activity" style="-fx-font-weight: bold;"/>
+                                <ListView fx:id="recentActivityList" prefHeight="200"/>
+                            </VBox>
+
+                            <!-- Security Alerts -->
+                            <VBox spacing="10" HBox.hgrow="ALWAYS"
+                                  style="-fx-background-color: #fff8e1; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                                <Label text="🔒 Security Alerts" style="-fx-font-weight: bold; -fx-text-fill: #f57c00;"/>
+                                <ListView fx:id="securityAlertsList" prefHeight="200"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Sync Status -->
+                        <HBox spacing="20" alignment="CENTER"
+                              style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                            <VBox spacing="5" alignment="CENTER">
+                                <Label text="Last Sync" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
+                                <Label fx:id="lastSyncLabel" text="Never" style="-fx-font-weight: bold;"/>
+                            </VBox>
+                            <Separator orientation="VERTICAL"/>
+                            <VBox spacing="5" alignment="CENTER">
+                                <Label text="Total Synced" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
+                                <Label fx:id="totalSyncedLabel" text="0" style="-fx-font-weight: bold;"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- ==================== Tokenization Tab ==================== -->
+            <Tab text="🔑 Tokenization" closable="false">
+                <VBox spacing="15">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                    <!-- Toolbar -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <TextField fx:id="tokenSearchField" promptText="Search tokens..."
+                                   prefWidth="200"/>
+                        <ComboBox fx:id="tokenStatusFilter" promptText="Status" prefWidth="120"/>
+                        <ComboBox fx:id="schoolYearFilter" promptText="School Year" prefWidth="120"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Button fx:id="generateAllTokensButton" text="Generate All Tokens"
+                                onAction="#handleGenerateAllTokens"
+                                style="-fx-background-color: #4caf50; -fx-text-fill: white;"/>
+                        <Button fx:id="annualRotationButton" text="Annual Rotation"
+                                onAction="#handleAnnualRotation"
+                                style="-fx-background-color: #ff9800; -fx-text-fill: white;"/>
+                        <Button fx:id="exportTokensButton" text="Export Tokens"
+                                onAction="#handleExportTokens"
+                                style="-fx-background-color: #2196f3; -fx-text-fill: white;"/>
+                    </HBox>
+
+                    <!-- Token Table -->
+                    <TableView fx:id="tokenTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="tokenValueColumn" text="Token" prefWidth="120"/>
+                            <TableColumn fx:id="studentIdColumn" text="Student ID" prefWidth="100"/>
+                            <TableColumn fx:id="tokenSchoolYearColumn" text="School Year" prefWidth="100"/>
+                            <TableColumn fx:id="tokenCreatedColumn" text="Created" prefWidth="140"/>
+                            <TableColumn fx:id="tokenExpiresColumn" text="Expires" prefWidth="140"/>
+                            <TableColumn fx:id="tokenStatusColumn" text="Status" prefWidth="80"/>
+                            <TableColumn fx:id="tokenActionsColumn" text="Actions" prefWidth="150"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No tokens found. Click 'Generate All Tokens' to create tokens for all students."/>
+                        </placeholder>
+                    </TableView>
+
+                    <!-- Footer -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label fx:id="tokenCountLabel" text="0 tokens"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label text="Note: Tokens are anonymized - no PII is stored with tokens"
+                               style="-fx-font-size: 10px; -fx-text-fill: #888;"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- ==================== Device Management Tab ==================== -->
+            <Tab text="📱 Device Management" closable="false">
+                <VBox spacing="15">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                    <!-- Pending Devices Section -->
+                    <TitledPane text="Pending Device Registrations" expanded="true">
+                        <VBox spacing="10">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label fx:id="pendingDeviceCountLabel" text="0"
+                                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+                                <Label text="devices pending approval"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Button fx:id="approveAllButton" text="Approve All"
+                                        onAction="#handleApproveAllDevices"
+                                        style="-fx-background-color: #4caf50; -fx-text-fill: white;"/>
+                            </HBox>
+
+                            <TableView fx:id="pendingDeviceTable" prefHeight="200">
+                                <columns>
+                                    <TableColumn fx:id="pendingDeviceIdColumn" text="Device ID" prefWidth="100"/>
+                                    <TableColumn fx:id="pendingAccountColumn" text="Account Token" prefWidth="120"/>
+                                    <TableColumn fx:id="pendingMacColumn" text="MAC Address" prefWidth="140"/>
+                                    <TableColumn fx:id="pendingDeviceNameColumn" text="Device Name" prefWidth="150"/>
+                                    <TableColumn fx:id="pendingRequestedColumn" text="Requested" prefWidth="140"/>
+                                    <TableColumn fx:id="pendingActionsColumn" text="Actions" prefWidth="150"/>
+                                </columns>
+                                <placeholder>
+                                    <Label text="No pending device registrations"/>
+                                </placeholder>
+                            </TableView>
+                        </VBox>
+                    </TitledPane>
+
+                    <!-- Active Devices Section -->
+                    <TitledPane text="Active Devices" expanded="true" VBox.vgrow="ALWAYS">
+                        <VBox spacing="10">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label fx:id="activeDeviceCountLabel" text="0"
+                                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                                <Label text="active devices"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Button fx:id="exportCRLButton" text="Export CRL"
+                                        onAction="#handleExportCRL"
+                                        style="-fx-background-color: #2196f3; -fx-text-fill: white;"/>
+                            </HBox>
+
+                            <TableView fx:id="activeDeviceTable" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="activeDeviceIdColumn" text="Device ID" prefWidth="100"/>
+                                    <TableColumn fx:id="activeAccountColumn" text="Account Token" prefWidth="120"/>
+                                    <TableColumn fx:id="activeMacColumn" text="MAC Address" prefWidth="140"/>
+                                    <TableColumn fx:id="activeCertSerialColumn" text="Certificate" prefWidth="180"/>
+                                    <TableColumn fx:id="activeCertExpiresColumn" text="Cert Expires" prefWidth="120"/>
+                                    <TableColumn fx:id="activeLastSeenColumn" text="Last Seen" prefWidth="120"/>
+                                    <TableColumn fx:id="activeActionsColumn" text="Actions" prefWidth="150"/>
+                                </columns>
+                                <placeholder>
+                                    <Label text="No active devices"/>
+                                </placeholder>
+                            </TableView>
+                        </VBox>
+                    </TitledPane>
+                </VBox>
+            </Tab>
+
+            <!-- ==================== Sync Operations Tab ==================== -->
+            <Tab text="🔄 Sync Operations" closable="false">
+                <HBox spacing="15">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                    <!-- Left Panel - Controls -->
+                    <VBox spacing="15" prefWidth="350">
+                        <!-- Burst Queue Status -->
+                        <VBox spacing="10"
+                              style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                            <Label text="Burst Queue Status" style="-fx-font-weight: bold;"/>
+                            <HBox spacing="20">
+                                <VBox spacing="3">
+                                    <Label text="Queue Size" style="-fx-font-size: 10px; -fx-text-fill: #888;"/>
+                                    <Label fx:id="burstQueueSizeLabel" text="0"
+                                           style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                                </VBox>
+                                <VBox spacing="3">
+                                    <Label text="Oldest Entry" style="-fx-font-size: 10px; -fx-text-fill: #888;"/>
+                                    <Label fx:id="oldestEntryLabel" text="None"
+                                           style="-fx-font-size: 14px;"/>
+                                </VBox>
+                            </HBox>
+                            <ProgressBar fx:id="syncProgressBar" progress="0" prefWidth="320"/>
+                            <Label fx:id="syncStatusLabel" text="Ready"
+                                   style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
+                        </VBox>
+
+                        <!-- Sync Actions -->
+                        <VBox spacing="10"
+                              style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                            <Label text="Sync Actions" style="-fx-font-weight: bold;"/>
+
+                            <Button fx:id="processBurstButton" text="▶ Process Burst Queue"
+                                    onAction="#handleProcessBurstQueue"
+                                    prefWidth="320"
+                                    style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14px;"/>
+
+                            <Button fx:id="generateEnrollmentButton" text="📦 Generate Enrollment Batch"
+                                    onAction="#handleGenerateEnrollmentBatch"
+                                    prefWidth="320"
+                                    style="-fx-background-color: #2196f3; -fx-text-fill: white;"/>
+
+                            <Button fx:id="generateCRLSyncButton" text="🔒 Generate CRL Sync"
+                                    onAction="#handleGenerateCRLSync"
+                                    prefWidth="320"
+                                    style="-fx-background-color: #ff9800; -fx-text-fill: white;"/>
+                        </VBox>
+
+                        <!-- Data Flow Diagram -->
+                        <VBox spacing="5"
+                              style="-fx-background-color: #f5f5f5; -fx-padding: 15; -fx-background-radius: 8;">
+                            <Label text="Data Flow (One-Way)" style="-fx-font-weight: bold; -fx-font-size: 11px;"/>
+                            <Label text="Server 1 (SIS) → Server 3 (DMZ) → Server 2 (External)"
+                                   style="-fx-font-size: 10px; -fx-font-family: monospace;"/>
+                            <Label text="• Tokenized data only (no PII)"
+                                   style="-fx-font-size: 10px; -fx-text-fill: #666;"/>
+                            <Label text="• AES-256-GCM encrypted"
+                                   style="-fx-font-size: 10px; -fx-text-fill: #666;"/>
+                            <Label text="• Air-gap transfer required"
+                                   style="-fx-font-size: 10px; -fx-text-fill: #666;"/>
+                        </VBox>
+                    </VBox>
+
+                    <!-- Right Panel - History and Log -->
+                    <VBox spacing="15" HBox.hgrow="ALWAYS">
+                        <!-- Sync History -->
+                        <VBox spacing="10" VBox.vgrow="ALWAYS"
+                              style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                            <Label text="Sync History" style="-fx-font-weight: bold;"/>
+                            <TableView fx:id="syncHistoryTable" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="syncPackageIdColumn" text="Package ID" prefWidth="180"/>
+                                    <TableColumn fx:id="syncTypeColumn" text="Type" prefWidth="140"/>
+                                    <TableColumn fx:id="syncEntryCountColumn" text="Entries" prefWidth="70"/>
+                                    <TableColumn fx:id="syncChecksumColumn" text="Checksum" prefWidth="120"/>
+                                    <TableColumn fx:id="syncCreatedColumn" text="Created" prefWidth="140"/>
+                                </columns>
+                                <placeholder>
+                                    <Label text="No sync history"/>
+                                </placeholder>
+                            </TableView>
+                        </VBox>
+
+                        <!-- Sync Log -->
+                        <VBox spacing="10" prefHeight="200"
+                              style="-fx-background-color: #263238; -fx-padding: 15; -fx-background-radius: 8;">
+                            <Label text="Sync Log" style="-fx-font-weight: bold; -fx-text-fill: #90a4ae;"/>
+                            <TextArea fx:id="syncLogArea" VBox.vgrow="ALWAYS"
+                                      style="-fx-control-inner-background: #263238; -fx-text-fill: #b0bec5; -fx-font-family: 'Consolas', monospace; -fx-font-size: 11px;"
+                                      wrapText="true"/>
+                        </VBox>
+                    </VBox>
+                </HBox>
+            </Tab>
+
+            <!-- ==================== CRL Management Tab ==================== -->
+            <Tab text="📜 CRL Management" closable="false">
+                <VBox spacing="15">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                    <!-- CRL Summary -->
+                    <HBox spacing="20" alignment="CENTER"
+                          style="-fx-background-color: #ffebee; -fx-padding: 15; -fx-background-radius: 8;">
+                        <VBox spacing="5" alignment="CENTER">
+                            <Label text="Total Revoked" style="-fx-font-size: 11px; -fx-text-fill: #c62828;"/>
+                            <Label fx:id="crlTotalLabel" text="0"
+                                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                        </VBox>
+                        <Separator orientation="VERTICAL"/>
+                        <VBox spacing="5" alignment="CENTER">
+                            <Label text="Last Generated" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
+                            <Label fx:id="crlLastGeneratedLabel" text="--"
+                                   style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                        </VBox>
+                        <Separator orientation="VERTICAL"/>
+                        <VBox spacing="5" alignment="CENTER">
+                            <Label text="CRL Checksum" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
+                            <Label fx:id="crlChecksumLabel" text="--"
+                                   style="-fx-font-size: 14px; -fx-font-family: monospace;"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <VBox spacing="5">
+                            <Button fx:id="exportCRLFileButton" text="Export CRL File"
+                                    onAction="#handleExportCRL"
+                                    style="-fx-background-color: #2196f3; -fx-text-fill: white;"/>
+                            <Button fx:id="regenerateCRLButton" text="Regenerate CRL"
+                                    onAction="#handleRegenerateCRL"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- CRL Table -->
+                    <TableView fx:id="crlTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="crlSerialColumn" text="Certificate Serial" prefWidth="250"/>
+                            <TableColumn fx:id="crlRevokedColumn" text="Revoked At" prefWidth="180"/>
+                            <TableColumn fx:id="crlReasonColumn" text="Reason" prefWidth="300"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No certificates have been revoked"/>
+                        </placeholder>
+                    </TableView>
+
+                    <!-- CRL Info -->
+                    <HBox spacing="10" alignment="CENTER"
+                          style="-fx-background-color: #e3f2fd; -fx-padding: 10; -fx-background-radius: 4;">
+                        <Label text="ℹ️ Certificate Revocation List (CRL) must be synced to Server 3 after any revocation"
+                               style="-fx-font-size: 11px; -fx-text-fill: #1565c0;"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- ==================== Help Tab ==================== -->
+            <Tab text="❓ Help" closable="false">
+                <ScrollPane fitToWidth="true">
+                    <VBox spacing="20">
+                        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                        <Label text="Secure Sync Control Panel - Help"
+                               style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+                        <!-- Security Architecture -->
+                        <TitledPane text="Security Architecture" expanded="true">
+                            <VBox spacing="10">
+                                <Label wrapText="true" text="The Heronix SIS operates in an airgapped environment with no external connections. External services (parent portal, mobile apps) communicate through a secure tokenized system."/>
+
+                                <Label text="Data Flow:" style="-fx-font-weight: bold;"/>
+                                <Label text="Server 1 (Airgapped SIS) → Server 3 (DMZ) → Server 2 (External Services)"
+                                       style="-fx-font-family: monospace;"/>
+
+                                <Label text="Key Principles:" style="-fx-font-weight: bold;"/>
+                                <Label text="• One-way data flow only (SIS never receives external data)"/>
+                                <Label text="• All student data is tokenized (no PII leaves Server 1)"/>
+                                <Label text="• AES-256-GCM encryption for all sync packages"/>
+                                <Label text="• X.509 certificate-based device authentication"/>
+                            </VBox>
+                        </TitledPane>
+
+                        <!-- Tokenization -->
+                        <TitledPane text="Tokenization">
+                            <VBox spacing="10">
+                                <Label text="Token Format: STU-[6-char-hex] (e.g., STU-7A3F2E)"
+                                       style="-fx-font-family: monospace;"/>
+                                <Label text="Algorithm: SHA-256(student_id + salt + timestamp + school_year)"/>
+                                <Label text="Collision Resistance: 2^24 possible tokens (16.7M combinations)"/>
+                                <Label text="Rotation: Annual automatic + on-demand"/>
+                                <Label wrapText="true" text="Even if external systems are compromised, tokens cannot be reversed to reveal student identities."/>
+                            </VBox>
+                        </TitledPane>
+
+                        <!-- Device Authentication -->
+                        <TitledPane text="Device Authentication">
+                            <VBox spacing="10">
+                                <Label text="• X.509 certificates (2048-bit RSA)"/>
+                                <Label text="• MAC address whitelisting"/>
+                                <Label text="• Device fingerprinting for fraud detection"/>
+                                <Label text="• Maximum 5 devices per account"/>
+                                <Label text="• Certificate Revocation List (CRL) for compromised devices"/>
+                            </VBox>
+                        </TitledPane>
+
+                        <!-- Sync Operations -->
+                        <TitledPane text="Sync Operations">
+                            <VBox spacing="10">
+                                <Label text="Real-time Sync: Grade changes (&lt; 60 seconds via burst queue)"/>
+                                <Label text="Batch Sync: Enrollment updates (every 15 minutes)"/>
+                                <Label text="Encryption: AES-256-GCM"/>
+                                <Label text="Validation: SHA-256 checksums, retry logic"/>
+                            </VBox>
+                        </TitledPane>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+        </TabPane>
+    </center>
+
+    <!-- Footer -->
+    <bottom>
+        <HBox alignment="CENTER" spacing="20"
+              style="-fx-background-color: #f5f5f5; -fx-padding: 10;">
+            <Label text="🔒 Airgapped SIS - No External Connections"
+                   style="-fx-font-size: 10px; -fx-text-fill: #666;"/>
+            <Label text="|" style="-fx-text-fill: #ccc;"/>
+            <Label text="All operations logged for audit compliance"
+                   style="-fx-font-size: 10px; -fx-text-fill: #666;"/>
+            <Label text="|" style="-fx-text-fill: #ccc;"/>
+            <Label text="Secure Sync v1.0.0"
+                   style="-fx-font-size: 10px; -fx-text-fill: #888;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

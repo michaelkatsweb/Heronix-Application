@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<DialogPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.dialogs.StaffFormDialogController"
+            prefWidth="700" prefHeight="650">
+
+    <header>
+        <VBox spacing="5">
+            <Label fx:id="dialogTitle" text="Add New Staff Member" styleClass="dialog-title"/>
+            <Label fx:id="dialogSubtitle" text="Enter staff member information" styleClass="dialog-subtitle"/>
+        </VBox>
+    </header>
+
+    <content>
+        <ScrollPane fitToWidth="true" styleClass="dialog-scroll">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+
+                <!-- Occupation Selection (Critical - determines form visibility) -->
+                <VBox styleClass="form-section" spacing="10">
+                    <Label text="Position Information" styleClass="section-header"/>
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="30"/>
+                            <ColumnConstraints percentWidth="70"/>
+                        </columnConstraints>
+
+                        <Label text="Occupation Type:*" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="occupationCombo" promptText="Select Occupation" prefWidth="350"
+                                  GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Job Title:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="jobTitleField" promptText="e.g., Lead Custodian, Senior Secretary"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Department:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="departmentCombo" editable="true" promptText="Select or enter department"
+                                  prefWidth="350" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Campus:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="campusCombo" promptText="Select Campus" prefWidth="350"
+                                  GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Personal Information -->
+                <VBox styleClass="form-section" spacing="10">
+                    <Label text="Personal Information" styleClass="section-header"/>
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="30"/>
+                            <ColumnConstraints percentWidth="70"/>
+                        </columnConstraints>
+
+                        <Label text="Title:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="titleCombo" promptText="Select" prefWidth="150"
+                                  GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="First Name:*" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="firstNameField" promptText="First Name"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Middle Name:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="middleNameField" promptText="Middle Name (optional)"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Last Name:*" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField fx:id="lastNameField" promptText="Last Name"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                        <Label text="Preferred Name:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <TextField fx:id="preferredNameField" promptText="Preferred Name (optional)"
+                                   GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                        <Label text="Employee ID:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <TextField fx:id="employeeIdField" promptText="Auto-generated if empty"
+                                   GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Contact Information -->
+                <VBox styleClass="form-section" spacing="10">
+                    <Label text="Contact Information" styleClass="section-header"/>
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="30"/>
+                            <ColumnConstraints percentWidth="70"/>
+                        </columnConstraints>
+
+                        <Label text="Email:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="emailField" promptText="email@school.edu"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Phone:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="phoneField" promptText="(555) 123-4567"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Mobile:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="mobileField" promptText="(555) 987-6543"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Office/Room:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField fx:id="officeRoomField" promptText="Room number or location"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Employment Information -->
+                <VBox styleClass="form-section" spacing="10">
+                    <Label text="Employment Information" styleClass="section-header"/>
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="30"/>
+                            <ColumnConstraints percentWidth="70"/>
+                        </columnConstraints>
+
+                        <Label text="Hire Date:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="hireDatePicker" prefWidth="200"
+                                    GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Employment Type:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="employmentTypeCombo" promptText="Select" prefWidth="200"
+                                  GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Work Schedule:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="workHoursField" promptText="e.g., 7:30 AM - 4:00 PM"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Years Experience:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Spinner fx:id="experienceSpinner" prefWidth="100"
+                                 GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                        <Label text="Status:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="activeCheckbox" text="Active" selected="true"
+                                  GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Paraprofessional-specific fields (visible only for para occupations) -->
+                <VBox fx:id="paraSection" styleClass="form-section" spacing="10" visible="false" managed="false">
+                    <Label text="Paraprofessional Assignment" styleClass="section-header"/>
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="30"/>
+                            <ColumnConstraints percentWidth="70"/>
+                        </columnConstraints>
+
+                        <Label text="Assignment Type:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="paraAssignmentCombo" promptText="Select Assignment Type"
+                                  prefWidth="250" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Max Students:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Spinner fx:id="maxStudentsSpinner" prefWidth="100"
+                                 GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Specialized Training:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <HBox spacing="15" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                            <CheckBox fx:id="medicalTrainingCheck" text="Medical Training"/>
+                            <CheckBox fx:id="behavioralTrainingCheck" text="Behavioral Training"/>
+                        </HBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Driver-specific fields (visible only for transportation staff) -->
+                <VBox fx:id="driverSection" styleClass="form-section" spacing="10" visible="false" managed="false">
+                    <Label text="Driver Credentials" styleClass="section-header"/>
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="30"/>
+                            <ColumnConstraints percentWidth="70"/>
+                        </columnConstraints>
+
+                        <Label text="CDL Number:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="cdlNumberField" promptText="CDL License Number"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="CDL Expiration:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="cdlExpirationPicker" prefWidth="200"
+                                    GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Nurse-specific fields -->
+                <VBox fx:id="nurseSection" styleClass="form-section" spacing="10" visible="false" managed="false">
+                    <Label text="Nursing Credentials" styleClass="section-header"/>
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="30"/>
+                            <ColumnConstraints percentWidth="70"/>
+                        </columnConstraints>
+
+                        <Label text="License Number:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="nursingLicenseField" promptText="Nursing License Number"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="License Expiration:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="nursingExpirationPicker" prefWidth="200"
+                                    GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Counselor-specific fields -->
+                <VBox fx:id="counselorSection" styleClass="form-section" spacing="10" visible="false" managed="false">
+                    <Label text="Counseling Credentials" styleClass="section-header"/>
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="30"/>
+                            <ColumnConstraints percentWidth="70"/>
+                        </columnConstraints>
+
+                        <Label text="License Type:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="counselorLicenseTypeCombo" promptText="e.g., LPC, LCSW"
+                                  prefWidth="200" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="License Number:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="counselorLicenseField" promptText="License Number"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="License Expiration:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="counselorExpirationPicker" prefWidth="200"
+                                    GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Notes -->
+                <VBox styleClass="form-section" spacing="10">
+                    <Label text="Notes" styleClass="section-header"/>
+                    <TextArea fx:id="notesArea" promptText="Additional notes..." prefRowCount="3"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </content>
+
+    <buttonTypes>
+        <ButtonType fx:constant="CANCEL"/>
+        <ButtonType fx:constant="OK"/>
+    </buttonTypes>
+</DialogPane>

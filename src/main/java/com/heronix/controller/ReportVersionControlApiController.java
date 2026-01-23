@@ -23,7 +23,7 @@ import java.util.Optional;
  * @since Phase 72 - Report Version Control & History
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/versions")
 @RequiredArgsConstructor
 public class ReportVersionControlApiController {

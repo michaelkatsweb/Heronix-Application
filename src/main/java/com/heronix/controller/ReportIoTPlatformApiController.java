@@ -39,7 +39,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 121 - Report Internet of Things (IoT) Platform
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/iot-platform")
 @RequiredArgsConstructor
 @Slf4j

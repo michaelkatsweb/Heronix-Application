@@ -5,6 +5,7 @@ import com.heronix.model.domain.WithdrawalRecord;
 import com.heronix.model.domain.WithdrawalRecord.WithdrawalStatus;
 import com.heronix.model.domain.WithdrawalRecord.FinalStatus;
 import com.heronix.repository.StudentRepository;
+import com.heronix.security.SecurityContext;
 import com.heronix.service.WithdrawalService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -285,7 +286,7 @@ public class StudentWithdrawalFormController {
             currentWithdrawal = withdrawalService.createWithdrawal(
                 currentStudent.getId(),
                 withdrawalDatePicker.getValue(),
-                1L  // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             withdrawalNumberField.setText(currentWithdrawal.getWithdrawalNumber());
@@ -358,7 +359,7 @@ public class StudentWithdrawalFormController {
             // Save to database
             currentWithdrawal = withdrawalService.updateWithdrawal(
                 currentWithdrawal,
-                1L  // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             isDirty = false;
@@ -404,7 +405,7 @@ public class StudentWithdrawalFormController {
             currentWithdrawal = withdrawalService.completeWithdrawal(
                 currentWithdrawal.getId(),
                 finalStatus,
-                1L  // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             if (statusLabel != null) {

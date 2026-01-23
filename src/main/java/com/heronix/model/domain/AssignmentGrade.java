@@ -247,6 +247,17 @@ public class AssignmentGrade {
         this.updatedAt = LocalDateTime.now();
     }
 
+    /**
+     * Get excuse reason (alias for comments when grade is excused)
+     * Returns the reason/note for why this grade was excused
+     */
+    public String getExcuseReason() {
+        if (Boolean.TRUE.equals(excused)) {
+            return comments;
+        }
+        return null;
+    }
+
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();

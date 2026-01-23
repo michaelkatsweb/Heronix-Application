@@ -93,6 +93,14 @@ public class ApiSecurityConfig {
                 .requestMatchers("/swagger-ui/**").permitAll()          // Swagger UI
                 .requestMatchers("/v3/api-docs/**").permitAll()         // OpenAPI spec
 
+                // Inter-service sync endpoints - internal service communication
+                .requestMatchers("/api/sync/**").permitAll()            // Service sync endpoints
+                .requestMatchers("/api/teacher/all").permitAll()        // Teacher sync for Heronix-Talk
+                .requestMatchers("/api/teacher/employee/**").permitAll() // Teacher lookup for Heronix-Talk auth
+                .requestMatchers("/api/teacher/sync/**").permitAll()    // Teacher portal sync
+                .requestMatchers("/api/config/discovery").permitAll()   // Service discovery
+                .requestMatchers("/api/config/client").permitAll()      // Client configuration
+
                 // Protected endpoints - require authentication
                 .requestMatchers("/api/**").authenticated()
 

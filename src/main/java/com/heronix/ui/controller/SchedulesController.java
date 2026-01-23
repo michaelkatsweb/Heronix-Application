@@ -115,7 +115,15 @@ public class SchedulesController {
         setupTableColumns();
         setupFilters();
         setupSelectionListener();
-        loadSchedules();
+
+        // Delay data loading to ensure UI is fully initialized
+        Platform.runLater(() -> {
+            try {
+                loadSchedules();
+            } catch (Exception e) {
+                log.error("Error during initial schedule load", e);
+            }
+        });
     }
 
     // ========================================================================

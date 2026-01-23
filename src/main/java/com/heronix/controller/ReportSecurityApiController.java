@@ -39,7 +39,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 79 - Report Security & Access Control
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/security")
 @RequiredArgsConstructor
 @Slf4j

@@ -23,8 +23,8 @@ import java.util.Map;
  * @version 1.0.0
  * @since December 29, 2025
  */
-@RestController
-@RequestMapping("/api/gradebook")
+// @RestController  // Disabled - duplicate of GradebookApiController
+// @RequestMapping("/api/gradebook")
 @RequiredArgsConstructor
 public class GradebookManagementApiController {
 

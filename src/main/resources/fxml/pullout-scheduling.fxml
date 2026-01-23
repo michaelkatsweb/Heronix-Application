@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.PullOutSchedulingController"
-            stylesheets="@../css/main-style.css"
             prefWidth="1400" prefHeight="900">
+
 
     <!-- Header -->
     <top>

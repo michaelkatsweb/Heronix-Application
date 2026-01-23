@@ -45,7 +45,7 @@
 
                     <!-- Statistics Cards -->
                     <VBox spacing="15">
-                        <Label text="Today's Statistics" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        <Label text="Today's Statistics" styleClass="section-title"/>
                         <GridPane hgap="15" vgap="15">
                             <columnConstraints>
                                 <ColumnConstraints percentWidth="16.66"/>
@@ -58,11 +58,11 @@
 
                             <!-- Active Visits -->
                             <VBox spacing="10" styleClass="stat-card"
-                                  style="-fx-background-color: #fff3e0;"
+                                  styleClass="card, metric-warning"
                                   GridPane.columnIndex="0" GridPane.rowIndex="0">
                                 <Label text="Active Visits" styleClass="stat-label"/>
                                 <Label fx:id="activeVisitsLabel" text="0"
-                                       styleClass="stat-value" style="-fx-text-fill: #f57c00;"/>
+                                       styleClass="stat-value"/>
                                 <Label text="In Office Now" styleClass="stat-sublabel"/>
                             </VBox>
 
@@ -74,22 +74,20 @@
                             </VBox>
 
                             <!-- Sent Home -->
-                            <VBox spacing="10" styleClass="stat-card"
-                                  style="-fx-background-color: #ffebee;"
+                            <VBox spacing="10" styleClass="stat-card card metric-danger"
                                   GridPane.columnIndex="2" GridPane.rowIndex="0">
                                 <Label text="Sent Home" styleClass="stat-label"/>
                                 <Label fx:id="sentHomeLabel" text="0"
-                                       styleClass="stat-value" style="-fx-text-fill: #d32f2f;"/>
+                                       styleClass="stat-value"/>
                                 <Label text="Today" styleClass="stat-sublabel"/>
                             </VBox>
 
                             <!-- Parent Notifications Pending -->
-                            <VBox spacing="10" styleClass="stat-card"
-                                  style="-fx-background-color: #fff9c4;"
+                            <VBox spacing="10" styleClass="stat-card card"
                                   GridPane.columnIndex="3" GridPane.rowIndex="0">
                                 <Label text="Pending Notifications" styleClass="stat-label"/>
                                 <Label fx:id="pendingNotificationsLabel" text="0"
-                                       styleClass="stat-value" style="-fx-text-fill: #f57f17;"/>
+                                       styleClass="stat-value"/>
                                 <Label text="Parents to Contact" styleClass="stat-sublabel"/>
                             </VBox>
 
@@ -101,12 +99,11 @@
                             </VBox>
 
                             <!-- High Risk Students -->
-                            <VBox spacing="10" styleClass="stat-card"
-                                  style="-fx-background-color: #fce4ec;"
+                            <VBox spacing="10" styleClass="stat-card card"
                                   GridPane.columnIndex="5" GridPane.rowIndex="0">
                                 <Label text="High Risk" styleClass="stat-label"/>
                                 <Label fx:id="highRiskLabel" text="0"
-                                       styleClass="stat-value" style="-fx-text-fill: #c2185b;"/>
+                                       styleClass="stat-value"/>
                                 <Label text="Medical Conditions" styleClass="stat-sublabel"/>
                             </VBox>
                         </GridPane>
@@ -169,7 +166,7 @@
                     <VBox spacing="10">
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label text="Nurse Visits Log"
-                                   style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                                   styleClass="section-title"/>
                             <Region HBox.hgrow="ALWAYS"/>
                             <TextField fx:id="searchField" promptText="Search by student name..."
                                        prefWidth="250"/>
@@ -218,9 +215,9 @@
 
                     <!-- Pending Parent Notifications -->
                     <VBox spacing="10" styleClass="sidebar-section"
-                          style="-fx-background-color: #fff9c4; -fx-padding: 10;">
+                          styleClass="card">
                         <Label text="⚠ Pending Notifications"
-                               style="-fx-font-weight: bold; -fx-text-fill: #f57f17;"/>
+                               styleClass="form-label"/>
                         <ListView fx:id="pendingNotificationsList" prefHeight="120">
                             <placeholder>
                                 <Label text="No pending notifications"/>
@@ -231,7 +228,7 @@
                     <!-- Frequent Visitors -->
                     <VBox spacing="10" styleClass="sidebar-section">
                         <Label text="Frequent Visitors (Last 30 Days)"
-                               style="-fx-font-weight: bold;"/>
+                               styleClass="form-label"/>
                         <ListView fx:id="frequentVisitorsList" prefHeight="150">
                             <placeholder>
                                 <Label text="No frequent visitors"/>
@@ -241,9 +238,9 @@
 
                     <!-- High-Risk Students -->
                     <VBox spacing="10" styleClass="sidebar-section"
-                          style="-fx-background-color: #fce4ec; -fx-padding: 10;">
+                          styleClass="card">
                         <Label text="🩺 High-Risk Students"
-                               style="-fx-font-weight: bold; -fx-text-fill: #c2185b;"/>
+                               styleClass="form-label"/>
                         <ListView fx:id="highRiskStudentsList" prefHeight="150">
                             <placeholder>
                                 <Label text="No high-risk students"/>
@@ -254,7 +251,7 @@
                     <!-- Screenings Due -->
                     <VBox spacing="10" styleClass="sidebar-section">
                         <Label text="Screenings Due"
-                               style="-fx-font-weight: bold;"/>
+                               styleClass="form-label"/>
                         <VBox spacing="5">
                             <Label fx:id="visionScreeningsDueLabel" text="Vision: 0 students"/>
                             <Label fx:id="hearingScreeningsDueLabel" text="Hearing: 0 students"/>
@@ -263,7 +260,7 @@
 
                     <!-- Quick Actions -->
                     <VBox spacing="10" styleClass="sidebar-section">
-                        <Label text="Quick Actions" style="-fx-font-weight: bold;"/>
+                        <Label text="Quick Actions" styleClass="form-label"/>
                         <VBox spacing="5">
                             <Button text="Export Daily Report" onAction="#handleExportDaily"
                                     maxWidth="Infinity"/>

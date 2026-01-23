@@ -15,10 +15,13 @@ public enum CourseType {
     REGULAR("Regular"),
     HONORS("Honors"),
     AP("Advanced Placement (AP)"),
+    PRE_AP("Pre-AP"),
     IB("International Baccalaureate (IB)"),
     DUAL_ENROLLMENT("Dual Enrollment"),
+    DUAL_CREDIT("Dual Credit"),
     REMEDIAL("Remedial/Support"),
     GIFTED("Gifted/Talented"),
+    GIFTED_TALENTED("Gifted & Talented"),
     ELECTIVE("Elective");
 
     private final String displayName;

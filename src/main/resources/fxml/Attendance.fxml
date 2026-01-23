@@ -46,43 +46,39 @@ Location: src/main/resources/fxml/Attendance.fxml
                     <!-- Attendance Summary Cards -->
                     <HBox spacing="15">
                         <!-- Total Students Card -->
-                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
-                            <Label text="👥 Total Students" styleClass="label"/>
-                            <Label fx:id="totalStudentsLabel" text="0"
-                                   style="-fx-font-size: 32; -fx-font-weight: bold;"/>
+                        <VBox spacing="10" styleClass="card, metric-card" HBox.hgrow="ALWAYS">
+                            <Label text="Total Students" styleClass="metric-label"/>
+                            <Label fx:id="totalStudentsLabel" text="0" styleClass="metric-value"/>
                         </VBox>
 
                         <!-- Present Card -->
-                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
-                            <Label text="✅ Present" styleClass="label"/>
-                            <Label fx:id="presentCountLabel" text="0"
-                                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
+                        <VBox spacing="10" styleClass="card, metric-card, metric-success" HBox.hgrow="ALWAYS">
+                            <Label text="Present" styleClass="metric-label"/>
+                            <Label fx:id="presentCountLabel" text="0" styleClass="metric-value-success"/>
                         </VBox>
 
                         <!-- Absent Card -->
-                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
-                            <Label text="❌ Absent" styleClass="label"/>
-                            <Label fx:id="absentCountLabel" text="0"
-                                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #F44336;"/>
+                        <VBox spacing="10" styleClass="card, metric-card, metric-danger" HBox.hgrow="ALWAYS">
+                            <Label text="Absent" styleClass="metric-label"/>
+                            <Label fx:id="absentCountLabel" text="0" styleClass="metric-value-danger"/>
                         </VBox>
 
                         <!-- Tardy Card -->
-                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
-                            <Label text="⏰ Tardy" styleClass="label"/>
-                            <Label fx:id="tardyCountLabel" text="0"
-                                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #FF9800;"/>
+                        <VBox spacing="10" styleClass="card, metric-card, metric-warning" HBox.hgrow="ALWAYS">
+                            <Label text="Tardy" styleClass="metric-label"/>
+                            <Label fx:id="tardyCountLabel" text="0" styleClass="metric-value-warning"/>
                         </VBox>
                     </HBox>
 
                     <!-- Attendance Rate Section -->
                     <VBox spacing="10" styleClass="card">
                         <HBox alignment="CENTER_LEFT" spacing="10">
-                            <Label text="📈 Attendance Rate" styleClass="label"/>
+                            <Label text="Attendance Rate" styleClass="section-title"/>
                             <Region HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="attendanceRateLabel" text="0.0%"
-                                   style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+                            <Label fx:id="attendanceRateLabel" text="0.0%" styleClass="metric-value-small"/>
                         </HBox>
-                        <ProgressBar fx:id="attendanceRateProgress" prefWidth="Infinity" prefHeight="20"/>
+                        <ProgressBar fx:id="attendanceRateProgress" prefWidth="Infinity" prefHeight="20"
+                                     styleClass="compliance-progress"/>
                     </VBox>
 
                     <!-- Chronic Absence Alerts -->
@@ -124,24 +120,24 @@ Location: src/main/resources/fxml/Attendance.fxml
 
                     <HBox spacing="15" alignment="CENTER_LEFT">
                         <VBox spacing="5">
-                            <Label text="Date:" style="-fx-font-weight: bold;"/>
+                            <Label text="Date:" styleClass="form-label"/>
                             <DatePicker fx:id="attendanceDatePicker" prefWidth="180"/>
                         </VBox>
 
                         <VBox spacing="5">
-                            <Label text="Campus:" style="-fx-font-weight: bold;"/>
+                            <Label text="Campus:" styleClass="form-label"/>
                             <ComboBox fx:id="campusComboBox" promptText="Select Campus"
                                       prefWidth="200" onAction="#handleCampusChange"/>
                         </VBox>
 
                         <VBox spacing="5">
-                            <Label text="Course:" style="-fx-font-weight: bold;"/>
+                            <Label text="Course:" styleClass="form-label"/>
                             <ComboBox fx:id="courseComboBox" promptText="Select Course"
                                       prefWidth="300" onAction="#handleCourseChange"/>
                         </VBox>
 
                         <VBox spacing="5">
-                            <Label text="Period:" style="-fx-font-weight: bold;"/>
+                            <Label text="Period:" styleClass="form-label"/>
                             <ComboBox fx:id="periodComboBox" promptText="Select Period"
                                       prefWidth="100"/>
                         </VBox>
@@ -204,17 +200,17 @@ Location: src/main/resources/fxml/Attendance.fxml
 
                     <!-- Daily Reports Section -->
                     <VBox spacing="15" styleClass="card">
-                        <Label text="📊 Daily Reports" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                        <Label text="Daily Reports" styleClass="section-title"/>
 
                         <HBox spacing="15" alignment="CENTER_LEFT">
                             <VBox spacing="5">
-                                <Label text="Campus:" style="-fx-font-weight: bold;"/>
+                                <Label text="Campus:" styleClass="form-label"/>
                                 <ComboBox fx:id="reportCampusComboBox" promptText="Select Campus"
                                           prefWidth="200"/>
                             </VBox>
 
                             <VBox spacing="5">
-                                <Label text="Date:" style="-fx-font-weight: bold;"/>
+                                <Label text="Date:" styleClass="form-label"/>
                                 <DatePicker fx:id="reportDatePicker" prefWidth="180"/>
                             </VBox>
 
@@ -229,17 +225,17 @@ Location: src/main/resources/fxml/Attendance.fxml
 
                     <!-- Notifications Section -->
                     <VBox spacing="15" styleClass="card">
-                        <Label text="📧 Notifications" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                        <Label text="Notifications" styleClass="section-title"/>
 
                         <HBox spacing="15" alignment="CENTER_LEFT">
                             <VBox spacing="5">
-                                <Label text="Campus:" style="-fx-font-weight: bold;"/>
+                                <Label text="Campus:" styleClass="form-label"/>
                                 <ComboBox fx:id="notificationCampusComboBox" promptText="Select Campus"
                                           prefWidth="200"/>
                             </VBox>
 
                             <VBox spacing="5">
-                                <Label text="Date:" style="-fx-font-weight: bold;"/>
+                                <Label text="Date:" styleClass="form-label"/>
                                 <DatePicker fx:id="notificationDatePicker" prefWidth="180"/>
                             </VBox>
 
@@ -255,16 +251,16 @@ Location: src/main/resources/fxml/Attendance.fxml
 
                     <!-- Truancy Reports Section -->
                     <VBox spacing="15" styleClass="card">
-                        <Label text="⚠️ Truancy Reports" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                        <Label text="Truancy Reports" styleClass="section-title"/>
 
                         <HBox spacing="15" alignment="CENTER_LEFT">
                             <VBox spacing="5">
-                                <Label text="Start Date:" style="-fx-font-weight: bold;"/>
+                                <Label text="Start Date:" styleClass="form-label"/>
                                 <DatePicker fx:id="truancyStartDatePicker" prefWidth="180"/>
                             </VBox>
 
                             <VBox spacing="5">
-                                <Label text="End Date:" style="-fx-font-weight: bold;"/>
+                                <Label text="End Date:" styleClass="form-label"/>
                                 <DatePicker fx:id="truancyEndDatePicker" prefWidth="180"/>
                             </VBox>
 

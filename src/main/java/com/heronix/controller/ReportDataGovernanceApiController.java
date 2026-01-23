@@ -40,7 +40,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 108 - Report Data Governance & Compliance
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/governance")
 @RequiredArgsConstructor
 @Slf4j

@@ -38,7 +38,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 69 - Report Template System & Customization
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/templates")
 @RequiredArgsConstructor
 @Slf4j

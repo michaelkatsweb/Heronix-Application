@@ -8,6 +8,7 @@ import com.heronix.model.domain.Student;
 import com.heronix.repository.AttendanceRepository;
 import com.heronix.repository.CampusRepository;
 import com.heronix.repository.CourseRepository;
+import com.heronix.security.SecurityContext;
 import com.heronix.service.AttendanceNotificationService;
 import com.heronix.service.AttendanceDocumentService;
 import com.heronix.service.TruancyInterventionService;
@@ -104,27 +105,24 @@ public class AttendanceController {
     @FXML private ComboBox<Campus> campusComboBox;
     @FXML private ComboBox<Course> courseComboBox;
     @FXML private ComboBox<Integer> periodComboBox;
-    @FXML private Button loadRosterButton;
     @FXML private TableView<StudentAttendanceRow> periodAttendanceTable;
     @FXML private TableColumn<StudentAttendanceRow, String> studentIdCol;
-    @FXML private TableColumn<StudentAttendanceRow, String> studentNamePeriodCol;
+    @FXML private TableColumn<StudentAttendanceRow, String> studentNameCol2;
     @FXML private TableColumn<StudentAttendanceRow, String> gradeCol;
     @FXML private TableColumn<StudentAttendanceRow, AttendanceStatus> statusCol;
     @FXML private TableColumn<StudentAttendanceRow, String> notesCol;
-    @FXML private TableColumn<StudentAttendanceRow, String> periodActionsCol;
-    @FXML private Button saveAttendanceButton;
-    @FXML private Button markAllPresentButton;
-    @FXML private Label rosterCountLabel;
 
     // Quick Actions Tab
     @FXML private Tab quickActionsTab;
-    @FXML private DatePicker quickDatePicker;
-    @FXML private ComboBox<Campus> quickCampusComboBox;
-    @FXML private Button generateDailyReportButton;
-    @FXML private Button sendDailyNotificationsButton;
-    @FXML private Button viewChronicAbsencesButton;
-    @FXML private Button generateTruancyReportButton;
-    @FXML private TextArea quickActionsResultArea;
+    @FXML private ComboBox<Campus> reportCampusComboBox;
+    @FXML private DatePicker reportDatePicker;
+    @FXML private TextArea reportOutputArea;
+    @FXML private ComboBox<Campus> notificationCampusComboBox;
+    @FXML private DatePicker notificationDatePicker;
+    @FXML private TextArea notificationOutputArea;
+    @FXML private DatePicker truancyStartDatePicker;
+    @FXML private DatePicker truancyEndDatePicker;
+    @FXML private TextArea truancyOutputArea;
 
     private ObservableList<ChronicAbsenceAlertRow> chronicAbsenceData = FXCollections.observableArrayList();
     private ObservableList<StudentAttendanceRow> periodAttendanceData = FXCollections.observableArrayList();
@@ -146,6 +144,17 @@ public class AttendanceController {
         loadCampuses();
 
         log.info("AttendanceController initialized successfully");
+    }
+
+    /**
+     * Handle refresh button click - reloads all data
+     */
+    @FXML
+    public void handleRefresh() {
+        log.info("Refreshing attendance data");
+        loadDashboardData();
+        loadCampuses();
+        log.info("Attendance data refreshed");
     }
 
     private void setupDashboardTab() {
@@ -206,7 +215,7 @@ public class AttendanceController {
 
         // Setup period attendance table
         studentIdCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStudentId()));
-        studentNamePeriodCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStudentName()));
+        studentNameCol2.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStudentName()));
         gradeCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getGradeLevel()));
 
         statusCol.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getStatus()));
@@ -260,22 +269,24 @@ public class AttendanceController {
 
         periodAttendanceTable.setItems(periodAttendanceData);
 
-        // Setup buttons
-        loadRosterButton.setOnAction(e -> handleLoadRoster());
-        saveAttendanceButton.setOnAction(e -> handleSaveAttendance());
-        markAllPresentButton.setOnAction(e -> handleMarkAllPresent());
-
         // Load courses when campus is selected
         campusComboBox.setOnAction(e -> loadCourses());
     }
 
     private void setupQuickActionsTab() {
-        quickDatePicker.setValue(LocalDate.now());
-
-        generateDailyReportButton.setOnAction(e -> handleGenerateDailyReport());
-        sendDailyNotificationsButton.setOnAction(e -> handleSendDailyNotifications());
-        viewChronicAbsencesButton.setOnAction(e -> handleViewChronicAbsences());
-        generateTruancyReportButton.setOnAction(e -> handleGenerateTruancyReport());
+        // Setup date pickers with today's date
+        if (reportDatePicker != null) {
+            reportDatePicker.setValue(LocalDate.now());
+        }
+        if (notificationDatePicker != null) {
+            notificationDatePicker.setValue(LocalDate.now());
+        }
+        if (truancyStartDatePicker != null) {
+            truancyStartDatePicker.setValue(LocalDate.now().minusDays(30));
+        }
+        if (truancyEndDatePicker != null) {
+            truancyEndDatePicker.setValue(LocalDate.now());
+        }
     }
 
     // ========================================================================
@@ -346,11 +357,21 @@ public class AttendanceController {
         try {
             List<Campus> campuses = campusRepository.findAll();
             campusComboBox.setItems(FXCollections.observableArrayList(campuses));
-            quickCampusComboBox.setItems(FXCollections.observableArrayList(campuses));
+            if (reportCampusComboBox != null) {
+                reportCampusComboBox.setItems(FXCollections.observableArrayList(campuses));
+            }
+            if (notificationCampusComboBox != null) {
+                notificationCampusComboBox.setItems(FXCollections.observableArrayList(campuses));
+            }
 
             if (!campuses.isEmpty()) {
                 campusComboBox.getSelectionModel().selectFirst();
-                quickCampusComboBox.getSelectionModel().selectFirst();
+                if (reportCampusComboBox != null) {
+                    reportCampusComboBox.getSelectionModel().selectFirst();
+                }
+                if (notificationCampusComboBox != null) {
+                    notificationCampusComboBox.getSelectionModel().selectFirst();
+                }
             }
         } catch (Exception e) {
             log.error("Error loading campuses", e);
@@ -376,6 +397,77 @@ public class AttendanceController {
     // ========================================================================
     // EVENT HANDLERS
     // ========================================================================
+
+    /**
+     * Handle campus selection change - loads courses for selected campus
+     */
+    @FXML
+    private void handleCampusChange() {
+        log.debug("Campus selection changed");
+        loadCourses();
+    }
+
+    /**
+     * Handle course selection change
+     */
+    @FXML
+    private void handleCourseChange() {
+        log.debug("Course selection changed");
+        // Course changed - could trigger roster reload if needed
+    }
+
+    /**
+     * Handle load attendance button - loads roster for selected course
+     */
+    @FXML
+    private void handleLoadAttendance() {
+        handleLoadRoster();
+    }
+
+    /**
+     * Handle mark all absent button
+     */
+    @FXML
+    private void handleMarkAllAbsent() {
+        for (StudentAttendanceRow row : periodAttendanceData) {
+            row.setStatus(AttendanceStatus.ABSENT);
+        }
+        periodAttendanceTable.refresh();
+    }
+
+    /**
+     * Handle cancel attendance button
+     */
+    @FXML
+    private void handleCancelAttendance() {
+        // Clear attendance data and reset form
+        periodAttendanceData.clear();
+        log.info("Attendance entry cancelled");
+    }
+
+    /**
+     * Handle view daily report button
+     */
+    @FXML
+    private void handleViewDailyReport() {
+        handleGenerateDailyReport();
+    }
+
+    /**
+     * Handle send notifications button
+     */
+    @FXML
+    private void handleSendNotifications() {
+        handleSendDailyNotifications();
+    }
+
+    /**
+     * Handle view truancy cases button
+     */
+    @FXML
+    private void handleViewTruancyCases() {
+        handleGenerateTruancyReport();
+    }
 
     @FXML
     private void handleLoadRoster() {
@@ -421,7 +513,7 @@ public class AttendanceController {
                 ));
             }
 
-            rosterCountLabel.setText(students.size() + " students loaded");
+            log.info("Loaded {} students for attendance", students.size());
 
         } catch (Exception e) {
             log.error("Error loading roster", e);
@@ -453,7 +545,7 @@ public class AttendanceController {
                 selectedDate,
                 selectedPeriod,
                 attendanceMap,
-                "System" // TODO: Get current user
+                SecurityContext.getCurrentUsername().orElse("System")
             );
 
             showSuccess("Attendance saved successfully for " + records.size() + " students");
@@ -478,8 +570,8 @@ public class AttendanceController {
     @FXML
     private void handleGenerateDailyReport() {
         try {
-            Campus selectedCampus = quickCampusComboBox.getValue();
-            LocalDate selectedDate = quickDatePicker.getValue();
+            Campus selectedCampus = reportCampusComboBox != null ? reportCampusComboBox.getValue() : null;
+            LocalDate selectedDate = reportDatePicker != null ? reportDatePicker.getValue() : null;
 
             if (selectedCampus == null || selectedDate == null) {
                 showWarning("Please select campus and date");
@@ -502,7 +594,9 @@ public class AttendanceController {
             result.append("Tardy: ").append(tardyCount).append("\n");
             result.append("Attendance Rate: ").append(String.format("%.1f%%", report.getAttendanceRate())).append("\n");
 
-            quickActionsResultArea.setText(result.toString());
+            if (reportOutputArea != null) {
+                reportOutputArea.setText(result.toString());
+            }
 
         } catch (Exception e) {
             log.error("Error generating daily report", e);
@@ -513,7 +607,7 @@ public class AttendanceController {
     @FXML
     private void handleSendDailyNotifications() {
         try {
-            LocalDate selectedDate = quickDatePicker.getValue();
+            LocalDate selectedDate = notificationDatePicker != null ? notificationDatePicker.getValue() : null;
 
             if (selectedDate == null) {
                 showWarning("Please select date");
@@ -531,7 +625,9 @@ public class AttendanceController {
             output.append("Failed: ").append(result.getFailureCount()).append("\n");
             output.append("Skipped: ").append(result.getSkippedCount()).append("\n");
 
-            quickActionsResultArea.setText(output.toString());
+            if (notificationOutputArea != null) {
+                notificationOutputArea.setText(output.toString());
+            }
             showSuccess("Notifications processed successfully");
 
         } catch (Exception e) {
@@ -549,9 +645,6 @@ public class AttendanceController {
     @FXML
     private void handleGenerateTruancyReport() {
         try {
-            LocalDate endDate = quickDatePicker.getValue();
-            LocalDate startDate = endDate.minusDays(30);
-
             var truancyReport = truancyService.getActiveCases();
 
             StringBuilder output = new StringBuilder();
@@ -566,7 +659,9 @@ public class AttendanceController {
                 output.append("Status: ").append(truancyCase.getStatus()).append("\n\n");
             }
 
-            quickActionsResultArea.setText(output.toString());
+            if (truancyOutputArea != null) {
+                truancyOutputArea.setText(output.toString());
+            }
 
         } catch (Exception e) {
             log.error("Error generating truancy report", e);

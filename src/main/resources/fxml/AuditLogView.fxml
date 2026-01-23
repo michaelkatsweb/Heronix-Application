@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<!--
+    Audit Log Viewer FXML
+    Provides UI for browsing, filtering, and exporting audit logs.
+
+    @author Heronix SIS Team
+    @version 1.0.0
+    @since January 20, 2026
+-->
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.AuditLogViewController"
+            prefWidth="1200" prefHeight="800"
+            styleClass="audit-log-view">
+
+    <!-- Top: Header and Filters -->
+    <top>
+        <VBox spacing="10">
+            <padding><Insets top="15" right="15" bottom="10" left="15"/></padding>
+
+            <!-- Header -->
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="Audit Log Viewer" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Label text="Total Logs:"/>
+                    <Label fx:id="totalLogsLabel" text="0" style="-fx-font-weight: bold;"/>
+                    <Label text="|"/>
+                    <Label text="Filtered:"/>
+                    <Label fx:id="filteredCountLabel" text="0" style="-fx-font-weight: bold;"/>
+                    <ProgressIndicator fx:id="loadingIndicator" visible="false" prefWidth="20" prefHeight="20"/>
+                </HBox>
+            </HBox>
+
+            <Separator/>
+
+            <!-- Filter Section -->
+            <TitledPane text="Filters" expanded="true" collapsible="true">
+                <VBox spacing="10">
+                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+                    <!-- Row 1: Date Range -->
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Date Range:" prefWidth="80"/>
+                        <DatePicker fx:id="startDatePicker" promptText="Start Date" prefWidth="150"/>
+                        <Label text="to"/>
+                        <DatePicker fx:id="endDatePicker" promptText="End Date" prefWidth="150"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Label text="Username:"/>
+                        <TextField fx:id="usernameFilter" promptText="Filter by username..." prefWidth="150"/>
+                    </HBox>
+
+                    <!-- Row 2: Dropdowns -->
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Action:" prefWidth="80"/>
+                        <ComboBox fx:id="actionFilter" prefWidth="180"/>
+
+                        <Label text="Severity:"/>
+                        <ComboBox fx:id="severityFilter" prefWidth="150"/>
+
+                        <Label text="Entity Type:"/>
+                        <ComboBox fx:id="entityTypeFilter" prefWidth="150"/>
+                    </HBox>
+
+                    <!-- Row 3: Checkboxes and Buttons -->
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <CheckBox fx:id="showSuccessOnly" text="Show Successful Only"/>
+                        <CheckBox fx:id="showFailuresOnly" text="Show Failures Only"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Button text="Apply Filters" onAction="#handleApplyFilters"
+                                style="-fx-background-color: #007bff; -fx-text-fill: white;"/>
+                        <Button text="Clear Filters" onAction="#handleClearFilters"/>
+                        <Button text="Refresh" onAction="#handleRefresh"
+                                style="-fx-background-color: #28a745; -fx-text-fill: white;"/>
+                    </HBox>
+                </VBox>
+            </TitledPane>
+        </VBox>
+    </top>
+
+    <!-- Center: Split Pane with Table and Details -->
+    <center>
+        <SplitPane dividerPositions="0.7" orientation="VERTICAL">
+            <padding><Insets top="5" right="15" bottom="5" left="15"/></padding>
+
+            <!-- Audit Log Table -->
+            <VBox spacing="5">
+                <TableView fx:id="auditLogTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="idColumn" text="ID" prefWidth="60" minWidth="50"/>
+                        <TableColumn fx:id="timestampColumn" text="Timestamp" prefWidth="150" minWidth="130"/>
+                        <TableColumn fx:id="usernameColumn" text="Username" prefWidth="120" minWidth="100"/>
+                        <TableColumn fx:id="actionColumn" text="Action" prefWidth="150" minWidth="120"/>
+                        <TableColumn fx:id="entityColumn" text="Entity" prefWidth="120" minWidth="100"/>
+                        <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="250" minWidth="150"/>
+                        <TableColumn fx:id="ipAddressColumn" text="IP Address" prefWidth="120" minWidth="100"/>
+                        <TableColumn fx:id="severityColumn" text="Severity" prefWidth="80" minWidth="70"/>
+                        <TableColumn fx:id="statusColumn" text="Status" prefWidth="80" minWidth="70"/>
+                    </columns>
+                    <placeholder>
+                        <Label text="No audit logs found. Adjust filters or date range."/>
+                    </placeholder>
+                </TableView>
+
+                <!-- Pagination -->
+                <HBox spacing="10" alignment="CENTER">
+                    <padding><Insets top="5" bottom="5"/></padding>
+                    <Label text="Page Size:"/>
+                    <ComboBox fx:id="pageSizeComboBox" prefWidth="80"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="prevPageButton" text="◀ Previous" onAction="#handlePrevPage"/>
+                    <Label fx:id="pageInfoLabel" text="Page 1 of 1"/>
+                    <Button fx:id="nextPageButton" text="Next ▶" onAction="#handleNextPage"/>
+                </HBox>
+            </VBox>
+
+            <!-- Detail Panel -->
+            <TitledPane text="Log Details" expanded="true" collapsible="true">
+                <TextArea fx:id="detailsTextArea" wrapText="true" editable="false"
+                          promptText="Select a log entry to view details..."
+                          style="-fx-font-family: 'Consolas', 'Courier New', monospace;"/>
+            </TitledPane>
+        </SplitPane>
+    </center>
+
+    <!-- Bottom: Export and Status -->
+    <bottom>
+        <VBox spacing="5">
+            <padding><Insets top="10" right="15" bottom="15" left="15"/></padding>
+
+            <Separator/>
+
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <!-- Export Controls -->
+                <Label text="Export Format:"/>
+                <ComboBox fx:id="exportFormatComboBox" prefWidth="100"/>
+                <Button fx:id="exportButton" text="Export Logs" onAction="#handleExport"
+                        style="-fx-background-color: #17a2b8; -fx-text-fill: white;">
+                    <tooltip><Tooltip text="Export filtered logs to file"/></tooltip>
+                </Button>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Status -->
+                <Label fx:id="statusLabel" text="Ready" style="-fx-text-fill: #666666;"/>
+
+                <Button text="Close" onAction="#handleClose"/>
+            </HBox>
+        </VBox>
+    </bottom>
+</BorderPane>

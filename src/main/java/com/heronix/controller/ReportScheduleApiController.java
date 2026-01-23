@@ -28,7 +28,7 @@ import java.util.List;
  * @version 1.0
  * @since Phase 57 - Dynamic Scheduled Report Generation
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/reports/schedules")
 @RequiredArgsConstructor
 @Slf4j

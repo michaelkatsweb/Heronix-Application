@@ -38,7 +38,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 111 - Report Predictive Analytics & Forecasting
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/predictive-analytics")
 @RequiredArgsConstructor
 @Slf4j

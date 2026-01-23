@@ -36,7 +36,7 @@ import java.util.Map;
  * @since December 27, 2025 - Staging Import Architecture
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/admin/staging")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")

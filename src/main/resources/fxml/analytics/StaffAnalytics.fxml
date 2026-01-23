@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.analytics.StaffAnalyticsController"
+            styleClass="analytics-view">
+
+    <!-- Header Section -->
+    <top>
+        <VBox styleClass="header-section" spacing="5">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Button fx:id="backButton" text="← Back to Hub" styleClass="button-secondary"
+                        onAction="#handleBackToHub"/>
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Staff Analytics" styleClass="page-title"/>
+                    <Label text="Certification tracking, workload distribution, and professional development" styleClass="page-subtitle"/>
+                </VBox>
+                <Button text="Export Report" styleClass="button-primary" onAction="#handleExportReport"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Main Content - TabPane with 4 Tabs -->
+    <center>
+        <TabPane fx:id="mainTabPane" styleClass="analytics-tabs" tabClosingPolicy="UNAVAILABLE">
+
+            <!-- Tab 1: Overview -->
+            <Tab text="Overview" closable="false">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- Quick Stats Row -->
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="quick-stats-grid">
+                        <VBox styleClass="metric-card, metric-primary" spacing="5" minWidth="180">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="TOTAL STAFF" styleClass="metric-label"/>
+                            <Label fx:id="totalStaffValue" text="0" styleClass="metric-value"/>
+                            <Label text="active employees" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-success" spacing="5" minWidth="180">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="CERTIFIED" styleClass="metric-label"/>
+                            <Label fx:id="certifiedValue" text="0" styleClass="metric-value"/>
+                            <Label fx:id="certRateTrend" text="0% compliance" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-warning" spacing="5" minWidth="180">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="EXPIRING SOON" styleClass="metric-label"/>
+                            <Label fx:id="expiringValue" text="0" styleClass="metric-value"/>
+                            <Label text="within 90 days" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-info" spacing="5" minWidth="180">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="AVG EXPERIENCE" styleClass="metric-label"/>
+                            <Label fx:id="avgExperienceValue" text="0" styleClass="metric-value"/>
+                            <Label text="years" styleClass="metric-trend"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Charts Row -->
+                    <HBox spacing="20" VBox.vgrow="ALWAYS">
+                        <!-- Department Distribution -->
+                        <VBox styleClass="chart-container" HBox.hgrow="ALWAYS" spacing="10">
+                            <padding>
+                                <Insets top="15" right="15" bottom="15" left="15"/>
+                            </padding>
+                            <Label text="Staff by Department" styleClass="section-header"/>
+                            <BarChart fx:id="departmentChart" VBox.vgrow="ALWAYS"
+                                      legendVisible="false" animated="true">
+                                <xAxis>
+                                    <CategoryAxis label="Department"/>
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="Staff Count"/>
+                                </yAxis>
+                            </BarChart>
+                        </VBox>
+
+                        <!-- Certification Status Pie Chart -->
+                        <VBox styleClass="chart-container" minWidth="350" spacing="10">
+                            <padding>
+                                <Insets top="15" right="15" bottom="15" left="15"/>
+                            </padding>
+                            <Label text="Certification Status" styleClass="section-header"/>
+                            <PieChart fx:id="certStatusChart" VBox.vgrow="ALWAYS"
+                                      legendSide="BOTTOM" labelsVisible="true"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 2: Certifications -->
+            <Tab text="Certifications" closable="false">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- Certification Tiers -->
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="quick-stats-grid">
+                        <VBox styleClass="metric-card, metric-danger" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="EXPIRED" styleClass="metric-label"/>
+                            <Label fx:id="expiredValue" text="0" styleClass="metric-value"/>
+                            <Label text="need immediate renewal" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-danger" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="EXPIRING IN 30 DAYS" styleClass="metric-label"/>
+                            <Label fx:id="expiring30Value" text="0" styleClass="metric-value"/>
+                            <Label text="urgent attention" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-warning" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="EXPIRING IN 60 DAYS" styleClass="metric-label"/>
+                            <Label fx:id="expiring60Value" text="0" styleClass="metric-value"/>
+                            <Label text="plan renewal" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-info" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="EXPIRING IN 90 DAYS" styleClass="metric-label"/>
+                            <Label fx:id="expiring90Value" text="0" styleClass="metric-value"/>
+                            <Label text="monitor status" styleClass="metric-trend"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Expiring Certifications Table -->
+                    <VBox styleClass="chart-container" spacing="10" VBox.vgrow="ALWAYS">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Certifications Expiring Soon" styleClass="section-header"/>
+                        <TableView fx:id="expiringCertsTable" VBox.vgrow="ALWAYS" styleClass="analytics-table">
+                            <placeholder>
+                                <Label text="No expiring certifications found"/>
+                            </placeholder>
+                            <columns>
+                                <TableColumn fx:id="certEmpIdCol" text="Employee ID" prefWidth="120"/>
+                                <TableColumn fx:id="certNameCol" text="Name" prefWidth="200"/>
+                                <TableColumn fx:id="certDeptCol" text="Department" prefWidth="150"/>
+                                <TableColumn fx:id="certExpDateCol" text="Expiration Date" prefWidth="130"/>
+                                <TableColumn fx:id="certDaysCol" text="Days Left" prefWidth="100"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 3: Experience -->
+            <Tab text="Experience" closable="false">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- Experience Distribution Chart -->
+                    <VBox styleClass="chart-container" VBox.vgrow="ALWAYS" spacing="10">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Experience Distribution" styleClass="section-header"/>
+                        <BarChart fx:id="experienceChart" VBox.vgrow="ALWAYS"
+                                  legendVisible="false" animated="true">
+                            <xAxis>
+                                <CategoryAxis label="Years of Experience"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Staff Count"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+
+                    <!-- Experience by Department -->
+                    <VBox styleClass="chart-container" VBox.vgrow="ALWAYS" spacing="10">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Average Experience by Department" styleClass="section-header"/>
+                        <BarChart fx:id="expByDeptChart" VBox.vgrow="ALWAYS"
+                                  legendVisible="false" animated="true">
+                            <xAxis>
+                                <CategoryAxis label="Department"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Average Years"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 4: Workload -->
+            <Tab text="Workload" closable="false">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- Workload Stats -->
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="quick-stats-grid">
+                        <VBox styleClass="metric-card, metric-info" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="AVG CLASSES/TEACHER" styleClass="metric-label"/>
+                            <Label fx:id="avgClassesValue" text="0" styleClass="metric-value"/>
+                            <Label text="courses per teacher" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-success" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="NORMAL WORKLOAD" styleClass="metric-label"/>
+                            <Label fx:id="normalWorkloadValue" text="0" styleClass="metric-value"/>
+                            <Label text="teachers" styleClass="metric-trend"/>
+                        </VBox>
+                        <VBox styleClass="metric-card, metric-danger" spacing="5" minWidth="200" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets top="15" right="20" bottom="15" left="20"/>
+                            </padding>
+                            <Label text="OVERLOADED" styleClass="metric-label"/>
+                            <Label fx:id="overloadedValue" text="0" styleClass="metric-value"/>
+                            <Label text="teachers (>5 classes)" styleClass="metric-trend"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Workload Distribution Chart -->
+                    <VBox styleClass="chart-container" VBox.vgrow="ALWAYS" spacing="10">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Teacher Workload Distribution" styleClass="section-header"/>
+                        <BarChart fx:id="workloadChart" VBox.vgrow="ALWAYS"
+                                  legendVisible="false" animated="true">
+                            <xAxis>
+                                <CategoryAxis label="Number of Classes"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Teachers"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+
+                    <!-- Overloaded Teachers Table -->
+                    <VBox styleClass="chart-container" spacing="10" VBox.vgrow="ALWAYS">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label text="Teacher Workload Details" styleClass="section-header"/>
+                        <TableView fx:id="workloadTable" VBox.vgrow="ALWAYS" styleClass="analytics-table">
+                            <placeholder>
+                                <Label text="No workload data available"/>
+                            </placeholder>
+                            <columns>
+                                <TableColumn fx:id="wlTeacherCol" text="Teacher" prefWidth="200"/>
+                                <TableColumn fx:id="wlDeptCol" text="Department" prefWidth="150"/>
+                                <TableColumn fx:id="wlCoursesCol" text="Courses" prefWidth="100"/>
+                                <TableColumn fx:id="wlStatusCol" text="Status" prefWidth="120"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+
+    <!-- Status Bar -->
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets top="8" right="20" bottom="8" left="20"/>
+            </padding>
+            <Label fx:id="statusLabel" text="Ready" styleClass="status-text"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lastUpdatedLabel" text="Last updated: --" styleClass="status-text"/>
+        </HBox>
+    </bottom>
+</BorderPane>

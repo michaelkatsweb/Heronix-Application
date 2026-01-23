@@ -284,6 +284,33 @@ public class UserServiceImpl implements UserService {
             } else {
                 log.info("Super admin already exists. Skipping default user creation.");
             }
+
+            // Create default Registrar user if not exists
+            if (!userRepository.existsByUsername("registrar") &&
+                !userRepository.existsByEmail("registrar@eduscheduler.com")) {
+                log.info("Creating default registrar user...");
+
+                User registrar = User.builder()
+                        .username("registrar")
+                        .password(passwordEncoder.encode("Registrar@123"))
+                        .email("registrar@eduscheduler.com")
+                        .fullName("School Registrar")
+                        .primaryRole(Role.REGISTRAR)
+                        .enabled(true)
+                        .accountNonExpired(true)
+                        .accountNonLocked(true)
+                        .credentialsNonExpired(true)
+                        .build();
+
+                // Add legacy role for backward compatibility
+                registrar.addRole("ROLE_USER");
+
+                userRepository.save(registrar);
+                log.info("Default registrar user created successfully");
+                log.info("Username: registrar, Password: Registrar@123");
+            } else {
+                log.info("Registrar user already exists. Skipping.");
+            }
         } catch (Exception e) {
             log.warn("Failed to initialize default users (likely already exist): {}", e.getMessage());
             // Don't propagate the error - this is not critical if users already exist

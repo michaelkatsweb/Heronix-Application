@@ -37,7 +37,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 95 - Report Microservices & Service Mesh
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/microservices")
 @RequiredArgsConstructor
 @Slf4j

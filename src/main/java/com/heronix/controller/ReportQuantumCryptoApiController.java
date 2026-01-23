@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 140 - Quantum-Ready Cryptography & Post-Quantum Security
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/quantum-crypto")
 @RequiredArgsConstructor
 public class ReportQuantumCryptoApiController {

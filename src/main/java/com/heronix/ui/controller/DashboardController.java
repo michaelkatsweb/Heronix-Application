@@ -785,6 +785,39 @@ public class DashboardController {
     }
 
     /**
+     * Handle Generate Schedule button - opens the schedule generation dialog
+     */
+    @FXML
+    public void handleGenerateSchedule() {
+        try {
+            log.info("Opening Schedule Generation dialog");
+
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                getClass().getResource("/fxml/ScheduleGenerationDialog.fxml")
+            );
+
+            if (applicationContext != null) {
+                loader.setControllerFactory(applicationContext::getBean);
+            }
+
+            javafx.scene.Parent root = loader.load();
+
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("Generate Schedule");
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            // Refresh dashboard after generation
+            refreshDashboard();
+
+        } catch (Exception e) {
+            log.error("Failed to open schedule generation dialog: {}", e.getMessage(), e);
+            showError("Could not open schedule generation dialog: " + e.getMessage());
+        }
+    }
+
+    /**
      * Open the District Settings dialog
      */
     @FXML

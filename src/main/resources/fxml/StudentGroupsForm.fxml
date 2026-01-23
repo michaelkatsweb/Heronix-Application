@@ -79,7 +79,7 @@
                     </font>
                 </Label>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="lblRecordCount" text="0 groups" style="-fx-text-fill: #666;"/>
+                <Label fx:id="lblRecordCount" text="0 groups" styleClass="text-muted"/>
             </HBox>
 
             <TableView fx:id="tblGroups" VBox.vgrow="ALWAYS">
@@ -112,7 +112,7 @@
 
                     <!-- Basic Information -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Basic Information" styleClass="section-header" style="-fx-background-color: #E3F2FD; -fx-padding: 5;">
+                        <Label text="Basic Information" styleClass="section-header-info">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -124,16 +124,16 @@
                                 <ColumnConstraints percentWidth="65"/>
                             </columnConstraints>
 
-                            <Label text="Group Name:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="Group Name:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="form-label"/>
                             <TextField fx:id="txtGroupName" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="250"/>
 
                             <Label text="Group Code:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                             <TextField fx:id="txtGroupCode" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="150"/>
 
-                            <Label text="Group Type:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="Group Type:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="form-label"/>
                             <ComboBox fx:id="cmbType" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="250"/>
 
-                            <Label text="Status:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="Status:" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="form-label"/>
                             <ComboBox fx:id="cmbStatus" GridPane.rowIndex="3" GridPane.columnIndex="1" prefWidth="200"/>
 
                             <Label text="Academic Year:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
@@ -149,7 +149,7 @@
 
                     <!-- Capacity & Enrollment -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Capacity &amp; Enrollment" styleClass="section-header" style="-fx-background-color: #E8F5E9; -fx-padding: 5;">
+                        <Label text="Capacity &amp; Enrollment" styleClass="section-header-success">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -166,11 +166,11 @@
 
                             <Label text="Current Enrollment:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                             <Label fx:id="lblCurrentEnrollment" text="0" GridPane.rowIndex="1" GridPane.columnIndex="1"
-                                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"/>
+                                   styleClass="stat-value-16-blue-primary"/>
 
                             <Label text="Available Spots:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                             <Label fx:id="lblAvailableSpots" text="0" GridPane.rowIndex="2" GridPane.columnIndex="1"
-                                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #388E3C;"/>
+                                   styleClass="stat-value-16-green-primary"/>
 
                             <Label text="Accepting Members:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                             <CheckBox fx:id="chkAcceptingMembers" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
@@ -179,7 +179,7 @@
 
                     <!-- Staff Assignments -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Staff Assignments" styleClass="section-header" style="-fx-background-color: #FFF3E0; -fx-padding: 5;">
+                        <Label text="Staff Assignments" styleClass="section-header-warning">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -204,7 +204,7 @@
 
                     <!-- Meeting Information -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Meeting Information" styleClass="section-header" style="-fx-background-color: #F3E5F5; -fx-padding: 5;">
+                        <Label text="Meeting Information" styleClass="section-header">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -230,7 +230,7 @@
 
                     <!-- House System (only for House groups) -->
                     <VBox fx:id="sectionHouse" spacing="8" managed="false" visible="false" styleClass="info-section">
-                        <Label text="House System" styleClass="section-header" style="-fx-background-color: #E1F5FE; -fx-padding: 5;">
+                        <Label text="House System" styleClass="section-header">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -263,7 +263,7 @@
 
                     <!-- Team Details (only for Team groups) -->
                     <VBox fx:id="sectionTeam" spacing="8" managed="false" visible="false" styleClass="info-section">
-                        <Label text="Team Details" styleClass="section-header" style="-fx-background-color: #FFF9C4; -fx-padding: 5;">
+                        <Label text="Team Details" styleClass="section-header">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -289,7 +289,7 @@
 
                     <!-- Administrative Notes -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Administrative Information" styleClass="section-header" style="-fx-background-color: #F5F5F5; -fx-padding: 5;">
+                        <Label text="Administrative Information" styleClass="section-header">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -330,7 +330,7 @@
                     </font>
                 </Label>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="lblMemberCount" text="0 students" style="-fx-text-fill: #666;"/>
+                <Label fx:id="lblMemberCount" text="0 students" styleClass="text-muted"/>
             </HBox>
 
             <!-- Search for Students -->

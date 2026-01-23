@@ -5,8 +5,9 @@ import com.heronix.model.domain.TransferOutDocumentation.TransferOutStatus;
 import com.heronix.model.domain.TransferOutDocumentation.TransmissionMethod;
 import com.heronix.model.domain.TransferOutDocumentation.TransferOutReason;
 import com.heronix.model.domain.Student;
-import com.heronix.service.TransferOutDocumentationService;
 import com.heronix.repository.StudentRepository;
+import com.heronix.security.SecurityContext;
+import com.heronix.service.TransferOutDocumentationService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -336,14 +337,14 @@ public class TransferOutDocumentationFormController {
                         selectedStudent.getId(),
                         destinationSchoolName.getText(),
                         requestDate.getValue(),
-                        1L // TODO: Get actual staff ID
+                        SecurityContext.getCurrentStaffId()
                 );
             }
 
             // Update with form data
             saveFormData();
             currentTransferOut = transferOutService.updateTransferOut(
-                    currentTransferOut, 1L);
+                    currentTransferOut, SecurityContext.getCurrentStaffId());
 
             transferOutNumberField.setText(currentTransferOut.getTransferOutNumber());
             showSuccess("Transfer out documentation saved");

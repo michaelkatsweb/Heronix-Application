@@ -14,7 +14,7 @@ import java.util.List;
  * Room REST API Controller - FIXED
  * Location: src/main/java/com/heronix/controller/RoomController.java
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/rooms")
 @CrossOrigin(origins = "*")
 public class RoomController {

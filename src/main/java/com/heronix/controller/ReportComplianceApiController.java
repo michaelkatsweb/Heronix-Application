@@ -40,7 +40,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 86 - Report Audit & Compliance
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/compliance")
 @RequiredArgsConstructor
 @Slf4j

@@ -39,7 +39,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 85 - Report Collaboration & Sharing
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/collaboration")
 @RequiredArgsConstructor
 @Slf4j

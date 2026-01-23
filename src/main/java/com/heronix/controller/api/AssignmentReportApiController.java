@@ -1,5 +1,6 @@
 package com.heronix.controller.api;
 
+import com.heronix.service.AssignmentReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -49,16 +50,16 @@ import java.util.*;
  * - Early Warning System
  *
  * @author Heronix Development Team
- * @version 1.0
+ * @version 2.0
  * @since December 30, 2025 - Phase 38
+ * @updated January 19, 2026 - Full implementation
  */
 @RestController
 @RequestMapping("/api/assignment-reports")
 @RequiredArgsConstructor
 public class AssignmentReportApiController {
 
-    private final com.heronix.service.AssignmentReportService assignmentReportService;
-    // private final AssignmentReportService reportService;
+    private final AssignmentReportService assignmentReportService;
 
     // ========================================================================
     // STUDENT ASSIGNMENT REPORTS
@@ -77,24 +78,33 @@ public class AssignmentReportApiController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
         try {
-            // TODO: Implement getStudentAssignmentSummary in AssignmentReportService
-            Map<String, Object> summary = new HashMap<>();
-            summary.put("message", "This endpoint is under development");
-            summary.put("totalAssignments", 0);
-            summary.put("completedAssignments", 0);
-            summary.put("missingAssignments", 0);
-            summary.put("lateAssignments", 0);
-            summary.put("averageGrade", "0.00%");
+            var summary = assignmentReportService.getStudentAssignmentSummary(
+                    studentId, courseId, startDate, endDate);
+
+            Map<String, Object> summaryData = new HashMap<>();
+            summaryData.put("studentId", summary.getStudentId());
+            summaryData.put("studentName", summary.getStudentName());
+            summaryData.put("totalAssignments", summary.getTotalAssignments());
+            summaryData.put("completedAssignments", summary.getCompletedAssignments());
+            summaryData.put("missingAssignments", summary.getMissingAssignments());
+            summaryData.put("lateAssignments", summary.getLateAssignments());
+            summaryData.put("averageGrade", String.format("%.2f%%", summary.getAverageGrade()));
+            summaryData.put("completionRate", String.format("%.2f%%", summary.getCompletionRate()));
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("studentId", studentId);
             response.put("courseId", courseId);
-            response.put("summary", summary);
+            response.put("summary", summaryData);
             response.put("period", Map.of("startDate", startDate, "endDate", endDate));
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -114,19 +124,37 @@ public class AssignmentReportApiController {
             @RequestParam(required = false) Long courseId) {
 
         try {
-            // TODO: Implement getStudentMissingAssignments in AssignmentReportService
-            List<Map<String, Object>> missingAssignments = new ArrayList<>();
+            var missingAssignments = assignmentReportService.getStudentMissingAssignments(studentId, courseId);
+
+            List<Map<String, Object>> missingData = missingAssignments.stream()
+                    .map(m -> {
+                        Map<String, Object> item = new HashMap<>();
+                        item.put("assignmentId", m.getAssignmentId());
+                        item.put("assignmentTitle", m.getAssignmentTitle());
+                        item.put("courseId", m.getCourseId());
+                        item.put("courseName", m.getCourseName());
+                        item.put("dueDate", m.getDueDate());
+                        item.put("maxPoints", m.getMaxPoints());
+                        item.put("daysOverdue", m.getDaysOverdue());
+                        item.put("categoryName", m.getCategoryName());
+                        return item;
+                    })
+                    .toList();
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("studentId", studentId);
             response.put("courseId", courseId);
-            response.put("missingAssignments", missingAssignments);
-            response.put("count", 0);
-            response.put("message", "This endpoint is under development");
+            response.put("missingAssignments", missingData);
+            response.put("count", missingData.size());
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -157,6 +185,11 @@ public class AssignmentReportApiController {
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -180,24 +213,34 @@ public class AssignmentReportApiController {
             @RequestParam(required = false) Long assignmentId) {
 
         try {
-            // TODO: Implement getCourseGradeDistribution in AssignmentReportService
-            Map<String, Object> distribution = new HashMap<>();
-            distribution.put("message", "This endpoint is under development");
-            distribution.put("gradeA", 0);
-            distribution.put("gradeB", 0);
-            distribution.put("gradeC", 0);
-            distribution.put("gradeD", 0);
-            distribution.put("gradeF", 0);
-            distribution.put("average", "0.00%");
+            var distribution = assignmentReportService.getCourseGradeDistribution(courseId, assignmentId);
+
+            Map<String, Object> distributionData = new HashMap<>();
+            distributionData.put("context", distribution.getContext());
+            distributionData.put("totalGrades", distribution.getTotalGrades());
+            distributionData.put("gradeA", distribution.getGradeA());
+            distributionData.put("gradeB", distribution.getGradeB());
+            distributionData.put("gradeC", distribution.getGradeC());
+            distributionData.put("gradeD", distribution.getGradeD());
+            distributionData.put("gradeF", distribution.getGradeF());
+            distributionData.put("average", String.format("%.2f%%", distribution.getAverage()));
+            distributionData.put("median", String.format("%.2f%%", distribution.getMedian()));
+            distributionData.put("highest", String.format("%.2f%%", distribution.getHighest()));
+            distributionData.put("lowest", String.format("%.2f%%", distribution.getLowest()));
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("courseId", courseId);
             response.put("assignmentId", assignmentId);
-            response.put("distribution", distribution);
+            response.put("distribution", distributionData);
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -218,22 +261,34 @@ public class AssignmentReportApiController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
         try {
-            // TODO: Implement getCourseCompletionRates in AssignmentReportService
-            Map<String, Object> completionRates = new HashMap<>();
-            completionRates.put("message", "This endpoint is under development");
-            completionRates.put("totalAssignments", 0);
-            completionRates.put("overallCompletionRate", "0.00%");
-            completionRates.put("onTimeCompletionRate", "0.00%");
-            completionRates.put("lateSubmissionRate", "0.00%");
+            var completionRates = assignmentReportService.getCourseCompletionRates(courseId, startDate, endDate);
+
+            Map<String, Object> ratesData = new HashMap<>();
+            ratesData.put("courseName", completionRates.getCourseName());
+            ratesData.put("totalAssignments", completionRates.getTotalAssignments());
+            ratesData.put("totalStudents", completionRates.getTotalStudents());
+            ratesData.put("expectedSubmissions", completionRates.getExpectedSubmissions());
+            ratesData.put("actualSubmissions", completionRates.getActualSubmissions());
+            ratesData.put("onTimeSubmissions", completionRates.getOnTimeSubmissions());
+            ratesData.put("lateSubmissions", completionRates.getLateSubmissions());
+            ratesData.put("missingSubmissions", completionRates.getMissingSubmissions());
+            ratesData.put("overallCompletionRate", String.format("%.2f%%", completionRates.getOverallCompletionRate()));
+            ratesData.put("onTimeCompletionRate", String.format("%.2f%%", completionRates.getOnTimeCompletionRate()));
+            ratesData.put("lateSubmissionRate", String.format("%.2f%%", completionRates.getLateSubmissionRate()));
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("courseId", courseId);
-            response.put("completionRates", completionRates);
+            response.put("completionRates", ratesData);
             response.put("period", Map.of("startDate", startDate, "endDate", endDate));
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -253,19 +308,39 @@ public class AssignmentReportApiController {
             @RequestParam(defaultValue = "70") double threshold) {
 
         try {
-            // TODO: Implement getStrugglingStudents in AssignmentReportService
-            List<Map<String, Object>> strugglingStudents = new ArrayList<>();
+            var strugglingStudents = assignmentReportService.getStrugglingStudents(courseId, threshold);
+
+            List<Map<String, Object>> studentsData = strugglingStudents.stream()
+                    .map(s -> {
+                        Map<String, Object> item = new HashMap<>();
+                        item.put("studentId", s.getStudentId());
+                        item.put("studentName", s.getStudentName());
+                        item.put("studentNumber", s.getStudentNumber());
+                        item.put("gradeLevel", s.getGradeLevel());
+                        item.put("currentAverage", String.format("%.2f%%", s.getCurrentAverage()));
+                        item.put("pointsBelowThreshold", String.format("%.2f", s.getPointsBelowThreshold()));
+                        item.put("missingAssignments", s.getMissingAssignments());
+                        item.put("lateAssignments", s.getLateAssignments());
+                        item.put("totalAssignments", s.getTotalAssignments());
+                        item.put("recentTrend", s.getRecentTrend());
+                        return item;
+                    })
+                    .toList();
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("courseId", courseId);
-            response.put("strugglingStudents", strugglingStudents);
-            response.put("count", 0);
+            response.put("strugglingStudents", studentsData);
+            response.put("count", studentsData.size());
             response.put("threshold", threshold + "%");
-            response.put("message", "This endpoint is under development");
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -288,21 +363,35 @@ public class AssignmentReportApiController {
             @PathVariable Long assignmentId) {
 
         try {
-            // TODO: Implement analyzeAssignmentDifficulty in AssignmentReportService
-            Map<String, Object> analysis = new HashMap<>();
-            analysis.put("message", "This endpoint is under development");
-            analysis.put("assignmentId", assignmentId);
-            analysis.put("averageScore", "0.00%");
-            analysis.put("completionRate", "0.00%");
-            analysis.put("timeToComplete", "N/A");
-            analysis.put("difficultyLevel", "Unknown");
+            var analysis = assignmentReportService.analyzeAssignmentDifficulty(assignmentId);
+
+            Map<String, Object> analysisData = new HashMap<>();
+            analysisData.put("assignmentId", analysis.getAssignmentId());
+            analysisData.put("assignmentTitle", analysis.getAssignmentTitle());
+            analysisData.put("courseName", analysis.getCourseName());
+            analysisData.put("maxPoints", analysis.getMaxPoints());
+            analysisData.put("dueDate", analysis.getDueDate());
+            analysisData.put("totalStudents", analysis.getTotalStudents());
+            analysisData.put("submittedCount", analysis.getSubmittedCount());
+            analysisData.put("gradedCount", analysis.getGradedCount());
+            analysisData.put("completionRate", String.format("%.2f%%", analysis.getCompletionRate()));
+            analysisData.put("averageScore", String.format("%.2f%%", analysis.getAverageScore()));
+            analysisData.put("standardDeviation", String.format("%.2f", analysis.getStandardDeviation()));
+            analysisData.put("studentsAbove70Percent", analysis.getStudentsAbove70Percent());
+            analysisData.put("studentsBelow70Percent", analysis.getStudentsBelow70Percent());
+            analysisData.put("difficultyLevel", analysis.getDifficultyLevel());
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("analysis", analysis);
+            response.put("analysis", analysisData);
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -321,18 +410,41 @@ public class AssignmentReportApiController {
             @PathVariable Long assignmentId) {
 
         try {
-            // TODO: Implement getSubmissionTimeline in AssignmentReportService
-            List<Map<String, Object>> timeline = new ArrayList<>();
+            var timeline = assignmentReportService.getSubmissionTimeline(assignmentId);
+
+            Map<String, Object> timelineData = new HashMap<>();
+            timelineData.put("assignmentId", timeline.getAssignmentId());
+            timelineData.put("assignmentTitle", timeline.getAssignmentTitle());
+            timelineData.put("dueDate", timeline.getDueDate());
+            timelineData.put("assignedDate", timeline.getAssignedDate());
+            timelineData.put("totalSubmissions", timeline.getTotalSubmissions());
+            timelineData.put("onTimeSubmissions", timeline.getOnTimeSubmissions());
+            timelineData.put("lateSubmissions", timeline.getLateSubmissions());
+            timelineData.put("notSubmitted", timeline.getNotSubmitted());
+
+            List<Map<String, Object>> points = timeline.getTimelinePoints().stream()
+                    .map(p -> {
+                        Map<String, Object> point = new HashMap<>();
+                        point.put("date", p.getDate());
+                        point.put("submissions", p.getSubmissions());
+                        point.put("cumulativeSubmissions", p.getCumulativeSubmissions());
+                        point.put("isBeforeDue", p.isIsBeforeDue());
+                        return point;
+                    })
+                    .toList();
+            timelineData.put("timelinePoints", points);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("assignmentId", assignmentId);
-            response.put("timeline", timeline);
-            response.put("count", 0);
-            response.put("message", "This endpoint is under development");
+            response.put("timeline", timelineData);
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -356,19 +468,38 @@ public class AssignmentReportApiController {
             @RequestParam(required = false) Long courseId) {
 
         try {
-            // TODO: Implement getStudentStandardsMastery in AssignmentReportService
-            List<Map<String, Object>> standards = new ArrayList<>();
+            var mastery = assignmentReportService.getStudentStandardsMastery(studentId, courseId);
+
+            Map<String, Object> masteryData = new HashMap<>();
+            masteryData.put("studentId", mastery.getStudentId());
+            masteryData.put("studentName", mastery.getStudentName());
+            masteryData.put("courseId", mastery.getCourseId());
+            masteryData.put("overallMasteryPercent", String.format("%.2f%%", mastery.getOverallMasteryPercent()));
+
+            List<Map<String, Object>> standards = mastery.getMasteryItems().stream()
+                    .map(item -> {
+                        Map<String, Object> s = new HashMap<>();
+                        s.put("standardName", item.getStandardName());
+                        s.put("averageScore", String.format("%.2f%%", item.getAverageScore()));
+                        s.put("masteryLevel", item.getMasteryLevel());
+                        s.put("assignmentCount", item.getAssignmentCount());
+                        s.put("completedCount", item.getCompletedCount());
+                        return s;
+                    })
+                    .toList();
+            masteryData.put("standards", standards);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("studentId", studentId);
-            response.put("courseId", courseId);
-            response.put("standards", standards);
-            response.put("count", 0);
-            response.put("message", "This endpoint is under development");
+            response.put("mastery", masteryData);
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -387,18 +518,38 @@ public class AssignmentReportApiController {
             @PathVariable Long courseId) {
 
         try {
-            // TODO: Implement getCourseStandardsMastery in AssignmentReportService
-            List<Map<String, Object>> standards = new ArrayList<>();
+            var mastery = assignmentReportService.getCourseStandardsMastery(courseId);
+
+            Map<String, Object> masteryData = new HashMap<>();
+            masteryData.put("courseId", mastery.getCourseId());
+            masteryData.put("courseName", mastery.getCourseName());
+            masteryData.put("overallMasteryRate", String.format("%.2f%%", mastery.getOverallMasteryRate()));
+
+            List<Map<String, Object>> standards = mastery.getMasteryItems().stream()
+                    .map(item -> {
+                        Map<String, Object> s = new HashMap<>();
+                        s.put("standardName", item.getStandardName());
+                        s.put("averageScore", String.format("%.2f%%", item.getAverageScore()));
+                        s.put("assignmentCount", item.getAssignmentCount());
+                        s.put("totalGrades", item.getTotalGrades());
+                        s.put("studentsAtMastery", item.getStudentsAtMastery());
+                        s.put("masteryRate", String.format("%.2f%%", item.getMasteryRate()));
+                        return s;
+                    })
+                    .toList();
+            masteryData.put("standards", standards);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("courseId", courseId);
-            response.put("standards", standards);
-            response.put("count", 0);
-            response.put("message", "This endpoint is under development");
+            response.put("mastery", masteryData);
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -422,22 +573,34 @@ public class AssignmentReportApiController {
             @RequestParam Long courseId) {
 
         try {
-            // TODO: Implement compareStudentToClass in AssignmentReportService
-            Map<String, Object> comparison = new HashMap<>();
-            comparison.put("message", "This endpoint is under development");
-            comparison.put("studentAverage", "0.00%");
-            comparison.put("classAverage", "0.00%");
-            comparison.put("percentile", 0);
-            comparison.put("ranking", "N/A");
+            var comparison = assignmentReportService.compareStudentToClass(studentId, courseId);
+
+            Map<String, Object> comparisonData = new HashMap<>();
+            comparisonData.put("studentId", comparison.getStudentId());
+            comparisonData.put("studentName", comparison.getStudentName());
+            comparisonData.put("courseName", comparison.getCourseName());
+            comparisonData.put("studentAverage", String.format("%.2f%%", comparison.getStudentAverage()));
+            comparisonData.put("classAverage", String.format("%.2f%%", comparison.getClassAverage()));
+            comparisonData.put("differenceFromAverage", String.format("%.2f", comparison.getDifferenceFromAverage()));
+            comparisonData.put("percentile", String.format("%.0f", comparison.getPercentile()));
+            comparisonData.put("ranking", comparison.getRanking());
+            comparisonData.put("classRank", comparison.getClassRank());
+            comparisonData.put("totalStudents", comparison.getTotalStudents());
+            comparisonData.put("aboveAverage", comparison.isAboveAverage());
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("studentId", studentId);
             response.put("courseId", courseId);
-            response.put("comparison", comparison);
+            response.put("comparison", comparisonData);
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -471,25 +634,34 @@ public class AssignmentReportApiController {
 
         try {
             String reportType = (String) requestBody.get("reportType");
+            Long entityId = ((Number) requestBody.get("entityId")).longValue();
             LocalDate startDate = LocalDate.parse((String) requestBody.get("startDate"));
             LocalDate endDate = LocalDate.parse((String) requestBody.get("endDate"));
             String format = (String) requestBody.getOrDefault("format", "PDF");
 
-            // TODO: Implement generateReport in AssignmentReportService
-            Map<String, Object> report = new HashMap<>();
-            report.put("message", "This endpoint is under development");
-            report.put("reportType", reportType);
-            report.put("format", format);
-            report.put("status", "pending");
-            report.put("period", Map.of("startDate", startDate, "endDate", endDate));
+            var generatedReport = assignmentReportService.generateReport(
+                    reportType, entityId, startDate, endDate, format);
+
+            Map<String, Object> reportData = new HashMap<>();
+            reportData.put("reportType", generatedReport.getReportType());
+            reportData.put("title", generatedReport.getTitle());
+            reportData.put("format", generatedReport.getFormat());
+            reportData.put("status", generatedReport.getStatus());
+            reportData.put("generatedAt", generatedReport.getGeneratedAt().toString());
+            reportData.put("data", generatedReport.getData());
+            reportData.put("period", Map.of("startDate", startDate, "endDate", endDate));
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("report", report);
-            response.put("message", "Report generation endpoint under development (mock response)");
+            response.put("report", reportData);
 
             return ResponseEntity.ok(response);
 
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);

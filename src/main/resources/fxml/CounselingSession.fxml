@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -227,7 +229,7 @@
                 </VBox>
 
                 <!-- Risk Assessment -->\n                <VBox spacing="15" styleClass="form-section">
-                    <Label text="Risk Assessment" styleClass="section-header" style="-fx-text-fill: #d32f2f;"/>
+                    <Label text="Risk Assessment" styleClass="section-header"/>
 
                     <GridPane hgap="20" vgap="10">
                         <columnConstraints>
@@ -237,19 +239,19 @@
                         </columnConstraints>
 
                         <CheckBox fx:id="suicidalIdeationCheckBox" text="Suicidal Ideation Expressed"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                         <CheckBox fx:id="selfHarmRiskCheckBox" text="Self-Harm Risk"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
                         <CheckBox fx:id="harmToOthersCheckBox" text="Harm to Others Risk"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="2" GridPane.rowIndex="0"/>
 
                         <CheckBox fx:id="substanceUseCheckBox" text="Substance Use Disclosed"
                                   GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                         <CheckBox fx:id="abuseDisclosedCheckBox" text="Abuse Disclosed (Mandated Reporting)"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                         <CheckBox fx:id="safetyPlanReviewedCheckBox" text="Safety Plan Reviewed/Updated"
                                   GridPane.columnIndex="2" GridPane.rowIndex="1"/>
@@ -257,11 +259,11 @@
 
                     <VBox spacing="5" fx:id="riskDetailsBox" visible="false" managed="false">
                         <Label text="Risk Details & Actions Taken *" styleClass="field-label"
-                               style="-fx-text-fill: #d32f2f;"/>
+                               styleClass="text-muted"/>
                         <TextArea fx:id="riskDetailsTextArea"
                                   promptText="REQUIRED: Document specific risk factors, level of risk, immediate safety interventions, notifications made, follow-up plan..."
                                   wrapText="true" prefRowCount="4"
-                                  style="-fx-border-color: #d32f2f; -fx-border-width: 2;"/>
+                                  styleClass="border-danger"/>
                     </VBox>
                 </VBox>
 
@@ -322,7 +324,7 @@
                         <CheckBox fx:id="crisisTeamInvolvedCheckBox" text="Crisis Team Involved"
                                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                         <CheckBox fx:id="emergencyContactCheckBox" text="Emergency Contact Made"
-                                  style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+                                  styleClass="form-label"
                                   GridPane.columnIndex="2" GridPane.rowIndex="1"/>
                     </GridPane>
 
@@ -363,7 +365,7 @@
             <padding>
                 <Insets top="15" right="20" bottom="15" left="20"/>
             </padding>
-            <Label fx:id="riskIndicator" text="" style="-fx-font-weight: bold; -fx-text-fill: #d32f2f;"/>
+            <Label fx:id="riskIndicator" text="" styleClass="form-label"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button fx:id="saveButton" text="Save Session" onAction="#handleSave" styleClass="primary-button"/>
             <Button fx:id="saveDraftButton" text="Save Draft" onAction="#handleSaveDraft"/>

@@ -39,7 +39,7 @@ import java.time.LocalDate;
  * @version 1.0
  * @since Phase 66 - Report Data Visualization & Charts
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/charts")
 @RequiredArgsConstructor
 @Slf4j

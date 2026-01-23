@@ -2,7 +2,8 @@ package com.heronix.ui.controller;
 
 import com.heronix.model.domain.Student;
 import com.heronix.model.domain.FamilyHousehold;
-import com.heronix.repository.StudentRepository;
+import com.heronix.security.SecurityContext;
+import com.heronix.service.StudentService;
 import com.heronix.service.FamilyManagementService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -35,7 +36,7 @@ import java.time.format.DateTimeFormatter;
 public class SiblingEnrollmentLinkingController {
 
     @Autowired
-    private StudentRepository studentRepository;
+    private StudentService studentService;
 
     @Autowired
     private FamilyManagementService familyManagementService;
@@ -373,7 +374,7 @@ public class SiblingEnrollmentLinkingController {
         try {
             currentFamily = familyManagementService.createFamilyHousehold(
                 familyNameField.getText().trim(),
-                1L  // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             familyIdField.setText(currentFamily.getFamilyId());
@@ -444,10 +445,10 @@ public class SiblingEnrollmentLinkingController {
                     Student student = null;
                     try {
                         Long studentId = Long.parseLong(searchTerm.trim());
-                        student = studentRepository.findById(studentId).orElse(null);
+                        student = studentService.findById(studentId);
                     } catch (NumberFormatException e) {
                         // Search by name
-                        java.util.List<Student> students = studentRepository.searchByName(searchTerm.trim());
+                        java.util.List<Student> students = studentService.searchByName(searchTerm.trim());
                         if (students.isEmpty()) {
                             showError("No student found matching: " + searchTerm);
                             return;
@@ -505,7 +506,7 @@ public class SiblingEnrollmentLinkingController {
             currentFamily = familyManagementService.addStudentToFamily(
                 currentFamily.getId(),
                 student.getId(),
-                1L  // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             // Refresh UI
@@ -549,13 +550,13 @@ public class SiblingEnrollmentLinkingController {
             newStudent.setActive(true);
 
             // Save the student
-            Student savedStudent = studentRepository.save(newStudent);
+            Student savedStudent = studentService.save(newStudent);
 
             // Add to family
             currentFamily = familyManagementService.addStudentToFamily(
                 currentFamily.getId(),
                 savedStudent.getId(),
-                1L  // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             // Refresh UI
@@ -613,7 +614,7 @@ public class SiblingEnrollmentLinkingController {
                         currentFamily = familyManagementService.removeStudentFromFamily(
                             currentFamily.getId(),
                             studentToRemove.getId(),
-                            1L  // TODO: Get actual staff ID from session
+                            SecurityContext.getCurrentStaffId()
                         );
 
                         // Refresh UI
@@ -676,7 +677,7 @@ public class SiblingEnrollmentLinkingController {
                         currentFamily = familyManagementService.setPrimaryStudent(
                             currentFamily.getId(),
                             primaryStudent.getId(),
-                            1L  // TODO: Get actual staff ID from session
+                            SecurityContext.getCurrentStaffId()
                         );
 
                         showSuccess("Primary student set: " + primaryStudent.getFullName());
@@ -781,7 +782,7 @@ public class SiblingEnrollmentLinkingController {
             // Recalculate discounts
             currentFamily = familyManagementService.calculateFamilyDiscounts(
                 currentFamily.getId(),
-                1L  // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             // Update UI
@@ -832,7 +833,7 @@ public class SiblingEnrollmentLinkingController {
             // Save to database
             currentFamily = familyManagementService.updateFamilyHousehold(
                 currentFamily,
-                1L  // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             isDirty = false;

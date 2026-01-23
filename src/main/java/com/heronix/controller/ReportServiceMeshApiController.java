@@ -23,7 +23,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 128 - Report Service Mesh
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/service-mesh")
 @RequiredArgsConstructor
 @Slf4j

@@ -35,7 +35,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 100 - Report AI/ML Integration & Analytics
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/ai")
 @RequiredArgsConstructor
 @Slf4j

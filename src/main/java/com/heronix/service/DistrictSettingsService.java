@@ -37,6 +37,15 @@ public interface DistrictSettingsService {
     DistrictSettings updateDistrictSettings(DistrictSettings settings);
 
     /**
+     * Save district settings (alias for updateDistrictSettings)
+     * @param settings Settings to save
+     * @return Saved settings
+     */
+    default DistrictSettings save(DistrictSettings settings) {
+        return updateDistrictSettings(settings);
+    }
+
+    /**
      * Check if district has been configured
      * @return true if configured
      */

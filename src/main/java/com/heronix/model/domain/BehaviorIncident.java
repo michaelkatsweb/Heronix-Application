@@ -172,7 +172,8 @@ public class BehaviorIncident {
     public enum SeverityLevel {
         MINOR,      // Verbal warning, classroom management
         MODERATE,   // Parent contact, detention
-        MAJOR       // Admin referral, suspension consideration
+        MAJOR,      // Admin referral, suspension consideration
+        SEVERE      // Expulsion consideration, police involvement
     }
 
     public enum IncidentLocation {

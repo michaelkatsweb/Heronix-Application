@@ -3,6 +3,7 @@ package com.heronix.ui.controller;
 import com.heronix.model.domain.EnrollmentApplication;
 import com.heronix.model.domain.EnrollmentApplication.ApplicationStatus;
 import com.heronix.model.domain.EnrollmentApplication.EnrollmentType;
+import com.heronix.security.SecurityContext;
 import com.heronix.service.EnrollmentApplicationService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -251,7 +252,7 @@ public class EnrollmentApplicationFormController {
 
     private void populateGenderOptions() {
         if (studentGender == null) return;
-        studentGender.getItems().addAll("Male", "Female", "Non-Binary", "Prefer Not to Say");
+        studentGender.getItems().addAll("Male", "Female");
     }
 
     private void populateRaceOptions() {
@@ -382,7 +383,7 @@ public class EnrollmentApplicationFormController {
             EnrollmentType.NEW_STUDENT,  // Default to new student
             "9th Grade",  // Default grade
             generateCurrentSchoolYear(),
-            1L  // TODO: Get actual staff ID from session
+            SecurityContext.getCurrentStaffId()
         );
 
         // Update UI
@@ -572,7 +573,7 @@ public class EnrollmentApplicationFormController {
             currentApplication = enrollmentApplicationService.updateApplication(
                 currentApplication.getId(),
                 currentApplication,
-                1L // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             isDirty = false;
@@ -601,13 +602,13 @@ public class EnrollmentApplicationFormController {
             currentApplication = enrollmentApplicationService.updateApplication(
                 currentApplication.getId(),
                 currentApplication,
-                1L // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             // Move to DOCUMENTS_PENDING status - use correct method signature
             currentApplication = enrollmentApplicationService.submitForDocuments(
                 currentApplication.getId(),
-                1L // TODO: Get actual staff ID from session
+                SecurityContext.getCurrentStaffId()
             );
 
             // Update UI
@@ -1091,8 +1092,7 @@ public class EnrollmentApplicationFormController {
     }
 
     private String getCurrentUsername() {
-        // TODO: Get from security context/session
-        return "Admin User";
+        return SecurityContext.getCurrentUsername().orElse("System");
     }
 
     private void showSuccess(String message) {

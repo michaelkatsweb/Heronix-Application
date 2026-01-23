@@ -13,15 +13,15 @@
 -->
 <BorderPane xmlns="http://javafx.com/javafx"
     xmlns:fx="http://javafx.com/fxml"
-    fx:controller="com.heronix.ui.controller.ScheduleConfigurationController"
+    fx:controller="com.heronix.ui.controller.ScheduleConfigurationViewController"
     prefWidth="1000" prefHeight="700"
-    style="-fx-background-color: #ecf0f1;">
+    styleClass="card">
 
     <!-- TOP: HEADER -->
     <top>
         <VBox>
             <HBox
-                style="-fx-background-color: linear-gradient(to bottom, #2c3e50, #34495e); -fx-padding: 20;">
+                styleClass="header-gradient">
                 <VBox spacing="5" HBox.hgrow="ALWAYS">
                     <Label text="⚙️ Schedule Configuration" textFill="white"
                         style="-fx-font-size: 28; -fx-font-weight: bold;" />
@@ -40,7 +40,7 @@
 
                 <!-- TAB 1: SCHOOL DAY -->
                 <Tab text="🏫 School Day">
-                    <ScrollPane fitToWidth="true" style="-fx-background-color: white;">
+                    <ScrollPane fitToWidth="true" styleClass="card">
                         <VBox spacing="20" style="-fx-padding: 30;">
 
                             <Label text="School Day Timing"
@@ -49,7 +49,7 @@
                             <GridPane hgap="15" vgap="15">
                                 <Label text="School Start Time:" GridPane.columnIndex="0"
                                     GridPane.rowIndex="0"
-                                    style="-fx-font-weight: bold;" />
+                                    styleClass="form-label" />
                                 <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
                                     <Spinner fx:id="schoolStartHour" prefWidth="80" />
                                     <Label text=":" style="-fx-font-size: 16;" />
@@ -58,7 +58,7 @@
 
                                 <Label text="School End Time:" GridPane.columnIndex="0"
                                     GridPane.rowIndex="1"
-                                    style="-fx-font-weight: bold;" />
+                                    styleClass="form-label" />
                                 <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                     <Spinner fx:id="schoolEndHour" prefWidth="80" />
                                     <Label text=":" style="-fx-font-size: 16;" />
@@ -74,13 +74,13 @@
                             <GridPane hgap="15" vgap="15">
                                 <Label text="Schedule Type:" GridPane.columnIndex="0"
                                     GridPane.rowIndex="0"
-                                    style="-fx-font-weight: bold;" />
+                                    styleClass="form-label" />
                                 <ComboBox fx:id="scheduleTypeCombo" prefWidth="250"
                                     GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
                                 <Label text="Period Duration:" GridPane.columnIndex="0"
                                     GridPane.rowIndex="1"
-                                    style="-fx-font-weight: bold;" />
+                                    styleClass="form-label" />
                                 <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                     <Spinner fx:id="periodDurationSpinner" prefWidth="100" />
                                     <Label text="minutes" />
@@ -88,13 +88,13 @@
 
                                 <Label text="Periods Per Day:" GridPane.columnIndex="0"
                                     GridPane.rowIndex="2"
-                                    style="-fx-font-weight: bold;" />
+                                    styleClass="form-label" />
                                 <Spinner fx:id="periodsPerDaySpinner" prefWidth="100"
                                     GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                                 <Label text="Passing Period:" GridPane.columnIndex="0"
                                     GridPane.rowIndex="3"
-                                    style="-fx-font-weight: bold;" />
+                                    styleClass="form-label" />
                                 <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                     <Spinner fx:id="passingPeriodDuration" prefWidth="100" />
                                     <Label text="minutes" />
@@ -120,7 +120,7 @@
 
                 <!-- TAB 2: LUNCH & BREAKS -->
                 <Tab text="🍽️ Lunch &amp; Breaks">
-                    <ScrollPane fitToWidth="true" style="-fx-background-color: white;">
+                    <ScrollPane fitToWidth="true" styleClass="card">
                         <VBox spacing="20" style="-fx-padding: 30;">
 
                             <VBox spacing="15">
@@ -130,7 +130,7 @@
                                 <GridPane hgap="15" vgap="15" style="-fx-padding: 0 0 0 25;">
                                     <Label text="Lunch Start Time:" GridPane.columnIndex="0"
                                         GridPane.rowIndex="0"
-                                        style="-fx-font-weight: bold;" />
+                                        styleClass="form-label" />
                                     <HBox spacing="10" GridPane.columnIndex="1"
                                         GridPane.rowIndex="0">
                                         <Spinner fx:id="lunchStartHour" prefWidth="80" />
@@ -140,7 +140,7 @@
 
                                     <Label text="Lunch Duration:" GridPane.columnIndex="0"
                                         GridPane.rowIndex="1"
-                                        style="-fx-font-weight: bold;" />
+                                        styleClass="form-label" />
                                     <HBox spacing="10" GridPane.columnIndex="1"
                                         GridPane.rowIndex="1">
                                         <Spinner fx:id="lunchDurationSpinner" prefWidth="100" />
@@ -149,7 +149,7 @@
 
                                     <Label text="Lunch Waves:" GridPane.columnIndex="0"
                                         GridPane.rowIndex="2"
-                                        style="-fx-font-weight: bold;" />
+                                        styleClass="form-label" />
                                     <HBox spacing="10" GridPane.columnIndex="1"
                                         GridPane.rowIndex="2">
                                         <Spinner fx:id="lunchWavesSpinner" prefWidth="100" />
@@ -167,7 +167,7 @@
                                 <GridPane hgap="15" vgap="15" style="-fx-padding: 0 0 0 25;">
                                     <Label text="Break Time:" GridPane.columnIndex="0"
                                         GridPane.rowIndex="0"
-                                        style="-fx-font-weight: bold;" />
+                                        styleClass="form-label" />
                                     <HBox spacing="10" GridPane.columnIndex="1"
                                         GridPane.rowIndex="0">
                                         <Spinner fx:id="morningBreakHour" prefWidth="80"
@@ -179,7 +179,7 @@
 
                                     <Label text="Duration:" GridPane.columnIndex="0"
                                         GridPane.rowIndex="1"
-                                        style="-fx-font-weight: bold;" />
+                                        styleClass="form-label" />
                                     <HBox spacing="10" GridPane.columnIndex="1"
                                         GridPane.rowIndex="1">
                                         <Spinner fx:id="morningBreakDuration" prefWidth="100"
@@ -198,7 +198,7 @@
                                 <GridPane hgap="15" vgap="15" style="-fx-padding: 0 0 0 25;">
                                     <Label text="Break Time:" GridPane.columnIndex="0"
                                         GridPane.rowIndex="0"
-                                        style="-fx-font-weight: bold;" />
+                                        styleClass="form-label" />
                                     <HBox spacing="10" GridPane.columnIndex="1"
                                         GridPane.rowIndex="0">
                                         <Spinner fx:id="afternoonBreakHour" prefWidth="80"
@@ -210,7 +210,7 @@
 
                                     <Label text="Duration:" GridPane.columnIndex="0"
                                         GridPane.rowIndex="1"
-                                        style="-fx-font-weight: bold;" />
+                                        styleClass="form-label" />
                                     <HBox spacing="10" GridPane.columnIndex="1"
                                         GridPane.rowIndex="1">
                                         <Spinner fx:id="afternoonBreakDuration" prefWidth="100"
@@ -226,7 +226,7 @@
 
                 <!-- TAB 3: TEACHER CONSTRAINTS -->
                 <Tab text="👤 Teacher Constraints">
-                    <ScrollPane fitToWidth="true" style="-fx-background-color: white;">
+                    <ScrollPane fitToWidth="true" styleClass="card">
                         <VBox spacing="20" style="-fx-padding: 30;">
 
                             <Label text="Teacher Workload Limits"
@@ -235,7 +235,7 @@
                             <GridPane hgap="15" vgap="15">
                                 <Label text="Max Consecutive Hours:" GridPane.columnIndex="0"
                                     GridPane.rowIndex="0"
-                                    style="-fx-font-weight: bold;" />
+                                    styleClass="form-label" />
                                 <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
                                     <Spinner fx:id="maxConsecutiveHours" prefWidth="100" />
                                     <Label text="hours without break" />
@@ -243,13 +243,13 @@
 
                                 <Label text="Max Classes Per Day:" GridPane.columnIndex="0"
                                     GridPane.rowIndex="1"
-                                    style="-fx-font-weight: bold;" />
+                                    styleClass="form-label" />
                                 <Spinner fx:id="maxClassesPerDay" prefWidth="100"
                                     GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                                 <Label text="Max Daily Hours:" GridPane.columnIndex="0"
                                     GridPane.rowIndex="2"
-                                    style="-fx-font-weight: bold;" />
+                                    styleClass="form-label" />
                                 <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                     <Spinner fx:id="maxDailyHours" prefWidth="100" />
                                     <Label text="hours total" />
@@ -257,7 +257,7 @@
 
                                 <Label text="Min Prep Periods:" GridPane.columnIndex="0"
                                     GridPane.rowIndex="3"
-                                    style="-fx-font-weight: bold;" />
+                                    styleClass="form-label" />
                                 <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                     <Spinner fx:id="minPrepPeriods" prefWidth="100" />
                                     <Label text="per day" />
@@ -276,7 +276,7 @@
 
                 <!-- TAB 4: ROOM SETTINGS -->
                 <Tab text="🏫 Room Settings">
-                    <ScrollPane fitToWidth="true" style="-fx-background-color: white;">
+                    <ScrollPane fitToWidth="true" styleClass="card">
                         <VBox spacing="20" style="-fx-padding: 30;">
 
                             <Label text="Room Capacity &amp; Sharing"
@@ -285,7 +285,7 @@
                             <GridPane hgap="15" vgap="15">
                                 <Label text="Default Room Capacity:" GridPane.columnIndex="0"
                                     GridPane.rowIndex="0"
-                                    style="-fx-font-weight: bold;" />
+                                    styleClass="form-label" />
                                 <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
                                     <Spinner fx:id="defaultRoomCapacity" prefWidth="100" />
                                     <Label text="students" />
@@ -293,7 +293,7 @@
 
                                 <Label text="Capacity Buffer:" GridPane.columnIndex="0"
                                     GridPane.rowIndex="1"
-                                    style="-fx-font-weight: bold;" />
+                                    styleClass="form-label" />
                                 <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                     <Spinner fx:id="capacityBufferPercent" prefWidth="100" />
                                     <Label text="% over capacity allowed" />
@@ -312,7 +312,7 @@
 
                 <!-- TAB 5: ADVANCED -->
                 <Tab text="🔧 Advanced">
-                    <ScrollPane fitToWidth="true" style="-fx-background-color: white;">
+                    <ScrollPane fitToWidth="true" styleClass="card">
                         <VBox spacing="20" style="-fx-padding: 30;">
 
                             <Label text="Advanced Schedule Options"
@@ -354,13 +354,13 @@
         <VBox>
             <Separator />
             <HBox spacing="15" alignment="CENTER_LEFT"
-                style="-fx-padding: 15; -fx-background-color: white;">
+                styleClass="wizard-footer">
 
                 <Button fx:id="loadTemplateButton" text="📋 Load Template"
-                    style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-padding: 10 20; -fx-font-size: 14; -fx-cursor: hand;" />
+                    styleClass="button-primary" />
 
                 <Button fx:id="resetButton" text="↶ Reset to Defaults"
-                    style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 10 20; -fx-font-size: 14; -fx-cursor: hand;" />
+                    styleClass="button-primary" />
 
                 <Region HBox.hgrow="ALWAYS" />
 
@@ -370,7 +370,7 @@
                 <Region HBox.hgrow="ALWAYS" />
 
                 <Button fx:id="saveButton" text="💾 Save Configuration"
-                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-padding: 10 25; -fx-font-size: 14; -fx-font-weight: bold; -fx-cursor: hand;" />
+                    styleClass="button-primary" />
 
             </HBox>
         </VBox>

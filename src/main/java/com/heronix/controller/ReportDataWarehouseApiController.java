@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 83 - Report Data Warehouse & ETL
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/data-warehouse")
 @RequiredArgsConstructor
 public class ReportDataWarehouseApiController {

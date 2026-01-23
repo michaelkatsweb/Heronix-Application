@@ -42,7 +42,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 81 - Report Monitoring & Health Checks
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/monitoring")
 @RequiredArgsConstructor
 @Slf4j

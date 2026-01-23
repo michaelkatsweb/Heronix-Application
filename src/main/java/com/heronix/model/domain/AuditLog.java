@@ -101,6 +101,7 @@ public class AuditLog {
 
         // Report Events
         REPORT_GENERATE,
+        REPORT_GENERATED,
         REPORT_DOWNLOAD,
         REPORT_VIEW,
 
@@ -405,8 +406,19 @@ public class AuditLog {
         return success;
     }
 
+    public Boolean getSuccess() {
+        return success;
+    }
+
     public void setSuccess(boolean success) {
         this.success = success;
+    }
+
+    /**
+     * Alias for getDetails() - some code expects getDescription()
+     */
+    public String getDescription() {
+        return details;
     }
 
     public String getUserAgent() {

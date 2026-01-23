@@ -23,7 +23,7 @@ import java.util.Map;
  * @since Phase 148 - Cloud-Native Infrastructure & Container Orchestration
  */
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/cloud-native")
 @RequiredArgsConstructor
 public class ReportCloudNativeApiController {

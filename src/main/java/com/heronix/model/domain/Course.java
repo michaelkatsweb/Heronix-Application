@@ -6,6 +6,8 @@ import com.heronix.model.enums.EducationLevel;
 import com.heronix.model.enums.PriorityLevel;
 import com.heronix.model.enums.RoomType;
 import com.heronix.model.enums.ScheduleType;
+import com.heronix.model.enums.SCEDSubjectArea;
+import com.heronix.model.enums.USState;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -53,6 +55,50 @@ public class Course {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_area_id")
     private SubjectArea subjectArea;
+
+    // ========================================================================
+    // STATE COURSE CODE MAPPING
+    // Phase 57: State Course Catalog Feature - January 2026
+    // ========================================================================
+
+    /**
+     * Reference to the state's official course code catalog entry
+     * This links the local course to the state-approved course definition
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "state_course_code_id")
+    @ToString.Exclude
+    private StateCourseCode stateCourseCode;
+
+    /**
+     * State course code string (stored separately for quick reference)
+     * Example: "03220100" (Texas TEA service ID for Algebra I)
+     */
+    @Column(name = "state_code", length = 30)
+    private String stateCode;
+
+    /**
+     * SCED (School Courses for Exchange of Data) national code
+     * 5-digit format: Subject Area (2) + Course Number (3)
+     * Example: "02101" = Mathematics (02) + Algebra I (101)
+     */
+    @Column(name = "sced_code", length = 10)
+    private String scedCode;
+
+    /**
+     * SCED Subject Area classification
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "sced_subject_area", length = 50)
+    private SCEDSubjectArea scedSubjectArea;
+
+    /**
+     * The state this course is registered in
+     * Used for state reporting compliance
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "registered_state", length = 20)
+    private USState registeredState;
 
     @Enumerated(EnumType.STRING)
     private EducationLevel level;
@@ -895,5 +941,131 @@ public class Course {
 
         return String.format("%d/%d enrolled (%d %s)",
             total, capacity, sectionCount, sectionCount == 1 ? "section" : "sections");
+    }
+
+    // ========================================================================
+    // STATE COURSE CODE METHODS
+    // Phase 57: State Course Catalog Feature - January 2026
+    // ========================================================================
+
+    /**
+     * Link this course to a state course code from the catalog
+     * This automatically copies key fields from the state code
+     *
+     * @param stateCourseCode The state course code to link
+     */
+    public void linkToStateCourseCode(StateCourseCode stateCourseCode) {
+        this.stateCourseCode = stateCourseCode;
+        if (stateCourseCode != null) {
+            this.stateCode = stateCourseCode.getStateCourseCode();
+            this.scedCode = stateCourseCode.getScedCode();
+            this.scedSubjectArea = stateCourseCode.getSubjectArea();
+            this.registeredState = stateCourseCode.getState();
+
+            // Optionally copy other fields if not already set
+            if (this.courseType == null || this.courseType == CourseType.REGULAR) {
+                this.courseType = stateCourseCode.getCourseType();
+            }
+            if (this.courseCategory == null) {
+                this.courseCategory = stateCourseCode.getCourseCategory();
+            }
+            if (this.minGradeLevel == null) {
+                this.minGradeLevel = stateCourseCode.getMinGradeLevel();
+            }
+            if (this.maxGradeLevel == null) {
+                this.maxGradeLevel = stateCourseCode.getMaxGradeLevel();
+            }
+            if (this.credits == null) {
+                this.credits = stateCourseCode.getCredits();
+            }
+        }
+    }
+
+    /**
+     * Check if this course has a state course code assigned
+     */
+    @Transient
+    public boolean hasStateCourseCode() {
+        return stateCourseCode != null || (stateCode != null && !stateCode.isEmpty());
+    }
+
+    /**
+     * Check if this course has a SCED code assigned
+     */
+    @Transient
+    public boolean hasSCEDCode() {
+        return scedCode != null && !scedCode.isEmpty();
+    }
+
+    /**
+     * Get the state code display (either from linked entity or direct field)
+     */
+    @Transient
+    public String getStateCodeDisplay() {
+        if (stateCourseCode != null) {
+            return stateCourseCode.getStateCourseCode();
+        }
+        return stateCode;
+    }
+
+    /**
+     * Get the SCED code display
+     */
+    @Transient
+    public String getSCEDCodeDisplay() {
+        if (stateCourseCode != null && stateCourseCode.getScedCode() != null) {
+            return stateCourseCode.getScedCode();
+        }
+        return scedCode;
+    }
+
+    /**
+     * Get the SCED subject area display name
+     */
+    @Transient
+    public String getSCEDSubjectAreaDisplay() {
+        if (scedSubjectArea != null) {
+            return scedSubjectArea.getDisplayName();
+        }
+        if (stateCourseCode != null && stateCourseCode.getSubjectArea() != null) {
+            return stateCourseCode.getSubjectArea().getDisplayName();
+        }
+        return null;
+    }
+
+    /**
+     * Get the registered state display name
+     */
+    @Transient
+    public String getRegisteredStateDisplay() {
+        if (registeredState != null) {
+            return registeredState.getDisplayName();
+        }
+        if (stateCourseCode != null && stateCourseCode.getState() != null) {
+            return stateCourseCode.getState().getDisplayName();
+        }
+        return null;
+    }
+
+    /**
+     * Get full state compliance information as a formatted string
+     */
+    @Transient
+    public String getStateComplianceInfo() {
+        StringBuilder sb = new StringBuilder();
+        if (registeredState != null) {
+            sb.append(registeredState.name());
+        }
+        if (stateCode != null && !stateCode.isEmpty()) {
+            if (sb.length() > 0) sb.append(": ");
+            sb.append(stateCode);
+        }
+        if (scedCode != null && !scedCode.isEmpty()) {
+            if (sb.length() > 0) sb.append(" (SCED: ");
+            else sb.append("SCED: ");
+            sb.append(scedCode);
+            if (sb.toString().contains("(")) sb.append(")");
+        }
+        return sb.length() > 0 ? sb.toString() : "Not assigned";
     }
 }

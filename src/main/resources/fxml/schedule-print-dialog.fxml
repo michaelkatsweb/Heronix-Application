@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -8,8 +10,8 @@
 <DialogPane xmlns="http://javafx.com/javafx/21"
     xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.heronix.ui.controller.SchedulePrintDialogController"
-    stylesheets="@../css/modern-theme.css"
     prefWidth="650" prefHeight="550">
+
 
     <headerText>Print Student Schedules</headerText>
 
@@ -22,7 +24,7 @@
                 <Label text="Select Schedule:" styleClass="section-header" />
                 <ComboBox fx:id="scheduleComboBox" prefWidth="400" promptText="Choose schedule to print..." />
                 <Text fx:id="scheduleInfoText" wrappingWidth="600"
-                    style="-fx-fill: #7f8c8d; -fx-font-size: 12px;" />
+                    styleClass="text-muted-12-fill" />
             </VBox>
 
             <Separator />
@@ -40,11 +42,11 @@
                     <VBox.margin><Insets top="5" /></VBox.margin>
                 </RadioButton>
                 <VBox fx:id="allStudentsInfo" spacing="5"
-                    style="-fx-background-color: #e8f4f8; -fx-background-radius: 5; -fx-padding: 10;">
+                    styleClass="card">
                     <Label text="Print schedules for all students in this schedule"
-                        style="-fx-font-size: 13px; -fx-text-fill: #34495e;" wrapText="true" />
+                        styleClass="text-muted" wrapText="true" />
                     <Label fx:id="totalStudentsLabel" text="Total students: Loading..."
-                        style="-fx-text-fill: #2980b9; -fx-font-weight: bold;" />
+                        styleClass="form-label" />
                 </VBox>
 
                 <Separator />
@@ -55,13 +57,13 @@
                     <VBox.margin><Insets top="5" /></VBox.margin>
                 </RadioButton>
                 <VBox fx:id="byGradeLevelInfo" spacing="5"
-                    style="-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-padding: 10;">
+                    styleClass="card">
                     <HBox spacing="10" alignment="CENTER_LEFT">
                         <Label text="Select Grade:" prefWidth="100" />
                         <ComboBox fx:id="gradeLevelComboBox" prefWidth="200" promptText="Choose grade level..." editable="false" />
                     </HBox>
                     <Label fx:id="gradeStudentsLabel" text="Students in selected grade: 0"
-                        style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+                        styleClass="text-muted" />
                 </VBox>
 
                 <Separator />
@@ -72,14 +74,14 @@
                     <VBox.margin><Insets top="5" /></VBox.margin>
                 </RadioButton>
                 <VBox fx:id="individualStudentsInfo" spacing="5"
-                    style="-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-padding: 10;">
+                    styleClass="card">
                     <HBox spacing="10" alignment="CENTER_LEFT">
                         <Label text="Search Student:" prefWidth="100" />
                         <TextField fx:id="studentSearchField" promptText="Search by name or ID..." prefWidth="300" />
                         <Button fx:id="addStudentButton" text="Add" styleClass="primary-button" />
                     </HBox>
                     <VBox spacing="5">
-                        <Label text="Selected Students:" style="-fx-font-weight: bold;" />
+                        <Label text="Selected Students:" styleClass="form-label" />
                         <ListView fx:id="selectedStudentsList" prefHeight="100" />
                         <Button fx:id="removeStudentButton" text="Remove Selected" styleClass="secondary-button" />
                     </VBox>
@@ -119,19 +121,19 @@
                 <CheckBox fx:id="saveToPortalCheckbox" text="Make available in parent/student portal" selected="true" />
 
                 <Text text="Note: Schedules will be saved to the server. You can download them or send to printer after generation."
-                    wrappingWidth="600" style="-fx-fill: #95a5a6; -fx-font-size: 11px; -fx-font-style: italic;" />
+                    wrappingWidth="600" styleClass="text-hint-11-italic-fill" />
             </VBox>
 
             <!-- PROGRESS INDICATOR (hidden initially) -->
             <VBox fx:id="progressBox" spacing="10" visible="false" managed="false"
-                style="-fx-background-color: #fff3cd; -fx-background-radius: 5; -fx-padding: 15;">
+                styleClass="card">
                 <HBox spacing="10" alignment="CENTER_LEFT">
                     <Label fx:id="progressIcon" text="⏳" style="-fx-font-size: 24px;" />
                     <VBox spacing="3">
                         <Label fx:id="progressLabel" text="Generating schedules..."
-                            style="-fx-font-weight: bold; -fx-text-fill: #856404;" />
+                            styleClass="form-label" />
                         <Label fx:id="progressMessage" text="Please wait..."
-                            style="-fx-text-fill: #856404; -fx-font-size: 12px;" />
+                            styleClass="text-muted" />
                     </VBox>
                 </HBox>
                 <ProgressBar fx:id="progressBar" progress="0" prefWidth="580" prefHeight="15" />

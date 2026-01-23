@@ -125,7 +125,7 @@ public class Student {
 
     /**
      * Gender
-     * Values: "Male", "Female", "Non-binary", "Prefer not to say"
+     * Values: "Male", "Female"
      */
     @Column(name = "gender", length = 50)
     private String gender;
@@ -1650,5 +1650,46 @@ public class Student {
         public String toString() {
             return displayName;
         }
+    }
+
+    // ========================================================================
+    // ALIAS METHODS FOR COMPATIBILITY
+    // These methods provide backward compatibility with code expecting
+    // different method names for the same underlying data
+    // ========================================================================
+
+    /**
+     * Alias for getCurrentGPA() - for compatibility with reporting services
+     */
+    public Double getGpa() {
+        return currentGPA;
+    }
+
+    /**
+     * Alias for getHasIEP() - for special education flag compatibility
+     */
+    public Boolean getSpecialEducation() {
+        return hasIEP;
+    }
+
+    /**
+     * Alias for getIsGifted() - for gifted/talented flag compatibility
+     */
+    public Boolean getGiftedTalented() {
+        return isGifted;
+    }
+
+    /**
+     * Alias for getIsEnglishLearner() - for ELL flag compatibility
+     */
+    public Boolean getEll() {
+        return isEnglishLearner;
+    }
+
+    /**
+     * Alias for getStudentStatus() - returns status as string for compatibility
+     */
+    public String getStatus() {
+        return studentStatus != null ? studentStatus.getDisplayName() : null;
     }
 }

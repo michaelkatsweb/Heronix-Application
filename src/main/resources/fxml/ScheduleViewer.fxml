@@ -76,7 +76,7 @@ Fixed emoji encoding and improved UI styling
 
                 <!-- Schedule Selection -->
                 <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                    <Label text="Schedule:" style="-fx-font-weight: bold; -fx-text-fill: #e8eaed; -fx-font-size: 13;"/>
+                    <Label text="Schedule:" styleClass="text-muted"/>
                     <ComboBox fx:id="scheduleComboBox" prefWidth="250" promptText="Select a schedule..."
                               style="-fx-font-size: 13;">
                         <tooltip>
@@ -87,7 +87,7 @@ Fixed emoji encoding and improved UI styling
 
                 <!-- View Type -->
                 <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                    <Label text="View Type:" style="-fx-font-weight: bold; -fx-text-fill: #e8eaed; -fx-font-size: 13;"/>
+                    <Label text="View Type:" styleClass="text-muted"/>
                     <ComboBox fx:id="viewTypeCombo" prefWidth="180" promptText="Select view..."
                               style="-fx-font-size: 13;">
                         <tooltip>
@@ -98,7 +98,7 @@ Fixed emoji encoding and improved UI styling
 
                 <!-- Date Picker -->
                 <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
-                    <Label text="Date:" style="-fx-font-weight: bold; -fx-text-fill: #e8eaed; -fx-font-size: 13;"/>
+                    <Label text="Date:" styleClass="text-muted"/>
                     <DatePicker fx:id="datePicker" prefWidth="180" style="-fx-font-size: 13;">
                         <tooltip>
                             <Tooltip text="Select date to view"/>
@@ -108,7 +108,7 @@ Fixed emoji encoding and improved UI styling
 
                 <!-- Search Field -->
                 <VBox spacing="5" GridPane.columnIndex="3" GridPane.rowIndex="0">
-                    <Label text="Search:" style="-fx-font-weight: bold; -fx-text-fill: #e8eaed; -fx-font-size: 13;"/>
+                    <Label text="Search:" styleClass="text-muted"/>
                     <TextField fx:id="searchField"
                               promptText="Search courses, teachers, rooms..."
                               prefWidth="250"
@@ -122,7 +122,7 @@ Fixed emoji encoding and improved UI styling
 
                 <!-- Legend Button -->
                 <VBox spacing="5" GridPane.columnIndex="4" GridPane.rowIndex="0">
-                    <Label text="Legend:" style="-fx-font-weight: bold; -fx-text-fill: #e8eaed; -fx-font-size: 13;"/>
+                    <Label text="Legend:" styleClass="text-muted"/>
                     <Button text="🎨 Show Legend" onAction="#handleShowLegend"
                             styleClass="button-primary">
                         <tooltip>
@@ -145,7 +145,7 @@ Fixed emoji encoding and improved UI styling
                 <Region HBox.hgrow="ALWAYS"/>
 
                 <Label fx:id="selectedDateLabel" text="Select a date"
-                       style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                       styleClass="header-16-slate"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
 
@@ -161,17 +161,17 @@ Fixed emoji encoding and improved UI styling
             <HBox spacing="20" styleClass="card" style="-fx-padding: 10 15; -fx-border-width: 1 0 0 0; -fx-border-color: rgba(91, 141, 239, 0.25);">
 
                 <Label fx:id="scheduleInfoLabel" text="No schedule selected"
-                       style="-fx-font-size: 13; -fx-text-fill: #2c3e50;"/>
+                       styleClass="text-muted"/>
 
                 <Separator orientation="VERTICAL"/>
 
                 <Label text="💡 Tip: Click on any slot to view details"
-                       style="-fx-font-size: 12; -fx-text-fill: #7f8c8d; -fx-font-style: italic;"/>
+                       styleClass="text-muted"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
 
                 <Label text="✅ Ready"
-                       style="-fx-font-size: 13; -fx-text-fill: #27ae60; -fx-font-weight: bold;"/>
+                       styleClass="text-muted"/>
             </HBox>
 
         </VBox>
@@ -196,7 +196,7 @@ Fixed emoji encoding and improved UI styling
                                  styleClass="card" style=" -fx-padding: 20; -fx-hgap: 2; -fx-vgap: 2;">
                             <!-- Calendar grid will be populated dynamically -->
                             <Label text="Calendar view will be rendered here"
-                                   style="-fx-font-size: 16; -fx-text-fill: #95a5a6; -fx-padding: 50;"
+                                   styleClass="text-muted"
                                    GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                         </GridPane>
 
@@ -222,7 +222,7 @@ Fixed emoji encoding and improved UI styling
 
                                 <placeholder>
                                     <Label text="No schedule data available. Select a schedule to view."
-                                           style="-fx-font-size: 14; -fx-text-fill: #95a5a6;"/>
+                                           styleClass="text-muted"/>
                                 </placeholder>
                             </TableView>
                         </center>
@@ -271,13 +271,13 @@ Fixed emoji encoding and improved UI styling
 
                     <!-- Conflicts List -->
                     <VBox spacing="5">
-                        <Label text="⚠ Conflicts:" style="-fx-font-weight: bold; -fx-text-fill: #e74c3c; -fx-font-size: 14;"/>
+                        <Label text="⚠ Conflicts:" styleClass="text-muted"/>
                         <ListView fx:id="conflictsList"
                                  prefHeight="150"
-                                 style="-fx-background-color: #fff5f5; -fx-border-color: #e74c3c; -fx-border-width: 1; -fx-border-radius: 5; -fx-font-size: 12;">
+                                 styleClass="card">
                             <placeholder>
                                 <Label text="No conflicts detected"
-                                       style="-fx-text-fill: #27ae60; -fx-font-size: 13;"/>
+                                       styleClass="text-muted"/>
                             </placeholder>
                         </ListView>
                     </VBox>
@@ -295,14 +295,14 @@ Fixed emoji encoding and improved UI styling
                         </Button>
 
                         <Button text="🔄 Assign Substitute" maxWidth="Infinity"
-                                style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-padding: 12; -fx-cursor: hand; -fx-background-radius: 5; -fx-font-weight: bold; -fx-font-size: 13;">
+                                styleClass="button-primary">
                             <tooltip>
                                 <Tooltip text="Assign a substitute teacher"/>
                             </tooltip>
                         </Button>
 
                         <Button text="🗑 Remove Slot" maxWidth="Infinity"
-                                style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 12; -fx-cursor: hand; -fx-background-radius: 5; -fx-font-weight: bold; -fx-font-size: 13;">
+                                styleClass="button-primary">
                             <tooltip>
                                 <Tooltip text="Remove this schedule slot"/>
                             </tooltip>

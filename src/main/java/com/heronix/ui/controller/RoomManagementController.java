@@ -2,7 +2,7 @@ package com.heronix.ui.controller;
 
 import com.heronix.model.domain.Room;
 import com.heronix.model.enums.RoomType;
-import com.heronix.repository.RoomRepository;
+import com.heronix.service.RoomService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -80,7 +80,7 @@ public class RoomManagementController {
     private HBox selectionToolbar;
 
     @Autowired
-    private RoomRepository roomRepository;
+    private RoomService roomService;
 
     @Autowired
     private com.heronix.service.ExportService exportService;
@@ -120,7 +120,7 @@ public class RoomManagementController {
     private void handleBulkDelete(List<Room> rooms) {
         try {
             for (Room room : rooms) {
-                roomRepository.delete(room);
+                roomService.delete(room);
                 log.info("Deleted room: {} (ID: {})", room.getRoomNumber(), room.getId());
             }
 
@@ -219,7 +219,7 @@ public class RoomManagementController {
     }
 
     private void loadRooms() {
-        List<Room> rooms = roomRepository.findAll();
+        List<Room> rooms = roomService.findAll();
         roomTable.setItems(FXCollections.observableArrayList(rooms));
         updateRecordCount(rooms.size());
     }
@@ -231,7 +231,7 @@ public class RoomManagementController {
             loadRooms();
             return;
         }
-        List<Room> filtered = roomRepository.findAll().stream()
+        List<Room> filtered = roomService.findAll().stream()
                 .filter(r -> r.getRoomNumber().toLowerCase().contains(searchText) ||
                         (r.getBuilding() != null && r.getBuilding().toLowerCase().contains(searchText)))
                 .toList();
@@ -245,7 +245,7 @@ public class RoomManagementController {
         String type = typeFilter.getValue();
         String status = statusFilter.getValue();
 
-        List<Room> filtered = roomRepository.findAll().stream()
+        List<Room> filtered = roomService.findAll().stream()
                 .filter(r -> {
                     boolean buildingMatch = building == null || building.equals("All Buildings") ||
                             (r.getBuilding() != null && r.getBuilding().equals(building));
@@ -273,7 +273,7 @@ public class RoomManagementController {
         newRoom.setType(RoomType.CLASSROOM);
 
         if (showRoomDialog(newRoom, "Add New Room")) {
-            roomRepository.save(newRoom);
+            roomService.save(newRoom);
             loadRooms();
             showAlert(Alert.AlertType.INFORMATION, "Success", "Room added successfully!");
         }
@@ -281,7 +281,7 @@ public class RoomManagementController {
 
     private void handleEditRoom(Room room) {
         if (showRoomDialog(room, "Edit Room")) {
-            roomRepository.save(room);
+            roomService.save(room);
             loadRooms();
             showAlert(Alert.AlertType.INFORMATION, "Success", "Room updated successfully!");
         }
@@ -295,7 +295,7 @@ public class RoomManagementController {
 
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                roomRepository.delete(room);
+                roomService.delete(room);
                 loadRooms();
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Room deleted successfully!");
             }
@@ -335,27 +335,27 @@ public class RoomManagementController {
         typeCombo.setValue(room.getType() != null ? room.getType() : RoomType.CLASSROOM);
 
         // Activity Tags field (Phase 5F)
-        TextField activityTagsField = new TextField(room.getActivityTags());
+        TextField activityTagsField = new TextField(room.getActivityTags() != null ? room.getActivityTags() : "");
         activityTagsField.setPromptText("e.g., Basketball, Volleyball, Weights");
         Label activityTagsHelp = new Label("Comma-separated list of activities this room supports");
         activityTagsHelp.setStyle("-fx-font-size: 10px; -fx-text-fill: gray;");
 
         CheckBox projectorCheckBox = new CheckBox();
-        projectorCheckBox.setSelected(room.getHasProjector());
+        projectorCheckBox.setSelected(Boolean.TRUE.equals(room.getHasProjector()));
 
         CheckBox smartboardCheckBox = new CheckBox();
-        smartboardCheckBox.setSelected(room.getHasSmartboard());
+        smartboardCheckBox.setSelected(Boolean.TRUE.equals(room.getHasSmartboard()));
 
         CheckBox computersCheckBox = new CheckBox();
-        computersCheckBox.setSelected(room.getHasComputers());
+        computersCheckBox.setSelected(Boolean.TRUE.equals(room.getHasComputers()));
 
         CheckBox accessibleCheckBox = new CheckBox();
-        accessibleCheckBox.setSelected(room.getWheelchairAccessible());
+        accessibleCheckBox.setSelected(Boolean.TRUE.equals(room.getWheelchairAccessible()));
 
         CheckBox activeCheckBox = new CheckBox();
-        activeCheckBox.setSelected(room.getActive());
+        activeCheckBox.setSelected(Boolean.TRUE.equals(room.getActive()));
 
-        TextArea notesArea = new TextArea(room.getNotes());
+        TextArea notesArea = new TextArea(room.getNotes() != null ? room.getNotes() : "");
         notesArea.setPrefRowCount(3);
         notesArea.setPromptText("Room notes...");
 
@@ -398,29 +398,35 @@ public class RoomManagementController {
         saveButton.setDisable(true);
 
         roomNumberField.textProperty().addListener((obs, old, newVal) -> {
-            saveButton.setDisable(newVal.trim().isEmpty() || buildingField.getText().trim().isEmpty());
+            String roomNum = newVal != null ? newVal.trim() : "";
+            String building = buildingField.getText() != null ? buildingField.getText().trim() : "";
+            saveButton.setDisable(roomNum.isEmpty() || building.isEmpty());
         });
 
         buildingField.textProperty().addListener((obs, old, newVal) -> {
-            saveButton.setDisable(newVal.trim().isEmpty() || roomNumberField.getText().trim().isEmpty());
+            String building = newVal != null ? newVal.trim() : "";
+            String roomNum = roomNumberField.getText() != null ? roomNumberField.getText().trim() : "";
+            saveButton.setDisable(building.isEmpty() || roomNum.isEmpty());
         });
 
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.isPresent() && result.get() == saveButtonType) {
-            room.setRoomNumber(roomNumberField.getText().trim());
-            room.setBuilding(buildingField.getText().trim());
+            room.setRoomNumber(roomNumberField.getText() != null ? roomNumberField.getText().trim() : "");
+            room.setBuilding(buildingField.getText() != null ? buildingField.getText().trim() : "");
             room.setFloor(floorSpinner.getValue());
             room.setZone(zoneCombo.getValue() != null && !zoneCombo.getValue().trim().isEmpty()
                     ? zoneCombo.getValue().trim() : null);  // Phase 6C
             room.setCapacity(capacitySpinner.getValue());
             room.setType(typeCombo.getValue());
-            room.setActivityTags(activityTagsField.getText().trim()); // Phase 5F
+            String activityTags = activityTagsField.getText();
+            room.setActivityTags(activityTags != null ? activityTags.trim() : null); // Phase 5F
             room.setHasProjector(projectorCheckBox.isSelected());
             room.setHasSmartboard(smartboardCheckBox.isSelected());
             room.setHasComputers(computersCheckBox.isSelected());
             room.setWheelchairAccessible(accessibleCheckBox.isSelected());
             room.setActive(activeCheckBox.isSelected());
-            room.setNotes(notesArea.getText().trim());
+            String notes = notesArea.getText();
+            room.setNotes(notes != null ? notes.trim() : null);
             return true;
         }
         return false;

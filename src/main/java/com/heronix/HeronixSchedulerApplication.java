@@ -1,6 +1,6 @@
 package com.heronix;
 
-import com.heronix.ui.controller.MainController;
+import com.heronix.ui.controller.MainControllerV2;
 import com.heronix.ui.controller.LoginController;
 import com.heronix.security.SecurityContext;
 import com.heronix.service.UserService;
@@ -89,15 +89,15 @@ public class HeronixSchedulerApplication extends Application {
                 return;
             }
 
-            log.info("Login successful. Loading main window...");
+            log.info("Login successful. Loading main window V2 (modern UI)...");
 
             // Load FXML with Spring controller factory
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainWindow.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainWindowV2.fxml"));
             loader.setControllerFactory(springContext::getBean);
             Parent root = loader.load();
 
             // Get controller reference
-            MainController mainController = loader.getController();
+            MainControllerV2 mainController = loader.getController();
 
             // Create scene with stylesheet
             Scene scene = new Scene(root, 1400, 900);
@@ -109,15 +109,8 @@ public class HeronixSchedulerApplication extends Application {
             // Show stage
             primaryStage.show();
 
-            // ✅ CRITICAL FIX: Auto-load Dashboard after stage is visible
-            Platform.runLater(() -> {
-                try {
-                    log.info("Auto-loading Dashboard...");
-                    mainController.onApplicationReady();
-                } catch (Exception e) {
-                    log.error("Failed to auto-load Dashboard", e);
-                }
-            });
+            // MainControllerV2 auto-loads dashboard in its initialize() method
+            log.info("MainControllerV2 will auto-load dashboard via Platform.runLater");
 
             log.info("Heronix Scheduling System started successfully!");
 
@@ -163,8 +156,9 @@ public class HeronixSchedulerApplication extends Application {
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.setResizable(false);
 
-            // Set scene
+            // Set scene with theme stylesheets
             Scene scene = new Scene(root);
+            loadStylesheet(scene);  // Apply theme to login dialog
             dialogStage.setScene(scene);
 
             // Pass stage reference to controller
@@ -207,45 +201,40 @@ public class HeronixSchedulerApplication extends Application {
         try {
             // Load theme preference from settings
             String themeName = loadThemePreference();
-            String cssFile;
+            String themeFile;
 
             switch (themeName) {
                 case "Dark":
-                    cssFile = "/css/dark-theme.css";
-                    log.info("Loading Dark theme (dark-theme.css)");
+                    themeFile = "/css/theme-dark.css";
+                    log.info("Loading Dark theme (theme-dark.css)");
                     break;
                 case "Light":
-                    cssFile = "/css/light-theme.css";
-                    log.info("Loading Light theme (light-theme.css)");
+                    themeFile = "/css/theme-light.css";
+                    log.info("Loading Light theme (theme-light.css)");
                     break;
                 case "System":
-                    // System theme defaults to light
-                    cssFile = "/css/light-theme.css";
-                    log.info("Loading System theme (defaulting to light-theme.css)");
+                    // Detect system theme preference
+                    themeFile = detectSystemTheme();
+                    log.info("Loading System theme ({})", themeFile);
                     break;
                 default:
-                    cssFile = "/css/light-theme.css";
-                    log.warn("Unknown theme '{}', defaulting to light-theme.css", themeName);
+                    themeFile = "/css/theme-dark.css";
+                    log.warn("Unknown theme '{}', defaulting to theme-dark.css", themeName);
             }
 
-            String stylesheet = getClass().getResource(cssFile).toExternalForm();
-            scene.getStylesheets().add(stylesheet);
-            log.info("Loaded theme: {} ({})", themeName, cssFile);
-
-            // Load module launcher stylesheet
-            try {
-                String launcherStylesheet = getClass().getResource("/css/module-launcher.css").toExternalForm();
-                scene.getStylesheets().add(launcherStylesheet);
-                log.info("Loaded module launcher stylesheet");
-            } catch (Exception ex) {
-                log.warn("Failed to load module-launcher.css (optional)", ex);
-            }
+            // Add theme stylesheet (complete styling - colors and layout)
+            // Note: theme-dark.css and theme-light.css now contain all styling
+            // base-styles.css is NOT loaded because it uses CSS variables which JavaFX ignores
+            String themeStylesheet = getClass().getResource(themeFile).toExternalForm();
+            scene.getStylesheets().add(themeStylesheet);
+            log.info("Loaded theme: {} ({})", themeName, themeFile);
         } catch (Exception e) {
             log.warn("Failed to load stylesheet, using fallback theme", e);
             try {
-                // Fallback to light theme
-                String fallback = getClass().getResource("/css/light-theme.css").toExternalForm();
+                // Fallback to dark theme only
+                String fallback = getClass().getResource("/css/theme-dark.css").toExternalForm();
                 scene.getStylesheets().add(fallback);
+                log.info("Loaded fallback dark theme");
             } catch (Exception ex) {
                 log.error("Failed to load fallback stylesheet", ex);
             }
@@ -253,8 +242,50 @@ public class HeronixSchedulerApplication extends Application {
     }
 
     /**
+     * Detect system theme preference (dark/light mode)
+     * Returns the appropriate theme CSS file path
+     */
+    private String detectSystemTheme() {
+        try {
+            // Try to detect Windows dark mode
+            String os = System.getProperty("os.name", "").toLowerCase();
+            if (os.contains("windows")) {
+                // Check Windows registry for dark mode setting
+                ProcessBuilder pb = new ProcessBuilder(
+                    "reg", "query",
+                    "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                    "/v", "AppsUseLightTheme"
+                );
+                pb.redirectErrorStream(true);
+                Process process = pb.start();
+                java.io.BufferedReader reader = new java.io.BufferedReader(
+                    new java.io.InputStreamReader(process.getInputStream())
+                );
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.contains("AppsUseLightTheme")) {
+                        // Value 0x0 means dark mode, 0x1 means light mode
+                        if (line.contains("0x0")) {
+                            log.info("System theme detected: Dark Mode");
+                            return "/css/theme-dark.css";
+                        } else {
+                            log.info("System theme detected: Light Mode");
+                            return "/css/theme-light.css";
+                        }
+                    }
+                }
+                process.waitFor();
+            }
+        } catch (Exception e) {
+            log.warn("Could not detect system theme, defaulting to dark", e);
+        }
+        // Default to dark theme if detection fails
+        return "/css/theme-dark.css";
+    }
+
+    /**
      * Load theme preference from settings file
-     * @return Theme name: "Light", "Dark", or "System"
+     * @return Theme name: "Dark", "Light", or "System"
      */
     private String loadThemePreference() {
         try {
@@ -262,14 +293,14 @@ public class HeronixSchedulerApplication extends Application {
             if (settingsFile.exists()) {
                 java.util.Properties settings = new java.util.Properties();
                 settings.load(new java.io.FileInputStream(settingsFile));
-                String theme = settings.getProperty("theme", "Light");
+                String theme = settings.getProperty("theme", "Dark");
                 log.info("Loaded theme preference from settings: {}", theme);
                 return theme;
             }
         } catch (Exception e) {
             log.warn("Failed to load theme preference, using default", e);
         }
-        return "Light"; // Default to Light theme
+        return "Dark"; // Default to Dark theme
     }
 
     private void showErrorAndExit(Exception e) {

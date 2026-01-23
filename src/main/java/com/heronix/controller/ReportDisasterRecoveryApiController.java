@@ -39,7 +39,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 110 - Report Disaster Recovery & Business Continuity
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/disaster-recovery")
 @RequiredArgsConstructor
 @Slf4j

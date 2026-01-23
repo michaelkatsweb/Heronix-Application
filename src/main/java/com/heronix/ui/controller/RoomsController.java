@@ -2,7 +2,6 @@ package com.heronix.ui.controller;
 
 import com.heronix.model.domain.Room;
 import com.heronix.model.enums.RoomType;
-import com.heronix.repository.RoomRepository;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -37,7 +36,7 @@ import java.util.concurrent.CompletableFuture;
 public class RoomsController {
 
     @Autowired
-    private RoomRepository roomRepository;
+    private com.heronix.service.RoomService roomService;
 
     @Autowired
     private com.heronix.service.ExportService exportService;
@@ -163,7 +162,7 @@ public class RoomsController {
                         Room room = getTableRow().getItem();
                         if (room != null) {
                             room.setCapacity(capacity);
-                            roomRepository.save(room);
+                            roomService.save(room);
                             commitEdit(textField.getText());
                             log.info("Updated capacity for room {} to {}", room.getRoomNumber(), capacity);
                         }
@@ -213,7 +212,7 @@ public class RoomsController {
                     Room room = getTableRow().getItem();
                     if (room != null) {
                         room.setEquipment(textField.getText());
-                        roomRepository.save(room);
+                        roomService.save(room);
                         commitEdit(textField.getText());
                         log.info("Updated equipment for room {} to '{}'", room.getRoomNumber(), textField.getText());
                     }
@@ -253,7 +252,7 @@ public class RoomsController {
                     if (room != null) {
                         boolean isAccessible = comboBox.getValue().startsWith("✓");
                         room.setAccessible(isAccessible);
-                        roomRepository.save(room);
+                        roomService.save(room);
                         commitEdit(comboBox.getValue());
                         log.info("Updated accessibility for room {} to {}", room.getRoomNumber(), isAccessible);
                     }
@@ -293,7 +292,7 @@ public class RoomsController {
                     if (room != null) {
                         boolean isAvailable = comboBox.getValue().startsWith("✓");
                         room.setAvailable(isAvailable);
-                        roomRepository.save(room);
+                        roomService.save(room);
                         commitEdit(comboBox.getValue());
                         log.info("Updated availability for room {} to {}", room.getRoomNumber(), isAvailable);
                     }
@@ -394,7 +393,7 @@ public class RoomsController {
             try {
                 // ✅ FIXED: Use findAllWithTeacher() to eagerly load teacher relationship
                 // Prevents LazyInitializationException when displaying teacher names in table
-                List<Room> rooms = roomRepository.findAllWithTeacher();
+                List<Room> rooms = roomService.findAll();
                 
                 Platform.runLater(() -> {
                     roomsList.clear();
@@ -427,7 +426,7 @@ public class RoomsController {
 
         CompletableFuture.runAsync(() -> {
             // ✅ FIXED: Use findAllWithTeacher() to prevent LazyInitializationException
-            List<Room> filtered = roomRepository.findAllWithTeacher().stream()
+            List<Room> filtered = roomService.findAll().stream()
                 .filter(r ->
                     r.getRoomNumber().toLowerCase().contains(query) ||
                     (r.getBuilding() != null && r.getBuilding().toLowerCase().contains(query))
@@ -453,7 +452,7 @@ public class RoomsController {
 
         CompletableFuture.runAsync(() -> {
             // ✅ FIXED: Use findAllWithTeacher() to prevent LazyInitializationException
-            List<Room> filtered = roomRepository.findAllWithTeacher().stream()
+            List<Room> filtered = roomService.findAll().stream()
                 // Filter by building
                 .filter(r -> 
                     "All".equals(building) || 
@@ -525,7 +524,7 @@ public class RoomsController {
         Optional<Room> result = dialog.showAndWait();
         result.ifPresent(room -> {
             try {
-                roomRepository.save(room);
+                roomService.save(room);
                 loadRooms();
                 log.info("Room added: {}", room.getRoomNumber());
                 showInfo("Success", "Room added successfully!");
@@ -604,7 +603,7 @@ public class RoomsController {
         Optional<Room> result = dialog.showAndWait();
         result.ifPresent(updated -> {
             try {
-                roomRepository.save(updated);
+                roomService.save(updated);
                 loadRooms();
                 log.info("Room updated: {}", updated.getRoomNumber());
                 showInfo("Success", "Room updated successfully!");
@@ -629,7 +628,7 @@ public class RoomsController {
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
-                    roomRepository.delete(room);
+                    roomService.delete(room);
                     loadRooms();
                     log.info("Room deleted: {}", room.getRoomNumber());
                     showInfo("Success", "Room deleted successfully!");

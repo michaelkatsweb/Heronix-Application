@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/schedule-config")
 @RequiredArgsConstructor
 public class ReportScheduleConfigApiController {

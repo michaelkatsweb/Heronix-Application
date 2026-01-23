@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.StaffDirectoryManagementController" prefWidth="1500" prefHeight="900">
+
     <top>
-        <VBox spacing="10" style="-fx-background-color: #607d8b; -fx-padding: 20;">
-            <Label text="Staff Directory Management" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <VBox spacing="10" styleClass="card">
+            <Label text="Staff Directory Management" styleClass="page-title-white"/>
         </VBox>
     </top>
     <center>

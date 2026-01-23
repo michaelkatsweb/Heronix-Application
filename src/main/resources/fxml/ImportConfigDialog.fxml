@@ -15,11 +15,11 @@ Location: src/main/resources/fxml/ImportConfigDialog.fxml
     prefWidth="900" prefHeight="700">
 
     <header>
-        <VBox spacing="10" style="-fx-background-color: #f8f9fa; -fx-padding: 20;">
+        <VBox spacing="10" styleClass="card">
             <Label text="📊 Import Configuration" 
                 style="-fx-font-size: 20; -fx-font-weight: bold;" />
             <Label text="Map your CSV columns to system fields" 
-                style="-fx-text-fill: #666;" />
+                styleClass="text-muted" />
         </VBox>
     </header>
 
@@ -50,22 +50,22 @@ Location: src/main/resources/fxml/ImportConfigDialog.fxml
                 <Label text="Column Mappings" 
                     style="-fx-font-weight: bold; -fx-font-size: 14;" />
                 <Label text="Match your CSV columns (left) to system fields (right)" 
-                    style="-fx-text-fill: #666; -fx-font-size: 12;" />
+                    styleClass="text-muted, text-small-12" />
                 
                 <!-- Mapping Grid -->
                 <ScrollPane fitToWidth="true" prefHeight="300">
                     <GridPane fx:id="mappingGrid" hgap="20" vgap="10" 
-                        style="-fx-padding: 10; -fx-background-color: white;">
+                        styleClass="form-panel">
                         
                         <!-- Headers -->
                         <Label text="CSV Column" GridPane.columnIndex="0" GridPane.rowIndex="0"
-                            style="-fx-font-weight: bold; -fx-text-fill: #2196F3;" />
+                            styleClass="form-label" />
                         <Label text="➔" GridPane.columnIndex="1" GridPane.rowIndex="0"
                             style="-fx-font-size: 18;" />
                         <Label text="System Field" GridPane.columnIndex="2" GridPane.rowIndex="0"
-                            style="-fx-font-weight: bold; -fx-text-fill: #4CAF50;" />
+                            styleClass="form-label" />
                         <Label text="Preview" GridPane.columnIndex="3" GridPane.rowIndex="0"
-                            style="-fx-font-weight: bold; -fx-text-fill: #666;" />
+                            styleClass="font-weight-bold-666" />
                         
                         <!-- Mappings will be added dynamically here -->
                     </GridPane>
@@ -90,11 +90,11 @@ Location: src/main/resources/fxml/ImportConfigDialog.fxml
             </HBox>
 
             <!-- Statistics -->
-            <HBox spacing="30" style="-fx-background-color: #f0f0f0; -fx-padding: 10; -fx-background-radius: 5;">
+            <HBox spacing="30" styleClass="card">
                 <Label fx:id="totalRowsLabel" text="Total Rows: 0" />
                 <Label fx:id="mappedFieldsLabel" text="Mapped Fields: 0" />
                 <Label fx:id="unmappedFieldsLabel" text="Unmapped Fields: 0" 
-                    style="-fx-text-fill: #FF9800;" />
+                    styleClass="text-warning" />
             </HBox>
         </VBox>
     </content>

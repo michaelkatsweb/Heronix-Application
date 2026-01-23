@@ -32,7 +32,7 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
                     </font>
                 </Label>
 
-                <Label text="ML-Powered Insights" style="-fx-text-fill: #6c757d; -fx-font-style: italic;"/>
+                <Label text="ML-Powered Insights" styleClass="text-muted"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
 
@@ -60,7 +60,7 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
                         <VBox spacing="15" style="-fx-padding: 15;">
                             <Label text="Predictive Enrollment Forecasting" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
                             <Label text="Linear regression with seasonal adjustments to predict future course enrollment."
-                                   style="-fx-text-fill: #666666;"/>
+                                   styleClass="text-muted"/>
 
                             <!-- Forecast Controls -->
                             <HBox spacing="15" alignment="CENTER_LEFT">
@@ -68,7 +68,7 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
                                 <Spinner fx:id="forecastPeriodsSpinner" prefWidth="100" min="1" max="5"/>
                                 <Button text="Generate Forecast" onAction="#handleGenerateForecast" styleClass="primary-button"/>
                                 <Region HBox.hgrow="ALWAYS"/>
-                                <Label text="Model Confidence:" style="-fx-font-weight: bold;"/>
+                                <Label text="Model Confidence:" styleClass="form-label"/>
                                 <Label fx:id="modelConfidenceLabel" text="N/A"/>
                             </HBox>
 
@@ -76,7 +76,7 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
                             <HBox spacing="15">
                                 <VBox styleClass="metric-card alert-card" HBox.hgrow="ALWAYS">
                                     <Label text="At-Risk Courses" styleClass="metric-label"/>
-                                    <Label fx:id="atRiskCoursesLabel" text="0" styleClass="metric-value" style="-fx-text-fill: #dc3545;">
+                                    <Label fx:id="atRiskCoursesLabel" text="0" styleClass="metric-value">
                                         <font><Font size="32"/></font>
                                     </Label>
                                     <Label text="may exceed capacity" styleClass="metric-subtitle"/>
@@ -84,7 +84,7 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
 
                                 <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
                                     <Label text="Over Capacity" styleClass="metric-label"/>
-                                    <Label fx:id="overCapacityLabel" text="0" styleClass="metric-value" style="-fx-text-fill: #ffc107;">
+                                    <Label fx:id="overCapacityLabel" text="0" styleClass="metric-value">
                                         <font><Font size="32"/></font>
                                     </Label>
                                     <Label text="predicted over-enrollment" styleClass="metric-subtitle"/>
@@ -137,13 +137,13 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
                         <VBox spacing="15" style="-fx-padding: 15;">
                             <Label text="ML-Ranked Conflict Resolution" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
                             <Label text="Conflicts ranked by severity and impact with intelligent resolution suggestions."
-                                   style="-fx-text-fill: #666666;"/>
+                                   styleClass="text-muted"/>
 
                             <!-- Conflict Summary -->
                             <HBox spacing="15">
                                 <VBox styleClass="metric-card alert-card" HBox.hgrow="ALWAYS">
                                     <Label text="Critical" styleClass="metric-label"/>
-                                    <Label fx:id="criticalConflictsLabel" text="0" styleClass="metric-value" style="-fx-text-fill: #dc3545;">
+                                    <Label fx:id="criticalConflictsLabel" text="0" styleClass="metric-value">
                                         <font><Font size="32"/></font>
                                     </Label>
                                     <Label text="immediate action required" styleClass="metric-subtitle"/>
@@ -151,7 +151,7 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
 
                                 <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
                                     <Label text="High Priority" styleClass="metric-label"/>
-                                    <Label fx:id="highConflictsLabel" text="0" styleClass="metric-value" style="-fx-text-fill: #ffc107;">
+                                    <Label fx:id="highConflictsLabel" text="0" styleClass="metric-value">
                                         <font><Font size="32"/></font>
                                     </Label>
                                     <Label text="should resolve soon" styleClass="metric-subtitle"/>
@@ -177,7 +177,7 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
                             <HBox spacing="20" VBox.vgrow="ALWAYS">
                                 <!-- Conflict List -->
                                 <VBox spacing="10" HBox.hgrow="ALWAYS">
-                                    <Label text="Ranked Conflicts" style="-fx-font-weight: bold;"/>
+                                    <Label text="Ranked Conflicts" styleClass="form-label"/>
                                     <TableView fx:id="conflictTable" VBox.vgrow="ALWAYS">
                                         <columns>
                                             <TableColumn fx:id="conflictRankColumn" text="#" prefWidth="40"/>
@@ -192,9 +192,9 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
 
                                 <!-- Resolution Suggestions -->
                                 <VBox spacing="10" prefWidth="350">
-                                    <Label text="Smart Resolutions" style="-fx-font-weight: bold;"/>
+                                    <Label text="Smart Resolutions" styleClass="form-label"/>
                                     <Label fx:id="selectedConflictLabel" text="Select a conflict to see resolutions"
-                                           style="-fx-text-fill: #666666;"/>
+                                           styleClass="text-muted"/>
                                     <ListView fx:id="resolutionsList" VBox.vgrow="ALWAYS"/>
                                     <Button fx:id="applyResolutionButton" text="Apply Selected Resolution"
                                             onAction="#handleApplyResolution" styleClass="primary-button"
@@ -209,7 +209,7 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
                         <VBox spacing="15" style="-fx-padding: 15;">
                             <Label text="Optimal Assignment Recommendations" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
                             <Label text="AI-powered teacher and room assignment suggestions with match scoring."
-                                   style="-fx-text-fill: #666666;"/>
+                                   styleClass="text-muted"/>
 
                             <!-- Recommendations Summary -->
                             <HBox spacing="15">
@@ -223,7 +223,7 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
 
                                 <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
                                     <Label text="Avg Match Score" styleClass="metric-label"/>
-                                    <Label fx:id="avgMatchScoreLabel" text="0%" styleClass="metric-value" style="-fx-text-fill: #28a745;">
+                                    <Label fx:id="avgMatchScoreLabel" text="0%" styleClass="metric-value">
                                         <font><Font size="32"/></font>
                                     </Label>
                                     <Label text="recommendation quality" styleClass="metric-subtitle"/>
@@ -248,7 +248,7 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
 
                             <!-- Teacher Recommendations Table -->
                             <VBox spacing="10" VBox.vgrow="ALWAYS">
-                                <Label text="Teacher Assignment Recommendations" style="-fx-font-weight: bold;"/>
+                                <Label text="Teacher Assignment Recommendations" styleClass="form-label"/>
                                 <TableView fx:id="teacherRecommendationTable" minHeight="200">
                                     <columns>
                                         <TableColumn fx:id="recCourseColumn" text="Course" prefWidth="180"/>
@@ -265,7 +265,7 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
                             <!-- Room Recommendations -->
                             <VBox spacing="10" VBox.vgrow="ALWAYS">
                                 <HBox alignment="CENTER_LEFT" spacing="15">
-                                    <Label text="Room Assignment Recommendations" style="-fx-font-weight: bold;"/>
+                                    <Label text="Room Assignment Recommendations" styleClass="form-label"/>
                                     <Region HBox.hgrow="ALWAYS"/>
                                     <Label text="Select Course:"/>
                                     <ComboBox fx:id="roomRecCourseCombo" prefWidth="200" onAction="#handleCourseForRoom"/>
@@ -305,7 +305,4 @@ Location: src/main/resources/fxml/PredictiveAnalyticsDashboard.fxml
         </ScrollPane>
     </center>
 
-    <stylesheets>
-        <String fx:value="@../css/main.css"/>
-    </stylesheets>
 </BorderPane>

@@ -1,7 +1,7 @@
 package com.heronix.ui.controller;
 
 import com.heronix.model.domain.Student;
-import com.heronix.repository.StudentRepository;
+import com.heronix.service.StudentService;
 import com.heronix.service.GraduationRequirementsService;
 import com.heronix.ui.util.CopyableErrorDialog;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 public class AtRiskStudentsController {
 
     @Autowired
-    private StudentRepository studentRepository;
+    private StudentService studentService;
 
     @Autowired
     private GraduationRequirementsService graduationRequirementsService;
@@ -732,7 +732,7 @@ public class AtRiskStudentsController {
                 String newNote = String.format("[%s] %s\n%s", timestamp, note, currentNotes);
                 student.setAdvisorNotes(newNote);
 
-                studentRepository.save(student);
+                studentService.save(student);
 
                 log.info("Added note for student {}", student.getStudentId());
                 showInfo("Note Added", "Counselor note has been added successfully.");

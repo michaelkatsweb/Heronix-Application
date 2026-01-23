@@ -38,13 +38,13 @@ Location: src/main/resources/fxml/TruancyIntervention.fxml
         <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
             <Label text="✅ Active Cases" styleClass="label"/>
             <Label fx:id="activeCasesLabel" text="0"
-                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
+                   styleClass="stat-value-32-green-material"/>
         </VBox>
 
         <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
             <Label text="⚖️ Court Referrals" styleClass="label"/>
             <Label fx:id="courtReferralsLabel" text="0"
-                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #F44336;"/>
+                   styleClass="stat-value-32-red"/>
         </VBox>
     </HBox>
 
@@ -60,7 +60,7 @@ Location: src/main/resources/fxml/TruancyIntervention.fxml
 
                 <!-- Filter Section -->
                 <HBox spacing="15" alignment="CENTER_LEFT" styleClass="card">
-                    <Label text="Filter by Severity:" style="-fx-font-weight: bold;"/>
+                    <Label text="Filter by Severity:" styleClass="form-label"/>
                     <ComboBox fx:id="severityFilterComboBox" promptText="All Severities"
                               prefWidth="200" onAction="#handleFilterBySeverity"/>
                     <Region HBox.hgrow="ALWAYS"/>
@@ -111,19 +111,19 @@ Location: src/main/resources/fxml/TruancyIntervention.fxml
 
                         <HBox spacing="15">
                             <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <Label text="Student:" style="-fx-font-weight: bold;"/>
+                                <Label text="Student:" styleClass="form-label"/>
                                 <ComboBox fx:id="studentComboBox" promptText="Select Student"
                                           prefWidth="Infinity" maxWidth="Infinity"/>
                             </VBox>
 
                             <VBox spacing="5">
-                                <Label text="Unexcused Absences:" style="-fx-font-weight: bold;"/>
+                                <Label text="Unexcused Absences:" styleClass="form-label"/>
                                 <Spinner fx:id="absencesSpinner" prefWidth="150" editable="true"/>
                             </VBox>
                         </HBox>
 
                         <VBox spacing="5">
-                            <Label text="Reason for Truancy Case:" style="-fx-font-weight: bold;"/>
+                            <Label text="Reason for Truancy Case:" styleClass="form-label"/>
                             <TextArea fx:id="reasonArea" prefHeight="120" wrapText="true"
                                       promptText="Describe the reason for opening this truancy case..."/>
                         </VBox>
@@ -160,26 +160,26 @@ Location: src/main/resources/fxml/TruancyIntervention.fxml
                         <Label text="📋 Intervention Details" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
 
                         <VBox spacing="5">
-                            <Label text="Case ID:" style="-fx-font-weight: bold;"/>
+                            <Label text="Case ID:" styleClass="form-label"/>
                             <TextField fx:id="caseIdField" promptText="Enter Case ID (e.g., TC-12345-2025)"/>
                         </VBox>
 
                         <HBox spacing="15">
                             <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <Label text="Intervention Type:" style="-fx-font-weight: bold;"/>
+                                <Label text="Intervention Type:" styleClass="form-label"/>
                                 <ComboBox fx:id="interventionTypeComboBox" promptText="Select Intervention Type"
                                           prefWidth="Infinity" maxWidth="Infinity"/>
                             </VBox>
 
                             <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <Label text="Assigned To:" style="-fx-font-weight: bold;"/>
+                                <Label text="Assigned To:" styleClass="form-label"/>
                                 <TextField fx:id="assignedToField" promptText="e.g., School Counselor, Truancy Officer"
                                            prefWidth="Infinity" maxWidth="Infinity"/>
                             </VBox>
                         </HBox>
 
                         <VBox spacing="5">
-                            <Label text="Intervention Description:" style="-fx-font-weight: bold;"/>
+                            <Label text="Intervention Description:" styleClass="form-label"/>
                             <TextArea fx:id="interventionDescriptionArea" prefHeight="120" wrapText="true"
                                       promptText="Describe the intervention strategy and goals..."/>
                         </VBox>
@@ -216,26 +216,26 @@ Location: src/main/resources/fxml/TruancyIntervention.fxml
                         <Label text="📋 Case Closure Details" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
 
                         <VBox spacing="5">
-                            <Label text="Case ID:" style="-fx-font-weight: bold;"/>
+                            <Label text="Case ID:" styleClass="form-label"/>
                             <TextField fx:id="closeCaseIdField" promptText="Enter Case ID to close"/>
                         </VBox>
 
                         <HBox spacing="15">
                             <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <Label text="Resolution:" style="-fx-font-weight: bold;"/>
+                                <Label text="Resolution:" styleClass="form-label"/>
                                 <ComboBox fx:id="resolutionComboBox" promptText="Select Resolution"
                                           prefWidth="Infinity" maxWidth="Infinity"/>
                             </VBox>
 
                             <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <Label text="Closed By:" style="-fx-font-weight: bold;"/>
+                                <Label text="Closed By:" styleClass="form-label"/>
                                 <TextField fx:id="closedByField" promptText="Your name or role"
                                            prefWidth="Infinity" maxWidth="Infinity"/>
                             </VBox>
                         </HBox>
 
                         <VBox spacing="5">
-                            <Label text="Resolution Notes:" style="-fx-font-weight: bold;"/>
+                            <Label text="Resolution Notes:" styleClass="form-label"/>
                             <TextArea fx:id="resolutionNotesArea" prefHeight="120" wrapText="true"
                                       promptText="Enter any additional notes about the case resolution..."/>
                         </VBox>

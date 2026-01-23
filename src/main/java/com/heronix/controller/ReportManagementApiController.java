@@ -33,7 +33,7 @@ import java.util.Optional;
  * @version 1.0
  * @since Phase 50 - Report API Endpoints
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/reports/management")
 @RequiredArgsConstructor
 @Slf4j

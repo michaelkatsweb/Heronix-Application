@@ -78,7 +78,7 @@
                     </font>
                 </Label>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="lblRecordCount" text="0 records" style="-fx-text-fill: #666;"/>
+                <Label fx:id="lblRecordCount" text="0 records" styleClass="text-muted"/>
             </HBox>
 
             <TableView fx:id="tblAccommodations" VBox.vgrow="ALWAYS">
@@ -112,7 +112,7 @@
 
                     <!-- Basic Information -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Basic Information" styleClass="section-header" style="-fx-background-color: #E3F2FD; -fx-padding: 5;">
+                        <Label text="Basic Information" styleClass="section-header-info">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -124,29 +124,29 @@
                                 <ColumnConstraints percentWidth="70"/>
                             </columnConstraints>
 
-                            <Label text="Student:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="Student:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="form-label"/>
                             <ComboBox fx:id="cmbStudent" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="300"/>
 
-                            <Label text="Type:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="Type:" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="form-label"/>
                             <ComboBox fx:id="cmbType" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="300"/>
 
-                            <Label text="Status:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="Status:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="form-label"/>
                             <ComboBox fx:id="cmbDetailStatus" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="300"/>
 
-                            <Label text="Start Date:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="Start Date:" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="form-label"/>
                             <DatePicker fx:id="dpStartDate" GridPane.rowIndex="3" GridPane.columnIndex="1" prefWidth="200"/>
 
-                            <Label text="End Date:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="End Date:" GridPane.rowIndex="4" GridPane.columnIndex="0" styleClass="form-label"/>
                             <DatePicker fx:id="dpEndDate" GridPane.rowIndex="4" GridPane.columnIndex="1" prefWidth="200"/>
 
-                            <Label text="Coordinator:" GridPane.rowIndex="5" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Label text="Coordinator:" GridPane.rowIndex="5" GridPane.columnIndex="0" styleClass="form-label"/>
                             <ComboBox fx:id="cmbDetailCoordinator" GridPane.rowIndex="5" GridPane.columnIndex="1" prefWidth="300"/>
                         </GridPane>
                     </VBox>
 
                     <!-- 504 Plan Details -->
                     <VBox fx:id="section504Plan" spacing="8" styleClass="info-section">
-                        <Label text="504 Plan Details" styleClass="section-header" style="-fx-background-color: #E8F5E9; -fx-padding: 5;">
+                        <Label text="504 Plan Details" styleClass="section-header-success">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -177,7 +177,7 @@
 
                     <!-- IEP Details -->
                     <VBox fx:id="sectionIEP" spacing="8" styleClass="info-section">
-                        <Label text="IEP (Individualized Education Program) Details" styleClass="section-header" style="-fx-background-color: #FFF3E0; -fx-padding: 5;">
+                        <Label text="IEP (Individualized Education Program) Details" styleClass="section-header-warning">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -213,7 +213,7 @@
 
                     <!-- ELL/ESL Details -->
                     <VBox fx:id="sectionELL" spacing="8" styleClass="info-section">
-                        <Label text="ELL/ESL (English Language Learner) Details" styleClass="section-header" style="-fx-background-color: #F3E5F5; -fx-padding: 5;">
+                        <Label text="ELL/ESL (English Language Learner) Details" styleClass="section-header">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -246,7 +246,7 @@
 
                     <!-- Other Designations -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Other Designations &amp; Services" styleClass="section-header" style="-fx-background-color: #E1F5FE; -fx-padding: 5;">
+                        <Label text="Other Designations &amp; Services" styleClass="section-header">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -264,7 +264,7 @@
 
                     <!-- Lunch & Transportation -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Lunch &amp; Transportation" styleClass="section-header" style="-fx-background-color: #FFF9C4; -fx-padding: 5;">
+                        <Label text="Lunch &amp; Transportation" styleClass="section-header">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -289,7 +289,7 @@
 
                     <!-- Accessibility -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Accessibility &amp; Technology" styleClass="section-header" style="-fx-background-color: #FCE4EC; -fx-padding: 5;">
+                        <Label text="Accessibility &amp; Technology" styleClass="section-header">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>
@@ -304,7 +304,7 @@
 
                     <!-- Review & Notes -->
                     <VBox spacing="8" styleClass="info-section">
-                        <Label text="Review &amp; Notes" styleClass="section-header" style="-fx-background-color: #F5F5F5; -fx-padding: 5;">
+                        <Label text="Review &amp; Notes" styleClass="section-header">
                             <font>
                                 <Font name="System Bold" size="13"/>
                             </font>

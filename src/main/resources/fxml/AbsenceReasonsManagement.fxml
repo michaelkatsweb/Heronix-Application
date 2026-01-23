@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -8,30 +10,30 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.AbsenceReasonsManagementController"
-            stylesheets="@../css/application.css"
             prefWidth="1200" prefHeight="800">
+
 
     <!-- Top: Header -->
     <top>
-        <VBox spacing="15" style="-fx-background-color: #1976d2; -fx-padding: 20;">
+        <VBox spacing="15" styleClass="card">
             <Label text="Absence Reasons &amp; Categories Management"
-                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                   styleClass="page-title-white"/>
             <Label text="Configure custom absence reasons, categorization rules, and excuse/documentation requirements"
-                   style="-fx-font-size: 13px; -fx-text-fill: white;"/>
+                   styleClass="text-white"/>
         </VBox>
     </top>
 
     <!-- Center: Split View -->
     <center>
-        <SplitPane dividerPositions="0.4" style="-fx-background-color: #f5f5f5;">
+        <SplitPane dividerPositions="0.4" styleClass="main-container">
 
             <!-- Left: Absence Reasons List -->
-            <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white;">
+            <VBox spacing="15" styleClass="padding-15-white">
                 <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Label text="Absence Reasons" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Label text="Absence Reasons" styleClass="section-title"/>
                     <Region HBox.hgrow="ALWAYS"/>
                     <Button text="+ Add New" onAction="#handleAddReason"
-                            style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-padding: 8 15; -fx-cursor: hand;"/>
+                            styleClass="button-primary"/>
                 </HBox>
 
                 <TextField fx:id="searchField" promptText="Search reasons..."/>
@@ -47,23 +49,23 @@
                 </TableView>
 
                 <HBox spacing="10">
-                    <Label text="Total Reasons:" style="-fx-font-weight: bold;"/>
+                    <Label text="Total Reasons:" styleClass="form-label"/>
                     <Label fx:id="totalReasonsLabel" text="0"/>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <Label text="Excused:" style="-fx-font-weight: bold;"/>
+                    <Label text="Excused:" styleClass="form-label"/>
                     <Label fx:id="excusedCountLabel" text="0"/>
-                    <Label text="Unexcused:" style="-fx-font-weight: bold;"/>
+                    <Label text="Unexcused:" styleClass="form-label"/>
                     <Label fx:id="unexcusedCountLabel" text="0"/>
                 </HBox>
             </VBox>
 
             <!-- Right: Reason Details -->
-            <ScrollPane fitToWidth="true" style="-fx-background-color: #f5f5f5;">
-                <VBox spacing="25" style="-fx-padding: 25;">
+            <ScrollPane fitToWidth="true" styleClass="main-container">
+                <VBox spacing="25" styleClass="content-padding-25">
 
                     <!-- Basic Information -->
-                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
-                        <Label text="Basic Information" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <VBox spacing="15" styleClass="form-section-white, card-bordered">
+                        <Label text="Basic Information" styleClass="section-title"/>
 
                         <GridPane hgap="15" vgap="15">
                             <columnConstraints>
@@ -71,23 +73,23 @@
                                 <ColumnConstraints percentWidth="70"/>
                             </columnConstraints>
 
-                            <Label text="Code:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label text="Code:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                             <TextField fx:id="reasonCodeField" promptText="e.g., ILL, DOC, FUN" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                            <Label text="Description:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Label text="Description:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                             <TextField fx:id="reasonDescriptionField" promptText="Brief description" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                            <Label text="Long Description:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Label text="Long Description:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                             <TextArea fx:id="longDescriptionArea" promptText="Detailed description for reports and communications" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                            <Label text="Active:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <Label text="Active:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                             <CheckBox fx:id="activeCheckBox" text="Reason is active and available for use" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                         </GridPane>
                     </VBox>
 
                     <!-- Categorization -->
-                    <VBox spacing="15" style="-fx-background-color: #fff3e0; -fx-padding: 20; -fx-border-color: #ffcc80; -fx-border-width: 2;">
-                        <Label text="Categorization" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #e65100;"/>
+                    <VBox spacing="15" styleClass="card, metric-warning">
+                        <Label text="Categorization" styleClass="section-title-orange-amber"/>
 
                         <GridPane hgap="15" vgap="15">
                             <columnConstraints>
@@ -95,26 +97,26 @@
                                 <ColumnConstraints percentWidth="70"/>
                             </columnConstraints>
 
-                            <Label text="Category:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label text="Category:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                             <ComboBox fx:id="categoryComboBox" promptText="Select category..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                            <Label text="Excused/Unexcused:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Label text="Excused/Unexcused:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                             <HBox spacing="20" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                 <RadioButton fx:id="excusedRadio" text="Excused" toggleGroup="$excuseGroup" selected="true"/>
                                 <RadioButton fx:id="unexcusedRadio" text="Unexcused" toggleGroup="$excuseGroup"/>
                             </HBox>
 
-                            <Label text="Counts Toward Truancy:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Label text="Counts Toward Truancy:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                             <CheckBox fx:id="countsTowardTruancyCheckBox" text="Include in truancy calculations" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                            <Label text="Affects Attendance Rate:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <Label text="Affects Attendance Rate:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                             <CheckBox fx:id="affectsAttendanceRateCheckBox" text="Include in attendance percentage" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                         </GridPane>
                     </VBox>
 
                     <!-- Documentation Requirements -->
-                    <VBox spacing="15" style="-fx-background-color: #e3f2fd; -fx-padding: 20; -fx-border-color: #90caf9; -fx-border-width: 2;">
-                        <Label text="Documentation Requirements" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0d47a1;"/>
+                    <VBox spacing="15" styleClass="card, metric-info">
+                        <Label text="Documentation Requirements" styleClass="section-title-cyan-dark"/>
 
                         <GridPane hgap="15" vgap="15">
                             <columnConstraints>
@@ -122,23 +124,23 @@
                                 <ColumnConstraints percentWidth="70"/>
                             </columnConstraints>
 
-                            <Label text="Requires Documentation:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label text="Requires Documentation:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                             <CheckBox fx:id="requiresDocumentationCheckBox" text="Documentation required to excuse" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                            <Label text="Document Type Required:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Label text="Document Type Required:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                             <TextField fx:id="documentTypeField" promptText="e.g., Doctor's Note, Court Order" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                            <Label text="Max Days Without Docs:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Label text="Max Days Without Docs:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                             <TextField fx:id="maxDaysWithoutDocsField" promptText="Days" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                            <Label text="Auto-Approve if Documented:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <Label text="Auto-Approve if Documented:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                             <CheckBox fx:id="autoApproveCheckBox" text="Automatically excuse when documentation provided" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                         </GridPane>
                     </VBox>
 
                     <!-- State Reporting -->
-                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
-                        <Label text="State Reporting" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <VBox spacing="15" styleClass="form-section-white, card-bordered">
+                        <Label text="State Reporting" styleClass="section-title"/>
 
                         <GridPane hgap="15" vgap="15">
                             <columnConstraints>
@@ -146,23 +148,23 @@
                                 <ColumnConstraints percentWidth="70"/>
                             </columnConstraints>
 
-                            <Label text="State Code:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label text="State Code:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                             <TextField fx:id="stateCodeField" promptText="State-specific reporting code" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                            <Label text="Federal Code:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Label text="Federal Code:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                             <TextField fx:id="federalCodeField" promptText="Federal reporting code" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                            <Label text="Include in State Reports:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Label text="Include in State Reports:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                             <CheckBox fx:id="includeInStateReportsCheckBox" text="Report to state" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                            <Label text="Chronic Absence Indicator:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <Label text="Chronic Absence Indicator:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                             <CheckBox fx:id="chronicAbsenceIndicatorCheckBox" text="Counts toward chronic absenteeism" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                         </GridPane>
                     </VBox>
 
                     <!-- Notifications & Actions -->
-                    <VBox spacing="15" style="-fx-background-color: #ffebee; -fx-padding: 20; -fx-border-color: #ef9a9a; -fx-border-width: 2;">
-                        <Label text="Notifications &amp; Automated Actions" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                    <VBox spacing="15" styleClass="card, metric-danger">
+                        <Label text="Notifications &amp; Automated Actions" styleClass="section-title-danger"/>
 
                         <GridPane hgap="15" vgap="15">
                             <columnConstraints>
@@ -170,23 +172,23 @@
                                 <ColumnConstraints percentWidth="70"/>
                             </columnConstraints>
 
-                            <Label text="Notify Parents:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label text="Notify Parents:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                             <CheckBox fx:id="notifyParentsCheckBox" text="Send automatic notification to parents" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                            <Label text="Notify Administration:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Label text="Notify Administration:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                             <CheckBox fx:id="notifyAdministrationCheckBox" text="Alert administration for this reason" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                            <Label text="Notification Template:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Label text="Notification Template:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                             <ComboBox fx:id="notificationTemplateComboBox" promptText="Select template..." maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                            <Label text="Trigger Intervention:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <Label text="Trigger Intervention:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                             <CheckBox fx:id="triggerInterventionCheckBox" text="Create intervention plan after threshold" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                         </GridPane>
                     </VBox>
 
                     <!-- Additional Settings -->
-                    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
-                        <Label text="Additional Settings" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <VBox spacing="15" styleClass="form-section-white, card-bordered">
+                        <Label text="Additional Settings" styleClass="section-title"/>
 
                         <GridPane hgap="15" vgap="15">
                             <columnConstraints>
@@ -194,16 +196,16 @@
                                 <ColumnConstraints percentWidth="70"/>
                             </columnConstraints>
 
-                            <Label text="Display Order:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label text="Display Order:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                             <TextField fx:id="displayOrderField" promptText="Sort order (lower = first)" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                            <Label text="Color Code:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Label text="Color Code:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                             <ColorPicker fx:id="colorPicker" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                            <Label text="Icon/Symbol:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Label text="Icon/Symbol:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                             <TextField fx:id="iconField" promptText="Icon name or symbol" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                            <Label text="Notes:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <Label text="Notes:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                             <TextArea fx:id="notesArea" promptText="Internal notes about this reason" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                         </GridPane>
                     </VBox>
@@ -216,13 +218,13 @@
 
     <!-- Bottom: Action Buttons -->
     <bottom>
-        <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+        <HBox spacing="15" alignment="CENTER_RIGHT" styleClass="footer-border-top">
             <Button fx:id="saveButton" text="Save Reason" onAction="#handleSave"
-                    style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30; -fx-cursor: hand;"/>
+                    styleClass="button-primary"/>
             <Button fx:id="deleteButton" text="Delete" onAction="#handleDelete"
-                    style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30; -fx-cursor: hand;"/>
+                    styleClass="header-danger"/>
             <Button fx:id="clearButton" text="Clear Form" onAction="#handleClear"
-                    style="-fx-background-color: #9e9e9e; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30; -fx-cursor: hand;"/>
+                    styleClass="button-primary"/>
         </HBox>
     </bottom>
 

@@ -37,7 +37,7 @@ import java.util.Map;
  * @version 1.0
  * @since Phase 106 - Report Edge Computing & CDN
  */
-@RestController
+// @RestController  // Disabled for API server mode
 @RequestMapping("/api/edge")
 @RequiredArgsConstructor
 @Slf4j

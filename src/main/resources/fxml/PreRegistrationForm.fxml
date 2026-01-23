@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -25,6 +27,7 @@
             fx:controller="com.heronix.ui.controller.PreRegistrationFormController"
             styleClass="content-pane"
             prefWidth="1000" prefHeight="700">
+
 
     <top>
         <VBox styleClass="header-section" spacing="15">

@@ -38,28 +38,28 @@
 
                 <VBox alignment="CENTER" spacing="5">
                     <Label text="Pending" styleClass="stat-label"/>
-                    <Label fx:id="pendingRequestsLabel" text="0" styleClass="stat-value" style="-fx-text-fill: #2196F3;"/>
+                    <Label fx:id="pendingRequestsLabel" text="0" styleClass="stat-value-info"/>
                 </VBox>
 
                 <Separator orientation="VERTICAL"/>
 
                 <VBox alignment="CENTER" spacing="5">
                     <Label text="Assigned" styleClass="stat-label"/>
-                    <Label fx:id="assignedRequestsLabel" text="0" styleClass="stat-value" style="-fx-text-fill: #4CAF50;"/>
+                    <Label fx:id="assignedRequestsLabel" text="0" styleClass="stat-value-success"/>
                 </VBox>
 
                 <Separator orientation="VERTICAL"/>
 
                 <VBox alignment="CENTER" spacing="5">
                     <Label text="Cancelled" styleClass="stat-label"/>
-                    <Label fx:id="cancelledRequestsLabel" text="0" styleClass="stat-value" style="-fx-text-fill: #F44336;"/>
+                    <Label fx:id="cancelledRequestsLabel" text="0" styleClass="stat-value-danger"/>
                 </VBox>
 
                 <Separator orientation="VERTICAL"/>
 
                 <VBox alignment="CENTER" spacing="5">
                     <Label text="Waitlist" styleClass="stat-label"/>
-                    <Label fx:id="waitlistRequestsLabel" text="0" styleClass="stat-value" style="-fx-text-fill: #FF9800;"/>
+                    <Label fx:id="waitlistRequestsLabel" text="0" styleClass="stat-value-warning"/>
                 </VBox>
             </HBox>
 

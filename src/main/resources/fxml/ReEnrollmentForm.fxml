@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -20,6 +22,7 @@ Tracks previous enrollment history, withdrawal reasons, and approval workflow.
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.ReEnrollmentFormController"
             styleClass="content-pane">
+
 
     <!-- Top: Header and Quick Actions -->
     <top>

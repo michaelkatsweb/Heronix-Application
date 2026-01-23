@@ -192,7 +192,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
                uri.startsWith("/api/auth/refresh") ||
                uri.startsWith("/swagger-ui") ||
                uri.startsWith("/v3/api-docs") ||
-               uri.startsWith("/api/health");
+               uri.startsWith("/api/health") ||
+               uri.startsWith("/actuator");
     }
 
     /**

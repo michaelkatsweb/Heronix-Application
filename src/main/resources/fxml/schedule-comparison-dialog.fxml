@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -11,8 +13,8 @@
 <DialogPane xmlns="http://javafx.com/javafx/21"
     xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.heronix.ui.controller.ScheduleComparisonDialogController"
-    stylesheets="@../css/modern-theme.css"
     prefWidth="900" prefHeight="700">
+
 
     <headerText>Compare Schedules</headerText>
 
@@ -32,7 +34,7 @@
                     <Label text="Schedule 1:" styleClass="section-header" />
                     <ComboBox fx:id="schedule1ComboBox" prefWidth="400" promptText="Select first schedule..." />
                     <Text fx:id="schedule1InfoText" wrappingWidth="400"
-                        style="-fx-fill: #7f8c8d; -fx-font-size: 12px;" />
+                        styleClass="text-muted-12-fill" />
                 </VBox>
 
                 <!-- Schedule 2 -->
@@ -40,7 +42,7 @@
                     <Label text="Schedule 2:" styleClass="section-header" />
                     <ComboBox fx:id="schedule2ComboBox" prefWidth="400" promptText="Select second schedule..." />
                     <Text fx:id="schedule2InfoText" wrappingWidth="400"
-                        style="-fx-fill: #7f8c8d; -fx-font-size: 12px;" />
+                        styleClass="text-muted-12-fill" />
                 </VBox>
             </GridPane>
 
@@ -53,7 +55,7 @@
                 <Label text="Quality Metrics Comparison:" styleClass="section-header" />
 
                 <GridPane hgap="20" vgap="12"
-                    style="-fx-background-color: #f8f9fa; -fx-background-radius: 8; -fx-padding: 15;">
+                    styleClass="card">
                     <columnConstraints>
                         <ColumnConstraints prefWidth="180" />
                         <ColumnConstraints prefWidth="140" halignment="CENTER" />
@@ -65,9 +67,9 @@
                     <Label text="Metric" GridPane.columnIndex="0" GridPane.rowIndex="0"
                         style="-fx-font-weight: bold; -fx-font-size: 14px;" />
                     <Label fx:id="schedule1NameLabel" text="Schedule 1" GridPane.columnIndex="1" GridPane.rowIndex="0"
-                        style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2980b9;" />
+                        styleClass="header-14-blue-accent" />
                     <Label fx:id="schedule2NameLabel" text="Schedule 2" GridPane.columnIndex="2" GridPane.rowIndex="0"
-                        style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #27ae60;" />
+                        styleClass="header-14-green-accent" />
                     <Label text="Winner" GridPane.columnIndex="3" GridPane.rowIndex="0"
                         style="-fx-font-weight: bold; -fx-font-size: 14px;" />
 
@@ -78,7 +80,7 @@
                     <Label fx:id="schedule2HardScoreLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1"
                         styleClass="metric-value" />
                     <Label fx:id="hardScoreWinnerLabel" text="—" GridPane.columnIndex="3" GridPane.rowIndex="1"
-                        style="-fx-font-weight: bold;" />
+                        styleClass="form-label" />
 
                     <!-- Soft Score -->
                     <Label text="Soft Score (Quality):" GridPane.columnIndex="0" GridPane.rowIndex="2" />
@@ -87,7 +89,7 @@
                     <Label fx:id="schedule2SoftScoreLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="2"
                         styleClass="metric-value" />
                     <Label fx:id="softScoreWinnerLabel" text="—" GridPane.columnIndex="3" GridPane.rowIndex="2"
-                        style="-fx-font-weight: bold;" />
+                        styleClass="form-label" />
 
                     <!-- Conflict Count -->
                     <Label text="Total Conflicts:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
@@ -96,7 +98,7 @@
                     <Label fx:id="schedule2ConflictsLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="3"
                         styleClass="metric-value" />
                     <Label fx:id="conflictsWinnerLabel" text="—" GridPane.columnIndex="3" GridPane.rowIndex="3"
-                        style="-fx-font-weight: bold;" />
+                        styleClass="form-label" />
 
                     <!-- Generation Method -->
                     <Label text="Generation Method:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
@@ -124,22 +126,22 @@
                 <Separator />
 
                 <!-- RECOMMENDATION -->
-                <VBox spacing="10" style="-fx-background-color: #d4edda; -fx-background-radius: 8; -fx-padding: 15;">
+                <VBox spacing="10" styleClass="card">
                     <HBox spacing="10" alignment="CENTER_LEFT">
                         <Label text="💡" style="-fx-font-size: 24px;" />
-                        <Label text="Recommendation:" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #155724;" />
+                        <Label text="Recommendation:" styleClass="header-16-success-dark" />
                     </HBox>
                     <Text fx:id="recommendationText" wrappingWidth="820"
-                        style="-fx-fill: #155724; -fx-font-size: 14px;" />
+                        styleClass="text-success-14-fill" />
                 </VBox>
 
             </VBox>
 
             <!-- LOADING INDICATOR (shown during comparison) -->
             <VBox fx:id="loadingBox" spacing="10" visible="false" managed="false"
-                style="-fx-background-color: #fff3cd; -fx-background-radius: 5; -fx-padding: 15;" alignment="CENTER">
+                styleClass="card" alignment="CENTER">
                 <ProgressIndicator prefHeight="60" prefWidth="60" />
-                <Label text="Comparing schedules..." style="-fx-font-size: 14px; -fx-text-fill: #856404;" />
+                <Label text="Comparing schedules..." styleClass="text-muted" />
             </VBox>
 
         </VBox>

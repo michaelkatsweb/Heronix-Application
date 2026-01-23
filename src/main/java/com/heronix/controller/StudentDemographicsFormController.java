@@ -186,7 +186,7 @@ public class StudentDemographicsFormController {
 
         // Gender
         cmbGender.setItems(FXCollections.observableArrayList(
-            "Male", "Female", "Non-binary", "Prefer not to say"
+            "Male", "Female"
         ));
 
         // US States
