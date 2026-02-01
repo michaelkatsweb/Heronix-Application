@@ -71,7 +71,7 @@ public class SecurityConfig {
      * - H2 console enabled
      */
     @Bean
-    @Profile({"dev", "test", "default"})
+    @Profile({"dev", "test"})
     public SecurityFilterChain devSecurityFilterChain(HttpSecurity http) throws Exception {
         http
             // Disable CSRF for development
