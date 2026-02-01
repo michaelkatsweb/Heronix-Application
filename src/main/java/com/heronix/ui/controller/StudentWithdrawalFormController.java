@@ -1,9 +1,11 @@
 package com.heronix.ui.controller;
 
 import com.heronix.model.domain.Student;
+import com.heronix.model.domain.StudentParentRelationship;
 import com.heronix.model.domain.WithdrawalRecord;
 import com.heronix.model.domain.WithdrawalRecord.WithdrawalStatus;
 import com.heronix.model.domain.WithdrawalRecord.FinalStatus;
+import com.heronix.repository.StudentParentRelationshipRepository;
 import com.heronix.repository.StudentRepository;
 import com.heronix.security.SecurityContext;
 import com.heronix.service.WithdrawalService;
@@ -37,6 +39,9 @@ public class StudentWithdrawalFormController {
 
     @Autowired
     private WithdrawalService withdrawalService;
+
+    @Autowired
+    private StudentParentRelationshipRepository parentRelationshipRepository;
 
     private WithdrawalRecord currentWithdrawal;
 
@@ -259,11 +264,26 @@ public class StudentWithdrawalFormController {
             currentGradeField.setText(student.getGradeLevel());
         }
         if (currentStatusField != null) {
-            currentStatusField.setText("ACTIVE"); // TODO: Get from enrollment status field
+            currentStatusField.setText(student.getStudentStatus() != null ? student.getStudentStatus().getDisplayName() : "Active");
         }
 
-        // Load parent info
-        // TODO: Load from StudentParentRelationship
+        // Load parent info from StudentParentRelationship
+        try {
+            parentRelationshipRepository.findByStudentAndIsPrimaryContactTrue(student).ifPresent(rel -> {
+                if (parentNameField != null && rel.getParent() != null) {
+                    parentNameField.setText(rel.getParent().getFullName());
+                }
+                if (parentPhoneField != null && rel.getParent() != null) {
+                    String phone = rel.getParent().getCellPhone() != null ? rel.getParent().getCellPhone() : rel.getParent().getHomePhone();
+                    parentPhoneField.setText(phone != null ? phone : "");
+                }
+                if (parentEmailField != null && rel.getParent() != null) {
+                    parentEmailField.setText(rel.getParent().getEmail() != null ? rel.getParent().getEmail() : "");
+                }
+            });
+        } catch (Exception e) {
+            log.debug("Could not load parent info for student {}", student.getStudentId(), e);
+        }
 
         log.info("Loaded student: {}", student.getStudentId());
     }

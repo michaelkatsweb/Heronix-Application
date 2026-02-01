@@ -924,8 +924,25 @@ public class IEPWizardController {
      */
     @FXML
     private void handleSaveDraft() {
-        log.info("Save Draft button clicked - Not yet implemented");
-        showInfo("Save Draft", "Draft saving functionality will be implemented in a future version.");
+        log.info("Save Draft button clicked");
+        try {
+            IEP iep = buildIEPFromFormData();
+            iep.setStatus(IEPStatus.DRAFT);
+
+            IEP saved;
+            if (editMode && currentIEP != null) {
+                saved = iepManagementService.updateIEP(iep);
+            } else {
+                saved = iepManagementService.createIEP(iep);
+                currentIEP = saved;
+                editMode = true;
+            }
+            showInfo("Draft Saved", "IEP draft " + saved.getIepNumber() + " saved successfully.");
+            log.info("IEP draft saved: {}", saved.getIepNumber());
+        } catch (Exception e) {
+            log.error("Error saving IEP draft", e);
+            showError("Save Draft Error", "Failed to save draft: " + e.getMessage());
+        }
     }
 
     /**
@@ -1011,9 +1028,227 @@ public class IEPWizardController {
         this.currentIEP = iep;
         this.editMode = true;
 
-        // TODO: Populate all form fields from existing IEP
         log.info("Loading existing IEP for editing: {}", iep.getId());
-        showInfo("Edit Mode", "IEP editing functionality will be fully implemented in next version.\n\nFor now, create a new IEP.");
+
+        try {
+            // Step 1: Basic Information
+            if (iep.getStudent() != null) {
+                selectedStudent = iep.getStudent();
+                studentCombo.setValue(iep.getStudent());
+                studentCombo.setDisable(true); // Cannot change student when editing
+                studentNameLabel.setText("Student: " + iep.getStudent().getFullName());
+            }
+
+            if (iep.getIepNumber() != null) {
+                iepNumberField.setText(iep.getIepNumber());
+            }
+            if (iep.getStartDate() != null) {
+                effectiveDatePicker.setValue(iep.getStartDate());
+            }
+            if (iep.getEndDate() != null) {
+                expirationDatePicker.setValue(iep.getEndDate());
+            }
+            if (iep.getNextReviewDate() != null) {
+                annualReviewDatePicker.setValue(iep.getNextReviewDate());
+            }
+            if (iep.getStatus() != null) {
+                statusCombo.setValue(iep.getStatus());
+            }
+
+            // Step 2: Disability Information
+            if (iep.getEligibilityCategory() != null) {
+                disabilityCategoryCombo.setValue(iep.getEligibilityCategory());
+            }
+            if (iep.getPrimaryDisability() != null) {
+                secondaryDisabilityCategoryCombo.setValue(iep.getPrimaryDisability());
+            }
+
+            // Step 3: Services - Load from IEP services list
+            loadServicesFromIEP(iep);
+
+            // Step 5: Accommodations - Parse from accommodations text
+            if (iep.getAccommodations() != null && !iep.getAccommodations().isEmpty()) {
+                parseAccommodationsToForm(iep.getAccommodations());
+            }
+
+            // Step 6: Goals
+            if (iep.getGoals() != null) {
+                annualGoalsArea.setText(iep.getGoals());
+            }
+
+            // Step 7: Case Manager and Notes
+            if (iep.getCaseManager() != null) {
+                // Parse case manager format: "Name (email)"
+                String caseManager = iep.getCaseManager();
+                if (caseManager.contains("(") && caseManager.contains(")")) {
+                    int emailStart = caseManager.indexOf("(");
+                    int emailEnd = caseManager.indexOf(")");
+                    caseManagerNameField.setText(caseManager.substring(0, emailStart).trim());
+                    caseManagerEmailField.setText(caseManager.substring(emailStart + 1, emailEnd).trim());
+                } else {
+                    caseManagerNameField.setText(caseManager);
+                }
+            }
+
+            // Parse notes for LRE and support service information
+            if (iep.getNotes() != null && !iep.getNotes().isEmpty()) {
+                parseNotesToForm(iep.getNotes());
+            }
+
+            log.info("Successfully loaded IEP data for editing: {}", iep.getIepNumber());
+
+        } catch (Exception e) {
+            log.error("Error loading IEP data for editing", e);
+            showError("Error Loading IEP", "Failed to load IEP data: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Load services from IEP into form checkboxes and minute fields
+     */
+    private void loadServicesFromIEP(IEP iep) {
+        if (iep.getServices() == null || iep.getServices().isEmpty()) {
+            return;
+        }
+
+        for (IEPService service : iep.getServices()) {
+            if (service.getServiceType() == null) continue;
+
+            switch (service.getServiceType()) {
+                case SPEECH_THERAPY -> {
+                    speechTherapyCheck.setSelected(true);
+                    if (service.getMinutesPerWeek() != null) {
+                        speechMinutesField.setText(String.valueOf(service.getMinutesPerWeek()));
+                    }
+                }
+                case OCCUPATIONAL_THERAPY -> {
+                    occupationalTherapyCheck.setSelected(true);
+                    if (service.getMinutesPerWeek() != null) {
+                        otMinutesField.setText(String.valueOf(service.getMinutesPerWeek()));
+                    }
+                }
+                case PHYSICAL_THERAPY -> {
+                    physicalTherapyCheck.setSelected(true);
+                    if (service.getMinutesPerWeek() != null) {
+                        ptMinutesField.setText(String.valueOf(service.getMinutesPerWeek()));
+                    }
+                }
+                case COUNSELING -> {
+                    counselingCheck.setSelected(true);
+                    if (service.getMinutesPerWeek() != null) {
+                        counselingMinutesField.setText(String.valueOf(service.getMinutesPerWeek()));
+                    }
+                }
+                case BEHAVIORAL_SUPPORT -> {
+                    behavioralSupportCheck.setSelected(true);
+                    if (service.getMinutesPerWeek() != null) {
+                        behavioralMinutesField.setText(String.valueOf(service.getMinutesPerWeek()));
+                    }
+                }
+            }
+        }
+
+        // Update total minutes display
+        updateTotalServiceMinutes();
+    }
+
+    /**
+     * Parse accommodations text and populate form fields
+     */
+    private void parseAccommodationsToForm(String accommodationsText) {
+        // Parse sections from the stored accommodations text
+        String[] sections = accommodationsText.split("\n\n");
+
+        for (String section : sections) {
+            if (section.startsWith("Accommodations:")) {
+                accommodationsArea.setText(section.replace("Accommodations:\n", "").trim());
+            } else if (section.startsWith("Modifications:")) {
+                modificationsArea.setText(section.replace("Modifications:\n", "").trim());
+            } else if (section.startsWith("Assistive Technology:")) {
+                assistiveTechnologyArea.setText(section.replace("Assistive Technology:\n", "").trim());
+            }
+        }
+    }
+
+    /**
+     * Parse notes text and populate form fields (LRE, support services, etc.)
+     */
+    private void parseNotesToForm(String notesText) {
+        String[] lines = notesText.split("\n");
+
+        StringBuilder generalNotes = new StringBuilder();
+        StringBuilder parentConcerns = new StringBuilder();
+        StringBuilder transitionPlan = new StringBuilder();
+        boolean inParentConcerns = false;
+        boolean inTransitionPlan = false;
+
+        for (String line : lines) {
+            // Parse LRE info
+            if (line.startsWith("General Ed:")) {
+                // Extract percentage from "General Ed: XX%"
+                String percentStr = line.replaceAll("[^0-9]", "");
+                if (!percentStr.isEmpty()) {
+                    int percent = Integer.parseInt(percentStr.split("")[0] + (percentStr.length() > 1 ? percentStr.split("")[1] : ""));
+                    if (percent <= 100) {
+                        generalEdSlider.setValue(percent);
+                        generalEdPercentField.setText(String.valueOf(percent));
+                    }
+                }
+            } else if (line.startsWith("Placement:")) {
+                String placement = line.replace("Placement:", "").trim();
+                if (!placement.isEmpty()) {
+                    placementSettingCombo.setValue(placement);
+                }
+            } else if (line.startsWith("Justification:")) {
+                lreJustificationArea.setText(line.replace("Justification:", "").trim());
+            }
+            // Parse support services
+            else if (line.contains("Requires Co-Teaching")) {
+                coTeachingCheck.setSelected(true);
+            } else if (line.contains("Requires Paraprofessional Support:")) {
+                paraprofessionalCheck.setSelected(true);
+                String hours = line.replaceAll("[^0-9.]", "");
+                if (!hours.isEmpty()) {
+                    paraHoursField.setText(hours);
+                }
+            } else if (line.contains("Requires Pull-Out Services")) {
+                pullOutServicesCheck.setSelected(true);
+            } else if (line.contains("Requires Push-In Services")) {
+                pushInServicesCheck.setSelected(true);
+            } else if (line.contains("Requires Transportation")) {
+                transportationCheck.setSelected(true);
+            } else if (line.contains("Extended School Year (ESY)")) {
+                extendedSchoolYearCheck.setSelected(true);
+            }
+            // Parse parent concerns and transition plan
+            else if (line.startsWith("Parent Concerns:")) {
+                inParentConcerns = true;
+                inTransitionPlan = false;
+            } else if (line.startsWith("Transition Plan:")) {
+                inParentConcerns = false;
+                inTransitionPlan = true;
+            } else if (inParentConcerns && !line.trim().isEmpty()) {
+                parentConcerns.append(line).append("\n");
+            } else if (inTransitionPlan && !line.trim().isEmpty()) {
+                transitionPlan.append(line).append("\n");
+            } else if (!inParentConcerns && !inTransitionPlan && !line.trim().isEmpty() &&
+                       !line.contains("General Ed:") && !line.contains("Special Ed:") &&
+                       !line.contains("Placement:") && !line.contains("Justification:") &&
+                       !line.contains("Requires")) {
+                generalNotes.append(line).append("\n");
+            }
+        }
+
+        // Set parsed values
+        if (parentConcerns.length() > 0) {
+            parentConcernsArea.setText(parentConcerns.toString().trim());
+        }
+        if (transitionPlan.length() > 0) {
+            transitionPlanArea.setText(transitionPlan.toString().trim());
+        }
+        if (generalNotes.length() > 0) {
+            notesArea.setText(generalNotes.toString().trim());
+        }
     }
 
     // ========== PLACEHOLDER EVENT HANDLERS (from FXML) ==========
@@ -1083,8 +1318,25 @@ public class IEPWizardController {
 
     @FXML
     private void handlePrint() {
-        log.info("Print IEP - Not yet implemented");
-        showInfo("Print IEP", "IEP printing will be implemented in a future version.");
+        log.info("Print IEP requested");
+        generateSummary();
+        String summary = summaryArea.getText();
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Save IEP Report");
+        fileChooser.setInitialFileName("IEP_" + (iepNumberField.getText().isEmpty() ? "draft" : iepNumberField.getText()) + ".txt");
+        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        java.io.File file = fileChooser.showSaveDialog(cancelButton.getScene().getWindow());
+        if (file != null) {
+            try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.OutputStreamWriter(
+                    new java.io.FileOutputStream(file), java.nio.charset.StandardCharsets.UTF_8))) {
+                pw.write('\ufeff');
+                pw.println(summary);
+                showInfo("IEP Exported", "IEP report saved to " + file.getName());
+            } catch (Exception e) {
+                log.error("Error printing IEP", e);
+                showError("Print Error", "Failed to save IEP report: " + e.getMessage());
+            }
+        }
     }
 
     @FXML

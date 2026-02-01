@@ -456,11 +456,41 @@ public class GiftedDashboardController {
 
     @FXML
     private void handleExportReport() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Export Report");
-        alert.setHeaderText("Export Gifted Program Report");
-        alert.setContentText("Exporting " + rawGiftedStudents.size() + " gifted student records to PDF...");
-        alert.showAndWait();
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Export Gifted Program Report");
+        fileChooser.setInitialFileName("gifted_program_report.csv");
+        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        java.io.File file = fileChooser.showSaveDialog(studentsTableView.getScene().getWindow());
+        if (file != null) {
+            try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.OutputStreamWriter(
+                    new java.io.FileOutputStream(file), java.nio.charset.StandardCharsets.UTF_8))) {
+                pw.write('\ufeff');
+                pw.println("Name,Student ID,Grade,GPA,Gifted Area,Service Type,Status,Identification Date");
+                for (GiftedStudent gs : rawGiftedStudents) {
+                    Student s = gs.getStudent();
+                    pw.printf("%s %s,%s,%s,%s,%s,%s,%s,%s%n",
+                            s.getFirstName(), s.getLastName(),
+                            s.getStudentId(),
+                            s.getGradeLevel(),
+                            s.getGpa() != null ? s.getGpa().toString() : "",
+                            gs.getPrimaryGiftedArea() != null ? gs.getPrimaryGiftedArea().toString() : "",
+                            gs.getServiceDeliveryModel() != null ? gs.getServiceDeliveryModel().toString() : "",
+                            gs.getGiftedStatus() != null ? gs.getGiftedStatus().toString() : "",
+                            gs.getIdentificationDate() != null ? gs.getIdentificationDate().toString() : "");
+                }
+                Alert success = new Alert(Alert.AlertType.INFORMATION);
+                success.setTitle("Export Complete");
+                success.setHeaderText(null);
+                success.setContentText("Exported " + rawGiftedStudents.size() + " records to " + file.getName());
+                success.showAndWait();
+            } catch (Exception e) {
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                error.setTitle("Export Error");
+                error.setHeaderText(null);
+                error.setContentText("Export failed: " + e.getMessage());
+                error.showAndWait();
+            }
+        }
     }
 
     @FXML

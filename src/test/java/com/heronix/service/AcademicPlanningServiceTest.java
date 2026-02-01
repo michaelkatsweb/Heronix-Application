@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Integration tests for AcademicPlanningService
  * Tests the graduation requirements validation (December 10, 2025 fix)
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @ActiveProfiles("test")
 @Transactional
 public class AcademicPlanningServiceTest {

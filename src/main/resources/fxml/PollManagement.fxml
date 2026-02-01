@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.PollManagementController"
+            prefWidth="1100" prefHeight="750" styleClass="main-container">
+
+    <top>
+        <VBox spacing="10">
+            <padding><Insets top="20" right="20" bottom="10" left="20"/></padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="Polls &amp; Surveys" styleClass="welcome-title">
+                    <font><Font name="System Bold" size="22"/></font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="+ Create Poll" onAction="#handleCreatePoll" styleClass="nav-button"
+                        style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;">
+                    <font><Font size="13"/></font>
+                </Button>
+            </HBox>
+
+            <!-- Stats -->
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <VBox alignment="CENTER" spacing="2" styleClass="stat-card">
+                    <padding><Insets top="8" right="15" bottom="8" left="15"/></padding>
+                    <Label fx:id="statTotal" text="0" styleClass="stat-value">
+                        <font><Font name="System Bold" size="20"/></font>
+                    </Label>
+                    <Label text="Total"><font><Font size="11"/></font></Label>
+                </VBox>
+                <VBox alignment="CENTER" spacing="2" styleClass="stat-card">
+                    <padding><Insets top="8" right="15" bottom="8" left="15"/></padding>
+                    <Label fx:id="statDraft" text="0" styleClass="stat-value">
+                        <font><Font name="System Bold" size="20"/></font>
+                    </Label>
+                    <Label text="Draft"><font><Font size="11"/></font></Label>
+                </VBox>
+                <VBox alignment="CENTER" spacing="2" styleClass="stat-card">
+                    <padding><Insets top="8" right="15" bottom="8" left="15"/></padding>
+                    <Label fx:id="statPublished" text="0" styleClass="stat-value">
+                        <font><Font name="System Bold" size="20"/></font>
+                    </Label>
+                    <Label text="Active"><font><Font size="11"/></font></Label>
+                </VBox>
+                <VBox alignment="CENTER" spacing="2" styleClass="stat-card">
+                    <padding><Insets top="8" right="15" bottom="8" left="15"/></padding>
+                    <Label fx:id="statClosed" text="0" styleClass="stat-value">
+                        <font><Font name="System Bold" size="20"/></font>
+                    </Label>
+                    <Label text="Closed"><font><Font size="11"/></font></Label>
+                </VBox>
+            </HBox>
+
+            <!-- Filters -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Status:"><font><Font size="13"/></font></Label>
+                <ComboBox fx:id="statusFilter" promptText="All" prefWidth="130"/>
+                <Label text="Audience:"><font><Font size="13"/></font></Label>
+                <ComboBox fx:id="audienceFilter" promptText="All" prefWidth="130"/>
+                <TextField fx:id="searchField" promptText="Search polls..." prefWidth="200"/>
+                <Button text="Refresh" onAction="#handleRefresh" styleClass="nav-button">
+                    <font><Font size="12"/></font>
+                </Button>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="recordCountLabel" text="0 polls">
+                    <font><Font size="13"/></font>
+                </Label>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox>
+            <padding><Insets top="5" right="20" bottom="20" left="20"/></padding>
+            <Label fx:id="statusLabel" text="" style="-fx-text-fill: #666;"/>
+            <TableView fx:id="pollsTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="titleColumn" text="Title" prefWidth="220" minWidth="150"/>
+                    <TableColumn fx:id="creatorColumn" text="Creator" prefWidth="130" minWidth="100"/>
+                    <TableColumn fx:id="audienceColumn" text="Audience" prefWidth="100" minWidth="80"/>
+                    <TableColumn fx:id="statusColumn" text="Status" prefWidth="90" minWidth="70"/>
+                    <TableColumn fx:id="questionsColumn" text="Questions" prefWidth="80" minWidth="60"/>
+                    <TableColumn fx:id="responsesColumn" text="Responses" prefWidth="80" minWidth="60"/>
+                    <TableColumn fx:id="createdColumn" text="Created" prefWidth="120" minWidth="100"/>
+                    <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="200" minWidth="180"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+</BorderPane>

@@ -12,7 +12,7 @@ import java.util.Map;
  * Diagnose Course-to-Teacher Assignment Issues
  * December 6, 2025
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 public class DiagnoseCourseAssignments {
 
     @Autowired

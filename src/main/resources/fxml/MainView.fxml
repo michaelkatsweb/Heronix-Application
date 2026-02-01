@@ -235,6 +235,7 @@ Reorganized menu structure based on 32 service categories
             <MenuItem text="Announcements" onAction="#handleAnnouncements"/>
             <MenuItem text="Mass Communication" onAction="#handleMassCommunication"/>
             <MenuItem text="Messaging Center" onAction="#handleMessaging"/>
+            <MenuItem text="Polls &amp; Surveys" onAction="#handlePollsAndSurveys"/>
             <SeparatorMenuItem/>
             <MenuItem text="Notification Center" onAction="#handleNotificationCenter"/>
             <MenuItem text="Emergency Alerts" onAction="#handleEmergencyAlerts"/>
@@ -284,13 +285,22 @@ Reorganized menu structure based on 32 service categories
                 <MenuItem text="Permissions" onAction="#handlePermissions"/>
                 <MenuItem text="Security Settings" onAction="#handleSecuritySettings"/>
             </Menu>
+            <Menu text="Security &amp; Network">
+                <MenuItem text="🛡️ Security Dashboard" onAction="#handleSecurityManagement"/>
+                <MenuItem text="📱 Device Management" onAction="#handleDeviceManagement"/>
+                <MenuItem text="🌐 Network Restrictions" onAction="#handleNetworkRestrictions"/>
+                <MenuItem text="🔐 Data Permissions" onAction="#handleDataPermissions"/>
+                <MenuItem text="📜 Gateway Audit Log" onAction="#handleGatewayAuditLog"/>
+                <MenuItem text="🔑 Encryption Settings" onAction="#handleEncryptionSettings"/>
+            </Menu>
             <MenuItem text="System Configuration" onAction="#handleSystemConfiguration"/>
             <MenuItem text="Settings" onAction="#handleSettings"/>
             <SeparatorMenuItem/>
-            <Menu text="Audit & Monitoring">
+            <Menu text="Audit &amp; Monitoring">
                 <MenuItem text="Audit Logs" onAction="#handleAuditLogs"/>
                 <MenuItem text="System Monitoring" onAction="#handleSystemMonitoring"/>
                 <MenuItem text="Database Health" onAction="#handleDatabaseHealth"/>
+                <MenuItem text="Gateway Transmission Log" onAction="#handleGatewayAuditLog"/>
             </Menu>
             <SeparatorMenuItem/>
             <MenuItem text="Enrollment Forecasting" onAction="#handleEnrollmentForecasting"/>
@@ -363,6 +373,12 @@ Reorganized menu structure based on 32 service categories
         </Button>
 
         <Region HBox.hgrow="ALWAYS"/>
+
+        <Button text="Security" onAction="#handleSecurityManagement" styleClass="toolbar-button">
+            <graphic>
+                <Label text="🛡️" style="-fx-font-size: 16;"/>
+            </graphic>
+        </Button>
 
         <Button text="Notifications" onAction="#handleNotificationCenter" styleClass="toolbar-button">
             <graphic>

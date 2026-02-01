@@ -2,6 +2,8 @@ package com.heronix.service.integration;
 
 import com.heronix.integration.SchedulerApiClient;
 import com.heronix.model.domain.*;
+import com.heronix.model.enums.EnrollmentStatus;
+import com.heronix.model.enums.ScheduleStatus;
 import com.heronix.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +42,7 @@ public class ScheduleImportService {
     private final RoomRepository roomRepository;
     private final PeriodTimerRepository periodTimerRepository;
     private final StudentRepository studentRepository;
+    private final StudentEnrollmentRepository studentEnrollmentRepository;
 
     // ========================================================================
     // MAIN IMPORT METHOD
@@ -231,18 +234,184 @@ public class ScheduleImportService {
 
     /**
      * Process student enrollments for a section
+     * Creates StudentEnrollment records linking students to the course section
      */
-    private void processStudentEnrollments(CourseSection section, List<Long> studentIds, ImportStatistics stats) {
-        // TODO: Implement student enrollment creation
-        // This would create StudentEnrollment records linking students to sections
-        // For now, just update the enrollment count
+    private void processStudentEnrollments(CourseSection section, List<Long> studentIds,
+            ImportStatistics stats) {
+        if (studentIds == null || studentIds.isEmpty()) {
+            log.debug("No students to enroll in section {}", section.getId());
+            return;
+        }
 
-        int enrollmentCount = studentIds.size();
-        section.setCurrentEnrollment(enrollmentCount);
+        // Get the schedule from the section's course slots
+        Schedule schedule = findScheduleForSection(section);
+        if (schedule == null) {
+            log.warn("Could not find schedule for section {}, skipping enrollments", section.getId());
+            return;
+        }
+
+        // Find the schedule slot for this section
+        ScheduleSlot scheduleSlot = findScheduleSlotForSection(section, schedule);
+
+        int enrolledCount = 0;
+        int skippedCount = 0;
+        List<StudentEnrollment> enrollmentsToSave = new ArrayList<>();
+
+        for (Long studentId : studentIds) {
+            try {
+                // Check if student exists
+                Student student = studentRepository.findById(studentId).orElse(null);
+                if (student == null) {
+                    log.warn("Student not found with ID: {}, skipping enrollment", studentId);
+                    skippedCount++;
+                    continue;
+                }
+
+                // Check for existing enrollment to avoid duplicates
+                boolean alreadyEnrolled = studentEnrollmentRepository
+                        .existsByStudentIdAndCourseId(studentId, section.getCourse().getId());
+
+                if (alreadyEnrolled) {
+                    log.debug("Student {} already enrolled in course {}, skipping",
+                            studentId, section.getCourse().getId());
+                    skippedCount++;
+                    continue;
+                }
+
+                // Create new enrollment
+                StudentEnrollment enrollment = createStudentEnrollment(
+                        student, section.getCourse(), schedule, scheduleSlot, student.getGradeLevel());
+                enrollmentsToSave.add(enrollment);
+                enrolledCount++;
+
+            } catch (Exception e) {
+                log.error("Error enrolling student {} in section {}: {}",
+                        studentId, section.getId(), e.getMessage());
+                skippedCount++;
+            }
+        }
+
+        // Batch save all enrollments
+        if (!enrollmentsToSave.isEmpty()) {
+            studentEnrollmentRepository.saveAll(enrollmentsToSave);
+            log.info("Created {} enrollment records for section {}", enrollmentsToSave.size(), section.getId());
+        }
+
+        // Update section enrollment count
+        section.setCurrentEnrollment(enrolledCount);
         courseSectionRepository.save(section);
 
-        stats.addStudentsScheduled(enrollmentCount);
-        log.debug("Enrolled {} students in section {}", enrollmentCount, section.getId());
+        stats.addStudentsScheduled(enrolledCount);
+        log.debug("Enrolled {} students in section {} ({} skipped)",
+                enrolledCount, section.getId(), skippedCount);
+    }
+
+    /**
+     * Find schedule for a section based on its schedule slots
+     */
+    private Schedule findScheduleForSection(CourseSection section) {
+        // Find schedule slots that reference this section's course
+        if (section.getCourse() == null) {
+            return null;
+        }
+
+        // Query for schedule slots with this course to find the schedule
+        List<ScheduleSlot> slots = scheduleSlotRepository.findByCourseIdWithDetails(section.getCourse().getId());
+        if (!slots.isEmpty()) {
+            return slots.get(0).getSchedule();
+        }
+
+        // Fallback: get the most recent published schedule
+        List<Schedule> schedules = scheduleRepository.findByStatus(ScheduleStatus.PUBLISHED);
+        return schedules.isEmpty() ? null : schedules.get(0);
+    }
+
+    /**
+     * Find schedule slot for a section
+     */
+    private ScheduleSlot findScheduleSlotForSection(CourseSection section, Schedule schedule) {
+        if (section.getCourse() == null || schedule == null) {
+            return null;
+        }
+
+        // Find slot matching course and teacher
+        List<ScheduleSlot> slots = scheduleSlotRepository.findByScheduleId(schedule.getId());
+        for (ScheduleSlot slot : slots) {
+            if (slot.getCourse() != null &&
+                slot.getCourse().getId().equals(section.getCourse().getId())) {
+                // Match by teacher if available
+                if (section.getAssignedTeacher() != null && slot.getTeacher() != null) {
+                    if (slot.getTeacher().getId().equals(section.getAssignedTeacher().getId())) {
+                        return slot;
+                    }
+                } else {
+                    return slot;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Create a new StudentEnrollment record
+     */
+    private StudentEnrollment createStudentEnrollment(Student student, Course course,
+            Schedule schedule, ScheduleSlot scheduleSlot, String gradeLevel) {
+
+        StudentEnrollment enrollment = new StudentEnrollment();
+        enrollment.setStudent(student);
+        enrollment.setCourse(course);
+        enrollment.setSchedule(schedule);
+        enrollment.setScheduleSlot(scheduleSlot);
+        enrollment.setStatus(EnrollmentStatus.ACTIVE);
+        enrollment.setEnrolledDate(LocalDateTime.now());
+
+        // Set priority based on grade level (seniors get higher priority)
+        enrollment.setPriority(calculateEnrollmentPriority(gradeLevel));
+
+        // Initialize attendance and grade
+        enrollment.setAttendanceRate(100.0); // Start at 100%
+        enrollment.setCurrentGrade(null); // No grade initially
+
+        return enrollment;
+    }
+
+    /**
+     * Calculate enrollment priority based on grade level
+     * Seniors get highest priority, freshmen lowest
+     */
+    private int calculateEnrollmentPriority(String gradeLevel) {
+        if (gradeLevel == null) {
+            return 5; // Default middle priority
+        }
+
+        switch (gradeLevel.toUpperCase()) {
+            case "12":
+            case "SENIOR":
+            case "GRADE 12":
+                return 10; // Highest priority
+            case "11":
+            case "JUNIOR":
+            case "GRADE 11":
+                return 8;
+            case "10":
+            case "SOPHOMORE":
+            case "GRADE 10":
+                return 6;
+            case "9":
+            case "FRESHMAN":
+            case "GRADE 9":
+                return 4;
+            default:
+                // Try to parse numeric grade level
+                try {
+                    int grade = Integer.parseInt(gradeLevel.replaceAll("[^0-9]", ""));
+                    return Math.min(10, Math.max(1, grade));
+                } catch (NumberFormatException e) {
+                    return 5;
+                }
+        }
     }
 
     /**

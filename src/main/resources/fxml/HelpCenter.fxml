@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+
+<!--
+    Help Center FXML - In-App Help System
+    Location: src/main/resources/fxml/HelpCenter.fxml
+
+    Features:
+    - Category-based navigation
+    - Article viewer with markdown support
+    - Glossary browser
+    - Keyboard shortcuts reference
+    - Search functionality
+
+    @author Heronix Educational Systems LLC
+    @version 1.0.0
+    @since 2026-01
+-->
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:id="helpCenterRoot"
+            fx:controller="com.heronix.ui.controller.HelpCenterController"
+            prefWidth="1000" prefHeight="700"
+            styleClass="help-center">
+
+    <!-- Top: Header with Search -->
+    <top>
+        <VBox styleClass="help-header">
+            <padding>
+                <Insets top="20" right="24" bottom="20" left="24"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="16">
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Help Center" styleClass="help-title"/>
+                    <Label text="Guides, tutorials, and reference documentation" styleClass="help-subtitle"/>
+                </VBox>
+
+                <!-- Search Box -->
+                <HBox alignment="CENTER_RIGHT" spacing="8">
+                    <TextField fx:id="searchField"
+                               promptText="Search help articles..."
+                               prefWidth="300"
+                               onAction="#handleSearch"
+                               styleClass="help-search"/>
+                    <Button text="Search" onAction="#handleSearch" styleClass="button-primary"/>
+                </HBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Main Content -->
+    <center>
+        <SplitPane dividerPositions="0.25" styleClass="help-split-pane">
+
+            <!-- Left: Navigation -->
+            <VBox styleClass="help-nav" minWidth="200" maxWidth="300">
+                <padding>
+                    <Insets top="16" right="8" bottom="16" left="8"/>
+                </padding>
+
+                <!-- Tab-like buttons for main sections -->
+                <VBox spacing="4">
+                    <Button fx:id="btnGuides" text="How-To Guides"
+                            onAction="#handleShowGuides"
+                            styleClass="help-nav-button,help-nav-active"
+                            maxWidth="Infinity"/>
+                    <Button fx:id="btnGlossary" text="Glossary"
+                            onAction="#handleShowGlossary"
+                            styleClass="help-nav-button"
+                            maxWidth="Infinity"/>
+                    <Button fx:id="btnShortcuts" text="Keyboard Shortcuts"
+                            onAction="#handleShowShortcuts"
+                            styleClass="help-nav-button"
+                            maxWidth="Infinity"/>
+                </VBox>
+
+                <Separator>
+                    <padding>
+                        <Insets top="12" bottom="12"/>
+                    </padding>
+                </Separator>
+
+                <!-- Category/Letter list -->
+                <Label fx:id="navLabel" text="Categories" styleClass="help-nav-label"/>
+
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="help-nav-scroll">
+                    <VBox fx:id="categoryList" spacing="2">
+                        <!-- Categories loaded dynamically -->
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Right: Content Area -->
+            <VBox styleClass="help-content-area">
+
+                <!-- Breadcrumb -->
+                <HBox fx:id="breadcrumbBar" alignment="CENTER_LEFT" spacing="8" styleClass="help-breadcrumb">
+                    <padding>
+                        <Insets top="12" right="16" bottom="12" left="16"/>
+                    </padding>
+                    <Label fx:id="breadcrumb1" text="Help Center" styleClass="help-breadcrumb-item"/>
+                    <Label fx:id="breadcrumbSep1" text=">" styleClass="help-breadcrumb-sep" visible="false"/>
+                    <Label fx:id="breadcrumb2" text="" styleClass="help-breadcrumb-item" visible="false"/>
+                    <Label fx:id="breadcrumbSep2" text=">" styleClass="help-breadcrumb-sep" visible="false"/>
+                    <Label fx:id="breadcrumb3" text="" styleClass="help-breadcrumb-item,help-breadcrumb-current" visible="false"/>
+                </HBox>
+
+                <!-- Content Stack (switches between different views) -->
+                <StackPane fx:id="contentStack" VBox.vgrow="ALWAYS">
+
+                    <!-- Guides View -->
+                    <VBox fx:id="guidesView" styleClass="help-view">
+                        <padding>
+                            <Insets top="16" right="24" bottom="16" left="24"/>
+                        </padding>
+
+                        <!-- Category header -->
+                        <HBox fx:id="categoryHeader" alignment="CENTER_LEFT" spacing="12" visible="false" managed="false">
+                            <Label fx:id="categoryIcon" text="" styleClass="help-category-icon"/>
+                            <VBox spacing="2">
+                                <Label fx:id="categoryTitle" text="" styleClass="help-category-title"/>
+                                <Label fx:id="categoryDesc" text="" styleClass="help-category-desc"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Article list or content -->
+                        <ScrollPane fx:id="articleScrollPane" fitToWidth="true" VBox.vgrow="ALWAYS">
+                            <VBox fx:id="articleContainer" spacing="12">
+                                <padding>
+                                    <Insets top="16"/>
+                                </padding>
+                                <!-- Article cards or content loaded here -->
+                            </VBox>
+                        </ScrollPane>
+                    </VBox>
+
+                    <!-- Glossary View -->
+                    <VBox fx:id="glossaryView" styleClass="help-view" visible="false" managed="false">
+                        <padding>
+                            <Insets top="16" right="24" bottom="16" left="24"/>
+                        </padding>
+
+                        <Label text="Glossary of Terms" styleClass="help-section-title"/>
+                        <Label text="Common terms used in Heronix SIS" styleClass="help-section-desc"/>
+
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+                            <VBox fx:id="glossaryContainer" spacing="12">
+                                <padding>
+                                    <Insets top="16"/>
+                                </padding>
+                                <!-- Glossary terms loaded here -->
+                            </VBox>
+                        </ScrollPane>
+                    </VBox>
+
+                    <!-- Shortcuts View -->
+                    <VBox fx:id="shortcutsView" styleClass="help-view" visible="false" managed="false">
+                        <padding>
+                            <Insets top="16" right="24" bottom="16" left="24"/>
+                        </padding>
+
+                        <Label text="Keyboard Shortcuts" styleClass="help-section-title"/>
+                        <Label text="Speed up your workflow with these shortcuts" styleClass="help-section-desc"/>
+
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+                            <VBox fx:id="shortcutsContainer" spacing="24">
+                                <padding>
+                                    <Insets top="16"/>
+                                </padding>
+                                <!-- Shortcuts loaded here by category -->
+                            </VBox>
+                        </ScrollPane>
+                    </VBox>
+
+                    <!-- Search Results View -->
+                    <VBox fx:id="searchResultsView" styleClass="help-view" visible="false" managed="false">
+                        <padding>
+                            <Insets top="16" right="24" bottom="16" left="24"/>
+                        </padding>
+
+                        <Label fx:id="searchResultsTitle" text="Search Results" styleClass="help-section-title"/>
+                        <Label fx:id="searchResultsCount" text="" styleClass="help-section-desc"/>
+
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+                            <VBox fx:id="searchResultsContainer" spacing="12">
+                                <padding>
+                                    <Insets top="16"/>
+                                </padding>
+                                <!-- Search results loaded here -->
+                            </VBox>
+                        </ScrollPane>
+                    </VBox>
+
+                    <!-- Article Detail View -->
+                    <VBox fx:id="articleDetailView" styleClass="help-view" visible="false" managed="false">
+                        <padding>
+                            <Insets top="16" right="24" bottom="16" left="24"/>
+                        </padding>
+
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Button fx:id="backButton" text="< Back" onAction="#handleBack" styleClass="help-back-button"/>
+                        </HBox>
+
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+                            <VBox fx:id="articleDetailContainer" spacing="16">
+                                <padding>
+                                    <Insets top="16"/>
+                                </padding>
+                                <!-- Article content loaded here -->
+                            </VBox>
+                        </ScrollPane>
+                    </VBox>
+
+                </StackPane>
+            </VBox>
+
+        </SplitPane>
+    </center>
+
+    <!-- Bottom: Footer -->
+    <bottom>
+        <HBox alignment="CENTER" spacing="16" styleClass="help-footer">
+            <padding>
+                <Insets top="12" right="24" bottom="12" left="24"/>
+            </padding>
+
+            <Label text="Can't find what you're looking for?" styleClass="help-footer-text"/>
+            <Hyperlink fx:id="contactSupportLink" text="Contact Support" onAction="#handleContactSupport"/>
+            <Label text="|" styleClass="help-footer-sep"/>
+            <Hyperlink fx:id="onlineDocsLink" text="Online Documentation" onAction="#handleOnlineDocs"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -507,17 +507,68 @@ public class HallPassController {
                 return;
             }
 
-            // Confirm action
-            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmAlert.setTitle("End Hall Pass");
-            confirmAlert.setHeaderText("End hall pass for " + selectedRow.getStudentName() + "?");
-            confirmAlert.setContentText("This will mark the student as returned.");
+            // Create dialog for manual end pass
+            Dialog<String> dialog = new Dialog<>();
+            dialog.setTitle("End Hall Pass");
+            dialog.setHeaderText("Manually end hall pass for " + selectedRow.getStudentName() + "?");
 
-            if (confirmAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-                // Note: In production, this would use QR/facial recognition
-                // For now, we'll need a manual end method
-                showWarning("Please use QR scanner to properly end hall pass");
-            }
+            // Set the button types
+            ButtonType endButtonType = new ButtonType("End Pass", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(endButtonType, ButtonType.CANCEL);
+
+            // Create the content
+            VBox content = new VBox(10);
+            content.setStyle("-fx-padding: 10;");
+
+            Label infoLabel = new Label("Note: For standard returns, use the QR scanner.\nManual end should only be used when QR scanning is not possible.");
+            infoLabel.setWrapText(true);
+            infoLabel.setStyle("-fx-font-style: italic;");
+
+            Label reasonLabel = new Label("Reason for manual end (required):");
+            TextArea reasonField = new TextArea();
+            reasonField.setPromptText("e.g., Student ID card lost, QR scanner malfunction, etc.");
+            reasonField.setPrefRowCount(2);
+            reasonField.setWrapText(true);
+
+            Label roomLabel = new Label("Return room (optional):");
+            TextField roomField = new TextField();
+            roomField.setPromptText("Room number/name");
+
+            content.getChildren().addAll(infoLabel, reasonLabel, reasonField, roomLabel, roomField);
+            dialog.getDialogPane().setContent(content);
+
+            // Disable end button until reason is provided
+            dialog.getDialogPane().lookupButton(endButtonType).setDisable(true);
+            reasonField.textProperty().addListener((obs, oldVal, newVal) -> {
+                dialog.getDialogPane().lookupButton(endButtonType).setDisable(
+                    newVal == null || newVal.trim().isEmpty()
+                );
+            });
+
+            // Convert the result
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == endButtonType) {
+                    return reasonField.getText();
+                }
+                return null;
+            });
+
+            // Show dialog and process result
+            dialog.showAndWait().ifPresent(reason -> {
+                HallPassService.HallPassResult result = hallPassService.manualEndHallPass(
+                    selectedRow.getSessionId(),
+                    roomField.getText(),
+                    reason
+                );
+
+                if (result.isSuccess()) {
+                    showSuccess("Hall pass ended successfully.\nDuration: " +
+                        (result.getSession() != null ? result.getSession().getFormattedDuration() : "N/A"));
+                    loadActivePasses(); // Refresh the table
+                } else {
+                    showError("Failed to end hall pass: " + result.getMessage());
+                }
+            });
 
         } catch (Exception e) {
             log.error("Error ending hall pass", e);

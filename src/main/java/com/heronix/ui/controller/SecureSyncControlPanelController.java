@@ -29,12 +29,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.SecureRandom;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 /**
  * Secure Sync Control Panel Controller
@@ -819,7 +832,8 @@ public class SecureSyncControlPanelController {
 
     @FXML
     public void handleExportTokens() {
-        log.warn("AUDIT: Token export requested by {}", SecurityContext.getCurrentUsername().orElse("admin"));
+        String currentUser = SecurityContext.getCurrentUsername().orElse("admin");
+        log.warn("AUDIT: Token export requested by {}", currentUser);
 
         List<StudentToken> tokens = tokenizationService.getAllTokens();
 
@@ -828,29 +842,158 @@ public class SecureSyncControlPanelController {
             return;
         }
 
-        // Build export content
-        StringBuilder export = new StringBuilder();
-        export.append("Token Value,Student ID,School Year,Created At,Expires At,Status\n");
-        for (StudentToken token : tokens) {
-            export.append(token.getTokenValue()).append(",")
-                  .append(token.getStudentId()).append(",")
-                  .append(token.getSchoolYear()).append(",")
-                  .append(formatDateTime(token.getCreatedAt())).append(",")
-                  .append(formatDateTime(token.getExpiresAt())).append(",")
-                  .append(token.getDisplayStatus()).append("\n");
+        // Ask user about encryption option
+        Alert encryptionDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        encryptionDialog.setTitle("Export Options");
+        encryptionDialog.setHeaderText("Token Export Security");
+        encryptionDialog.setContentText("Would you like to encrypt the exported token data?\n\n" +
+                "Encrypted exports are recommended for secure air-gap transfers.");
+
+        ButtonType encryptedBtn = new ButtonType("Encrypted Export");
+        ButtonType plainBtn = new ButtonType("Plain CSV");
+        ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        encryptionDialog.getButtonTypes().setAll(encryptedBtn, plainBtn, cancelBtn);
+
+        encryptionDialog.showAndWait().ifPresent(response -> {
+            if (response == cancelBtn) {
+                return;
+            }
+
+            boolean encrypt = (response == encryptedBtn);
+
+            // Build export content
+            StringBuilder export = new StringBuilder();
+            export.append("Token Value,Student ID,School Year,Created At,Expires At,Status\n");
+            for (StudentToken token : tokens) {
+                export.append(token.getTokenValue()).append(",")
+                      .append(token.getStudentId()).append(",")
+                      .append(token.getSchoolYear()).append(",")
+                      .append(formatDateTime(token.getCreatedAt())).append(",")
+                      .append(formatDateTime(token.getExpiresAt())).append(",")
+                      .append(token.getDisplayStatus()).append("\n");
+            }
+
+            // File chooser for save location
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Token Export");
+            fileChooser.setInitialFileName("token_export_" +
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) +
+                    (encrypt ? ".enc" : ".csv"));
+
+            if (encrypt) {
+                fileChooser.getExtensionFilters().add(
+                        new FileChooser.ExtensionFilter("Encrypted Files", "*.enc"));
+            } else {
+                fileChooser.getExtensionFilters().add(
+                        new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+            }
+
+            Stage stage = (Stage) refreshAllButton.getScene().getWindow();
+            File saveFile = fileChooser.showSaveDialog(stage);
+
+            if (saveFile != null) {
+                try {
+                    String content = export.toString();
+
+                    if (encrypt) {
+                        // Encrypt the content before saving
+                        String encryptedContent = encryptTokenExport(content);
+                        try (FileWriter writer = new FileWriter(saveFile)) {
+                            writer.write(encryptedContent);
+                        }
+                    } else {
+                        try (FileWriter writer = new FileWriter(saveFile)) {
+                            writer.write(content);
+                        }
+                    }
+
+                    // Log audit trail for export operation
+                    logTokenExportAudit(currentUser, tokens.size(), saveFile.getAbsolutePath(), encrypt);
+
+                    addActivity("Token export: " + tokens.size() + " tokens exported to " + saveFile.getName());
+                    appendSyncLog("Token export generated:\n" +
+                            "  Total Tokens: " + tokens.size() + "\n" +
+                            "  File: " + saveFile.getAbsolutePath() + "\n" +
+                            "  Encrypted: " + encrypt + "\n" +
+                            "  Exported By: " + currentUser);
+
+                    showInfo("Export Complete",
+                            "Token export saved successfully.\n\n" +
+                            "Total Tokens: " + tokens.size() + "\n" +
+                            "File: " + saveFile.getName() + "\n" +
+                            "Encrypted: " + (encrypt ? "Yes" : "No") + "\n\n" +
+                            "Use secure air-gap transfer method for external systems.");
+
+                } catch (Exception e) {
+                    log.error("Failed to export tokens: {}", e.getMessage(), e);
+                    showError("Export Failed", "Failed to save token export: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    /**
+     * Encrypt token export data using AES-256-GCM
+     */
+    private String encryptTokenExport(String content) throws Exception {
+        // Generate a random key for this export (in production, use key from HSM)
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] keyBytes = new byte[32]; // 256 bits
+        secureRandom.nextBytes(keyBytes);
+        SecretKey secretKey = new SecretKeySpec(keyBytes, "AES");
+
+        // Generate random IV
+        byte[] iv = new byte[12]; // 96 bits for GCM
+        secureRandom.nextBytes(iv);
+
+        // Encrypt with AES-GCM
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmSpec);
+        byte[] encryptedData = cipher.doFinal(content.getBytes(StandardCharsets.UTF_8));
+
+        // Calculate checksum of original data
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] checksum = digest.digest(content.getBytes(StandardCharsets.UTF_8));
+
+        // Format: KEY_BASE64|IV_BASE64|ENCRYPTED_DATA_BASE64|CHECKSUM_BASE64
+        String result = Base64.getEncoder().encodeToString(keyBytes) + "|" +
+                        Base64.getEncoder().encodeToString(iv) + "|" +
+                        Base64.getEncoder().encodeToString(encryptedData) + "|" +
+                        Base64.getEncoder().encodeToString(checksum);
+
+        return result;
+    }
+
+    /**
+     * Log token export operation for audit trail
+     */
+    private void logTokenExportAudit(String user, int tokenCount, String filePath, boolean encrypted) {
+        // Create detailed audit log entry
+        String auditEntry = String.format(
+                "TOKEN_EXPORT|User=%s|TokenCount=%d|File=%s|Encrypted=%s|Timestamp=%s|IP=%s",
+                user, tokenCount, filePath, encrypted,
+                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                getClientIpAddress()
+        );
+
+        log.warn("AUDIT_TRAIL: {}", auditEntry);
+
+        // Add security alert for unencrypted exports
+        if (!encrypted) {
+            addSecurityAlert("WARNING: Unencrypted token export by " + user);
         }
+    }
 
-        addActivity("Token export: " + tokens.size() + " tokens exported");
-        appendSyncLog("Token export generated:\n  Total Tokens: " + tokens.size());
-
-        // TODO: Implement FileChooser to save CSV to secure location
-        // TODO: Add encryption option for exported token data
-        // TODO: Implement audit trail for export operations
-        showInfo("Export Tokens",
-                "Token export generated.\n\n" +
-                "Total Tokens: " + tokens.size() + "\n\n" +
-                "In production, this would save to a secure file.\n" +
-                "Use secure air-gap transfer method for external systems.");
+    /**
+     * Get client IP address for audit purposes
+     */
+    private String getClientIpAddress() {
+        try {
+            return java.net.InetAddress.getLocalHost().getHostAddress();
+        } catch (Exception e) {
+            return "unknown";
+        }
     }
 
     private void handleViewToken(TokenTableRow row) {

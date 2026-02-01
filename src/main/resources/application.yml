@@ -1,6 +1,9 @@
 spring:
   application:
     name: Heronix Scheduling System
+  main:
+    # Allow bean definition overriding to support multiple @SpringBootApplication classes
+    allow-bean-definition-overriding: true
 
 # OptaPlanner Configuration
 optaplanner:
@@ -20,7 +23,7 @@ heronix:
 
     # SchedulerV2 REST API URL
     # Change this if SchedulerV2 is running on a different machine or port
-    api-url: http://localhost:8080
+    api-url: http://localhost:8090
 
     # Timeout for schedule generation (seconds)
     # This should be longer than the optimization time to allow for data transfer

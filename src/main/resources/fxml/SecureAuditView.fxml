@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.SecureAuditViewController"
+            prefWidth="1200" prefHeight="800"
+            styleClass="secure-audit-view">
+
+    <!-- Top: Header and Filters -->
+    <top>
+        <VBox spacing="10">
+            <padding><Insets top="15" right="15" bottom="10" left="15"/></padding>
+
+            <!-- Header -->
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="Security Audit Trail" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <Label text="(Encrypted Hub Activity Logs)" style="-fx-font-size: 14px; -fx-text-fill: #666;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Label text="Total:"/>
+                    <Label fx:id="totalEntriesLabel" text="0" style="-fx-font-weight: bold;"/>
+                    <ProgressIndicator fx:id="loadingIndicator" visible="false" prefWidth="20" prefHeight="20"/>
+                </HBox>
+            </HBox>
+
+            <Separator/>
+
+            <!-- Filter Row -->
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Label text="From:"/>
+                <DatePicker fx:id="fromDatePicker" prefWidth="140"/>
+                <Label text="To:"/>
+                <DatePicker fx:id="toDatePicker" prefWidth="140"/>
+                <Label text="Hub Device:"/>
+                <TextField fx:id="deviceFilter" promptText="Device ID" prefWidth="150"/>
+                <Button text="Search" onAction="#handleSearch" styleClass="button-primary"/>
+                <Button text="Clear" onAction="#handleClearFilters"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Export CSV" onAction="#handleExportCsv"/>
+                <Button text="Refresh" onAction="#handleRefresh"/>
+            </HBox>
+
+            <Separator/>
+        </VBox>
+    </top>
+
+    <!-- Center: Table -->
+    <center>
+        <VBox>
+            <padding><Insets top="0" right="15" bottom="15" left="15"/></padding>
+
+            <TableView fx:id="auditTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="timestampColumn" text="Timestamp" prefWidth="170" sortable="true"/>
+                    <TableColumn fx:id="hubDeviceColumn" text="Hub Device" prefWidth="130"/>
+                    <TableColumn fx:id="usernameColumn" text="Username" prefWidth="120"/>
+                    <TableColumn fx:id="roleColumn" text="Role" prefWidth="100"/>
+                    <TableColumn fx:id="actionColumn" text="Action" prefWidth="180"/>
+                    <TableColumn fx:id="detailsColumn" text="Details" prefWidth="300"/>
+                    <TableColumn fx:id="severityColumn" text="Severity" prefWidth="80"/>
+                </columns>
+                <placeholder>
+                    <Label text="No secure audit entries found. Hub activity logs will appear here once Hubs connect and send encrypted events."/>
+                </placeholder>
+            </TableView>
+
+            <!-- Pagination -->
+            <HBox spacing="10" alignment="CENTER" style="-fx-padding: 10 0 0 0;">
+                <Button fx:id="prevPageBtn" text="Previous" onAction="#handlePrevPage"/>
+                <Label fx:id="pageInfoLabel" text="Page 1"/>
+                <Button fx:id="nextPageBtn" text="Next" onAction="#handleNextPage"/>
+            </HBox>
+        </VBox>
+    </center>
+
+</BorderPane>

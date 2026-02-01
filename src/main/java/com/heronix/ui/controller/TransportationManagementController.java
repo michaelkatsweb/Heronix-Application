@@ -359,10 +359,68 @@ public class TransportationManagementController {
     @FXML private void handleCreateRoute() { showAlert("Create Route", "Route builder feature coming soon"); }
     @FXML private void handleEditRoute() { showAlert("Edit Route", "Edit route via REST API"); }
     @FXML private void handleViewMap() { showAlert("View Map", "Map visualization coming soon"); }
-    @FXML private void handlePrintSchedule() { showAlert("Print Schedule", "Print feature coming soon"); }
-    @FXML private void handleSearchStudents() { statusLabel.setText("Search functionality coming soon"); }
+    @FXML private void handlePrintSchedule() {
+        if (selectedRoute == null) {
+            showAlert("Print Schedule", "Please select a route first.");
+            return;
+        }
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Save Route Schedule");
+        fileChooser.setInitialFileName(selectedRoute.getRouteNumber() + "_schedule.csv");
+        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        java.io.File file = fileChooser.showSaveDialog(stopsTableView.getScene().getWindow());
+        if (file != null) {
+            try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.OutputStreamWriter(
+                    new java.io.FileOutputStream(file), java.nio.charset.StandardCharsets.UTF_8))) {
+                pw.write('\ufeff');
+                pw.println("Route: " + selectedRoute.getRouteName() + " (" + selectedRoute.getRouteNumber() + ")");
+                pw.println("Stop Order,Location,Time,Students");
+                for (RouteStopDTO stop : stops) {
+                    pw.printf("%s,%s,%s,%s%n", stop.getOrder(), stop.getLocation(), stop.getTime(), stop.getStudents());
+                }
+                statusLabel.setText("Schedule saved to " + file.getName());
+            } catch (Exception e) {
+                showAlert("Print Error", "Failed to save schedule: " + e.getMessage());
+            }
+        }
+    }
+    @FXML private void handleSearchStudents() {
+        String query = studentSearchField.getText();
+        if (query == null || query.isBlank()) {
+            studentAssignmentsTableView.setItems(students);
+            assignmentStatsLabel.setText("Showing " + students.size() + " students");
+            return;
+        }
+        String lower = query.toLowerCase();
+        ObservableList<StudentAssignmentDTO> filtered = students.filtered(
+                s -> s.getName().toLowerCase().contains(lower)
+                        || s.getGrade().toLowerCase().contains(lower)
+                        || s.getRoute().toLowerCase().contains(lower));
+        studentAssignmentsTableView.setItems(filtered);
+        assignmentStatsLabel.setText("Showing " + filtered.size() + " of " + students.size() + " students");
+    }
     @FXML private void handleImportAssignments() { showAlert("Import", "CSV import coming soon"); }
-    @FXML private void handleExportAssignments() { showAlert("Export", "Excel export coming soon"); }
+    @FXML private void handleExportAssignments() {
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Export Student Assignments");
+        fileChooser.setInitialFileName("student_assignments.csv");
+        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        java.io.File file = fileChooser.showSaveDialog(studentAssignmentsTableView.getScene().getWindow());
+        if (file != null) {
+            try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.OutputStreamWriter(
+                    new java.io.FileOutputStream(file), java.nio.charset.StandardCharsets.UTF_8))) {
+                pw.write('\ufeff');
+                pw.println("Name,Grade,Route,Pickup Stop,Dropoff Stop,Guardian,Phone");
+                for (StudentAssignmentDTO s : students) {
+                    pw.printf("%s,%s,%s,%s,%s,%s,%s%n", s.getName(), s.getGrade(), s.getRoute(),
+                            s.getPickupStop(), s.getDropoffStop(), s.getGuardian(), s.getPhone());
+                }
+                statusLabel.setText("Exported " + students.size() + " assignments to " + file.getName());
+            } catch (Exception e) {
+                showAlert("Export Error", "Failed to export: " + e.getMessage());
+            }
+        }
+    }
     @FXML private void handleAssignStudents() { showAlert("Assign", "Assignment dialog coming soon"); }
     @FXML private void handleAddDriver() { showAlert("Add Driver", "Use teacher management to add drivers"); }
     @FXML private void handleEditDriver() { showAlert("Edit Driver", "Edit via teacher management"); }

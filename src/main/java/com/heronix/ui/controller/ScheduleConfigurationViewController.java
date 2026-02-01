@@ -1,15 +1,26 @@
 package com.heronix.ui.controller;
 
+import com.heronix.model.domain.ScheduleConfiguration;
+import com.heronix.repository.ScheduleConfigurationRepository;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalTime;
 
 /**
  * Controller for the Schedule Configuration View (UI/FXML)
  * Handles school day parameters, lunch periods, breaks, and constraints
  */
+@Slf4j
 @Component("scheduleConfigurationViewController")
 public class ScheduleConfigurationViewController {
+
+    @Autowired
+    private ScheduleConfigurationRepository configRepository;
 
     // School Day Tab
     @FXML private Spinner<Integer> schoolStartHour;
@@ -62,12 +73,14 @@ public class ScheduleConfigurationViewController {
     @FXML private Button saveButton;
     @FXML private Label statusLabel;
 
+    private ScheduleConfiguration currentConfig;
+
     @FXML
     public void initialize() {
         initializeSpinners();
         initializeComboBoxes();
         setupListeners();
-        loadDefaults();
+        loadFromDatabase();
     }
 
     private void initializeSpinners() {
@@ -199,19 +212,121 @@ public class ScheduleConfigurationViewController {
         if (requireLunchBreakCheck != null) requireLunchBreakCheck.setSelected(true);
         if (allowRoomSharingCheck != null) allowRoomSharingCheck.setSelected(false);
 
-        updateStatus("Configuration loaded");
+        updateStatus("Default configuration loaded");
+    }
+
+    private void loadFromDatabase() {
+        new Thread(() -> {
+            try {
+                var configOpt = configRepository.findByActiveTrue();
+                Platform.runLater(() -> {
+                    if (configOpt.isPresent()) {
+                        currentConfig = configOpt.get();
+                        applyConfigToUI(currentConfig);
+                        updateStatus("Configuration loaded from database");
+                        log.info("Loaded schedule configuration: {}", currentConfig.getName());
+                    } else {
+                        loadDefaults();
+                        log.info("No saved configuration found, using defaults");
+                    }
+                });
+            } catch (Exception e) {
+                log.error("Failed to load schedule configuration", e);
+                Platform.runLater(() -> {
+                    loadDefaults();
+                    updateStatus("Error loading config, using defaults");
+                });
+            }
+        }).start();
+    }
+
+    private void applyConfigToUI(ScheduleConfiguration config) {
+        if (config.getSchoolStartTime() != null) {
+            setSpinnerValue(schoolStartHour, config.getSchoolStartTime().getHour());
+            setSpinnerValue(schoolStartMinute, config.getSchoolStartTime().getMinute());
+        }
+        if (config.getSchoolEndTime() != null) {
+            setSpinnerValue(schoolEndHour, config.getSchoolEndTime().getHour());
+            setSpinnerValue(schoolEndMinute, config.getSchoolEndTime().getMinute());
+        }
+        if (config.getDefaultPeriodDuration() != null) {
+            setSpinnerValue(periodDurationSpinner, config.getDefaultPeriodDuration());
+        }
+        if (config.getPeriodsPerDay() != null) {
+            setSpinnerValue(periodsPerDaySpinner, config.getPeriodsPerDay());
+        }
+        if (config.getBlockPeriodDuration() != null) {
+            setSpinnerValue(blockDurationSpinner, config.getBlockPeriodDuration());
+        }
+        if (config.getLunchDurationMinutes() != null) {
+            setSpinnerValue(lunchDurationSpinner, config.getLunchDurationMinutes());
+        }
+        if (config.getNumberOfLunchPeriods() != null) {
+            setSpinnerValue(lunchWavesSpinner, config.getNumberOfLunchPeriods());
+        }
+        if (config.getDefaultMaxStudents() != null) {
+            setSpinnerValue(defaultRoomCapacity, config.getDefaultMaxStudents());
+        }
+        if (config.getScheduleType() != null && scheduleTypeCombo != null) {
+            switch (config.getScheduleType()) {
+                case BLOCK -> scheduleTypeCombo.setValue("Block Schedule (A/B)");
+                case HYBRID -> scheduleTypeCombo.setValue("Hybrid Schedule");
+                default -> scheduleTypeCombo.setValue("Traditional (Fixed Periods)");
+            }
+        }
+        if (Boolean.TRUE.equals(config.getUsesAlternatingDays()) && blockScheduleCheck != null) {
+            blockScheduleCheck.setSelected(true);
+        }
+        if (enableLunchCheck != null) enableLunchCheck.setSelected(true);
+        if (requireLunchBreakCheck != null) requireLunchBreakCheck.setSelected(true);
+    }
+
+    private void setSpinnerValue(Spinner<Integer> spinner, int value) {
+        if (spinner != null && spinner.getValueFactory() != null) {
+            spinner.getValueFactory().setValue(value);
+        }
     }
 
     @FXML
     private void handleLoadTemplate() {
-        // Show template selection dialog
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Load Template");
-        alert.setHeaderText("Schedule Templates");
-        alert.setContentText("Template loading coming soon. Default configuration applied.");
-        alert.showAndWait();
+        javafx.scene.control.ChoiceDialog<String> dialog = new javafx.scene.control.ChoiceDialog<>(
+                "Standard 8-Period Day",
+                "Standard 8-Period Day",
+                "Block Schedule (A/B Day)",
+                "7-Period Traditional",
+                "Trimester Schedule",
+                "Modified Block"
+        );
+        dialog.setTitle("Load Template");
+        dialog.setHeaderText("Select a Schedule Template");
+        dialog.setContentText("Template:");
 
-        updateStatus("Template loaded");
+        dialog.showAndWait().ifPresent(template -> {
+            loadDefaults();
+            switch (template) {
+                case "Block Schedule (A/B Day)" -> {
+                    setSpinnerValue(periodsPerDaySpinner, 4);
+                    setSpinnerValue(periodDurationSpinner, 90);
+                    scheduleTypeCombo.setValue("A/B Block");
+                }
+                case "7-Period Traditional" -> {
+                    setSpinnerValue(periodsPerDaySpinner, 7);
+                    setSpinnerValue(periodDurationSpinner, 50);
+                }
+                case "Trimester Schedule" -> {
+                    setSpinnerValue(periodsPerDaySpinner, 5);
+                    setSpinnerValue(periodDurationSpinner, 60);
+                }
+                case "Modified Block" -> {
+                    setSpinnerValue(periodsPerDaySpinner, 6);
+                    setSpinnerValue(periodDurationSpinner, 55);
+                }
+                default -> {} // Standard 8-Period keeps defaults
+            }
+            initializeSpinners();
+            initializeComboBoxes();
+            updateStatus("Template '" + template + "' loaded");
+        });
     }
 
     @FXML
@@ -224,14 +339,60 @@ public class ScheduleConfigurationViewController {
 
     @FXML
     private void handleSave() {
-        // Save configuration
-        updateStatus("Configuration saved successfully");
+        try {
+            if (currentConfig == null) {
+                currentConfig = new ScheduleConfiguration();
+                currentConfig.setName("Default");
+                currentConfig.setActive(true);
+            }
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Save Configuration");
-        alert.setHeaderText("Success");
-        alert.setContentText("Schedule configuration has been saved.");
-        alert.showAndWait();
+            // Read UI values into entity
+            currentConfig.setSchoolStartTime(LocalTime.of(
+                    schoolStartHour.getValue(), schoolStartMinute.getValue()));
+            currentConfig.setSchoolEndTime(LocalTime.of(
+                    schoolEndHour.getValue(), schoolEndMinute.getValue()));
+            currentConfig.setDefaultPeriodDuration(periodDurationSpinner.getValue());
+            currentConfig.setPeriodsPerDay(periodsPerDaySpinner.getValue());
+            currentConfig.setBlockPeriodDuration(blockDurationSpinner.getValue());
+            currentConfig.setLunchDurationMinutes(lunchDurationSpinner.getValue());
+            currentConfig.setNumberOfLunchPeriods(lunchWavesSpinner.getValue());
+            currentConfig.setDefaultMaxStudents(defaultRoomCapacity.getValue());
+
+            if (blockScheduleCheck != null) {
+                currentConfig.setUsesAlternatingDays(blockScheduleCheck.isSelected());
+            }
+
+            // Map schedule type combo to enum
+            String typeVal = scheduleTypeCombo != null ? scheduleTypeCombo.getValue() : null;
+            if (typeVal != null) {
+                if (typeVal.contains("Block")) {
+                    currentConfig.setScheduleType(ScheduleConfiguration.ScheduleType.BLOCK);
+                } else if (typeVal.contains("Hybrid")) {
+                    currentConfig.setScheduleType(ScheduleConfiguration.ScheduleType.HYBRID);
+                } else {
+                    currentConfig.setScheduleType(ScheduleConfiguration.ScheduleType.STANDARD);
+                }
+            }
+
+            configRepository.save(currentConfig);
+            log.info("Saved schedule configuration: {}", currentConfig.getName());
+            updateStatus("Configuration saved successfully");
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Save Configuration");
+            alert.setHeaderText("Success");
+            alert.setContentText("Schedule configuration has been saved to database.");
+            alert.showAndWait();
+        } catch (Exception e) {
+            log.error("Failed to save schedule configuration", e);
+            updateStatus("Save failed: " + e.getMessage());
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Save Failed");
+            alert.setHeaderText(null);
+            alert.setContentText("Failed to save configuration: " + e.getMessage());
+            alert.showAndWait();
+        }
     }
 
     private void updateStatus(String message) {

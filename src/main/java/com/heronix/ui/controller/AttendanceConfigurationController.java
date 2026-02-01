@@ -229,8 +229,16 @@ public class AttendanceConfigurationController {
         }
 
         try {
-            // Save configuration to service
-            // attendanceConfigurationService.saveConfiguration(buildConfiguration());
+            // Save threshold settings to service
+            double chronicThreshold = parseDouble(chronicAbsenteeismThresholdField.getText(), 10.0);
+            double earlyWarning = parseDouble(earlyWarningThresholdField.getText(), 3.0);
+            AttendanceConfigurationService.ThresholdSettings thresholds =
+                    AttendanceConfigurationService.ThresholdSettings.builder()
+                            .chronicAbsenceThreshold(chronicThreshold)
+                            .atRiskThreshold(earlyWarning)
+                            .perfectAttendanceThreshold(100.0)
+                            .build();
+            attendanceConfigurationService.updateThresholdSettings(thresholds);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Success");
@@ -363,5 +371,13 @@ public class AttendanceConfigurationController {
         }
 
         return errors;
+    }
+
+    private double parseDouble(String text, double defaultValue) {
+        try {
+            return Double.parseDouble(text.trim());
+        } catch (Exception e) {
+            return defaultValue;
+        }
     }
 }

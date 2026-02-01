@@ -6,11 +6,14 @@
 package com.heronix.ui.controller;
 
 import com.heronix.model.domain.Course;
+import com.heronix.model.domain.SchoolConfiguration;
 import com.heronix.model.domain.Teacher;
 import com.heronix.model.domain.Room;
 import com.heronix.model.enums.EducationLevel;
 import com.heronix.model.enums.RoomType;
+import com.heronix.model.enums.SchoolType;
 import com.heronix.repository.CourseRepository;
+import com.heronix.repository.SchoolConfigurationRepository;
 import com.heronix.repository.TeacherRepository;
 import com.heronix.repository.RoomRepository;
 import javafx.collections.FXCollections;
@@ -43,9 +46,12 @@ public class CourseManagementController {
     @FXML private TableColumn<Course, String> subjectColumn;
     @FXML private TableColumn<Course, String> levelColumn;
     @FXML private TableColumn<Course, String> teacherColumn;
+    @FXML private TableColumn<Course, String> roomColumn;
     @FXML private TableColumn<Course, Integer> maxStudentsColumn;
     @FXML private TableColumn<Course, Integer> enrollmentColumn;
+    @FXML private TableColumn<Course, Integer> durationColumn;
     @FXML private TableColumn<Course, Boolean> activeColumn;
+    @FXML private TableColumn<Course, Void> actionsColumn;
     @FXML private HBox selectionToolbar;
 
     @Autowired
@@ -60,12 +66,31 @@ public class CourseManagementController {
     @Autowired
     private com.heronix.service.ExportService exportService;
 
+    @Autowired(required = false)
+    private SchoolConfigurationRepository schoolConfigurationRepository;
+
+    private SchoolType schoolType;
+
     @FXML
     public void initialize() {
+        loadSchoolType();
         setupTableColumns();
         setupFilters();
         setupBulkSelection();
         loadCourses();
+    }
+
+    private void loadSchoolType() {
+        if (schoolConfigurationRepository != null) {
+            try {
+                SchoolConfiguration config = schoolConfigurationRepository.findAll().stream().findFirst().orElse(null);
+                if (config != null) {
+                    schoolType = config.getSchoolType();
+                }
+            } catch (Exception e) {
+                log.warn("Could not load school configuration: {}", e.getMessage());
+            }
+        }
     }
 
     private void setupBulkSelection() {
@@ -129,24 +154,45 @@ public class CourseManagementController {
     }
 
     private void setupFilters() {
+        // Store current selections to preserve them on refresh
+        String currentSubject = subjectFilter.getValue();
+        String currentLevel = levelFilter.getValue();
+        String currentStatus = statusFilter.getValue();
+
         List<String> subjects = courseRepository.findAll().stream()
                 .map(Course::getSubject)
+                .filter(s -> s != null && !s.isEmpty())
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
 
         subjectFilter.setItems(FXCollections.observableArrayList("All Subjects"));
         subjectFilter.getItems().addAll(subjects);
-        subjectFilter.setValue("All Subjects");
+        // Restore selection or default to "All Subjects"
+        if (currentSubject != null && subjectFilter.getItems().contains(currentSubject)) {
+            subjectFilter.setValue(currentSubject);
+        } else {
+            subjectFilter.setValue("All Subjects");
+        }
 
         levelFilter.setItems(FXCollections.observableArrayList("All Levels"));
         for (EducationLevel level : EducationLevel.values()) {
             levelFilter.getItems().add(level.getDisplayName());
         }
-        levelFilter.setValue("All Levels");
+        // Restore selection or default to "All Levels"
+        if (currentLevel != null && levelFilter.getItems().contains(currentLevel)) {
+            levelFilter.setValue(currentLevel);
+        } else {
+            levelFilter.setValue("All Levels");
+        }
 
         statusFilter.setItems(FXCollections.observableArrayList("All", "Active", "Inactive"));
-        statusFilter.setValue("All");
+        // Restore selection or default to "All"
+        if (currentStatus != null && statusFilter.getItems().contains(currentStatus)) {
+            statusFilter.setValue(currentStatus);
+        } else {
+            statusFilter.setValue("All");
+        }
     }
 
     // ========================================================================
@@ -374,7 +420,13 @@ public class CourseManagementController {
                 }
 
                 Course saved = courseRepository.save(course);
+
+                // Refresh filters to include new subject if added
+                setupFilters();
+
+                // Reload courses table
                 loadCourses();
+
                 showInfo("Success", "Course '" + saved.getCourseName() + "' added successfully!");
                 log.info("Added course: {}", saved.getCourseCode());
 
@@ -388,6 +440,7 @@ public class CourseManagementController {
     @FXML
     private void handleRefresh() {
         log.info("Refresh clicked");
+        setupFilters();  // Refresh filters to include any new subjects
         loadCourses();
     }
 
@@ -433,7 +486,23 @@ public class CourseManagementController {
     // ========================================================================
 
     private void loadCourses() {
-        List<Course> courses = courseRepository.findAll();
+        List<Course> courses;
+        if (schoolType != null) {
+            courses = courseRepository.findActiveByGradeRange(
+                    schoolType.getMinGradeValue(), schoolType.getMaxGradeValue());
+            // Also include courses with no grade range set
+            List<Course> noGrade = courseRepository.findAll().stream()
+                    .filter(c -> c.getMinGradeLevel() == null && c.getMaxGradeLevel() == null)
+                    .collect(Collectors.toList());
+            java.util.Set<Long> ids = courses.stream().map(Course::getId).collect(Collectors.toSet());
+            for (Course c : noGrade) {
+                if (!ids.contains(c.getId())) {
+                    courses.add(c);
+                }
+            }
+        } else {
+            courses = courseRepository.findAll();
+        }
         courseTable.setItems(FXCollections.observableArrayList(courses));
         recordCountLabel.setText(courses.size() + " courses");
     }
@@ -445,6 +514,21 @@ public class CourseManagementController {
         String status = statusFilter.getValue();
 
         List<Course> filtered = courseRepository.findAll().stream()
+                .filter(c -> {
+                    // School level filter
+                    if (schoolType != null) {
+                        Integer min = c.getMinGradeLevel();
+                        Integer max = c.getMaxGradeLevel();
+                        if (min != null || max != null) {
+                            int cMin = min != null ? min : -1;
+                            int cMax = max != null ? max : 12;
+                            if (cMin > schoolType.getMaxGradeValue() || cMax < schoolType.getMinGradeValue()) {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                })
                 .filter(c -> searchText.isEmpty() ||
                         c.getCourseCode().toLowerCase().contains(searchText) ||
                         c.getCourseName().toLowerCase().contains(searchText))

@@ -166,6 +166,8 @@ public class TeacherManagementController {
                 String subjects = teacher.getCertificationsDisplay();
                 return new javafx.beans.property.SimpleStringProperty(subjects);
             } catch (org.hibernate.LazyInitializationException e) {
+                log.warn("LazyInitializationException loading certifications for teacher {}: {}",
+                        teacher.getId(), e.getMessage());
                 return new javafx.beans.property.SimpleStringProperty("--");
             }
         });
@@ -289,6 +291,8 @@ public class TeacherManagementController {
                     String display = teacher.getCertificationsDisplay();
                     return new javafx.beans.property.SimpleStringProperty(display);
                 } catch (org.hibernate.LazyInitializationException e) {
+                    log.warn("LazyInitializationException loading certifications display for teacher {}: {}",
+                            teacher.getId(), e.getMessage());
                     return new javafx.beans.property.SimpleStringProperty("--");
                 }
             });
@@ -305,6 +309,8 @@ public class TeacherManagementController {
                 }
                 return new javafx.beans.property.SimpleStringProperty(count + " course" + (count > 1 ? "s" : ""));
             } catch (org.hibernate.LazyInitializationException e) {
+                log.warn("LazyInitializationException loading courses for teacher {}: {}",
+                        teacher.getId(), e.getMessage());
                 return new javafx.beans.property.SimpleStringProperty("--");
             }
         });
@@ -819,11 +825,11 @@ public class TeacherManagementController {
 
             log.debug("Loading TeacherAvailabilityDialog.fxml...");
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                getClass().getResource("/com/heronix/view/TeacherAvailabilityDialog.fxml")
+                getClass().getResource("/com/eduscheduler/view/TeacherAvailabilityDialog.fxml")
             );
 
             if (loader.getLocation() == null) {
-                throw new RuntimeException("TeacherAvailabilityDialog.fxml not found at /com/heronix/view/TeacherAvailabilityDialog.fxml");
+                throw new RuntimeException("TeacherAvailabilityDialog.fxml not found at /com/eduscheduler/view/TeacherAvailabilityDialog.fxml");
             }
 
             loader.setControllerFactory(applicationContext::getBean);

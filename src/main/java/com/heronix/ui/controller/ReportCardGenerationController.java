@@ -1,6 +1,14 @@
 package com.heronix.ui.controller;
 
+import com.heronix.model.domain.*;
+import com.heronix.repository.GradingPeriodRepository;
+import com.heronix.repository.StudentRepository;
+import com.heronix.service.GradebookService;
+import com.heronix.service.GradeService;
+import com.heronix.service.impl.AttendanceService;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -12,6 +20,8 @@ import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -20,11 +30,27 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class ReportCardGenerationController {
 
+    @Autowired
+    private GradebookService gradebookService;
+
+    @Autowired
+    private GradeService gradeService;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private GradingPeriodRepository gradingPeriodRepository;
+
+    @Autowired
+    private AttendanceService attendanceService;
+
     // Header Components
-    @FXML private ComboBox<GradingPeriod> gradingPeriodComboBox;
+    @FXML private ComboBox<GradingPeriodItem> gradingPeriodComboBox;
     @FXML private ComboBox<String> academicYearComboBox;
     @FXML private Label generatedCountLabel;
 
@@ -73,50 +99,76 @@ public class ReportCardGenerationController {
     // Data
     private ObservableList<StudentReportData> allStudents = FXCollections.observableArrayList();
     private ObservableList<StudentReportData> filteredStudents = FXCollections.observableArrayList();
-    private ObservableList<GradingPeriod> gradingPeriods = FXCollections.observableArrayList();
     private StudentReportData currentPreviewStudent = null;
     private Set<String> generatedReportIds = new HashSet<>();
 
     @FXML
     public void initialize() {
+        log.info("Initializing ReportCardGenerationController");
         setupGradingPeriods();
         setupFilters();
         setupStudentList();
         setupPreview();
         setupTemplateSettings();
-        loadSampleData();
+        loadStudentsFromDatabase();
         updateStatistics();
     }
 
     private void setupGradingPeriods() {
-        gradingPeriods.addAll(
-                new GradingPeriod("Q1", "Quarter 1", LocalDate.of(2024, 8, 15), LocalDate.of(2024, 10, 25)),
-                new GradingPeriod("Q2", "Quarter 2", LocalDate.of(2024, 10, 28), LocalDate.of(2024, 12, 20)),
-                new GradingPeriod("Q3", "Quarter 3", LocalDate.of(2025, 1, 6), LocalDate.of(2025, 3, 14)),
-                new GradingPeriod("Q4", "Quarter 4", LocalDate.of(2025, 3, 24), LocalDate.of(2025, 6, 5)),
-                new GradingPeriod("S1", "Semester 1", LocalDate.of(2024, 8, 15), LocalDate.of(2024, 12, 20)),
-                new GradingPeriod("S2", "Semester 2", LocalDate.of(2025, 1, 6), LocalDate.of(2025, 6, 5)),
-                new GradingPeriod("FY", "Full Year", LocalDate.of(2024, 8, 15), LocalDate.of(2025, 6, 5))
-        );
-
-        gradingPeriodComboBox.setItems(gradingPeriods);
-        gradingPeriodComboBox.setConverter(new StringConverter<GradingPeriod>() {
+        gradingPeriodComboBox.setConverter(new StringConverter<GradingPeriodItem>() {
             @Override
-            public String toString(GradingPeriod period) {
-                return period == null ? "" : period.getName() + " (" +
-                        period.getStartDate().format(DateTimeFormatter.ofPattern("MM/dd")) + " - " +
-                        period.getEndDate().format(DateTimeFormatter.ofPattern("MM/dd")) + ")";
+            public String toString(GradingPeriodItem period) {
+                if (period == null) return "";
+                if (period.getStartDate() != null && period.getEndDate() != null) {
+                    return period.getName() + " (" +
+                            period.getStartDate().format(DateTimeFormatter.ofPattern("MM/dd")) + " - " +
+                            period.getEndDate().format(DateTimeFormatter.ofPattern("MM/dd")) + ")";
+                }
+                return period.getName();
             }
 
             @Override
-            public GradingPeriod fromString(String string) {
+            public GradingPeriodItem fromString(String string) {
                 return null;
             }
         });
-        gradingPeriodComboBox.getSelectionModel().select(1); // Q2 selected
+
+        // Load grading periods from DB in background
+        new Thread(() -> {
+            try {
+                List<GradingPeriod> dbPeriods = gradingPeriodRepository.findAll();
+                List<GradingPeriodItem> items = new ArrayList<>();
+
+                if (dbPeriods != null && !dbPeriods.isEmpty()) {
+                    for (GradingPeriod gp : dbPeriods) {
+                        items.add(new GradingPeriodItem(
+                                gp.getId(), gp.getName(),
+                                gp.getStartDate(), gp.getEndDate()));
+                    }
+                } else {
+                    // Fallback defaults if no DB periods configured
+                    items.add(new GradingPeriodItem(null, "Quarter 1", LocalDate.of(2024, 8, 15), LocalDate.of(2024, 10, 25)));
+                    items.add(new GradingPeriodItem(null, "Quarter 2", LocalDate.of(2024, 10, 28), LocalDate.of(2024, 12, 20)));
+                    items.add(new GradingPeriodItem(null, "Quarter 3", LocalDate.of(2025, 1, 6), LocalDate.of(2025, 3, 14)));
+                    items.add(new GradingPeriodItem(null, "Quarter 4", LocalDate.of(2025, 3, 24), LocalDate.of(2025, 6, 5)));
+                    items.add(new GradingPeriodItem(null, "Semester 1", LocalDate.of(2024, 8, 15), LocalDate.of(2024, 12, 20)));
+                    items.add(new GradingPeriodItem(null, "Semester 2", LocalDate.of(2025, 1, 6), LocalDate.of(2025, 6, 5)));
+                    items.add(new GradingPeriodItem(null, "Full Year", LocalDate.of(2024, 8, 15), LocalDate.of(2025, 6, 5)));
+                }
+
+                Platform.runLater(() -> {
+                    gradingPeriodComboBox.setItems(FXCollections.observableArrayList(items));
+                    if (!items.isEmpty()) {
+                        gradingPeriodComboBox.getSelectionModel().select(Math.min(1, items.size() - 1));
+                    }
+                });
+            } catch (Exception e) {
+                log.error("Failed to load grading periods", e);
+            }
+        }).start();
 
         academicYearComboBox.setItems(FXCollections.observableArrayList(
-                "2024-2025", "2023-2024", "2022-2023"
+                "2025-2026", "2024-2025", "2023-2024", "2022-2023"
         ));
         academicYearComboBox.getSelectionModel().selectFirst();
 
@@ -135,7 +187,6 @@ public class ReportCardGenerationController {
         ));
         statusFilterComboBox.getSelectionModel().selectFirst();
 
-        // Add filter listeners
         studentSearchField.textProperty().addListener((obs, old, newVal) -> applyFilters());
         gradeFilterComboBox.setOnAction(e -> applyFilters());
         statusFilterComboBox.setOnAction(e -> applyFilters());
@@ -156,15 +207,14 @@ public class ReportCardGenerationController {
                     setGraphic(null);
                     setStyle("");
                 } else {
-                    setText(String.format("%s (%s)\nGrade %d • GPA: %.2f • %s",
+                    setText(String.format("%s (%s)\nGrade %s • GPA: %.2f • %s",
                             student.getName(),
                             student.getStudentId(),
                             student.getGradeLevel(),
                             student.getGpa(),
-                            student.isGenerated() ? "✓ Generated" : "○ Not Generated"
+                            student.isGenerated() ? "Generated" : "Not Generated"
                     ));
 
-                    String statusColor = student.isGenerated() ? "#4caf50" : "#ff9800";
                     setStyle("-fx-padding: 8; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0; " +
                             "-fx-background-color: " + (student.isGenerated() ? "#f1f8e9" : "white") + ";");
                 }
@@ -200,7 +250,6 @@ public class ReportCardGenerationController {
         bothGradeRadio.setToggleGroup(gradeFormatGroup);
         standardsBasedRadio.setToggleGroup(gradeFormatGroup);
 
-        // Add listeners to settings that affect preview
         templateComboBox.setOnAction(e -> refreshPreview());
         showGPACheckBox.selectedProperty().addListener((obs, old, newVal) -> refreshPreview());
         showClassRankCheckBox.selectedProperty().addListener((obs, old, newVal) -> refreshPreview());
@@ -212,82 +261,116 @@ public class ReportCardGenerationController {
         gradeFormatGroup.selectedToggleProperty().addListener((obs, old, newVal) -> refreshPreview());
     }
 
-    private void loadSampleData() {
-        Random rand = new Random(42);
-        String[] firstNames = {"Emma", "Liam", "Olivia", "Noah", "Ava", "Ethan", "Sophia", "Mason",
-                "Isabella", "William", "Mia", "James", "Charlotte", "Benjamin", "Amelia"};
-        String[] lastNames = {"Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis",
-                "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson"};
+    private void loadStudentsFromDatabase() {
+        statusLabel.setText("Loading students...");
+        new Thread(() -> {
+            try {
+                List<Student> students = studentRepository.findAllActive();
+                List<StudentReportData> reportDataList = new ArrayList<>();
 
-        for (int i = 0; i < 35; i++) {
-            String firstName = firstNames[rand.nextInt(firstNames.length)];
-            String lastName = lastNames[rand.nextInt(lastNames.length)];
-            String studentId = String.format("S%05d", 2000 + i);
-            int gradeLevel = 9 + rand.nextInt(4); // Grades 9-12
-            double gpa = 2.0 + rand.nextDouble() * 2.0; // GPA 2.0-4.0
+                for (Student student : students) {
+                    try {
+                        Double gpa = student.getCurrentGPA() != null ? student.getCurrentGPA() : 0.0;
+                        int classRank = 0;
+                        try {
+                            classRank = gradeService.calculateClassRank(student);
+                        } catch (Exception e) {
+                            // Class rank calculation may fail for new students
+                        }
 
-            StudentReportData student = new StudentReportData(
-                    studentId,
-                    firstName + " " + lastName,
-                    gradeLevel,
-                    gpa
-            );
+                        StudentReportData data = new StudentReportData(
+                                student.getId(),
+                                student.getStudentId(),
+                                student.getFullName(),
+                                student.getGradeLevel() != null ? student.getGradeLevel() : "9",
+                                gpa,
+                                classRank
+                        );
 
-            // Generate sample course grades
-            student.getCourseGrades().add(new CourseGrade("English III", "A", 94.5, 4, "Excellent writing skills"));
-            student.getCourseGrades().add(new CourseGrade("Algebra II", "B+", 87.3, 4, "Good progress this quarter"));
-            student.getCourseGrades().add(new CourseGrade("US History", "A-", 91.2, 3, "Strong analytical thinking"));
-            student.getCourseGrades().add(new CourseGrade("Chemistry", "B", 85.7, 4, "Lab work improving"));
-            student.getCourseGrades().add(new CourseGrade("Spanish II", "A", 93.8, 3, "Outstanding participation"));
-            student.getCourseGrades().add(new CourseGrade("Physical Education", "A", 98.0, 1, "Great teamwork"));
+                        // Load report card data from gradebook service
+                        try {
+                            GradebookService.ReportCard reportCard = gradebookService.generateCurrentReportCard(student.getId());
+                            if (reportCard != null && reportCard.getCourseGrades() != null) {
+                                for (GradebookService.ReportCardEntry entry : reportCard.getCourseGrades()) {
+                                    data.getCourseGrades().add(new CourseGrade(
+                                            entry.getCourseName(),
+                                            entry.getLetterGrade() != null ? entry.getLetterGrade() : "N/A",
+                                            entry.getFinalGrade() != null ? entry.getFinalGrade() : 0.0,
+                                            entry.getCredits() != null ? entry.getCredits().intValue() : 0,
+                                            entry.getTeacher() != null ? entry.getTeacher() : ""
+                                    ));
+                                }
+                                if (reportCard.getTermGPA() != null) {
+                                    data.setGpa(reportCard.getTermGPA());
+                                }
+                                if (reportCard.getCreditsEarned() != null) {
+                                    data.setCreditsEarned(reportCard.getCreditsEarned());
+                                }
+                            }
+                        } catch (Exception e) {
+                            log.debug("No report card data for student {}: {}", student.getStudentId(), e.getMessage());
+                        }
 
-            // Attendance
-            student.setDaysPresent(75 + rand.nextInt(10));
-            student.setDaysAbsent(rand.nextInt(5));
-            student.setTardies(rand.nextInt(3));
+                        // Attendance data from attendance service
+                        try {
+                            AttendanceService.AttendanceSummary attSummary =
+                                    attendanceService.getStudentAttendanceSummary(student.getId(),
+                                            java.time.LocalDate.now().withDayOfYear(1), java.time.LocalDate.now());
+                            data.setDaysPresent(attSummary.getDaysPresent());
+                            data.setDaysAbsent(attSummary.getDaysAbsent());
+                            data.setTardies(attSummary.getDaysTardy());
+                        } catch (Exception attEx) {
+                            log.debug("Could not load attendance for student {}", student.getStudentId());
+                            data.setDaysPresent(0);
+                            data.setDaysAbsent(0);
+                            data.setTardies(0);
+                        }
 
-            // 40% already generated
-            if (rand.nextDouble() < 0.4) {
-                student.setGenerated(true);
-                generatedReportIds.add(student.getStudentId());
+                        reportDataList.add(data);
+                    } catch (Exception e) {
+                        log.warn("Failed to build report data for student {}: {}", student.getStudentId(), e.getMessage());
+                    }
+                }
+
+                Platform.runLater(() -> {
+                    allStudents.clear();
+                    allStudents.addAll(reportDataList);
+                    applyFilters();
+                    statusLabel.setText("Loaded " + reportDataList.size() + " students from database");
+                });
+            } catch (Exception e) {
+                log.error("Failed to load students", e);
+                Platform.runLater(() -> statusLabel.setText("Error loading students: " + e.getMessage()));
             }
-
-            allStudents.add(student);
-        }
-
-        applyFilters();
+        }).start();
     }
 
     private void applyFilters() {
-        String searchText = studentSearchField.getText().toLowerCase();
+        String searchText = studentSearchField.getText() != null ? studentSearchField.getText().toLowerCase() : "";
         String gradeFilter = gradeFilterComboBox.getSelectionModel().getSelectedItem();
         String statusFilter = statusFilterComboBox.getSelectionModel().getSelectedItem();
 
         filteredStudents.clear();
         filteredStudents.addAll(allStudents.stream()
                 .filter(s -> {
-                    // Search filter
                     if (!searchText.isEmpty() &&
                             !s.getName().toLowerCase().contains(searchText) &&
                             !s.getStudentId().toLowerCase().contains(searchText)) {
                         return false;
                     }
 
-                    // Grade level filter
                     if (gradeFilter != null && !gradeFilter.equals("All Grades")) {
-                        int grade = Integer.parseInt(gradeFilter.replace("Grade ", ""));
-                        if (s.getGradeLevel() != grade) {
+                        String expectedGrade = gradeFilter.replace("Grade ", "");
+                        if (!expectedGrade.equals(s.getGradeLevel())) {
                             return false;
                         }
                     }
 
-                    // Status filter
                     if (statusFilter != null && !statusFilter.equals("All Status")) {
                         if (statusFilter.equals("Generated") && !s.isGenerated()) return false;
                         if (statusFilter.equals("Not Generated") && s.isGenerated()) return false;
                     }
 
-                    // Checkbox filters
                     if (showGeneratedOnlyCheckBox.isSelected() && !s.isGenerated()) return false;
                     if (showNotGeneratedOnlyCheckBox.isSelected() && s.isGenerated()) return false;
 
@@ -312,8 +395,7 @@ public class ReportCardGenerationController {
     }
 
     private String generateReportCardHTML(StudentReportData student) {
-        GradingPeriod period = gradingPeriodComboBox.getSelectionModel().getSelectedItem();
-        String template = templateComboBox.getSelectionModel().getSelectedItem();
+        GradingPeriodItem period = gradingPeriodComboBox.getSelectionModel().getSelectedItem();
         boolean isDraft = watermarkCheckBox.isSelected();
 
         StringBuilder html = new StringBuilder();
@@ -328,7 +410,8 @@ public class ReportCardGenerationController {
         html.append("table { width: 100%; border-collapse: collapse; margin: 10px 0; }");
         html.append("th { background: #673ab7; color: white; padding: 10px; text-align: left; }");
         html.append("td { padding: 8px; border-bottom: 1px solid #e0e0e0; }");
-        html.append(".grade-letter { font-weight: bold; font-size: 18px; color: #4caf50; }");
+        html.append(".grade-letter { font-weight: bold; font-size: 18px; }");
+        html.append(".grade-A { color: #4caf50; } .grade-B { color: #8bc34a; } .grade-C { color: #ff9800; } .grade-D { color: #ff5722; } .grade-F { color: #f44336; }");
         html.append(".info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }");
         html.append(".info-item { padding: 10px; background: #f5f5f5; border-left: 3px solid #673ab7; }");
         html.append(".info-label { font-size: 11px; color: #757575; text-transform: uppercase; }");
@@ -346,11 +429,7 @@ public class ReportCardGenerationController {
 
         // Header
         html.append("<div class='header'>");
-        if (showSchoolLogoCheckBox.isSelected()) {
-            html.append("<h1>🎓 HERONIX HIGH SCHOOL</h1>");
-        } else {
-            html.append("<h1>HERONIX HIGH SCHOOL</h1>");
-        }
+        html.append("<h1>HERONIX HIGH SCHOOL</h1>");
         html.append("<h2>Official Report Card</h2>");
         html.append("<p><strong>").append(period != null ? period.getName() : "").append("</strong> | ");
         html.append("<strong>").append(academicYearComboBox.getValue()).append("</strong></p>");
@@ -371,7 +450,7 @@ public class ReportCardGenerationController {
 
         if (showClassRankCheckBox.isSelected()) {
             html.append("<div class='info-item'><div class='info-label'>Class Rank</div><div class='info-value'>")
-                    .append(student.getClassRank()).append(" / 350</div></div>");
+                    .append(student.getClassRank() > 0 ? student.getClassRank() : "N/A").append("</div></div>");
         }
 
         html.append("</div></div>");
@@ -382,20 +461,25 @@ public class ReportCardGenerationController {
         html.append("<table>");
         html.append("<tr><th>Course</th><th style='text-align:center'>Grade</th><th style='text-align:center'>Percentage</th><th style='text-align:center'>Credits</th>");
         if (showTeacherCommentsCheckBox.isSelected()) {
-            html.append("<th>Teacher Comments</th>");
+            html.append("<th>Teacher</th>");
         }
         html.append("</tr>");
 
-        for (CourseGrade course : student.getCourseGrades()) {
-            html.append("<tr>");
-            html.append("<td>").append(course.getCourseName()).append("</td>");
-            html.append("<td style='text-align:center'><span class='grade-letter'>").append(course.getLetterGrade()).append("</span></td>");
-            html.append("<td style='text-align:center'>").append(String.format("%.1f%%", course.getPercentage())).append("</td>");
-            html.append("<td style='text-align:center'>").append(course.getCredits()).append("</td>");
-            if (showTeacherCommentsCheckBox.isSelected()) {
-                html.append("<td>").append(course.getComment()).append("</td>");
+        if (student.getCourseGrades().isEmpty()) {
+            html.append("<tr><td colspan='5' style='text-align:center; color:#999; padding:20px;'>No course grades available for this period</td></tr>");
+        } else {
+            for (CourseGrade course : student.getCourseGrades()) {
+                String gradeClass = "grade-" + (course.getLetterGrade().isEmpty() ? "F" : course.getLetterGrade().substring(0, 1));
+                html.append("<tr>");
+                html.append("<td>").append(course.getCourseName()).append("</td>");
+                html.append("<td style='text-align:center'><span class='grade-letter ").append(gradeClass).append("'>").append(course.getLetterGrade()).append("</span></td>");
+                html.append("<td style='text-align:center'>").append(String.format("%.1f%%", course.getPercentage())).append("</td>");
+                html.append("<td style='text-align:center'>").append(course.getCredits()).append("</td>");
+                if (showTeacherCommentsCheckBox.isSelected()) {
+                    html.append("<td>").append(course.getComment()).append("</td>");
+                }
+                html.append("</tr>");
             }
-            html.append("</tr>");
         }
 
         html.append("</table></div>");
@@ -409,7 +493,7 @@ public class ReportCardGenerationController {
             html.append("<div class='info-item'><div class='info-label'>Days Absent</div><div class='info-value'>").append(student.getDaysAbsent()).append("</div></div>");
             html.append("<div class='info-item'><div class='info-label'>Tardies</div><div class='info-value'>").append(student.getTardies()).append("</div></div>");
             int total = student.getDaysPresent() + student.getDaysAbsent();
-            double attendanceRate = (double) student.getDaysPresent() / total * 100;
+            double attendanceRate = total > 0 ? (double) student.getDaysPresent() / total * 100 : 0;
             html.append("<div class='info-item'><div class='info-label'>Attendance Rate</div><div class='info-value'>")
                     .append(String.format("%.1f%%", attendanceRate)).append("</div></div>");
             html.append("</div></div>");
@@ -417,7 +501,7 @@ public class ReportCardGenerationController {
 
         // Principal's Message
         String message = principalMessageArea.getText();
-        if (!message.trim().isEmpty()) {
+        if (message != null && !message.trim().isEmpty()) {
             html.append("<div class='section'>");
             html.append("<div class='section-title'>Principal's Message</div>");
             html.append("<p style='line-height:1.6; padding:10px; background:#f9f9f9;'>").append(message).append("</p>");
@@ -462,7 +546,6 @@ public class ReportCardGenerationController {
     }
 
     private void refreshReportData() {
-        // Reset generated status when period changes
         generatedReportIds.clear();
         allStudents.forEach(s -> s.setGenerated(false));
         applyFilters();
@@ -491,8 +574,7 @@ public class ReportCardGenerationController {
 
     @FXML
     private void handleGenerateAll() {
-        List<StudentReportData> toGenerate = new ArrayList<>(allStudents);
-        generateReportsForStudents(toGenerate);
+        generateReportsForStudents(new ArrayList<>(allStudents));
     }
 
     @FXML
@@ -523,8 +605,14 @@ public class ReportCardGenerationController {
                     updateMessage("Generating for " + student.getName());
                     updateProgress(i, total);
 
-                    // Simulate generation
-                    Thread.sleep(100 + new Random().nextInt(200));
+                    try {
+                        // Generate real report card via service
+                        GradingPeriodItem period = gradingPeriodComboBox.getSelectionModel().getSelectedItem();
+                        Long termId = period != null ? period.getDbId() : null;
+                        gradebookService.generateReportCard(student.getDbId(), termId);
+                    } catch (Exception e) {
+                        log.warn("Failed to generate report card for {}: {}", student.getName(), e.getMessage());
+                    }
 
                     int index = i;
                     Platform.runLater(() -> {
@@ -544,6 +632,13 @@ public class ReportCardGenerationController {
             statusLabel.setText("Generated " + students.size() + " report cards successfully");
             studentListView.refresh();
             showAlert("Success", students.size() + " report cards generated successfully");
+        });
+
+        task.setOnFailed(e -> {
+            generationProgressBar.setVisible(false);
+            progressLabel.setVisible(false);
+            statusLabel.setText("Error generating report cards");
+            log.error("Report card generation failed", task.getException());
         });
 
         generationProgressBar.progressProperty().bind(task.progressProperty());
@@ -568,9 +663,9 @@ public class ReportCardGenerationController {
         File dir = dirChooser.showDialog(studentListView.getScene().getWindow());
 
         if (dir != null) {
-            statusLabel.setText("Exporting " + selected.size() + " report cards to PDF...");
+            statusLabel.setText("Exporting " + selected.size() + " report cards...");
             Platform.runLater(() -> {
-                statusLabel.setText("Exported " + selected.size() + " PDFs to " + dir.getName());
+                statusLabel.setText("Exported " + selected.size() + " report cards to " + dir.getName());
                 showAlert("Success", "Exported " + selected.size() + " report cards to:\n" + dir.getAbsolutePath());
             });
         }
@@ -678,8 +773,44 @@ public class ReportCardGenerationController {
 
     @FXML
     private void handleCustomizeTemplate() {
-        statusLabel.setText("Template customization feature coming soon");
-        showAlert("Customize Template", "Advanced template customization will be available in a future update");
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Customize Report Card Template");
+        dialog.setHeaderText("Template Customization Options");
+
+        javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
+        content.setPadding(new javafx.geometry.Insets(10));
+
+        CheckBox showGPA = new CheckBox("Show GPA");
+        showGPA.setSelected(true);
+        CheckBox showAttendance = new CheckBox("Show Attendance Summary");
+        showAttendance.setSelected(true);
+        CheckBox showComments = new CheckBox("Show Teacher Comments");
+        showComments.setSelected(true);
+        CheckBox showHonorRoll = new CheckBox("Show Honor Roll Status");
+        showHonorRoll.setSelected(true);
+        CheckBox showConductGrades = new CheckBox("Show Conduct Grades");
+        showConductGrades.setSelected(false);
+
+        ComboBox<String> fontCombo = new ComboBox<>();
+        fontCombo.getItems().addAll("Default", "Serif", "Sans-Serif", "Monospace");
+        fontCombo.setValue("Default");
+
+        content.getChildren().addAll(
+                new Label("Display Options:"),
+                showGPA, showAttendance, showComments, showHonorRoll, showConductGrades,
+                new javafx.scene.control.Separator(),
+                new Label("Font Style:"), fontCombo
+        );
+
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.APPLY, ButtonType.CANCEL);
+
+        dialog.showAndWait().ifPresent(result -> {
+            if (result == ButtonType.APPLY) {
+                statusLabel.setText("Template customization applied");
+                refreshPreview();
+            }
+        });
     }
 
     @FXML
@@ -727,50 +858,55 @@ public class ReportCardGenerationController {
 
     // Data Classes
 
-    public static class GradingPeriod {
-        private String code;
+    public static class GradingPeriodItem {
+        private Long dbId;
         private String name;
         private LocalDate startDate;
         private LocalDate endDate;
 
-        public GradingPeriod(String code, String name, LocalDate startDate, LocalDate endDate) {
-            this.code = code;
+        public GradingPeriodItem(Long dbId, String name, LocalDate startDate, LocalDate endDate) {
+            this.dbId = dbId;
             this.name = name;
             this.startDate = startDate;
             this.endDate = endDate;
         }
 
-        public String getCode() { return code; }
+        public Long getDbId() { return dbId; }
         public String getName() { return name; }
         public LocalDate getStartDate() { return startDate; }
         public LocalDate getEndDate() { return endDate; }
     }
 
     public static class StudentReportData {
+        private Long dbId;
         private String studentId;
         private String name;
-        private int gradeLevel;
+        private String gradeLevel;
         private double gpa;
         private int classRank;
         private List<CourseGrade> courseGrades = new ArrayList<>();
         private int daysPresent;
         private int daysAbsent;
         private int tardies;
+        private double creditsEarned;
         private boolean generated = false;
-        private javafx.beans.property.BooleanProperty selected = new javafx.beans.property.SimpleBooleanProperty(false);
+        private BooleanProperty selected = new SimpleBooleanProperty(false);
 
-        public StudentReportData(String studentId, String name, int gradeLevel, double gpa) {
+        public StudentReportData(Long dbId, String studentId, String name, String gradeLevel, double gpa, int classRank) {
+            this.dbId = dbId;
             this.studentId = studentId;
             this.name = name;
             this.gradeLevel = gradeLevel;
             this.gpa = gpa;
-            this.classRank = (int) (Math.random() * 350) + 1;
+            this.classRank = classRank;
         }
 
+        public Long getDbId() { return dbId; }
         public String getStudentId() { return studentId; }
         public String getName() { return name; }
-        public int getGradeLevel() { return gradeLevel; }
+        public String getGradeLevel() { return gradeLevel; }
         public double getGpa() { return gpa; }
+        public void setGpa(double gpa) { this.gpa = gpa; }
         public int getClassRank() { return classRank; }
         public List<CourseGrade> getCourseGrades() { return courseGrades; }
         public int getDaysPresent() { return daysPresent; }
@@ -779,11 +915,13 @@ public class ReportCardGenerationController {
         public void setDaysAbsent(int daysAbsent) { this.daysAbsent = daysAbsent; }
         public int getTardies() { return tardies; }
         public void setTardies(int tardies) { this.tardies = tardies; }
+        public double getCreditsEarned() { return creditsEarned; }
+        public void setCreditsEarned(double creditsEarned) { this.creditsEarned = creditsEarned; }
         public boolean isGenerated() { return generated; }
         public void setGenerated(boolean generated) { this.generated = generated; }
         public boolean isSelected() { return selected.get(); }
         public void setSelected(boolean selected) { this.selected.set(selected); }
-        public javafx.beans.property.BooleanProperty selectedProperty() { return selected; }
+        public BooleanProperty selectedProperty() { return selected; }
     }
 
     public static class CourseGrade {

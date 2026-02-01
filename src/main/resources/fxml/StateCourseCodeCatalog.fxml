@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.StateCourseCodeCatalogController"
+            prefWidth="1200" prefHeight="800">
+
+    <!-- Top: Title and School Info -->
+    <top>
+        <VBox spacing="10" styleClass="catalog-header">
+            <padding>
+                <Insets top="20" right="20" bottom="10" left="20"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="State Course Code Catalog" styleClass="welcome-title">
+                    <font><Font name="System Bold" size="24"/></font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="schoolLevelInfoLabel" text="" styleClass="card-title">
+                    <font><Font size="14"/></font>
+                </Label>
+                <Label fx:id="addedCountLabel" text="0 courses in school catalog" styleClass="stat-value">
+                    <font><Font name="System Bold" size="14"/></font>
+                </Label>
+            </HBox>
+
+            <!-- Filter Bar -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="State:"><font><Font size="13"/></font></Label>
+                <ComboBox fx:id="stateSelector" promptText="Select a State" prefWidth="200"/>
+
+                <Label text="Grade:"><font><Font size="13"/></font></Label>
+                <ComboBox fx:id="gradeLevelFilter" prefWidth="150"/>
+
+                <Label text="Subject:"><font><Font size="13"/></font></Label>
+                <ComboBox fx:id="subjectAreaFilter" prefWidth="160"/>
+
+                <Label text="Type:"><font><Font size="13"/></font></Label>
+                <ComboBox fx:id="courseTypeFilter" prefWidth="130"/>
+
+                <TextField fx:id="searchField" promptText="Search courses..." prefWidth="180"/>
+            </HBox>
+
+            <!-- School Level Filter + Batch Controls -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <CheckBox fx:id="schoolLevelFilterToggle" text="Filter by My School Level"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Select All Visible" onAction="#handleSelectAllVisible" styleClass="nav-button">
+                    <font><Font size="12"/></font>
+                </Button>
+                <Button text="Deselect All" onAction="#handleDeselectAll" styleClass="nav-button">
+                    <font><Font size="12"/></font>
+                </Button>
+                <Button text="Add Selected to School Catalog" onAction="#handleBatchAddToSchool" styleClass="nav-button-active">
+                    <font><Font name="System Bold" size="13"/></font>
+                </Button>
+            </HBox>
+
+            <!-- Action Bar -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button text="Import CSV" onAction="#handleImportCSV" styleClass="nav-button">
+                    <font><Font size="13"/></font>
+                </Button>
+                <Button text="Export CSV" onAction="#handleExportCatalog" styleClass="nav-button">
+                    <font><Font size="13"/></font>
+                </Button>
+                <Button text="Copy Selected to Local" onAction="#handleCopyToLocalCatalog" styleClass="nav-button">
+                    <font><Font size="13"/></font>
+                </Button>
+                <Button text="Refresh" onAction="#handleRefresh" styleClass="nav-button">
+                    <font><Font size="13"/></font>
+                </Button>
+                <Button text="Clear Filters" onAction="#handleClearFilters" styleClass="nav-button">
+                    <font><Font size="13"/></font>
+                </Button>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="stateInfoLabel" text="" styleClass="date-label">
+                    <font><Font size="12"/></font>
+                </Label>
+                <ProgressIndicator fx:id="loadingIndicator" prefWidth="24" prefHeight="24" visible="false"/>
+                <Label fx:id="recordCountLabel" text="No courses loaded" styleClass="card-title">
+                    <font><Font size="13"/></font>
+                </Label>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Course Table -->
+    <center>
+        <SplitPane dividerPositions="0.65" orientation="HORIZONTAL">
+            <VBox>
+                <TableView fx:id="courseTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="selectColumn" text="" prefWidth="40" minWidth="40" maxWidth="50" sortable="false"/>
+                        <TableColumn fx:id="addedColumn" text="Status" prefWidth="80" minWidth="70"/>
+                        <TableColumn fx:id="stateCodeColumn" text="State Code" prefWidth="110" minWidth="90"/>
+                        <TableColumn fx:id="courseNameColumn" text="Course Name" prefWidth="250" minWidth="200"/>
+                        <TableColumn fx:id="scedCodeColumn" text="SCED Code" prefWidth="90" minWidth="70"/>
+                        <TableColumn fx:id="subjectAreaColumn" text="Subject Area" prefWidth="130" minWidth="100"/>
+                        <TableColumn fx:id="gradeLevelColumn" text="Grade Levels" prefWidth="100" minWidth="80"/>
+                        <TableColumn fx:id="creditsColumn" text="Credits" prefWidth="70" minWidth="60"/>
+                        <TableColumn fx:id="courseTypeColumn" text="Type" prefWidth="100" minWidth="80"/>
+                        <TableColumn fx:id="categoryColumn" text="Category" prefWidth="80" minWidth="70"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <!-- Right: Detail Panel + Statistics -->
+            <VBox spacing="15">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <!-- Statistics -->
+                <VBox styleClass="stat-card" spacing="8">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Catalog Statistics" styleClass="section-title">
+                        <font><Font name="System Bold" size="15"/></font>
+                    </Label>
+                    <HBox spacing="20">
+                        <VBox alignment="CENTER" spacing="3">
+                            <Label fx:id="statTotalCourses" text="0" styleClass="stat-value">
+                                <font><Font name="System Bold" size="20"/></font>
+                            </Label>
+                            <Label text="Total"><font><Font size="11"/></font></Label>
+                        </VBox>
+                        <VBox alignment="CENTER" spacing="3">
+                            <Label fx:id="statAPCourses" text="0" styleClass="stat-value">
+                                <font><Font name="System Bold" size="20"/></font>
+                            </Label>
+                            <Label text="AP"><font><Font size="11"/></font></Label>
+                        </VBox>
+                        <VBox alignment="CENTER" spacing="3">
+                            <Label fx:id="statCTECourses" text="0" styleClass="stat-value">
+                                <font><Font name="System Bold" size="20"/></font>
+                            </Label>
+                            <Label text="CTE"><font><Font size="11"/></font></Label>
+                        </VBox>
+                        <VBox alignment="CENTER" spacing="3">
+                            <Label fx:id="statElectives" text="0" styleClass="stat-value">
+                                <font><Font name="System Bold" size="20"/></font>
+                            </Label>
+                            <Label text="Electives"><font><Font size="11"/></font></Label>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Detail Panel -->
+                <VBox fx:id="detailPanel" styleClass="section-card" spacing="8" visible="false" VBox.vgrow="ALWAYS">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                    <Label text="Course Details" styleClass="section-title">
+                        <font><Font name="System Bold" size="15"/></font>
+                    </Label>
+
+                    <Label text="Course Code:" styleClass="card-title"><font><Font size="11"/></font></Label>
+                    <Label fx:id="detailCourseCode" text="-"><font><Font name="System Bold" size="13"/></font></Label>
+
+                    <Label text="Course Name:" styleClass="card-title"><font><Font size="11"/></font></Label>
+                    <Label fx:id="detailCourseName" text="-" wrapText="true"><font><Font size="13"/></font></Label>
+
+                    <Label text="Description:" styleClass="card-title"><font><Font size="11"/></font></Label>
+                    <TextArea fx:id="detailDescription" prefRowCount="3" editable="false" wrapText="true"/>
+
+                    <Label text="SCED Code:" styleClass="card-title"><font><Font size="11"/></font></Label>
+                    <Label fx:id="detailSCEDCode" text="-"><font><Font size="12"/></font></Label>
+
+                    <Label text="Subject Area:" styleClass="card-title"><font><Font size="11"/></font></Label>
+                    <Label fx:id="detailSubjectArea" text="-"><font><Font size="12"/></font></Label>
+
+                    <Label text="Grade Levels:" styleClass="card-title"><font><Font size="11"/></font></Label>
+                    <Label fx:id="detailGradeLevels" text="-"><font><Font size="12"/></font></Label>
+
+                    <Label text="Credits:" styleClass="card-title"><font><Font size="11"/></font></Label>
+                    <Label fx:id="detailCredits" text="-"><font><Font size="12"/></font></Label>
+
+                    <Label text="Course Type:" styleClass="card-title"><font><Font size="11"/></font></Label>
+                    <Label fx:id="detailCourseType" text="-"><font><Font size="12"/></font></Label>
+
+                    <Label text="Prerequisites:" styleClass="card-title"><font><Font size="11"/></font></Label>
+                    <Label fx:id="detailPrerequisites" text="-" wrapText="true"><font><Font size="12"/></font></Label>
+
+                    <Label text="Special Designations:" styleClass="card-title"><font><Font size="11"/></font></Label>
+                    <Label fx:id="detailCTE" text="-"><font><Font size="12"/></font></Label>
+
+                    <Label text="Graduation Requirement:" styleClass="card-title"><font><Font size="11"/></font></Label>
+                    <Label fx:id="detailGraduationReq" text="-"><font><Font size="12"/></font></Label>
+                </VBox>
+            </VBox>
+        </SplitPane>
+    </center>
+
+</BorderPane>

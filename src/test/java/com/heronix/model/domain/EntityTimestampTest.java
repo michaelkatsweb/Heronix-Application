@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests for entity timestamp functionality
  * Tests the createdAt/updatedAt fields added on December 10, 2025
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @ActiveProfiles("test")
 @Transactional
 public class EntityTimestampTest {

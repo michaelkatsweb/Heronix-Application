@@ -96,4 +96,29 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, Lo
      */
     @Query("SELECT COALESCE(SUM(cs.maxEnrollment), 0) FROM CourseSection cs WHERE cs.course.id = :courseId")
     int getTotalCapacityByCourseId(@Param("courseId") Long courseId);
+
+    // ========================================================================
+    // TEACHER ATTENDANCE API QUERIES (Added January 2026)
+    // ========================================================================
+
+    /**
+     * Find all sections assigned to a specific teacher (with course eagerly loaded)
+     */
+    @Query("SELECT cs FROM CourseSection cs " +
+           "LEFT JOIN FETCH cs.course c " +
+           "LEFT JOIN FETCH cs.assignedRoom " +
+           "WHERE cs.assignedTeacher.id = :teacherId " +
+           "ORDER BY cs.assignedPeriod, c.courseCode")
+    List<CourseSection> findByAssignedTeacherId(@Param("teacherId") Long teacherId);
+
+    /**
+     * Find sections for a specific teacher and period
+     */
+    @Query("SELECT cs FROM CourseSection cs " +
+           "LEFT JOIN FETCH cs.course c " +
+           "LEFT JOIN FETCH cs.assignedRoom " +
+           "WHERE cs.assignedTeacher.id = :teacherId AND cs.assignedPeriod = :period")
+    List<CourseSection> findByAssignedTeacherIdAndAssignedPeriod(
+            @Param("teacherId") Long teacherId,
+            @Param("period") Integer period);
 }

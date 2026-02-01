@@ -100,6 +100,7 @@ public class SidebarNavigationController {
     @FXML private HBox navDatabase;
     @FXML private HBox navNetworkPanel;
     @FXML private HBox navSecureSync;
+    @FXML private HBox navSecureAudit;
 
     // Labels (for collapse mode)
     @FXML private Label navDashboardLabel;
@@ -145,6 +146,7 @@ public class SidebarNavigationController {
     @FXML private Label navDatabaseLabel;
     @FXML private Label navNetworkPanelLabel;
     @FXML private Label navSecureSyncLabel;
+    @FXML private Label navSecureAuditLabel;
 
     // Counts
     @FXML private Label studentCount;
@@ -280,6 +282,7 @@ public class SidebarNavigationController {
         navItemsMap.put("database", navDatabase);
         navItemsMap.put("network-panel", navNetworkPanel);
         navItemsMap.put("secure-sync", navSecureSync);
+        navItemsMap.put("secure-audit", navSecureAudit);
     }
 
     /**
@@ -815,6 +818,11 @@ public class SidebarNavigationController {
     @FXML
     private void handleNavSecureSync(MouseEvent event) {
         navigateTo("secure-sync", navSecureSync);
+    }
+
+    @FXML
+    private void handleNavSecureAudit(MouseEvent event) {
+        navigateTo("secure-audit", navSecureAudit);
     }
 
     @FXML

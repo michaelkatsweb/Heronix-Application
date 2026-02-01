@@ -869,8 +869,34 @@ public class IncompleteRegistrationsController {
      */
     @FXML
     private void handleExport() {
-        showInfo("Export functionality will generate a CSV/PDF report of incomplete registrations.\n\n" +
-            "Feature coming soon.");
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Export Incomplete Registrations");
+        fileChooser.setInitialFileName("incomplete_registrations.csv");
+        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        java.io.File file = fileChooser.showSaveDialog(registrationsTable.getScene().getWindow());
+        if (file != null) {
+            try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.OutputStreamWriter(
+                    new java.io.FileOutputStream(file), java.nio.charset.StandardCharsets.UTF_8))) {
+                pw.write('\ufeff');
+                pw.println("Student Name,Grade Level,Guardian,Phone,Email,Status,Reason,Priority,Expected Completion,Follow-ups");
+                for (IncompleteRegistration r : registrationsTable.getItems()) {
+                    pw.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%d%n",
+                            r.getStudentFullName() != null ? r.getStudentFullName() : "",
+                            r.getGradeLevel() != null ? r.getGradeLevel() : "",
+                            r.getGuardianName() != null ? r.getGuardianName() : "",
+                            r.getGuardianPhone() != null ? r.getGuardianPhone() : "",
+                            r.getGuardianEmail() != null ? r.getGuardianEmail() : "",
+                            r.getStatus() != null ? r.getStatus().toString() : "",
+                            r.getIncompleteReason() != null ? r.getIncompleteReason().toString() : "",
+                            r.getPriority() != null ? r.getPriority().toString() : "",
+                            r.getExpectedCompletionDate() != null ? r.getExpectedCompletionDate().toString() : "",
+                            r.getFollowupCount());
+                }
+                showInfo("Exported " + registrationsTable.getItems().size() + " records to " + file.getName());
+            } catch (Exception e) {
+                showError("Export failed: " + e.getMessage());
+            }
+        }
     }
 
     // ========================================================================

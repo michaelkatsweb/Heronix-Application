@@ -99,15 +99,20 @@ public class AttendanceRecord {
     private java.time.LocalDateTime createdAt;
 
     public enum AttendanceStatus {
-        PRESENT,           // Student attended
-        ABSENT,            // Student did not attend
+        PRESENT,           // Student attended class
+        ABSENT,            // Student did not attend (generic)
         TARDY,             // Student arrived late
-        EXCUSED_ABSENT,    // Excused absence (doctor, etc.)
+        EXCUSED_ABSENT,    // Excused absence (doctor note, family emergency, etc.)
         UNEXCUSED_ABSENT,  // Unexcused absence
         EARLY_DEPARTURE,   // Left early
-        SCHOOL_ACTIVITY,   // Field trip, sports, etc.
-        SUSPENDED,         // Disciplinary
-        REMOTE,            // Virtual attendance
+        SCHOOL_ACTIVITY,   // Field trip, sports event, assembly, etc.
+        SUSPENDED,         // Disciplinary suspension (generic)
+        ISS,               // In-School Suspension - student on campus but removed from class
+        OSS,               // Out-of-School Suspension - student not on campus
+        TESTING,           // Student in testing session (state testing, AP exams, finals, etc.)
+        MEDICAL,           // Medical visit/nurse office - student left for medical reasons
+        EARLY_DISMISSAL,   // Early dismissal - parent/guardian requested pickup
+        REMOTE,            // Virtual/remote attendance
         HALF_DAY           // Partial day attendance
     }
 
@@ -116,14 +121,27 @@ public class AttendanceRecord {
     public boolean isAbsent() {
         return status == AttendanceStatus.ABSENT ||
                status == AttendanceStatus.EXCUSED_ABSENT ||
-               status == AttendanceStatus.UNEXCUSED_ABSENT;
+               status == AttendanceStatus.UNEXCUSED_ABSENT ||
+               status == AttendanceStatus.OSS ||
+               status == AttendanceStatus.MEDICAL ||
+               status == AttendanceStatus.EARLY_DISMISSAL;
     }
 
     @Transient
     public boolean isPresent() {
         return status == AttendanceStatus.PRESENT ||
                status == AttendanceStatus.TARDY ||
-               status == AttendanceStatus.REMOTE;
+               status == AttendanceStatus.REMOTE ||
+               status == AttendanceStatus.TESTING ||
+               status == AttendanceStatus.ISS ||
+               status == AttendanceStatus.SCHOOL_ACTIVITY;
+    }
+
+    @Transient
+    public boolean isDisciplinary() {
+        return status == AttendanceStatus.ISS ||
+               status == AttendanceStatus.OSS ||
+               status == AttendanceStatus.SUSPENDED;
     }
 
     @Transient

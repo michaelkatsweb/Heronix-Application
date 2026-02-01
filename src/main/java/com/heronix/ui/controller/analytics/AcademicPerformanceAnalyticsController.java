@@ -370,7 +370,37 @@ public class AcademicPerformanceAnalyticsController implements Initializable {
     @FXML
     private void handleExportReport() {
         log.info("Export report requested");
-        updateStatus("Export functionality coming soon...");
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Export Academic Performance Report");
+        fileChooser.setInitialFileName("academic_performance_report.csv");
+        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        java.io.File file = fileChooser.showSaveDialog(statusLabel.getScene().getWindow());
+        if (file != null) {
+            try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.OutputStreamWriter(
+                    new java.io.FileOutputStream(file), java.nio.charset.StandardCharsets.UTF_8))) {
+                pw.write('\ufeff');
+                pw.println("Academic Performance Analytics Report");
+                pw.println("Generated: " + java.time.LocalDate.now());
+                pw.println();
+                if (honorRollTable != null && honorRollTable.getItems() != null) {
+                    pw.println("Honor Roll Students");
+                    for (var row : honorRollTable.getItems()) {
+                        pw.println(row.values().stream().map(String::valueOf).collect(java.util.stream.Collectors.joining(",")));
+                    }
+                }
+                pw.println();
+                if (atRiskTable != null && atRiskTable.getItems() != null) {
+                    pw.println("At-Risk Students");
+                    for (var row : atRiskTable.getItems()) {
+                        pw.println(row.values().stream().map(String::valueOf).collect(java.util.stream.Collectors.joining(",")));
+                    }
+                }
+                updateStatus("Report exported to " + file.getName());
+            } catch (Exception e) {
+                log.error("Export failed", e);
+                updateStatus("Export failed: " + e.getMessage());
+            }
+        }
     }
 
     private void updateStatus(String message) {

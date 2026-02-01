@@ -4,6 +4,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
 
 <!--
     Main Window V2 FXML - Modern Sidebar Navigation Layout
@@ -70,10 +71,15 @@
                     </Button>
 
                     <!-- Help -->
-                    <Button fx:id="helpShortcutsBtn" text="?" styleClass="btn-icon"
-                            onAction="#handleShowShortcuts">
-                        <tooltip><Tooltip text="Keyboard Shortcuts (?)"/></tooltip>
-                    </Button>
+                    <MenuButton fx:id="helpMenuBtn" text="?" styleClass="btn-icon">
+                        <tooltip><Tooltip text="Help (F1)"/></tooltip>
+                        <items>
+                            <MenuItem text="Help Center" onAction="#handleOpenHelpCenter"/>
+                            <MenuItem text="Keyboard Shortcuts" onAction="#handleShowShortcuts"/>
+                            <SeparatorMenuItem/>
+                            <MenuItem text="About Heronix SIS" onAction="#handleShowAbout"/>
+                        </items>
+                    </MenuButton>
                 </HBox>
             </HBox>
 
@@ -114,10 +120,11 @@
                 <Insets top="8" right="24" bottom="8" left="24"/>
             </padding>
 
-            <!-- Connection Status -->
-            <HBox alignment="CENTER_LEFT" spacing="6">
-                <Label fx:id="connectionIndicator" text="&#9679;" styleClass="text-success" style="-fx-font-size: 10px;"/>
-                <Label fx:id="connectionStatus" text="Connected" styleClass="status-label"/>
+            <!-- API Server Connection Status -->
+            <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-padding: 2 8; -fx-background-color: rgba(0,0,0,0.1); -fx-background-radius: 10;">
+                <Circle fx:id="connectionCircle" radius="5" style="-fx-fill: #10B981;"/>
+                <Label fx:id="connectionIndicator" text="●" style="-fx-font-size: 12px; -fx-text-fill: #10B981;" visible="false" managed="false"/>
+                <Label fx:id="connectionStatus" text="Connected" styleClass="status-label" style="-fx-font-size: 11px;"/>
             </HBox>
 
             <Separator orientation="VERTICAL"/>

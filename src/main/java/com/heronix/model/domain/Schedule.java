@@ -108,6 +108,29 @@ public class Schedule {
     private Double qualityScore = 0.0;
 
     // ════════════════════════════════════════════════════════════════════════
+    // PUBLICATION TRACKING (Added in v3.2.0)
+    // ════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Explicit publication flag for distribution workflow
+     * Used by ScheduleDistributionService
+     */
+    @Column(name = "is_published")
+    private Boolean isPublishedFlag = false;
+
+    /**
+     * When this schedule was published to students
+     */
+    @Column(name = "published_date")
+    private LocalDateTime publishedDate;
+
+    /**
+     * Who published this schedule
+     */
+    @Column(name = "published_by")
+    private String publishedBy;
+
+    // ════════════════════════════════════════════════════════════════════════
     // TIME RANGE CONFIGURATION (Added in v3.1.0)
     // ════════════════════════════════════════════════════════════════════════
     @Transient

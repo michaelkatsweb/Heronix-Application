@@ -15,7 +15,7 @@ import java.util.Map;
  * Schedule generation failed with 521 hard violations.
  * This diagnostic will identify the root cause.
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 public class DiagnoseHardViolations {
 
     @Autowired

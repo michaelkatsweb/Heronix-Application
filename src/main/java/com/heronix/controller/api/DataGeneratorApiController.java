@@ -1,6 +1,6 @@
 package com.heronix.controller.api;
 
-import com.heronix.service.RealisticDataGeneratorService;
+import com.heronix.service.MockDataGeneratorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,25 +12,25 @@ import java.util.Map;
 /**
  * REST API Controller for Data Generator
  *
- * Provides endpoints for generating realistic test data for the system.
- * Note: Data generator is currently disabled due to entity structure mismatches.
- * Recommended approach: Use CSV import from sample data files.
+ * Provides endpoints for generating realistic test data for the attendance system.
  *
- * Alternative: CSV Import
- * - Location: H:\Heronix Scheduler\sample_data\
- * - Files: teachers.csv (75), courses.csv (271), rooms.csv (82), students.csv (1,500), events.csv (27)
- * - Use File Import API: POST /api/import/{entityType} with multipart file
+ * Features:
+ * - Generate 500 students across grades 9-12
+ * - Generate 15 teachers with certifications
+ * - Generate courses (core + electives) with sections
+ * - Generate bell schedule with 7 periods
+ * - Enroll students in appropriate courses
  *
  * @author Heronix SIS Team
- * @version 1.0.0
- * @since December 29, 2025
+ * @version 2.0.0
+ * @since January 2026 - Attendance System Enhancement
  */
 @RestController
 @RequestMapping("/api/data-generator")
 @RequiredArgsConstructor
 public class DataGeneratorApiController {
 
-    private final RealisticDataGeneratorService dataGeneratorService;
+    private final MockDataGeneratorService mockDataGeneratorService;
 
     // ==================== Generator Status ====================
 
@@ -38,16 +38,18 @@ public class DataGeneratorApiController {
     public ResponseEntity<Map<String, Object>> getGeneratorStatus() {
         Map<String, Object> status = new HashMap<>();
 
-        status.put("enabled", false);
-        status.put("status", "DISABLED");
-        status.put("reason", "Entity structure mismatches - pending refactoring");
-        status.put("recommendation", "Use CSV import from sample data files");
+        status.put("enabled", true);
+        status.put("status", "ACTIVE");
+        status.put("version", "2.0.0");
+        status.put("description", "Mock data generator for Attendance System testing");
 
-        status.put("alternativeApproach", Map.of(
-            "method", "CSV Import",
-            "location", "H:\\Heronix Scheduler\\sample_data\\",
-            "endpoint", "/api/import/{entityType}",
-            "documentation", "See FileImportApiController for import endpoints"
+        status.put("capabilities", Map.of(
+            "students", "Generate 500 students across grades 9-12",
+            "teachers", "Generate 15 teachers with certifications",
+            "courses", "Generate core and elective courses",
+            "sections", "Create course sections with assignments",
+            "bellSchedule", "Create 7-period bell schedule",
+            "enrollments", "Enroll students in appropriate courses"
         ));
 
         return ResponseEntity.ok(status);
@@ -270,70 +272,116 @@ public class DataGeneratorApiController {
         return ResponseEntity.ok(help);
     }
 
-    // ==================== Future Generator Endpoints (Disabled) ====================
-
-    @PostMapping("/generate/teachers")
-    public ResponseEntity<Map<String, Object>> generateTeachers(@RequestParam(defaultValue = "10") int count) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", false);
-        response.put("error", "Data generator is currently disabled");
-        response.put("alternative", "Use CSV import: POST /api/import/teachers with teachers.csv");
-        response.put("sampleFile", "H:\\Heronix Scheduler\\sample_data\\teachers.csv (75 records)");
-
-        return ResponseEntity.ok(response);
+    @PostMapping("/generate/all")
+    public ResponseEntity<Map<String, Object>> generateAllData() {
+        try {
+            Map<String, Object> results = mockDataGeneratorService.generateAllMockData();
+            results.put("success", true);
+            return ResponseEntity.ok(results);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
     }
 
-    @PostMapping("/generate/courses")
-    public ResponseEntity<Map<String, Object>> generateCourses(@RequestParam(defaultValue = "10") int count) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", false);
-        response.put("error", "Data generator is currently disabled");
-        response.put("alternative", "Use CSV import: POST /api/import/courses with courses.csv");
-        response.put("sampleFile", "H:\\Heronix Scheduler\\sample_data\\courses.csv (271 records)");
+    // ==================== Individual Generator Endpoints ====================
 
-        return ResponseEntity.ok(response);
+    @PostMapping("/generate/bell-schedule")
+    public ResponseEntity<Map<String, Object>> generateBellSchedule() {
+        try {
+            var schedule = mockDataGeneratorService.generateBellSchedule();
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("scheduleName", schedule.getName());
+            response.put("periodCount", schedule.getPeriodCount());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
     }
 
     @PostMapping("/generate/rooms")
-    public ResponseEntity<Map<String, Object>> generateRooms(@RequestParam(defaultValue = "10") int count) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", false);
-        response.put("error", "Data generator is currently disabled");
-        response.put("alternative", "Use CSV import: POST /api/import/rooms with rooms.csv");
-        response.put("sampleFile", "H:\\Heronix Scheduler\\sample_data\\rooms.csv (82 records)");
+    public ResponseEntity<Map<String, Object>> generateRoomsNew() {
+        try {
+            var rooms = mockDataGeneratorService.generateRooms();
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("roomsCreated", rooms.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
 
-        return ResponseEntity.ok(response);
+    @PostMapping("/generate/teachers")
+    public ResponseEntity<Map<String, Object>> generateTeachersNew(@RequestParam(defaultValue = "15") int count) {
+        try {
+            var teachers = mockDataGeneratorService.generateTeachers();
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("teachersCreated", teachers.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @PostMapping("/generate/courses")
+    public ResponseEntity<Map<String, Object>> generateCoursesNew() {
+        try {
+            var courses = mockDataGeneratorService.generateCourses();
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("coursesCreated", courses.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
     }
 
     @PostMapping("/generate/students")
-    public ResponseEntity<Map<String, Object>> generateStudents(@RequestParam(defaultValue = "10") int count) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", false);
-        response.put("error", "Data generator is currently disabled");
-        response.put("alternative", "Use CSV import: POST /api/import/students with students.csv");
-        response.put("sampleFile", "H:\\Heronix Scheduler\\sample_data\\students.csv (1,500 records)");
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Map<String, Object>> generateStudentsNew(@RequestParam(defaultValue = "500") int count) {
+        try {
+            var students = mockDataGeneratorService.generateStudents(count);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("studentsCreated", students.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
     }
 
-    @PostMapping("/generate/all")
-    public ResponseEntity<Map<String, Object>> generateAllData() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", false);
-        response.put("error", "Data generator is currently disabled");
-
-        response.put("alternative", Map.of(
-            "method", "Import all sample CSV files in order",
-            "order", List.of(
-                "1. POST /api/import/teachers with teachers.csv",
-                "2. POST /api/import/rooms with rooms.csv",
-                "3. POST /api/import/courses with courses.csv",
-                "4. POST /api/import/students with students.csv",
-                "5. POST /api/import/events with events.csv"
-            ),
-            "totalRecords", 1955
-        ));
-
-        return ResponseEntity.ok(response);
+    @DeleteMapping("/clear-all")
+    public ResponseEntity<Map<String, Object>> clearAllMockData() {
+        try {
+            mockDataGeneratorService.clearAllMockData();
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "All mock data cleared successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
     }
 }

@@ -1,7 +1,11 @@
 package com.heronix.service;
 
-import lombok.RequiredArgsConstructor;
+import com.heronix.model.domain.AuditLog;
+import com.heronix.repository.AuditLogRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +54,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class ApiAuthenticationService {
 
     private final AuthenticationManager authenticationManager;
@@ -57,8 +61,28 @@ public class ApiAuthenticationService {
     private final SecurityAuditService auditService;
     private final UserDetailsService userDetailsService;
 
-    // In-memory token blacklist - production should use Redis
-    private final Set<String> blacklistedTokens = ConcurrentHashMap.newKeySet();
+    @Autowired(required = false)
+    private AuditLogRepository auditLogRepository;
+
+    @Value("${heronix.security.token-blacklist.persist-to-db:true}")
+    private boolean persistBlacklistToDb;
+
+    // In-memory token blacklist with TTL support
+    private final Map<String, LocalDateTime> blacklistedTokens = new ConcurrentHashMap<>();
+
+    // Token blacklist cleanup interval: 1 hour
+    private static final long CLEANUP_INTERVAL_MS = 3600000;
+
+    @Autowired
+    public ApiAuthenticationService(AuthenticationManager authenticationManager,
+                                    JwtTokenService jwtTokenService,
+                                    SecurityAuditService auditService,
+                                    UserDetailsService userDetailsService) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenService = jwtTokenService;
+        this.auditService = auditService;
+        this.userDetailsService = userDetailsService;
+    }
 
     /**
      * Authenticate user and generate JWT tokens
@@ -227,77 +251,106 @@ public class ApiAuthenticationService {
     }
 
     /**
-     * Add token to blacklist
+     * Add token to blacklist with TTL tracking
      *
-     * STUB IMPLEMENTATION: Uses in-memory HashSet
+     * Uses in-memory map with expiration tracking, plus optional database persistence
+     * for recovery across application restarts.
      *
-     * Production Redis Setup:
-     * =======================
-     *
-     * 1. Add Spring Data Redis dependency to pom.xml:
-     * <dependency>
-     *     <groupId>org.springframework.boot</groupId>
-     *     <artifactId>spring-boot-starter-data-redis</artifactId>
-     * </dependency>
-     *
-     * 2. Configure Redis in application.properties:
+     * For high-volume production, consider Redis:
      * spring.redis.host=localhost
      * spring.redis.port=6379
-     * spring.redis.password=yourRedisPassword
-     * spring.redis.timeout=60000
-     * spring.redis.jedis.pool.max-active=8
-     * spring.redis.jedis.pool.max-idle=8
-     * spring.redis.jedis.pool.min-idle=0
-     *
-     * 3. Inject RedisTemplate:
-     * @Autowired
-     * private RedisTemplate<String, String> redisTemplate;
-     *
-     * 4. Production implementation:
-     * long ttl = jwtTokenService.getExpirationFromToken(token)
-     *     .toInstant().getEpochSecond() - System.currentTimeMillis() / 1000;
-     * redisTemplate.opsForValue().set("blacklist:" + token, "1",
-     *     ttl, TimeUnit.SECONDS);
-     *
-     * Alternative: Use @Cacheable annotation with Redis:
-     * @Configuration
-     * @EnableCaching
-     * public class CacheConfig {
-     *     @Bean
-     *     public RedisCacheManager cacheManager(RedisConnectionFactory factory) {
-     *         return RedisCacheManager.builder(factory).build();
-     *     }
-     * }
      */
     private void blacklistToken(String token) {
-        log.debug("Blacklisting token (in-memory mode): {}", token.substring(0, Math.min(10, token.length())) + "...");
-        blacklistedTokens.add(token);
+        try {
+            // Get token expiration for TTL
+            LocalDateTime expiration = LocalDateTime.now().plusHours(24); // Default 24h if can't parse
+            try {
+                java.util.Date expDate = jwtTokenService.getExpirationFromToken(token);
+                if (expDate != null) {
+                    expiration = expDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime();
+                }
+            } catch (Exception e) {
+                log.debug("Could not parse token expiration, using default TTL");
+            }
 
-        // Stub: In-memory storage
-        // Production: Use Redis as documented above
+            // Add to in-memory blacklist with expiration
+            blacklistedTokens.put(token, expiration);
+            log.debug("Token blacklisted until {}", expiration);
+
+            // Optionally persist to database for recovery across restarts
+            if (persistBlacklistToDb && auditLogRepository != null) {
+                try {
+                    AuditLog auditEntry = new AuditLog();
+                    auditEntry.setAction(AuditLog.AuditAction.LOGOUT);
+                    auditEntry.setEntityType("JWT_TOKEN");
+                    auditEntry.setDetails("Token blacklisted until " + expiration +
+                            " | TokenPrefix=" + token.substring(0, Math.min(20, token.length())) + "...");
+                    auditEntry.setTimestamp(LocalDateTime.now());
+                    auditEntry.setUsername("SYSTEM");
+                    auditEntry.setSuccess(true);
+                    auditLogRepository.save(auditEntry);
+                } catch (Exception e) {
+                    log.warn("Could not persist token blacklist to database: {}", e.getMessage());
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("Error blacklisting token: {}", e.getMessage());
+            // Still add to in-memory as fallback
+            blacklistedTokens.put(token, LocalDateTime.now().plusHours(24));
+        }
     }
 
     /**
      * Check if token is blacklisted
      *
-     * STUB IMPLEMENTATION: Checks in-memory HashSet
-     *
-     * Production implementation with Redis:
-     * return Boolean.TRUE.equals(redisTemplate.hasKey("blacklist:" + token));
-     *
-     * Or with caching:
-     * @Cacheable(value = "tokenBlacklist", key = "#token")
-     * public boolean isTokenBlacklisted(String token) {
-     *     return redisTemplate.hasKey("blacklist:" + token);
-     * }
+     * Checks in-memory map and cleans up expired entries
      */
     private boolean isTokenBlacklisted(String token) {
-        boolean isBlacklisted = blacklistedTokens.contains(token);
-        log.debug("Token blacklist check (in-memory mode): {}", isBlacklisted);
+        LocalDateTime expiration = blacklistedTokens.get(token);
 
-        // Stub: In-memory storage
-        // Production: Use Redis as documented in blacklistToken method
-        return isBlacklisted;
+        if (expiration == null) {
+            return false;
+        }
+
+        // Check if blacklist entry has expired
+        if (LocalDateTime.now().isAfter(expiration)) {
+            blacklistedTokens.remove(token);
+            log.debug("Removed expired blacklist entry for token");
+            return false;
+        }
+
+        log.debug("Token is blacklisted until {}", expiration);
+        return true;
+    }
+
+    /**
+     * Cleanup expired tokens from blacklist (runs every hour)
+     */
+    @Scheduled(fixedRate = CLEANUP_INTERVAL_MS)
+    public void cleanupExpiredBlacklistEntries() {
+        LocalDateTime now = LocalDateTime.now();
+        int removedCount = 0;
+
+        var iterator = blacklistedTokens.entrySet().iterator();
+        while (iterator.hasNext()) {
+            var entry = iterator.next();
+            if (now.isAfter(entry.getValue())) {
+                iterator.remove();
+                removedCount++;
+            }
+        }
+
+        if (removedCount > 0) {
+            log.info("Cleaned up {} expired token blacklist entries", removedCount);
+        }
+    }
+
+    /**
+     * Get current blacklist size (for monitoring)
+     */
+    public int getBlacklistSize() {
+        return blacklistedTokens.size();
     }
 
     /**

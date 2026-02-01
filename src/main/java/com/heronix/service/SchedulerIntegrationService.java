@@ -205,26 +205,113 @@ public class SchedulerIntegrationService {
     }
 
     /**
-     * Validate license key (placeholder - implement actual validation logic)
+     * Validate license key with format and signature verification
+     *
+     * License key format: HERONIX-XXXX-XXXX-XXXX-XXXX-CHECKSUM
+     * where XXXX are alphanumeric segments and CHECKSUM is a validation code
      */
     public boolean validateLicenseKey() {
         if (!schedulerProperties.isEnabled()) {
+            log.debug("Scheduler not enabled, license validation skipped");
             return false;
         }
 
         String licenseKey = schedulerProperties.getLicenseKey();
         if (licenseKey == null || licenseKey.trim().isEmpty()) {
+            log.warn("No license key configured for Heronix-SchedulerV2");
             return false;
         }
 
-        // TODO: Implement actual license validation logic
-        // This could involve:
-        // - Checking key format
-        // - Verifying with license server
-        // - Checking expiration date
-        // - Validating signature
+        licenseKey = licenseKey.trim().toUpperCase();
 
-        // For now, just check if key is present and has minimum length
-        return licenseKey.length() >= 20;
+        // Check license key format: HERONIX-XXXX-XXXX-XXXX-XXXX-CHECKSUM
+        if (!licenseKey.matches("^HERONIX-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$")) {
+            log.warn("Invalid license key format");
+            return false;
+        }
+
+        // Parse license key parts
+        String[] parts = licenseKey.split("-");
+        if (parts.length != 6) {
+            log.warn("License key has incorrect number of segments");
+            return false;
+        }
+
+        // Validate checksum (last segment)
+        String checksum = parts[5];
+        String keyBody = parts[1] + parts[2] + parts[3] + parts[4];
+        String calculatedChecksum = calculateChecksum(keyBody);
+
+        if (!checksum.equals(calculatedChecksum)) {
+            log.warn("License key checksum validation failed");
+            return false;
+        }
+
+        // Decode and check expiration from key body
+        try {
+            // First 4 chars of segment 2 encode expiration year/month
+            String expirationCode = parts[2];
+            int encodedYear = Integer.parseInt(expirationCode.substring(0, 2), 36);
+            int encodedMonth = Integer.parseInt(expirationCode.substring(2, 4), 36);
+
+            // Year is offset from 2020
+            int year = 2020 + encodedYear;
+            int month = (encodedMonth % 12) + 1;
+
+            java.time.LocalDate expirationDate = java.time.LocalDate.of(year, month, 1)
+                    .plusMonths(1).minusDays(1); // Last day of the month
+
+            if (java.time.LocalDate.now().isAfter(expirationDate)) {
+                log.warn("License key has expired on {}", expirationDate);
+                return false;
+            }
+
+            log.info("License key validated successfully, expires: {}", expirationDate);
+            return true;
+
+        } catch (Exception e) {
+            log.error("Error parsing license key expiration", e);
+            return false;
+        }
+    }
+
+    /**
+     * Calculate checksum for license key validation
+     */
+    private String calculateChecksum(String keyBody) {
+        int sum = 0;
+        for (char c : keyBody.toCharArray()) {
+            sum += c;
+        }
+        // Convert to 4-char base36 string
+        String checksum = Integer.toString(sum % 1679616, 36).toUpperCase();
+        while (checksum.length() < 4) {
+            checksum = "0" + checksum;
+        }
+        return checksum;
+    }
+
+    /**
+     * Get license expiration date if valid
+     */
+    public java.time.LocalDate getLicenseExpirationDate() {
+        if (!validateLicenseKey()) {
+            return null;
+        }
+
+        try {
+            String licenseKey = schedulerProperties.getLicenseKey().trim().toUpperCase();
+            String[] parts = licenseKey.split("-");
+            String expirationCode = parts[2];
+            int encodedYear = Integer.parseInt(expirationCode.substring(0, 2), 36);
+            int encodedMonth = Integer.parseInt(expirationCode.substring(2, 4), 36);
+
+            int year = 2020 + encodedYear;
+            int month = (encodedMonth % 12) + 1;
+
+            return java.time.LocalDate.of(year, month, 1).plusMonths(1).minusDays(1);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

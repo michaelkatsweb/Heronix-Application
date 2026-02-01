@@ -2,13 +2,22 @@ package com.heronix.service;
 
 import com.heronix.model.domain.Schedule;
 import com.heronix.model.domain.Student;
+import com.heronix.model.enums.ScheduleStatus;
 import com.heronix.repository.ScheduleRepository;
 import com.heronix.repository.StudentRepository;
+import com.heronix.security.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import org.springframework.core.io.ByteArrayResource;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,6 +43,9 @@ public class ScheduleDistributionService {
     private final ScheduleRepository scheduleRepository;
     private final StudentRepository studentRepository;
     private final StudentSchedulePrintService printService;
+
+    @Autowired(required = false)
+    private JavaMailSender mailSender;
 
     @Value("${heronix.schedule.distribution.email-enabled:false}")
     private Boolean emailEnabled;
@@ -61,9 +73,14 @@ public class ScheduleDistributionService {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("Schedule not found: " + scheduleId));
 
-        // Mark schedule as published (note: Schedule entity may need published field added)
-        // TODO: Add published and publishedDate fields to Schedule entity if needed
+        // Mark schedule as published with full tracking
+        String currentUser = SecurityContext.getCurrentUsername().orElse("system");
+        schedule.setIsPublishedFlag(true);
+        schedule.setPublishedDate(LocalDateTime.now());
+        schedule.setPublishedBy(currentUser);
+        schedule.setStatus(ScheduleStatus.PUBLISHED);
         schedule.setLastModifiedDate(LocalDate.now());
+        schedule.setLastModifiedBy(currentUser);
         scheduleRepository.save(schedule);
 
         // Count affected students
@@ -97,12 +114,15 @@ public class ScheduleDistributionService {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("Schedule not found: " + scheduleId));
 
-        // Mark schedule as unpublished
-        // TODO: Add published field to Schedule entity if needed
+        // Mark schedule as unpublished with tracking
+        String currentUser = SecurityContext.getCurrentUsername().orElse("system");
+        schedule.setIsPublishedFlag(false);
+        schedule.setStatus(ScheduleStatus.DRAFT);
         schedule.setLastModifiedDate(LocalDate.now());
+        schedule.setLastModifiedBy(currentUser);
         scheduleRepository.save(schedule);
 
-        log.info("Schedule {} unpublished successfully", scheduleId);
+        log.info("Schedule {} unpublished successfully by {}", scheduleId, currentUser);
 
         return SchedulePublicationResult.builder()
                 .success(true)
@@ -191,63 +211,47 @@ public class ScheduleDistributionService {
 
     /**
      * Send schedule notification via email
-     *
-     * STUB IMPLEMENTATION: Logs notification without sending
-     *
-     * Production SMTP Setup:
-     * ======================
-     *
-     * 1. Add Spring Boot Mail dependency to pom.xml:
-     * <dependency>
-     *     <groupId>org.springframework.boot</groupId>
-     *     <artifactId>spring-boot-starter-mail</artifactId>
-     * </dependency>
-     *
-     * 2. Configure SMTP in application.properties:
-     * spring.mail.host=smtp.gmail.com
-     * spring.mail.port=587
-     * spring.mail.username=your-email@school.edu
-     * spring.mail.password=your-app-specific-password
-     * spring.mail.properties.mail.smtp.auth=true
-     * spring.mail.properties.mail.smtp.starttls.enable=true
-     * spring.mail.properties.mail.smtp.starttls.required=true
-     * spring.mail.properties.mail.smtp.ssl.trust=smtp.gmail.com
-     *
-     * 3. Inject JavaMailSender:
-     * @Autowired
-     * private JavaMailSender mailSender;
-     *
-     * 4. Production implementation:
-     * try {
-     *     MimeMessage message = mailSender.createMimeMessage();
-     *     MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-     *     helper.setFrom("noreply@school.edu");
-     *     helper.setTo(student.getEmail());
-     *     helper.setSubject("Your Schedule is Available");
-     *     helper.setText("Dear " + student.getFullName() + ",\n\n" +
-     *         "Your class schedule for " + schedule.getScheduleName() + " is now available...");
-     *     mailSender.send(message);
-     *     return true;
-     * } catch (MessagingException e) {
-     *     log.error("Failed to send email", e);
-     *     return false;
-     * }
+     * Uses JavaMailSender if configured, otherwise logs as stub
      */
     private boolean notifyViaEmail(Student student, Schedule schedule) {
-        log.info("Email notification (stub mode) for student {} - schedule {}",
-                student.getId(), schedule.getId());
-
         if (student.getEmail() == null || student.getEmail().isEmpty()) {
             log.warn("Cannot send email notification - student {} has no email", student.getId());
             return false;
         }
 
-        log.debug("Would send email to: {} with subject: 'Your Schedule is Available - {}'",
-                student.getEmail(), schedule.getScheduleName());
+        // If JavaMailSender is not configured, log and return stub mode
+        if (mailSender == null) {
+            log.info("Email notification (stub mode - no mailSender configured) for student {} - schedule {}",
+                    student.getId(), schedule.getId());
+            log.debug("Would send email to: {} with subject: 'Your Schedule is Available - {}'",
+                    student.getEmail(), schedule.getScheduleName());
+            return false;
+        }
 
-        // Stub: Return false to indicate email not actually sent
-        // Production: Use JavaMailSender as documented above
-        return false;
+        // Send actual email using JavaMailSender
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
+
+            helper.setFrom("noreply@heronix.edu");
+            helper.setTo(student.getEmail());
+            helper.setSubject("Your Schedule is Available - " + schedule.getScheduleName());
+            helper.setText("Dear " + student.getFullName() + ",\n\n" +
+                    "Your class schedule for " + schedule.getScheduleName() + " is now available.\n\n" +
+                    "Please log in to the student portal to view your complete schedule.\n\n" +
+                    "Schedule Period: " + schedule.getStartDate() + " to " + schedule.getEndDate() + "\n\n" +
+                    "If you have any questions, please contact your guidance counselor.\n\n" +
+                    "Best regards,\n" +
+                    "School Administration");
+
+            mailSender.send(message);
+            log.info("Email notification sent to {} for schedule {}", student.getEmail(), schedule.getId());
+            return true;
+
+        } catch (MessagingException e) {
+            log.error("Failed to send email notification to {}: {}", student.getEmail(), e.getMessage());
+            return false;
+        }
     }
 
     // ========================================================================
@@ -322,50 +326,39 @@ public class ScheduleDistributionService {
     }
 
     /**
-     * Send email with attachment
-     *
-     * STUB IMPLEMENTATION: Logs email details without sending
-     *
-     * Production implementation with JavaMailSender:
-     * ===============================================
-     *
-     * try {
-     *     MimeMessage message = mailSender.createMimeMessage();
-     *     MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-     *
-     *     helper.setFrom("noreply@school.edu");
-     *     helper.setTo(to);
-     *     helper.setSubject(subject);
-     *     helper.setText(body, false); // false = plain text, true = HTML
-     *
-     *     // Add PDF attachment
-     *     helper.addAttachment(attachmentFilename, new ByteArrayResource(attachment));
-     *
-     *     mailSender.send(message);
-     *     log.info("Email sent successfully to: {}", to);
-     *     return true;
-     *
-     * } catch (MessagingException e) {
-     *     log.error("Failed to send email to: {}", to, e);
-     *     return false;
-     * }
-     *
-     * For HTML emails with embedded images:
-     * helper.setText(htmlBody, true); // true = HTML
-     * helper.addInline("logo", new ClassPathResource("images/logo.png"));
-     *
-     * For batch emails (BCC):
-     * helper.setBcc(recipients.toArray(new String[0]));
+     * Send email with attachment using JavaMailSender if configured
      */
     private boolean sendEmailWithAttachment(String to, String subject, String body,
                                            byte[] attachment, String attachmentFilename) {
-        log.info("Email (stub mode) - To: {} | Subject: {} | Attachment: {} ({} bytes)",
-                to, subject, attachmentFilename, attachment.length);
-        log.debug("Email body preview: {}", body.substring(0, Math.min(100, body.length())) + "...");
+        // If JavaMailSender is not configured, log and return stub mode
+        if (mailSender == null) {
+            log.info("Email (stub mode - no mailSender configured) - To: {} | Subject: {} | Attachment: {} ({} bytes)",
+                    to, subject, attachmentFilename, attachment.length);
+            log.debug("Email body preview: {}", body.substring(0, Math.min(100, body.length())) + "...");
+            return false;
+        }
 
-        // Stub: Return false to indicate email not actually sent
-        // Production: Use JavaMailSender with MimeMessageHelper as documented above
-        return false;
+        // Send actual email with attachment using JavaMailSender
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom("noreply@heronix.edu");
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(body, false); // false = plain text
+
+            // Add PDF attachment
+            helper.addAttachment(attachmentFilename, new ByteArrayResource(attachment));
+
+            mailSender.send(message);
+            log.info("Email with attachment sent successfully to: {}", to);
+            return true;
+
+        } catch (MessagingException e) {
+            log.error("Failed to send email with attachment to: {}: {}", to, e.getMessage());
+            return false;
+        }
     }
 
     /**

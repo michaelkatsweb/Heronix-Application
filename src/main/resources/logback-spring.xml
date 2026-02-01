@@ -75,10 +75,30 @@
 
     <!-- Spring Profile: production (use JSON for log aggregation) -->
     <springProfile name="prod,production">
+        <!-- Application logging -->
         <logger name="com.heronix" level="INFO"/>
+        <logger name="com.heronix.security" level="INFO"/>
+        <logger name="com.heronix.service" level="INFO"/>
+
+        <!-- Security audit logging - keep detailed for compliance -->
+        <logger name="com.heronix.security.SecurityAuditService" level="INFO"/>
+        <logger name="com.heronix.security.ApiKeyAuthenticationFilter" level="WARN"/>
+        <logger name="com.heronix.security.JwtAuthenticationFilter" level="WARN"/>
+
+        <!-- Framework logging - minimize noise -->
         <logger name="org.springframework.web" level="WARN"/>
+        <logger name="org.springframework.security" level="WARN"/>
         <logger name="org.hibernate" level="WARN"/>
+        <logger name="org.hibernate.SQL" level="WARN"/>
         <logger name="org.optaplanner" level="WARN"/>
+
+        <!-- Connection pool monitoring -->
+        <logger name="com.zaxxer.hikari" level="INFO"/>
+        <logger name="com.zaxxer.hikari.pool" level="WARN"/>
+
+        <!-- Tomcat/server logging -->
+        <logger name="org.apache.tomcat" level="WARN"/>
+        <logger name="org.apache.catalina" level="WARN"/>
 
         <root level="WARN">
             <appender-ref ref="CONSOLE_JSON"/>

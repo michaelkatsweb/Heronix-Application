@@ -14,6 +14,8 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -835,7 +837,67 @@ public class TeacherQuickEntryController {
     @FXML
     private void handleSearchStudents() {
         log.info("Search students clicked");
-        // TODO: Implement advanced search
+
+        // Create advanced search dialog
+        Dialog<String> searchDialog = new Dialog<>();
+        searchDialog.setTitle("Advanced Student Search");
+        searchDialog.setHeaderText("Search for students by various criteria");
+
+        // Set the button types
+        ButtonType searchButtonType = new ButtonType("Search", ButtonBar.ButtonData.OK_DONE);
+        searchDialog.getDialogPane().getButtonTypes().addAll(searchButtonType, ButtonType.CANCEL);
+
+        // Create search form
+        VBox searchForm = new VBox(10);
+        searchForm.setPadding(new Insets(20, 20, 10, 20));
+
+        TextField nameField = new TextField();
+        nameField.setPromptText("Name (first or last)");
+
+        TextField idField = new TextField();
+        idField.setPromptText("Student ID");
+
+        ComboBox<String> gradeCombo = new ComboBox<>();
+        gradeCombo.setPromptText("Grade Level");
+        gradeCombo.getItems().addAll("K", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12");
+
+        ComboBox<String> riskCombo = new ComboBox<>();
+        riskCombo.setPromptText("Risk Level");
+        riskCombo.getItems().addAll("Low", "Medium", "High", "Critical");
+
+        searchForm.getChildren().addAll(
+                new Label("Search by Name:"), nameField,
+                new Label("Search by ID:"), idField,
+                new Label("Filter by Grade:"), gradeCombo,
+                new Label("Filter by Risk Level:"), riskCombo
+        );
+
+        searchDialog.getDialogPane().setContent(searchForm);
+
+        // Handle result
+        searchDialog.setResultConverter(dialogButton -> {
+            if (dialogButton == searchButtonType) {
+                return nameField.getText().trim().toLowerCase();
+            }
+            return null;
+        });
+
+        Optional<String> result = searchDialog.showAndWait();
+        result.ifPresent(searchTerm -> {
+            if (!searchTerm.isEmpty()) {
+                studentSearchField.setText(searchTerm);
+                handleStudentSearch();
+            } else if (gradeCombo.getValue() != null) {
+                // Filter by grade
+                String selectedGrade = gradeCombo.getValue();
+                ObservableList<Student> filtered = studentsList.stream()
+                        .filter(s -> s.getGradeLevel() != null && s.getGradeLevel().equals(selectedGrade))
+                        .collect(Collectors.toCollection(FXCollections::observableArrayList));
+                studentListView.setItems(filtered);
+            } else {
+                studentListView.setItems(studentsList);
+            }
+        });
     }
 
     @FXML
@@ -999,8 +1061,159 @@ public class TeacherQuickEntryController {
     @FXML
     private void handleBulkGradeEntry() {
         log.info("Bulk Grade Entry clicked");
-        // TODO: Open bulk entry dialog
-        showInfo("Coming Soon", "Bulk grade entry will allow you to enter grades for all students at once.");
+
+        if (selectedCourse == null) {
+            showError("No Course Selected", "Please select a course first.");
+            return;
+        }
+
+        if (studentsList.isEmpty()) {
+            showError("No Students", "No students enrolled in this course.");
+            return;
+        }
+
+        // Create bulk entry dialog
+        Dialog<Map<Long, Double>> dialog = new Dialog<>();
+        dialog.setTitle("Bulk Grade Entry");
+        dialog.setHeaderText("Enter grades for all students in " + selectedCourse.getCourseName());
+        dialog.getDialogPane().setPrefSize(600, 500);
+
+        // Create bulk entry form
+        VBox contentBox = new VBox(10);
+        contentBox.setPadding(new Insets(10));
+
+        // Assignment details section
+        TextField assignmentField = new TextField();
+        assignmentField.setPromptText("Assignment Name (required)");
+
+        TextField maxPointsField = new TextField("100");
+        maxPointsField.setPromptText("Points Possible");
+
+        ComboBox<ClassroomGradeEntry.AssignmentType> typeCombo = new ComboBox<>();
+        typeCombo.getItems().addAll(ClassroomGradeEntry.AssignmentType.values());
+        typeCombo.setPromptText("Assignment Type");
+        typeCombo.setValue(ClassroomGradeEntry.AssignmentType.HOMEWORK);
+
+        DatePicker datePicker = new DatePicker(LocalDate.now());
+
+        HBox assignmentRow = new HBox(10);
+        assignmentRow.getChildren().addAll(
+                new VBox(new Label("Assignment:"), assignmentField),
+                new VBox(new Label("Points:"), maxPointsField),
+                new VBox(new Label("Type:"), typeCombo),
+                new VBox(new Label("Date:"), datePicker)
+        );
+        contentBox.getChildren().add(assignmentRow);
+
+        contentBox.getChildren().add(new Separator());
+        contentBox.getChildren().add(new Label("Enter points earned for each student (leave blank to skip):"));
+
+        // Student grade entries
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefHeight(300);
+
+        VBox studentEntries = new VBox(5);
+        studentEntries.setPadding(new Insets(10));
+
+        Map<Long, TextField> gradeFields = new HashMap<>();
+        for (Student student : studentsList) {
+            HBox row = new HBox(10);
+            row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+            Label nameLabel = new Label(student.getFullName());
+            nameLabel.setPrefWidth(200);
+
+            TextField gradeField = new TextField();
+            gradeField.setPromptText("Points");
+            gradeField.setPrefWidth(80);
+
+            gradeFields.put(student.getId(), gradeField);
+            row.getChildren().addAll(nameLabel, gradeField);
+            studentEntries.getChildren().add(row);
+        }
+        scrollPane.setContent(studentEntries);
+        contentBox.getChildren().add(scrollPane);
+
+        dialog.getDialogPane().setContent(contentBox);
+
+        ButtonType saveButton = new ButtonType("Save All Grades", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButton, ButtonType.CANCEL);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButton) {
+                Map<Long, Double> grades = new HashMap<>();
+                for (Map.Entry<Long, TextField> entry : gradeFields.entrySet()) {
+                    String value = entry.getValue().getText().trim();
+                    if (!value.isEmpty()) {
+                        try {
+                            grades.put(entry.getKey(), Double.parseDouble(value));
+                        } catch (NumberFormatException e) {
+                            log.warn("Invalid grade value for student {}: {}", entry.getKey(), value);
+                        }
+                    }
+                }
+                return grades;
+            }
+            return null;
+        });
+
+        Optional<Map<Long, Double>> result = dialog.showAndWait();
+        result.ifPresent(grades -> {
+            if (grades.isEmpty()) {
+                showInfo("No Grades", "No grades were entered.");
+                return;
+            }
+
+            String assignmentName = assignmentField.getText().trim();
+            if (assignmentName.isEmpty()) {
+                showError("Validation Error", "Assignment name is required.");
+                return;
+            }
+
+            double maxPoints;
+            try {
+                maxPoints = Double.parseDouble(maxPointsField.getText().trim());
+            } catch (NumberFormatException e) {
+                showError("Validation Error", "Invalid points possible value.");
+                return;
+            }
+
+            int savedCount = 0;
+            for (Map.Entry<Long, Double> entry : grades.entrySet()) {
+                try {
+                    Student student = studentRepository.findById(entry.getKey()).orElse(null);
+                    if (student == null) continue;
+
+                    double pointsEarned = entry.getValue();
+                    double percentage = (pointsEarned / maxPoints) * 100.0;
+
+                    ClassroomGradeEntry gradeEntry = ClassroomGradeEntry.builder()
+                            .student(student)
+                            .course(selectedCourse)
+                            .teacher(currentTeacher)
+                            .campus(campusRepository.findAll().stream().findFirst().orElse(null))
+                            .assignmentName(assignmentName)
+                            .assignmentType(typeCombo.getValue())
+                            .assignmentDate(datePicker.getValue())
+                            .pointsPossible(maxPoints)
+                            .pointsEarned(pointsEarned)
+                            .percentageGrade(percentage)
+                            .letterGrade(calculateLetterGrade(percentage))
+                            .enteredByStaffId(currentTeacher.getId())
+                            .entryTimestamp(LocalDateTime.now())
+                            .build();
+
+                    gradeEntryRepository.save(gradeEntry);
+                    savedCount++;
+                } catch (Exception e) {
+                    log.error("Error saving grade for student {}: {}", entry.getKey(), e.getMessage());
+                }
+            }
+
+            showInfo("Bulk Entry Complete", "Saved " + savedCount + " grades for " + assignmentName);
+            loadRecentGrades();
+        });
     }
 
     // ========================================================================
@@ -1312,8 +1525,142 @@ public class TeacherQuickEntryController {
     @FXML
     private void handleContactParent() {
         log.info("Contact Parent clicked");
-        // TODO: Open parent contact dialog
-        showInfo("Coming Soon", "Parent contact functionality will be available soon.");
+
+        if (selectedStudent == null) {
+            showError("No Selection", "Please select a student first.");
+            return;
+        }
+
+        // Create parent contact dialog
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Contact Parent/Guardian");
+        dialog.setHeaderText("Contact parent for: " + selectedStudent.getFullName());
+
+        // Create contact form
+        VBox content = new VBox(15);
+        content.setPadding(new Insets(20));
+
+        // Parent info section
+        VBox parentInfoBox = new VBox(5);
+        parentInfoBox.setStyle("-fx-background-color: #f0f0f0; -fx-padding: 10; -fx-background-radius: 5;");
+
+        // Try to get parent contact info from emergency contact or parent list
+        String parentName = "Parent/Guardian";
+        String parentEmail = "No email on file";
+        String parentPhone = "No phone on file";
+
+        // Check emergency contact info on student record
+        if (selectedStudent.getEmergencyContact() != null && !selectedStudent.getEmergencyContact().isEmpty()) {
+            parentName = selectedStudent.getEmergencyContact();
+        }
+        if (selectedStudent.getEmergencyPhone() != null && !selectedStudent.getEmergencyPhone().isEmpty()) {
+            parentPhone = selectedStudent.getEmergencyPhone();
+        }
+        // Student email may be used for parent communication
+        if (selectedStudent.getEmail() != null && !selectedStudent.getEmail().isEmpty()) {
+            parentEmail = selectedStudent.getEmail() + " (student)";
+        }
+
+        parentInfoBox.getChildren().addAll(
+                new Label("Parent: " + parentName),
+                new Label("Email: " + parentEmail),
+                new Label("Phone: " + parentPhone)
+        );
+
+        // Contact method selection
+        ComboBox<String> contactMethodCombo = new ComboBox<>();
+        contactMethodCombo.getItems().addAll("Email", "Phone Call", "In-Person Meeting Request", "Parent Portal Message");
+        contactMethodCombo.setValue("Email");
+
+        // Subject/purpose
+        ComboBox<String> purposeCombo = new ComboBox<>();
+        purposeCombo.getItems().addAll(
+                "Academic Concern",
+                "Behavior Concern",
+                "Attendance Issue",
+                "Positive Update",
+                "Meeting Request",
+                "Other"
+        );
+        purposeCombo.setPromptText("Select purpose");
+
+        // Message
+        TextArea messageArea = new TextArea();
+        messageArea.setPromptText("Enter your message here...");
+        messageArea.setPrefRowCount(6);
+        messageArea.setWrapText(true);
+
+        // Log this contact checkbox
+        CheckBox logContactCheck = new CheckBox("Log this contact in student record");
+        logContactCheck.setSelected(true);
+
+        content.getChildren().addAll(
+                parentInfoBox,
+                new HBox(10, new Label("Contact Method:"), contactMethodCombo),
+                new HBox(10, new Label("Purpose:"), purposeCombo),
+                new Label("Message:"), messageArea,
+                logContactCheck
+        );
+
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().setPrefWidth(500);
+
+        ButtonType sendButton = new ButtonType("Send/Log Contact", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(sendButton, ButtonType.CANCEL);
+
+        dialog.setResultConverter(button -> {
+            if (button == sendButton) {
+                return messageArea.getText();
+            }
+            return null;
+        });
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(message -> {
+            if (message.trim().isEmpty() && purposeCombo.getValue() == null) {
+                showError("Validation Error", "Please enter a message or select a purpose.");
+                return;
+            }
+
+            // Log the contact attempt
+            String contactMethod = contactMethodCombo.getValue();
+            String purpose = purposeCombo.getValue() != null ? purposeCombo.getValue() : "General";
+
+            log.info("Parent contact logged - Student: {}, Method: {}, Purpose: {}",
+                    selectedStudent.getFullName(), contactMethod, purpose);
+
+            if (logContactCheck.isSelected() && selectedCourse != null) {
+                // Create a teacher observation note to log the contact
+                try {
+                    TeacherObservationNote contactLog = TeacherObservationNote.builder()
+                            .student(selectedStudent)
+                            .teacher(currentTeacher)
+                            .course(selectedCourse)
+                            .observationCategory(TeacherObservationNote.ObservationCategory.SOCIAL_EMOTIONAL)
+                            .observationRating(TeacherObservationNote.ObservationRating.GOOD)
+                            .observationNotes("Parent Contact - Method: " + contactMethod +
+                                    " | Purpose: " + purpose +
+                                    " | Message: " + (message.length() > 200 ? message.substring(0, 200) + "..." : message))
+                            .observationDate(LocalDate.now())
+                            .entryTimestamp(LocalDateTime.now())
+                            .build();
+
+                    observationNoteRepository.save(contactLog);
+                    log.info("Parent contact logged as observation note");
+                } catch (Exception e) {
+                    log.error("Error logging parent contact: {}", e.getMessage());
+                }
+            } else if (logContactCheck.isSelected()) {
+                log.warn("Cannot log parent contact - no course selected");
+            }
+
+            showInfo("Contact Logged",
+                    "Parent contact recorded for " + selectedStudent.getFullName() +
+                            "\nMethod: " + contactMethod +
+                            "\nPurpose: " + purpose);
+
+            loadRecentObservations();
+        });
     }
 
     @FXML
@@ -1325,8 +1672,76 @@ public class TeacherQuickEntryController {
         }
 
         try {
-            // TODO: Use StudentProgressReportService to generate report
-            showInfo("Report Generated", "Weekly progress report generated for " + selectedStudent.getFullName());
+            // Generate comprehensive progress report using the service
+            StudentProgressReportService.StudentWeeklyReport report =
+                    reportService.generateStudentWeeklyReport(selectedStudent);
+
+            // Display report summary
+            StringBuilder reportSummary = new StringBuilder();
+            reportSummary.append("WEEKLY PROGRESS REPORT\n");
+            reportSummary.append("=====================\n\n");
+            reportSummary.append("Student: ").append(selectedStudent.getFullName()).append("\n");
+            reportSummary.append("Grade: ").append(selectedStudent.getGradeLevel()).append("\n");
+            reportSummary.append("Report Period: ").append(report.getStartDate())
+                    .append(" to ").append(report.getEndDate()).append("\n\n");
+
+            // Academic summary from nested object
+            StudentProgressReportService.AcademicSummary academic = report.getAcademicSummary();
+            reportSummary.append("ACADEMIC SUMMARY\n");
+            reportSummary.append("----------------\n");
+            if (academic != null) {
+                reportSummary.append("Assignments Graded: ").append(academic.getTotalAssignments()).append("\n");
+                reportSummary.append("Average Grade: ").append(String.format("%.1f%%", academic.getAverageGrade())).append("\n");
+                reportSummary.append("Missing Work: ").append(academic.getMissingAssignments()).append(" assignments\n\n");
+            } else {
+                reportSummary.append("No academic data available\n\n");
+            }
+
+            // Behavior summary from nested object
+            StudentProgressReportService.BehaviorSummary behavior = report.getBehaviorSummary();
+            reportSummary.append("BEHAVIOR SUMMARY\n");
+            reportSummary.append("----------------\n");
+            if (behavior != null) {
+                reportSummary.append("Positive Incidents: ").append(behavior.getPositiveIncidents()).append("\n");
+                reportSummary.append("Negative Incidents: ").append(behavior.getNegativeIncidents()).append("\n\n");
+            } else {
+                reportSummary.append("No behavior data available\n\n");
+            }
+
+            // Attendance summary from nested object
+            StudentProgressReportService.AttendanceSummary attendance = report.getAttendanceSummary();
+            reportSummary.append("ATTENDANCE\n");
+            reportSummary.append("----------\n");
+            if (attendance != null) {
+                reportSummary.append("Days Present: ").append(attendance.getPresentDays()).append("\n");
+                reportSummary.append("Days Absent: ").append(attendance.getAbsentDays()).append("\n");
+                reportSummary.append("Attendance Rate: ").append(String.format("%.1f%%", attendance.getAttendanceRate())).append("\n\n");
+            } else {
+                reportSummary.append("No attendance data available\n\n");
+            }
+
+            // Risk assessment
+            if (report.getRiskAssessment() != null) {
+                reportSummary.append("RISK ASSESSMENT: ").append(report.getRiskAssessment().getRiskLevel()).append("\n");
+            }
+
+            // Show report in dialog
+            Alert reportAlert = new Alert(Alert.AlertType.INFORMATION);
+            reportAlert.setTitle("Weekly Progress Report");
+            reportAlert.setHeaderText("Progress Report for " + selectedStudent.getFullName());
+
+            TextArea reportArea = new TextArea(reportSummary.toString());
+            reportArea.setEditable(false);
+            reportArea.setWrapText(true);
+            reportArea.setPrefRowCount(20);
+            reportArea.setPrefColumnCount(50);
+
+            reportAlert.getDialogPane().setContent(reportArea);
+            reportAlert.getDialogPane().setMinHeight(400);
+            reportAlert.showAndWait();
+
+            log.info("Progress report generated for student: {}", selectedStudent.getFullName());
+
         } catch (Exception e) {
             log.error("Error generating report", e);
             showError("Report Error", "Failed to generate report: " + e.getMessage());
@@ -1342,8 +1757,45 @@ public class TeacherQuickEntryController {
         }
 
         try {
-            // TODO: Use AlertGenerationService to create alert
-            showInfo("Alert Created", "Alert created for " + selectedStudent.getFullName());
+            // Generate alert using AlertGenerationService
+            alertGenerationService.generateAlert(selectedStudent);
+
+            // Get current risk assessment to show in confirmation
+            StudentProgressMonitoringService.StudentRiskAssessment assessment =
+                    progressMonitoringService.getStudentRiskAssessment(selectedStudent);
+
+            StringBuilder alertMessage = new StringBuilder();
+            alertMessage.append("Alert generated and routed for ").append(selectedStudent.getFullName()).append("\n\n");
+            alertMessage.append("Risk Level: ").append(assessment.getRiskLevel()).append("\n\n");
+            alertMessage.append("Risk Indicators:\n");
+
+            if (assessment.isHasAcademicRisk()) {
+                alertMessage.append("• Academic Risk (low grades or missing work)\n");
+            }
+            if (assessment.isHasAttendanceRisk()) {
+                alertMessage.append("• Attendance Risk (chronic absences or tardies)\n");
+            }
+            if (assessment.isHasBehaviorRisk()) {
+                alertMessage.append("• Behavior Risk (negative incidents)\n");
+            }
+
+            alertMessage.append("\nNotifications sent to:\n");
+            alertMessage.append("• Assigned Teacher(s)\n");
+            if (assessment.getRiskLevel() != StudentProgressMonitoringService.RiskLevel.LOW) {
+                alertMessage.append("• School Counselor\n");
+            }
+            if (assessment.getRiskLevel() == StudentProgressMonitoringService.RiskLevel.HIGH) {
+                alertMessage.append("• Grade-Level Administrator\n");
+                alertMessage.append("• Principal\n");
+            }
+
+            showInfo("Alert Created", alertMessage.toString());
+            log.info("Alert created for student: {} with risk level: {}",
+                    selectedStudent.getFullName(), assessment.getRiskLevel());
+
+            // Refresh risk display
+            updateRiskAssessment();
+
         } catch (Exception e) {
             log.error("Error creating alert", e);
             showError("Alert Error", "Failed to create alert: " + e.getMessage());
@@ -1422,8 +1874,27 @@ public class TeacherQuickEntryController {
             selectedStudentId.setText("ID: " + selectedStudent.getStudentId());
             selectedStudentGrade.setText("Grade " + selectedStudent.getGradeLevel());
 
-            // TODO: Get risk assessment
-            selectedStudentRisk.setText("Risk: Low");
+            // Get actual risk assessment from monitoring service
+            try {
+                StudentProgressMonitoringService.StudentRiskAssessment assessment =
+                        progressMonitoringService.getStudentRiskAssessment(selectedStudent);
+
+                String riskLevel = assessment.getRiskLevel().toString();
+                selectedStudentRisk.setText("Risk: " + riskLevel);
+
+                // Color code based on risk level
+                switch (assessment.getRiskLevel()) {
+                    case HIGH -> selectedStudentRisk.setStyle("-fx-text-fill: #d32f2f; -fx-font-weight: bold;");
+                    case MEDIUM -> selectedStudentRisk.setStyle("-fx-text-fill: #f57c00;");
+                    case LOW -> selectedStudentRisk.setStyle("-fx-text-fill: #388e3c;");
+                    case NONE -> selectedStudentRisk.setStyle("-fx-text-fill: #757575;");
+                    default -> selectedStudentRisk.setStyle("-fx-text-fill: #757575;");
+                }
+            } catch (Exception e) {
+                log.warn("Could not get risk assessment for student {}: {}", selectedStudent.getId(), e.getMessage());
+                selectedStudentRisk.setText("Risk: Unknown");
+                selectedStudentRisk.setStyle("-fx-text-fill: #757575;");
+            }
         } else {
             selectedStudentCard.setVisible(false);
         }

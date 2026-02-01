@@ -109,6 +109,20 @@
             </HBox>
         </VBox>
 
+        <!-- Students Card -->
+        <VBox styleClass="stat-card" spacing="8" HBox.hgrow="ALWAYS">
+            <padding>
+                <Insets top="16" right="16" bottom="16" left="16"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <Label text="&#127891;" style="-fx-font-size: 32;"/>
+                <VBox spacing="2">
+                    <Label fx:id="studentCountLabel" text="0" styleClass="stat-value"/>
+                    <Label text="Enrolled Students" styleClass="stat-description"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
         <!-- Courses Card -->
         <VBox styleClass="stat-card" spacing="8" HBox.hgrow="ALWAYS">
             <padding>

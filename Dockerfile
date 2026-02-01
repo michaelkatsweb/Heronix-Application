@@ -1,13 +1,15 @@
-# Multi-stage Dockerfile for EduScheduler Pro Backend
-# Quick Win #8 - Optimized Docker image with build and runtime stages
+# ============================================================================
+# Heronix SIS - Docker Configuration
+# Multi-stage build for optimized production image
+# ============================================================================
 
 # ==========================================================================
 # Stage 1: Build Stage
 # ==========================================================================
-FROM maven:3.9-eclipse-temurin-21 AS build
+FROM maven:3.9-eclipse-temurin-21-alpine AS build
 
 LABEL stage=builder
-LABEL application=eduscheduler-pro
+LABEL application=heronix-sis
 
 WORKDIR /app
 
@@ -20,7 +22,7 @@ RUN mvn dependency:go-offline -B
 # Copy source code
 COPY src ./src
 
-# Build the application (skip tests for faster builds)
+# Build the application (skip tests for faster builds in Docker)
 RUN mvn clean package -DskipTests -B
 
 # ==========================================================================
@@ -28,57 +30,87 @@ RUN mvn clean package -DskipTests -B
 # ==========================================================================
 FROM eclipse-temurin:21-jre-alpine
 
-LABEL maintainer="EduScheduler Team"
-LABEL application=eduscheduler-pro
+LABEL maintainer="Heronix Educational Systems LLC"
+LABEL application=heronix-sis
 LABEL version=1.0.0
 
 # Install utilities for health checks
 RUN apk add --no-cache wget curl
 
 # Create application user (non-root for security)
-RUN addgroup -g 1000 eduscheduler && \
-    adduser -D -u 1000 -G eduscheduler eduscheduler
+RUN addgroup -g 1000 heronix && \
+    adduser -D -u 1000 -G heronix heronix
 
 # Create application directories
 RUN mkdir -p /app/data /app/logs /app/exports && \
-    chown -R eduscheduler:eduscheduler /app
+    chown -R heronix:heronix /app
 
 WORKDIR /app
 
-# Copy JAR from build stage
-COPY --from=build --chown=eduscheduler:eduscheduler \
-    /app/target/eduscheduler-pro-1.0.0.jar app.jar
+# Copy JAR from build stage (artifact name from pom.xml)
+COPY --from=build --chown=heronix:heronix \
+    /app/target/heronix-scheduler-1.0.0.jar app.jar
 
 # Switch to non-root user
-USER eduscheduler
+USER heronix
 
-# Expose ports
+# Expose ports (8080 HTTP, 8443 HTTPS)
 EXPOSE 8080 8443
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+# Health check using Spring Actuator endpoint
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health/readiness || exit 1
 
-# JVM options for containerized environment
+# ==========================================================================
+# JVM OPTIONS - Optimized for 500+ concurrent connections
+# ==========================================================================
+# Memory: Use container-aware settings
+# GC: G1GC tuned for low latency with high throughput
+# Threading: Optimized for high concurrency
+# Security: Secure random generation
+# ==========================================================================
 ENV JAVA_OPTS="-XX:+UseContainerSupport \
     -XX:MaxRAMPercentage=75.0 \
     -XX:InitialRAMPercentage=50.0 \
     -XX:+UseG1GC \
+    -XX:MaxGCPauseMillis=200 \
+    -XX:G1HeapRegionSize=16m \
     -XX:+UseStringDeduplication \
-    -Djava.security.egd=file:/dev/./urandom"
+    -XX:+ParallelRefProcEnabled \
+    -XX:+AlwaysPreTouch \
+    -XX:+DisableExplicitGC \
+    -XX:+UseNUMA \
+    -XX:+OptimizeStringConcat \
+    -XX:MetaspaceSize=256m \
+    -XX:MaxMetaspaceSize=512m \
+    -XX:+HeapDumpOnOutOfMemoryError \
+    -XX:HeapDumpPath=/app/logs/heapdump.hprof \
+    -XX:+ExitOnOutOfMemoryError \
+    -Djava.security.egd=file:/dev/./urandom \
+    -Dfile.encoding=UTF-8 \
+    -Djava.awt.headless=true \
+    -Dspring.backgroundpreinitializer.ignore=true"
 
-# Run application
+# Default Spring profile for production
+ENV SPRING_PROFILES_ACTIVE=production
+
+# Additional environment variables for tuning
+ENV HIKARI_MAX_POOL_SIZE=100
+ENV HIKARI_MIN_IDLE=20
+
+# Run application with optimized settings
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
 
-# Metadata
+# OCI Image Metadata
 ARG BUILD_DATE
 ARG VCS_REF
 ARG VERSION=1.0.0
 
 LABEL org.opencontainers.image.created=$BUILD_DATE \
-      org.opencontainers.image.title="EduScheduler Pro Backend" \
-      org.opencontainers.image.description="AI-Powered School Scheduling System - REST API" \
+      org.opencontainers.image.title="Heronix SIS API Server" \
+      org.opencontainers.image.description="AI-Powered School Information System - REST API" \
       org.opencontainers.image.version=$VERSION \
       org.opencontainers.image.revision=$VCS_REF \
-      org.opencontainers.image.vendor="EduScheduler" \
+      org.opencontainers.image.vendor="Heronix Educational Systems LLC" \
+      org.opencontainers.image.url="https://heronixedu.com" \
       org.opencontainers.image.licenses="Proprietary"

@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.*;
  * @version 1.0.0
  * @since 2025-12-23
  */
-@SpringBootTest(classes = com.heronix.HeronixSchedulerApplication.class)
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @ActiveProfiles("test")
 @Transactional
 class EnrollmentVerificationServiceTest {
@@ -60,6 +60,7 @@ class EnrollmentVerificationServiceTest {
                     student.setFirstName("Test");
                     student.setLastName("Student");
                     student.setStudentId("ENV001");
+                    student.setGradeLevel("10"); // Required field
                     return studentRepository.save(student);
                 });
 

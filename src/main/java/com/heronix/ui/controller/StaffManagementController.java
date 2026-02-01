@@ -2,6 +2,7 @@ package com.heronix.ui.controller;
 
 import com.heronix.model.domain.Staff;
 import com.heronix.model.enums.StaffOccupation;
+import com.heronix.security.SecurityContext;
 import com.heronix.service.StaffService;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -438,7 +439,7 @@ public class StaffManagementController implements Initializable {
         Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
-                staffService.softDeleteStaff(staff.getId(), "admin"); // TODO: Get current user
+                staffService.softDeleteStaff(staff.getId(), SecurityContext.getCurrentUsername().orElse("admin"));
                 loadStaffData();
                 updateStatus("Staff member deleted: " + staff.getFullName());
             } catch (Exception e) {
@@ -450,7 +451,33 @@ public class StaffManagementController implements Initializable {
 
     @FXML
     private void handleExport() {
-        updateStatus("Export functionality coming soon...");
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Export Staff Directory");
+        fileChooser.setInitialFileName("staff_directory.csv");
+        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        java.io.File file = fileChooser.showSaveDialog(staffTable.getScene().getWindow());
+        if (file != null) {
+            try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.OutputStreamWriter(
+                    new java.io.FileOutputStream(file), java.nio.charset.StandardCharsets.UTF_8))) {
+                pw.write('\ufeff');
+                pw.println("Employee ID,Name,Occupation,Department,Email,Phone,Hire Date,Status");
+                for (Staff s : allStaff) {
+                    pw.printf("%s,%s,%s,%s,%s,%s,%s,%s%n",
+                            s.getEmployeeId() != null ? s.getEmployeeId() : "",
+                            s.getFullName() != null ? s.getFullName() : "",
+                            s.getOccupation() != null ? s.getOccupation() : "",
+                            s.getDepartment() != null ? s.getDepartment() : "",
+                            s.getEmail() != null ? s.getEmail() : "",
+                            s.getPhoneNumber() != null ? s.getPhoneNumber() : "",
+                            s.getHireDate() != null ? s.getHireDate().toString() : "",
+                            s.getActive() != null && s.getActive() ? "Active" : "Inactive");
+                }
+                updateStatus("Exported " + allStaff.size() + " staff records to " + file.getName());
+            } catch (Exception e) {
+                log.error("Export failed", e);
+                updateStatus("Export failed: " + e.getMessage());
+            }
+        }
     }
 
     @FXML

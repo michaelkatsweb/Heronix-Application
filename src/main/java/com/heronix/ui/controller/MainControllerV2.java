@@ -5,6 +5,9 @@ import com.heronix.service.GlobalSearchService;
 import com.heronix.ui.component.BreadcrumbNavigation;
 import com.heronix.ui.service.FilterPersistenceService;
 import com.heronix.ui.service.KeyboardShortcutManager;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,18 +19,27 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Main Controller V2 - Modern UI with Sidebar Navigation
@@ -63,7 +75,7 @@ public class MainControllerV2 {
     @FXML private HBox breadcrumbContainer;
     @FXML private MenuButton quickAddBtn;
     @FXML private Button notificationBtn;
-    @FXML private Button helpShortcutsBtn;
+    @FXML private MenuButton helpMenuBtn;
 
     // Page Header
     @FXML private HBox pageHeader;
@@ -78,6 +90,7 @@ public class MainControllerV2 {
 
     // Status Bar
     @FXML private HBox statusBar;
+    @FXML private Circle connectionCircle;
     @FXML private Label connectionIndicator;
     @FXML private Label connectionStatus;
     @FXML private Label statusLabel;
@@ -101,6 +114,13 @@ public class MainControllerV2 {
     @Autowired(required = false)
     private GlobalSearchService globalSearchService;
 
+    // Server URL for client mode
+    @Value("${sis.server.url:http://localhost:9580}")
+    private String serverUrl;
+
+    @Value("${sis.client.mode:false}")
+    private boolean clientMode;
+
     // ========================================================================
     // STATE
     // ========================================================================
@@ -108,6 +128,18 @@ public class MainControllerV2 {
     private BreadcrumbNavigation breadcrumb;
     private String currentView = "dashboard";
     private Node currentViewNode;
+
+    // API connection status
+    private ScheduledExecutorService connectionChecker;
+    private Timeline blinkAnimation;
+    private boolean isConnected = false;
+    private boolean isApiOperationInProgress = false;
+
+    // Connection status colors
+    private static final String COLOR_GREEN = "#10B981";  // Connected
+    private static final String COLOR_RED = "#EF4444";    // Disconnected
+    private static final String COLOR_BLUE = "#3B82F6";   // Communicating
+    private static final String COLOR_BLUE_LIGHT = "#93C5FD";  // Blink state
 
     // View cache for faster navigation
     private final Map<String, Node> viewCache = new HashMap<>();
@@ -134,9 +166,9 @@ public class MainControllerV2 {
         VIEW_METADATA.put("course-enrollment", new ViewMetadata("Course Enrollment", "Enroll existing students into courses", "/fxml/StudentEnrollment.fxml"));
         VIEW_METADATA.put("rooms", new ViewMetadata("Rooms", "Manage room inventory", "/fxml/RoomManagement.fxml"));
         VIEW_METADATA.put("events", new ViewMetadata("Events", "School events and calendar", "/fxml/Events.fxml"));
-        VIEW_METADATA.put("iep", new ViewMetadata("IEP Management", "Manage Individual Education Plans", "/fxml/IEPManagement.fxml"));
+        VIEW_METADATA.put("iep", new ViewMetadata("IEP Management", "Manage Individual Education Plans", "/fxml/iep-management.fxml"));
         VIEW_METADATA.put("504", new ViewMetadata("504 Plans", "Manage 504 accommodation plans", "/fxml/plan504-management.fxml"));
-        VIEW_METADATA.put("sped", new ViewMetadata("SPED Dashboard", "Special Education metrics", "/fxml/SPEDDashboard.fxml"));
+        VIEW_METADATA.put("sped", new ViewMetadata("SPED Dashboard", "Special Education metrics", "/fxml/sped-dashboard.fxml"));
         VIEW_METADATA.put("ell", new ViewMetadata("ELL Dashboard", "English Language Learners management", "/fxml/ELLDashboard.fxml"));
         VIEW_METADATA.put("gifted", new ViewMetadata("Gifted & Talented", "Gifted and talented program management", "/fxml/GiftedDashboard.fxml"));
         VIEW_METADATA.put("health-office", new ViewMetadata("Health Office", "Health office and nurse visits", "/fxml/HealthOfficeDashboard.fxml"));
@@ -164,6 +196,7 @@ public class MainControllerV2 {
         VIEW_METADATA.put("database", new ViewMetadata("Database", "Database management and maintenance", "/fxml/DatabaseManagement.fxml"));
         VIEW_METADATA.put("network-panel", new ViewMetadata("Network Panel", "Network monitoring and diagnostics", "/fxml/NetworkPanel.fxml"));
         VIEW_METADATA.put("secure-sync", new ViewMetadata("Secure Sync", "Secure synchronization control panel", "/fxml/SecureSyncControlPanel.fxml"));
+        VIEW_METADATA.put("secure-audit", new ViewMetadata("Security Audit", "Encrypted Hub activity logs (tamper-proof)", "/fxml/SecureAuditView.fxml"));
     }
 
     // ========================================================================
@@ -194,7 +227,135 @@ public class MainControllerV2 {
         // Load default view (dashboard)
         Platform.runLater(() -> navigateTo("dashboard"));
 
+        // Start API connection monitoring (delayed to ensure FXML is fully loaded)
+        Platform.runLater(this::startConnectionMonitoring);
+
         log.info("✓ MainControllerV2 initialized successfully");
+    }
+
+    /**
+     * Start periodic API connection monitoring
+     */
+    private void startConnectionMonitoring() {
+        // Check if connectionCircle is available
+        if (connectionCircle == null) {
+            log.warn("Connection circle not available, skipping connection monitoring");
+            return;
+        }
+
+        try {
+            // Create blink animation for "communicating" state using Circle
+            blinkAnimation = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                    new KeyValue(connectionCircle.fillProperty(), Color.web(COLOR_BLUE))),
+                new KeyFrame(Duration.millis(400),
+                    new KeyValue(connectionCircle.fillProperty(), Color.web(COLOR_BLUE_LIGHT))),
+                new KeyFrame(Duration.millis(800),
+                    new KeyValue(connectionCircle.fillProperty(), Color.web(COLOR_BLUE)))
+            );
+            blinkAnimation.setCycleCount(Timeline.INDEFINITE);
+
+            // Start periodic connection check
+            connectionChecker = Executors.newSingleThreadScheduledExecutor();
+            connectionChecker.scheduleAtFixedRate(this::checkApiConnection, 0, 30, TimeUnit.SECONDS);
+
+            log.info("API connection monitoring started (checking every 30 seconds)");
+        } catch (Exception e) {
+            log.error("Failed to start connection monitoring: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Check API server connection
+     */
+    private void checkApiConnection() {
+        // Show blinking blue while checking
+        Platform.runLater(() -> {
+            connectionStatus.setText("Checking...");
+            blinkAnimation.play();
+        });
+
+        try {
+            String healthUrl = serverUrl + "/actuator/health";
+            URL url = new URL(healthUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            int responseCode = connection.getResponseCode();
+            connection.disconnect();
+
+            boolean connected = responseCode >= 200 && responseCode < 500;
+
+            Platform.runLater(() -> {
+                blinkAnimation.stop();
+                isConnected = connected;
+
+                if (connected) {
+                    connectionCircle.setFill(Color.web(COLOR_GREEN));
+                    connectionStatus.setText("Connected");
+                    connectionStatus.setStyle("-fx-text-fill: " + COLOR_GREEN + ";");
+                } else {
+                    connectionCircle.setFill(Color.web(COLOR_RED));
+                    connectionStatus.setText("Offline");
+                    connectionStatus.setStyle("-fx-text-fill: " + COLOR_RED + ";");
+                }
+            });
+
+        } catch (Exception e) {
+            log.debug("API connection check failed: {}", e.getMessage());
+            Platform.runLater(() -> {
+                blinkAnimation.stop();
+                isConnected = false;
+                connectionCircle.setFill(Color.web(COLOR_RED));
+                connectionStatus.setText("Offline");
+                connectionStatus.setStyle("-fx-text-fill: " + COLOR_RED + ";");
+            });
+        }
+    }
+
+    /**
+     * Call this when starting an API operation to show blinking blue
+     */
+    public void startApiOperation() {
+        isApiOperationInProgress = true;
+        Platform.runLater(() -> {
+            blinkAnimation.play();
+            connectionStatus.setText("Syncing...");
+        });
+    }
+
+    /**
+     * Call this when API operation completes
+     */
+    public void endApiOperation(boolean success) {
+        isApiOperationInProgress = false;
+        Platform.runLater(() -> {
+            blinkAnimation.stop();
+            if (success && isConnected) {
+                connectionCircle.setFill(Color.web(COLOR_GREEN));
+                connectionStatus.setText("Connected");
+                connectionStatus.setStyle("-fx-text-fill: " + COLOR_GREEN + ";");
+                lastSyncTime.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+            } else {
+                connectionCircle.setFill(Color.web(COLOR_RED));
+                connectionStatus.setText("Sync Failed");
+                connectionStatus.setStyle("-fx-text-fill: " + COLOR_RED + ";");
+            }
+        });
+    }
+
+    /**
+     * Stop connection monitoring (call on shutdown)
+     */
+    public void stopConnectionMonitoring() {
+        if (connectionChecker != null && !connectionChecker.isShutdown()) {
+            connectionChecker.shutdown();
+        }
+        if (blinkAnimation != null) {
+            blinkAnimation.stop();
+        }
     }
 
     /**
@@ -255,7 +416,7 @@ public class MainControllerV2 {
             sidebarNavigationController.setOnLogout(this::handleLogout);
 
             // Help callback
-            sidebarNavigationController.setOnHelp(this::handleShowShortcuts);
+            sidebarNavigationController.setOnHelp(this::handleOpenHelpCenter);
 
             log.info("✓ Sidebar callbacks configured");
         } else {
@@ -313,8 +474,8 @@ public class MainControllerV2 {
         registerShortcut("Ctrl+R", this::handleRefresh, "Actions", "Refresh View");
         registerShortcut("F5", this::handleRefresh, "Actions", "Refresh View");
 
-        // Help shortcut
-        registerShortcut("F1", this::handleShowShortcuts, "Help", "Show Keyboard Shortcuts");
+        // Help shortcuts
+        registerShortcut("F1", this::handleOpenHelpCenter, "Help", "Open Help Center");
         registerShortcut("Shift+?", this::handleShowShortcuts, "Help", "Show Keyboard Shortcuts");
 
         // Escape to go back
@@ -469,26 +630,25 @@ public class MainControllerV2 {
     @FXML
     private void handleQuickAddStudent() {
         log.info("Quick add student");
-        // TODO: Open add student dialog
-        showInfo("Add Student", "Student creation dialog coming soon");
+        navigateTo("students");
     }
 
     @FXML
     private void handleQuickAddTeacher() {
         log.info("Quick add teacher");
-        showInfo("Add Teacher", "Teacher creation dialog coming soon");
+        navigateTo("teachers");
     }
 
     @FXML
     private void handleQuickAddCourse() {
         log.info("Quick add course");
-        showInfo("Add Course", "Course creation dialog coming soon");
+        navigateTo("courses");
     }
 
     @FXML
     private void handleQuickAddEvent() {
         log.info("Quick add event");
-        showInfo("Add Event", "Event creation dialog coming soon");
+        navigateTo("events");
     }
 
     @FXML
@@ -585,7 +745,7 @@ public class MainControllerV2 {
     @FXML
     private void handleNotifications() {
         log.info("Opening notifications");
-        showInfo("Notifications", "Notification center coming soon");
+        navigateTo("notifications");
     }
 
     @FXML
@@ -607,6 +767,54 @@ public class MainControllerV2 {
 
         alert.getDialogPane().setContent(textArea);
         alert.showAndWait();
+    }
+
+    @FXML
+    private void handleOpenHelpCenter() {
+        log.info("Opening Help Center");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/HelpCenter.fxml"));
+            loader.setControllerFactory(springContext::getBean);
+            Parent helpCenterRoot = loader.load();
+
+            Stage helpStage = new Stage();
+            helpStage.setTitle("Heronix SIS - Help Center");
+            helpStage.initModality(Modality.NONE);
+            helpStage.initOwner(mainBorderPane.getScene().getWindow());
+
+            Scene scene = new Scene(helpCenterRoot, 1100, 750);
+
+            // Apply current theme
+            String currentTheme = mainBorderPane.getScene().getStylesheets().stream()
+                    .filter(s -> s.contains("theme-"))
+                    .findFirst()
+                    .orElse(getClass().getResource("/css/theme-dark.css").toExternalForm());
+            scene.getStylesheets().add(currentTheme);
+
+            helpStage.setScene(scene);
+            helpStage.show();
+        } catch (IOException e) {
+            log.error("Failed to open Help Center: {}", e.getMessage(), e);
+            showError("Help Center Error", "Could not open Help Center: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleShowAbout() {
+        log.info("Showing About dialog");
+
+        Alert about = new Alert(Alert.AlertType.INFORMATION);
+        about.setTitle("About Heronix SIS");
+        about.setHeaderText("Heronix Student Information System");
+        about.setContentText(
+                "Version: 2.0.0\n" +
+                "Build: 2026.01\n\n" +
+                "A comprehensive student information system for\n" +
+                "managing students, teachers, courses, grades,\n" +
+                "attendance, and more.\n\n" +
+                "© 2026 Heronix Education Technology"
+        );
+        about.showAndWait();
     }
 
     private void handleImportData() {
@@ -637,7 +845,7 @@ public class MainControllerV2 {
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 log.info("User confirmed logout");
-                // TODO: Implement actual logout
+                SecurityContext.clearCurrentUser();
                 Platform.exit();
             }
         });
@@ -665,8 +873,9 @@ public class MainControllerV2 {
      */
     public void setConnectionStatus(boolean connected) {
         Platform.runLater(() -> {
-            connectionIndicator.setStyle("-fx-text-fill: " + (connected ? "#10B981" : "#EF4444") + "; -fx-font-size: 10px;");
+            connectionCircle.setFill(Color.web(connected ? COLOR_GREEN : COLOR_RED));
             connectionStatus.setText(connected ? "Connected" : "Disconnected");
+            connectionStatus.setStyle("-fx-text-fill: " + (connected ? COLOR_GREEN : COLOR_RED) + ";");
         });
     }
 

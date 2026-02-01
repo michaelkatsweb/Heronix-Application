@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * Diagnostic test to identify schedule generation constraint violations
  * December 5, 2025
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 public class ScheduleGenerationDiagnosticTest {
 
     @Autowired

@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.heronix.service.export.AnalyticsExportService;
+
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -134,6 +136,9 @@ public class StudentAnalyticsController {
 
     @Autowired
     private ApplicationContext springContext;
+
+    @Autowired
+    private AnalyticsExportService analyticsExportService;
 
     // ========================================================================
     // STATE
@@ -552,6 +557,11 @@ public class StudentAnalyticsController {
 
     @FXML
     private void handleExportPDF() {
+        if (currentAnalytics == null) {
+            setStatus("No data to export");
+            return;
+        }
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Export Student Analytics Report");
         fileChooser.getExtensionFilters().add(
@@ -560,13 +570,30 @@ public class StudentAnalyticsController {
 
         File file = fileChooser.showSaveDialog(analyticsTabs.getScene().getWindow());
         if (file != null) {
-            // TODO: Implement PDF export
-            setStatus("PDF export coming soon");
+            setStatus("Exporting PDF...");
+            CompletableFuture.runAsync(() -> {
+                try {
+                    String campusName = campusFilter.getValue() != null ?
+                            campusFilter.getValue().getName() : null;
+                    byte[] pdfData = analyticsExportService.exportStudentAnalyticsPdf(
+                            currentAnalytics, campusName);
+                    analyticsExportService.writeToFile(pdfData, file);
+                    Platform.runLater(() -> setStatus("PDF exported successfully: " + file.getName()));
+                } catch (Exception e) {
+                    log.error("Error exporting PDF: {}", e.getMessage(), e);
+                    Platform.runLater(() -> setStatus("Error exporting PDF: " + e.getMessage()));
+                }
+            });
         }
     }
 
     @FXML
     private void handleExportExcel() {
+        if (currentAnalytics == null) {
+            setStatus("No data to export");
+            return;
+        }
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Export Student Analytics Data");
         fileChooser.getExtensionFilters().add(
@@ -575,13 +602,30 @@ public class StudentAnalyticsController {
 
         File file = fileChooser.showSaveDialog(analyticsTabs.getScene().getWindow());
         if (file != null) {
-            // TODO: Implement Excel export
-            setStatus("Excel export coming soon");
+            setStatus("Exporting Excel...");
+            CompletableFuture.runAsync(() -> {
+                try {
+                    String campusName = campusFilter.getValue() != null ?
+                            campusFilter.getValue().getName() : null;
+                    byte[] excelData = analyticsExportService.exportStudentAnalyticsExcel(
+                            currentAnalytics, campusName);
+                    analyticsExportService.writeToFile(excelData, file);
+                    Platform.runLater(() -> setStatus("Excel exported successfully: " + file.getName()));
+                } catch (Exception e) {
+                    log.error("Error exporting Excel: {}", e.getMessage(), e);
+                    Platform.runLater(() -> setStatus("Error exporting Excel: " + e.getMessage()));
+                }
+            });
         }
     }
 
     @FXML
     private void handleExportCSV() {
+        if (currentAnalytics == null) {
+            setStatus("No data to export");
+            return;
+        }
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Export Student Analytics Data");
         fileChooser.getExtensionFilters().add(
@@ -590,8 +634,20 @@ public class StudentAnalyticsController {
 
         File file = fileChooser.showSaveDialog(analyticsTabs.getScene().getWindow());
         if (file != null) {
-            // TODO: Implement CSV export
-            setStatus("CSV export coming soon");
+            setStatus("Exporting CSV...");
+            CompletableFuture.runAsync(() -> {
+                try {
+                    String campusName = campusFilter.getValue() != null ?
+                            campusFilter.getValue().getName() : null;
+                    byte[] csvData = analyticsExportService.exportStudentAnalyticsCsv(
+                            currentAnalytics, campusName);
+                    analyticsExportService.writeToFile(csvData, file);
+                    Platform.runLater(() -> setStatus("CSV exported successfully: " + file.getName()));
+                } catch (Exception e) {
+                    log.error("Error exporting CSV: {}", e.getMessage(), e);
+                    Platform.runLater(() -> setStatus("Error exporting CSV: " + e.getMessage()));
+                }
+            });
         }
     }
 
@@ -611,8 +667,20 @@ public class StudentAnalyticsController {
 
         File file = fileChooser.showSaveDialog(analyticsTabs.getScene().getWindow());
         if (file != null) {
-            // TODO: Implement export
-            setStatus("At-risk list export coming soon");
+            setStatus("Exporting at-risk students list...");
+            CompletableFuture.runAsync(() -> {
+                try {
+                    List<Student> atRiskStudents = studentAnalyticsService.getAtRiskStudentsByGPA(
+                            selectedCampusId, 2.5);
+                    byte[] excelData = analyticsExportService.exportAtRiskStudentsExcel(atRiskStudents);
+                    analyticsExportService.writeToFile(excelData, file);
+                    Platform.runLater(() -> setStatus("At-risk list exported: " +
+                            atRiskStudents.size() + " students to " + file.getName()));
+                } catch (Exception e) {
+                    log.error("Error exporting at-risk list: {}", e.getMessage(), e);
+                    Platform.runLater(() -> setStatus("Error exporting at-risk list: " + e.getMessage()));
+                }
+            });
         }
     }
 
@@ -626,8 +694,20 @@ public class StudentAnalyticsController {
 
         File file = fileChooser.showSaveDialog(analyticsTabs.getScene().getWindow());
         if (file != null) {
-            // TODO: Implement export
-            setStatus("Honor roll export coming soon");
+            setStatus("Exporting honor roll list...");
+            CompletableFuture.runAsync(() -> {
+                try {
+                    List<Student> honorRollStudents = studentAnalyticsService.getHonorRollStudents(
+                            selectedCampusId, 3.25);
+                    byte[] excelData = analyticsExportService.exportHonorRollExcel(honorRollStudents);
+                    analyticsExportService.writeToFile(excelData, file);
+                    Platform.runLater(() -> setStatus("Honor roll exported: " +
+                            honorRollStudents.size() + " students to " + file.getName()));
+                } catch (Exception e) {
+                    log.error("Error exporting honor roll: {}", e.getMessage(), e);
+                    Platform.runLater(() -> setStatus("Error exporting honor roll: " + e.getMessage()));
+                }
+            });
         }
     }
 }

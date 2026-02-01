@@ -2,6 +2,7 @@ package com.heronix.service.analytics;
 
 import com.heronix.dto.analytics.*;
 import com.heronix.repository.StudentRepository;
+import com.heronix.repository.StudentGradeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 public class AcademicPerformanceAnalyticsService {
 
     private final StudentRepository studentRepository;
+    private final StudentGradeRepository studentGradeRepository;
 
     // ========================================================================
     // GPA ANALYTICS
@@ -175,16 +177,54 @@ public class AcademicPerformanceAnalyticsService {
 
     /**
      * Get letter grade distribution (A, B, C, D, F)
-     * This would require a StudentGradeRepository - placeholder for now
+     * Aggregates final grades across all courses for the specified campus
      */
+    @Cacheable(value = "letterGradeDistribution", key = "#campusId ?: 'all'")
     public Map<String, Long> getLetterGradeDistribution(Long campusId) {
+        log.info("Fetching letter grade distribution for campus: {}", campusId);
+
         Map<String, Long> distribution = new LinkedHashMap<>();
+        // Initialize with proper order
         distribution.put("A", 0L);
         distribution.put("B", 0L);
         distribution.put("C", 0L);
         distribution.put("D", 0L);
         distribution.put("F", 0L);
-        // TODO: Implement with StudentGradeRepository
+
+        try {
+            // Get all active students for the campus
+            List<com.heronix.model.domain.Student> students;
+            if (campusId != null) {
+                students = studentRepository.findByCampusId(campusId).stream()
+                        .filter(s -> Boolean.TRUE.equals(s.getActive()))
+                        .collect(java.util.stream.Collectors.toList());
+            } else {
+                students = studentRepository.findByActiveTrue();
+            }
+
+            // Count grades for each student's final grades
+            for (com.heronix.model.domain.Student student : students) {
+                List<com.heronix.model.domain.StudentGrade> grades =
+                    studentGradeRepository.findFinalGradesByStudentId(student.getId());
+
+                for (com.heronix.model.domain.StudentGrade grade : grades) {
+                    String letterGrade = grade.getLetterGrade();
+                    if (letterGrade != null && !letterGrade.isEmpty()) {
+                        // Normalize letter grades (A+, A, A- all count as A)
+                        String baseGrade = letterGrade.substring(0, 1).toUpperCase();
+                        if (distribution.containsKey(baseGrade)) {
+                            distribution.merge(baseGrade, 1L, Long::sum);
+                        }
+                    }
+                }
+            }
+
+            log.debug("Letter grade distribution: {}", distribution);
+
+        } catch (Exception e) {
+            log.error("Error calculating letter grade distribution for campus {}", campusId, e);
+        }
+
         return distribution;
     }
 }

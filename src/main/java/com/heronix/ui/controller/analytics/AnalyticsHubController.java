@@ -4,8 +4,10 @@ import com.heronix.dto.analytics.AnalyticsFilterDTO;
 import com.heronix.dto.analytics.AnalyticsSummaryDTO;
 import com.heronix.model.domain.Campus;
 import com.heronix.service.analytics.AnalyticsHubService;
+import com.heronix.service.export.AnalyticsExportService;
 import com.heronix.ui.controller.MainControllerV2;
 import javafx.application.Platform;
+import javafx.stage.FileChooser;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -44,6 +47,9 @@ public class AnalyticsHubController {
 
     @Autowired(required = false)
     private MainControllerV2 mainController;
+
+    @Autowired
+    private AnalyticsExportService analyticsExportService;
 
     // Filters
     @FXML private ComboBox<Campus> campusFilter;
@@ -91,6 +97,9 @@ public class AnalyticsHubController {
     @FXML private VBox districtOverviewTile;
 
     @FXML private GridPane quickStatsGrid;
+
+    // Current data for export
+    private AnalyticsSummaryDTO currentSummary;
 
     @FXML
     public void initialize() {
@@ -171,7 +180,10 @@ public class AnalyticsHubController {
                 AnalyticsSummaryDTO summary = analyticsHubService.getHubSummary(filter);
                 List<Campus> allCampuses = analyticsHubService.getAllCampuses();
 
-                Platform.runLater(() -> updateUI(summary, allCampuses.size()));
+                Platform.runLater(() -> {
+                    currentSummary = summary;
+                    updateUI(summary, allCampuses.size());
+                });
             } catch (Exception e) {
                 log.error("Error loading analytics data", e);
                 Platform.runLater(() -> showError("Failed to load analytics data: " + e.getMessage()));
@@ -253,9 +265,33 @@ public class AnalyticsHubController {
 
     @FXML
     private void handleExportSummary() {
-        log.info("Exporting analytics summary");
-        // TODO: Implement export functionality
-        showInfo("Export functionality will be available soon.");
+        if (currentSummary == null) {
+            showInfo("No data to export. Please wait for data to load.");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export Analytics Summary");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"));
+        fileChooser.setInitialFileName("analytics-summary-" +
+                LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ".xlsx");
+
+        File file = fileChooser.showSaveDialog(campusFilter.getScene().getWindow());
+        if (file != null) {
+            log.info("Exporting analytics summary to {}", file.getAbsolutePath());
+
+            new Thread(() -> {
+                try {
+                    byte[] excelData = analyticsExportService.exportHubSummaryExcel(currentSummary);
+                    analyticsExportService.writeToFile(excelData, file);
+                    Platform.runLater(() -> showInfo("Analytics summary exported successfully to:\n" + file.getName()));
+                } catch (Exception e) {
+                    log.error("Error exporting analytics summary", e);
+                    Platform.runLater(() -> showError("Failed to export: " + e.getMessage()));
+                }
+            }).start();
+        }
     }
 
     @FXML

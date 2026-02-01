@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * List all tables in the database to verify schema
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 public class ListAllTables {
 
     @Autowired

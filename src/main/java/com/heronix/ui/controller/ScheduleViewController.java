@@ -152,6 +152,9 @@ public class ScheduleViewController {
     private ComboBox<String> teacherFilterCombo;
 
     @FXML
+    private ComboBox<String> courseFilterCombo;
+
+    @FXML
     private ComboBox<String> roomFilterCombo;
 
     @FXML
@@ -162,6 +165,23 @@ public class ScheduleViewController {
 
     @FXML
     private TextField searchField;
+
+    // Toolbar and Filter Panel
+    @FXML
+    private ToolBar toolbar;
+
+    @FXML
+    private HBox filterPanel;
+
+    // Status Bar Labels
+    @FXML
+    private Label totalSlotsLabel;
+
+    @FXML
+    private Label conflictCountLabel;
+
+    @FXML
+    private Label statusLabel;
 
     // Information Labels
     @FXML

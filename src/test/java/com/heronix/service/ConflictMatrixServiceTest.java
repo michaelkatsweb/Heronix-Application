@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
  * Comprehensive unit tests for ConflictMatrixService
  * Tests conflict generation, singleton detection, and heatmap visualization
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @TestPropertySource(properties = {
     "spring.jpa.hibernate.ddl-auto=update",
     "logging.level.com.heronix=DEBUG"

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * Detailed constraint diagnostic for schedule generation
  * December 6, 2025 - Deep dive into constraint violations
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 public class DetailedConstraintDiagnostic {
 
     @Autowired

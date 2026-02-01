@@ -144,6 +144,9 @@ public class Notification {
         COURSE_REQUEST_DENIED("Course Request Denied", "warning"),
         ALTERNATE_ASSIGNED("Alternate Course Assigned", "info"),
 
+        // Dismissal & Counselor
+        COUNSELOR_SUMMON("Counselor Summon", "warning"),
+
         // System
         SYSTEM_ALERT("System Alert", "info"),
         VALIDATION_ERROR("Validation Error", "danger"),

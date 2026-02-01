@@ -1,28 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.StaffDirectoryManagementController" prefWidth="1500" prefHeight="900">
 
     <top>
         <VBox spacing="10" styleClass="card">
             <Label text="Staff Directory Management" styleClass="page-title-white"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField" promptText="Search by name, ID, email, or department..." prefWidth="350"/>
+                <ComboBox fx:id="departmentFilter" promptText="All Departments" prefWidth="180"/>
+                <ComboBox fx:id="statusFilter" promptText="All Statuses" prefWidth="140"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="totalStaffLabel" text="Total: 0" style="-fx-font-weight: bold;"/>
+                <Button fx:id="refreshButton" text="Refresh" onAction="#handleRefresh"/>
+                <Button fx:id="exportButton" text="Export CSV" onAction="#handleExportCSV"/>
+            </HBox>
         </VBox>
     </top>
+
     <center>
         <VBox spacing="10" style="-fx-padding: 15;">
-            <TextField fx:id="searchField" promptText="Search staff..."/>
             <TableView fx:id="staffTableView" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn text="Name" prefWidth="150"/>
-                    <TableColumn text="Position" prefWidth="150"/>
-                    <TableColumn text="Department" prefWidth="120"/>
-                    <TableColumn text="Email" prefWidth="200"/>
-                    <TableColumn text="Phone" prefWidth="120"/>
+                    <TableColumn fx:id="colEmployeeId" text="Employee ID" prefWidth="110"/>
+                    <TableColumn fx:id="colName" text="Name" prefWidth="180"/>
+                    <TableColumn fx:id="colRole" text="Role" prefWidth="130"/>
+                    <TableColumn fx:id="colDepartment" text="Department" prefWidth="130"/>
+                    <TableColumn fx:id="colEmail" text="Email" prefWidth="220"/>
+                    <TableColumn fx:id="colPhone" text="Phone" prefWidth="130"/>
+                    <TableColumn fx:id="colCertification" text="Certification" prefWidth="120"/>
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="80"/>
                 </columns>
             </TableView>
+            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 5 0 0 0;">
+                <Label fx:id="statusLabel" text="Ready"/>
+            </HBox>
         </VBox>
     </center>
 </BorderPane>

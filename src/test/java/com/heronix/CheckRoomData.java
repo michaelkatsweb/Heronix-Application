@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Check room data in the actual database
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 public class CheckRoomData {
 
     @Autowired

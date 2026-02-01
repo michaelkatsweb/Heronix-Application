@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Integration tests for TeacherApiController
  * Tests the December 10, 2025 fix for timestamp-based conflict detection
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @ActiveProfiles("test")
 @Transactional
 public class TeacherApiControllerTest {

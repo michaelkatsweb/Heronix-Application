@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Heronix Scheduling System Team
  * @since Block Scheduling MVP - November 26, 2025
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @TestPropertySource(properties = {
     "spring.jpa.hibernate.ddl-auto=update",
     "logging.level.com.heronix=DEBUG"

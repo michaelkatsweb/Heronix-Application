@@ -104,6 +104,9 @@ public class AnalyticsHubService {
                 .map(s -> new Object[]{s}).collect(Collectors.toList());
         Long academicRisk = (long) atRiskByGPA.size();
 
+        // Calculate behavior risk from repeat offenders (3+ negative incidents in last 30 days)
+        Long behaviorRisk = calculateBehaviorRisk(campusId, startDate);
+
         // Build campus name
         String campusName = "All Campuses";
         if (campusId != null) {
@@ -129,10 +132,10 @@ public class AnalyticsHubService {
                 .positiveIncidents(positiveIncidents)
                 .negativeIncidents(negativeIncidents)
                 .positiveNegativeRatio(positiveNegativeRatio)
-                .atRiskStudentsTotal(academicRisk + chronicAbsenteeismCount)
+                .atRiskStudentsTotal(academicRisk + chronicAbsenteeismCount + behaviorRisk)
                 .academicRisk(academicRisk)
                 .attendanceRisk(chronicAbsenteeismCount)
-                .behaviorRisk(0L) // TODO: Calculate from repeat offenders
+                .behaviorRisk(behaviorRisk)
                 .dataAsOfDate(today)
                 .generatedAt(LocalDateTime.now())
                 .campusName(campusName)
@@ -284,5 +287,22 @@ public class AnalyticsHubService {
         LocalDate now = LocalDate.now();
         int year = now.getMonthValue() >= 8 ? now.getYear() : now.getYear() - 1;
         return year + "-" + (year + 1);
+    }
+
+    /**
+     * Calculate behavior risk count from repeat offenders
+     * Students with 3+ negative behavior incidents are considered at-risk
+     */
+    private Long calculateBehaviorRisk(Long campusId, LocalDate sinceDate) {
+        try {
+            // Find students with 3 or more negative incidents since the start date
+            List<Object[]> repeatOffenders = behaviorIncidentRepository.findRepeatOffenders(
+                    sinceDate, campusId, 3L);
+
+            return (long) repeatOffenders.size();
+        } catch (Exception e) {
+            log.error("Error calculating behavior risk for campus {}", campusId, e);
+            return 0L;
+        }
     }
 }

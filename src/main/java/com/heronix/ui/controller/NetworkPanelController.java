@@ -6,6 +6,7 @@ import com.heronix.model.enums.NetworkDeviceType;
 import com.heronix.service.NetworkService;
 import com.heronix.service.NetworkService.NetworkHealthSummary;
 import com.heronix.service.NetworkService.PingResult;
+import com.heronix.service.export.AnalyticsExportService;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -23,13 +24,16 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -56,6 +60,9 @@ public class NetworkPanelController implements Initializable {
 
     @Autowired
     private NetworkService networkService;
+
+    @Autowired
+    private AnalyticsExportService analyticsExportService;
 
     // ==================== Header ====================
     @FXML private Label panelTitleLabel;
@@ -555,8 +562,42 @@ public class NetworkPanelController implements Initializable {
 
     @FXML
     private void handleExport() {
-        // TODO: Implement CSV export
-        showInfo("Export", "Export functionality will be implemented.");
+        List<NetworkDevice> devicesToExport = new ArrayList<>(filteredDevices);
+        if (devicesToExport.isEmpty()) {
+            showInfo("Export", "No devices to export.");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export Network Devices");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        fileChooser.setInitialFileName("network-devices-" +
+                LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ".csv");
+
+        File file = fileChooser.showSaveDialog(deviceTable.getScene().getWindow());
+        if (file != null) {
+            footerStatusLabel.setText("Exporting devices...");
+
+            CompletableFuture.runAsync(() -> {
+                try {
+                    byte[] csvData = analyticsExportService.exportNetworkDevicesCsv(devicesToExport);
+                    analyticsExportService.writeToFile(csvData, file);
+                    Platform.runLater(() -> {
+                        footerStatusLabel.setText("Export complete");
+                        appendOutput("Exported " + devicesToExport.size() + " devices to " + file.getName());
+                        showInfo("Export Complete", "Exported " + devicesToExport.size() +
+                                " devices to:\n" + file.getName());
+                    });
+                } catch (Exception e) {
+                    log.error("Error exporting devices", e);
+                    Platform.runLater(() -> {
+                        footerStatusLabel.setText("Export failed");
+                        showError("Export Error", "Failed to export: " + e.getMessage());
+                    });
+                }
+            });
+        }
     }
 
     // ==================== Network Tools ====================
@@ -740,8 +781,54 @@ public class NetworkPanelController implements Initializable {
 
     @FXML
     private void handleGenerateReport() {
-        // TODO: Implement report generation
-        showInfo("Report", "Report generation will be implemented.");
+        if (allDevices.isEmpty()) {
+            showInfo("Report", "No devices available to generate report.");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Generate Network Report");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"));
+        fileChooser.setInitialFileName("network-report-" +
+                LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ".xlsx");
+
+        File file = fileChooser.showSaveDialog(deviceTable.getScene().getWindow());
+        if (file != null) {
+            footerStatusLabel.setText("Generating report...");
+            appendOutput("Generating network report...");
+
+            CompletableFuture.runAsync(() -> {
+                try {
+                    NetworkHealthSummary summary = networkService.getNetworkHealthSummary();
+                    List<NetworkDevice> devices = new ArrayList<>(allDevices);
+
+                    byte[] excelData = analyticsExportService.exportNetworkReportExcel(
+                            devices,
+                            (int) summary.getOnlineDevices(),
+                            (int) summary.getOfflineDevices(),
+                            summary.getAverageLatencyMs()
+                    );
+                    analyticsExportService.writeToFile(excelData, file);
+
+                    Platform.runLater(() -> {
+                        footerStatusLabel.setText("Report generated");
+                        appendOutput("Report generated: " + file.getName());
+                        showInfo("Report Complete", "Network report generated successfully:\n" +
+                                file.getName() + "\n\n" +
+                                "Total devices: " + devices.size() + "\n" +
+                                "Online: " + summary.getOnlineDevices() + "\n" +
+                                "Offline: " + summary.getOfflineDevices());
+                    });
+                } catch (Exception e) {
+                    log.error("Error generating report", e);
+                    Platform.runLater(() -> {
+                        footerStatusLabel.setText("Report generation failed");
+                        showError("Report Error", "Failed to generate report: " + e.getMessage());
+                    });
+                }
+            });
+        }
     }
 
     @FXML

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @version 1.0.0
  * @since December 19, 2025 - Controller Layer Test Coverage
  */
-@SpringBootTest(classes = com.heronix.HeronixSchedulerApiApplication.class)
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @ActiveProfiles("test")
 @Transactional
 public class AnalyticsApiControllerTest {

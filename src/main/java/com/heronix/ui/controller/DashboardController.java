@@ -124,6 +124,28 @@ public class DashboardController {
     private Label teacherUtilizationLabel;
 
     // ========================================================================
+    // FXML UI COMPONENTS - Dashboard Metrics Cards (from dashboard-view.fxml)
+    // ========================================================================
+    @FXML
+    private Label efficiencyScoreLabel;
+    @FXML
+    private Label conflictsLabel;
+    @FXML
+    private Label utilizationLabel;
+    @FXML
+    private Label qualityTrendLabel;
+    @FXML
+    private Label efficiencyTrendLabel;
+    @FXML
+    private javafx.scene.control.ProgressBar qualityProgressBar;
+    @FXML
+    private javafx.scene.control.ProgressBar efficiencyProgressBar;
+    @FXML
+    private javafx.scene.control.ProgressBar utilizationProgressBar;
+    @FXML
+    private VBox activityList;
+
+    // ========================================================================
     // FXML UI COMPONENTS - Schedule Health
     // ========================================================================
     @FXML

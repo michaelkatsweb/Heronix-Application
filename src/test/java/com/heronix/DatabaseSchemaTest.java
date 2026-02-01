@@ -8,7 +8,7 @@ import org.springframework.test.context.TestPropertySource;
  * Test class to initialize database schema.
  * Run this test to create all tables via Hibernate DDL.
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @TestPropertySource(properties = {
     "spring.jpa.hibernate.ddl-auto=update",
     "spring.jpa.show-sql=true",

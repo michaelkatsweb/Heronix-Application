@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @since Phase 6E - December 3, 2025
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @Transactional
 public class Phase6EMultiRoomCoursesTest {
 

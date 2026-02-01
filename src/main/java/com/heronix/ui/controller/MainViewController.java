@@ -445,7 +445,7 @@ public class MainViewController {
     @FXML
     private void handleExportData() {
         log.info("Exporting data...");
-        showInfo("Export Data", "Data export feature coming soon!");
+        loadView("/fxml/SISExport.fxml", "📤 Export Data");
     }
 
     @FXML
@@ -476,7 +476,7 @@ public class MainViewController {
     @FXML
     private void handleEnrollmentVerification() {
         log.info("Navigating to Enrollment Verification...");
-        showInfo("Enrollment Verification", "Enrollment verification feature coming soon!");
+        loadView("/fxml/EnrollmentVerificationForm.fxml", "✅ Enrollment Verification");
     }
 
     @FXML
@@ -488,56 +488,56 @@ public class MainViewController {
     @FXML
     private void handleWithdrawal() {
         log.info("Navigating to Withdrawal Processing...");
-        showInfo("Withdrawal Processing", "Student withdrawal feature coming soon!");
+        loadView("/fxml/StudentWithdrawalForm.fxml", "📋 Withdrawal Processing");
     }
 
     @FXML
     private void handleEnrollmentReports() {
         log.info("Navigating to Enrollment Reports...");
-        showInfo("Enrollment Reports", "Enrollment reporting feature coming soon!");
+        loadView("/fxml/EnrollmentReportsForm.fxml", "📊 Enrollment Reports");
     }
 
     // ========== STUDENTS MENU HANDLERS ==========
     @FXML
     private void handleStudentDemographics() {
         log.info("Navigating to Student Demographics...");
-        showInfo("Student Demographics", "Student demographics management coming soon!");
+        loadView("/fxml/StudentDemographicsForm.fxml", "👤 Student Demographics");
     }
 
     @FXML
     private void handleParentGuardian() {
         log.info("Navigating to Parent/Guardian Management...");
-        showInfo("Parent/Guardian Management", "Parent/guardian management feature coming soon!");
+        loadView("/fxml/ParentGuardianManagementForm.fxml", "👨‍👩‍👧 Parent/Guardian Management");
     }
 
     @FXML
     private void handleEmergencyContacts() {
         log.info("Navigating to Emergency Contacts...");
-        showInfo("Emergency Contacts", "Emergency contact management coming soon!");
+        loadView("/fxml/EmergencyContactsForm.fxml", "🚨 Emergency Contacts");
     }
 
     @FXML
     private void handleMedicalInfo() {
         log.info("Navigating to Medical Information...");
-        showInfo("Medical Information", "Medical information management coming soon!");
+        loadView("/fxml/MedicalInformationForm.fxml", "🏥 Medical Information");
     }
 
     @FXML
     private void handleAccommodations() {
         log.info("Navigating to Student Accommodations...");
-        showInfo("Student Accommodations", "Student accommodations management coming soon!");
+        loadView("/fxml/plan504-management.fxml", "♿ Student Accommodations (504 Plans)");
     }
 
     @FXML
     private void handleStudentGroups() {
         log.info("Navigating to Student Groups...");
-        showInfo("Student Groups", "Student groups & categories feature coming soon!");
+        loadView("/fxml/StudentGroupsForm.fxml", "👥 Student Groups");
     }
 
     @FXML
     private void handleStudentSearch() {
         log.info("Navigating to Student Search...");
-        showInfo("Student Search", "Student search feature coming soon!");
+        loadView("/fxml/CommandPalette.fxml", "🔍 Student Search");
     }
 
     // ========== ACADEMICS MENU HANDLERS ==========
@@ -733,19 +733,19 @@ public class MainViewController {
     @FXML
     private void handleIEPManagement() {
         log.info("Navigating to IEP Management...");
-        loadView("/fxml/IEPManagement.fxml", "📝 IEP Management");
+        loadView("/fxml/iep-management.fxml", "📝 IEP Management");
     }
 
     @FXML
     private void handle504Plans() {
         log.info("Navigating to 504 Plan Management...");
-        loadView("/fxml/Plan504Management.fxml", "📋 504 Plan Management");
+        loadView("/fxml/plan504-management.fxml", "📋 504 Plan Management");
     }
 
     @FXML
     private void handleRTI() {
         log.info("Navigating to RTI...");
-        loadView("/fxml/SPEDDashboard.fxml", "🎯 Response to Intervention");
+        loadView("/fxml/sped-dashboard.fxml", "🎯 Response to Intervention");
     }
 
     @FXML
@@ -757,7 +757,7 @@ public class MainViewController {
     @FXML
     private void handleSPEDCompliance() {
         log.info("Navigating to SPED Compliance...");
-        loadView("/fxml/SPEDDashboard.fxml", "✅ SPED Compliance");
+        loadView("/fxml/sped-dashboard.fxml", "✅ SPED Compliance");
     }
 
     @FXML
@@ -769,19 +769,19 @@ public class MainViewController {
     @FXML
     private void handleGiftedTalented() {
         log.info("Navigating to Gifted & Talented...");
-        loadView("/fxml/SPEDDashboard.fxml", "⭐ Gifted & Talented");
+        loadView("/fxml/sped-dashboard.fxml", "⭐ Gifted & Talented");
     }
 
     @FXML
     private void handleTitleI() {
         log.info("Navigating to Title I Programs...");
-        loadView("/fxml/SPEDDashboard.fxml", "📚 Title I Programs");
+        loadView("/fxml/sped-dashboard.fxml", "📚 Title I Programs");
     }
 
     @FXML
     private void handleMcKinneyVento() {
         log.info("Navigating to McKinney-Vento...");
-        loadView("/fxml/SPEDDashboard.fxml", "🏠 McKinney-Vento");
+        loadView("/fxml/sped-dashboard.fxml", "🏠 McKinney-Vento");
     }
 
     // ========== HEALTH & COUNSELING MENU HANDLERS ==========
@@ -1102,6 +1102,12 @@ public class MainViewController {
     }
 
     @FXML
+    private void handlePollsAndSurveys() {
+        log.info("Navigating to Polls & Surveys...");
+        loadView("/fxml/PollManagement.fxml", "📊 Polls & Surveys");
+    }
+
+    @FXML
     private void handleEmergencyAlerts() {
         log.info("Navigating to Emergency Alerts...");
         loadView("/fxml/NotificationCenter.fxml", "🚨 Emergency Alerts");
@@ -1135,7 +1141,7 @@ public class MainViewController {
     @FXML
     private void handleStandardSPEDReports() {
         log.info("Navigating to Standard Special Ed Reports...");
-        loadView("/fxml/SPEDDashboard.fxml", "🧩 Special Ed Reports");
+        loadView("/fxml/sped-dashboard.fxml", "🧩 Special Ed Reports");
     }
 
     @FXML
@@ -1297,13 +1303,13 @@ public class MainViewController {
     @FXML
     private void handleDatabaseHealth() {
         log.info("Navigating to Database Health...");
-        showInfo("Database Health", "Database health monitoring coming soon!");
+        loadView("/fxml/DatabaseManagement.fxml", "🗄️ Database Health");
     }
 
     @FXML
     private void handleCheckConflicts() {
         log.info("Checking for schedule conflicts...");
-        showInfo("Conflict Detection", "Schedule conflict detection coming soon!");
+        loadView("/fxml/conflict-dashboard.fxml", "⚠️ Conflict Detection");
     }
 
     // ========== HELP MENU HANDLERS (Additional) ==========
@@ -1347,6 +1353,6 @@ public class MainViewController {
     @FXML
     private void handleDashboard() {
         log.info("Navigating to Dashboard...");
-        showInfo("Dashboard", "Dashboard feature coming soon!");
+        loadView("/fxml/Dashboard.fxml", "📊 Dashboard");
     }
 }

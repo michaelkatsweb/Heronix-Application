@@ -11,9 +11,11 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -42,6 +44,9 @@ public class StagingReviewDashboardController {
 
     @Autowired
     private StagingDataImportService stagingImportService;
+
+    @Value("${heronix.staging.server-url:http://localhost:8090}")
+    private String stagingServerUrl;
 
     // Header
     @FXML private Label lblServerStatus;
@@ -192,13 +197,28 @@ public class StagingReviewDashboardController {
     public void checkStagingServerHealth() {
         log.info("Checking staging server health");
 
-        // TODO: Implement actual health check
-        lblServerStatus.setText("Not Connected");
-        lblServerStatus.getStyleClass().clear();
-        lblServerStatus.getStyleClass().add("status-disconnected");
-
-        showInfo("Staging Server", "Staging server integration not yet configured.\n" +
-            "This will check connectivity when staging server is deployed.");
+        new Thread(() -> {
+            boolean connected = false;
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                org.springframework.http.ResponseEntity<String> healthCheck =
+                        restTemplate.getForEntity(stagingServerUrl + "/actuator/health", String.class);
+                connected = healthCheck.getStatusCode().is2xxSuccessful();
+            } catch (Exception e) {
+                log.debug("Staging server not reachable: {}", e.getMessage());
+            }
+            final boolean isConnected = connected;
+            Platform.runLater(() -> {
+                lblServerStatus.getStyleClass().clear();
+                if (isConnected) {
+                    lblServerStatus.setText("Connected");
+                    lblServerStatus.getStyleClass().add("status-connected");
+                } else {
+                    lblServerStatus.setText("Not Connected");
+                    lblServerStatus.getStyleClass().add("status-disconnected");
+                }
+            });
+        }).start();
     }
 
     /**

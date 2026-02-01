@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 /**
  * Create sample data to test new advanced scheduling features
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @TestPropertySource(properties = {
     "spring.jpa.hibernate.ddl-auto=update"
 })

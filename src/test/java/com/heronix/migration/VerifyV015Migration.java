@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Verification test for V015 migration
  * Tests that Phase 1 Multi-Level Monitoring tables are created correctly
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 public class VerifyV015Migration {
 
     @Autowired

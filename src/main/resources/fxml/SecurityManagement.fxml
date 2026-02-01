@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+    Security & Network Management Dashboard
+    Comprehensive GUI for managing devices, network restrictions, and gateway security
+    Location: src/main/resources/fxml/SecurityManagement.fxml
+-->
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.heronix.ui.controller.SecurityManagementController"
+      spacing="0"
+      styleClass="security-dashboard">
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="15" styleClass="security-header">
+        <padding>
+            <Insets top="20" right="25" bottom="20" left="25"/>
+        </padding>
+        <Label text="🛡️" style="-fx-font-size: 36;"/>
+        <VBox>
+            <Label text="Security &amp; Network Management" styleClass="header-title"
+                   style="-fx-font-size: 26; -fx-font-weight: bold;"/>
+            <Label text="Manage devices, network restrictions, gateway security, and audit logs"
+                   styleClass="header-subtitle"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <VBox alignment="CENTER_RIGHT" spacing="3">
+            <HBox alignment="CENTER_RIGHT" spacing="8">
+                <Label fx:id="gatewayStatusIndicator" text="●" style="-fx-font-size: 14;"/>
+                <Label fx:id="gatewayStatusLabel" text="Gateway Status: Loading..."
+                       style="-fx-font-weight: bold;"/>
+            </HBox>
+            <Label fx:id="lastRefreshLabel" text="Last refresh: --" styleClass="text-muted"/>
+        </VBox>
+        <Button fx:id="refreshBtn" text="🔄 Refresh" onAction="#handleRefreshAll"
+                styleClass="button-primary"/>
+    </HBox>
+
+    <!-- Main Tab Pane -->
+    <TabPane fx:id="mainTabPane" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+
+        <!-- ==================== TAB 1: DASHBOARD OVERVIEW ==================== -->
+        <Tab text="📊 Dashboard">
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="25" bottom="20" left="25"/>
+                    </padding>
+
+                    <!-- Status Cards Row -->
+                    <HBox spacing="20">
+                        <!-- Gateway Status Card -->
+                        <VBox HBox.hgrow="ALWAYS" spacing="10" styleClass="status-card, status-card-primary">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="🔒" style="-fx-font-size: 24;"/>
+                                <Label text="Secure Gateway" style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+                            </HBox>
+                            <Separator/>
+                            <GridPane hgap="15" vgap="8">
+                                <Label text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <Label fx:id="dashGatewayStatus" text="OPERATIONAL" styleClass="status-active"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                                <Label text="Encryption:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <Label fx:id="dashEncryption" text="AES-256-GCM"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                <Label text="Total Transmissions:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                <Label fx:id="dashTotalTransmissions" text="0"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            </GridPane>
+                        </VBox>
+
+                        <!-- Device Status Card -->
+                        <VBox HBox.hgrow="ALWAYS" spacing="10" styleClass="status-card, status-card-success">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="📱" style="-fx-font-size: 24;"/>
+                                <Label text="Registered Devices" style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+                            </HBox>
+                            <Separator/>
+                            <GridPane hgap="15" vgap="8">
+                                <Label text="Active Devices:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <Label fx:id="dashActiveDevices" text="0" style="-fx-font-weight: bold; -fx-font-size: 18;"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                                <Label text="Pending Approval:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <Label fx:id="dashPendingDevices" text="0" styleClass="text-warning"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                <Label text="Expiring Soon:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                <Label fx:id="dashExpiringDevices" text="0"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            </GridPane>
+                        </VBox>
+
+                        <!-- Network Status Card -->
+                        <VBox HBox.hgrow="ALWAYS" spacing="10" styleClass="status-card, status-card-info">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="🌐" style="-fx-font-size: 24;"/>
+                                <Label text="Network Security" style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+                            </HBox>
+                            <Separator/>
+                            <GridPane hgap="15" vgap="8">
+                                <Label text="Offline Mode:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <Label fx:id="dashOfflineMode" text="ENABLED" styleClass="status-active"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                                <Label text="External HTTP:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <Label fx:id="dashExternalHttp" text="BLOCKED"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                <Label text="Webhooks:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                <Label fx:id="dashWebhooks" text="DISABLED"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            </GridPane>
+                        </VBox>
+
+                        <!-- Security Alerts Card -->
+                        <VBox HBox.hgrow="ALWAYS" spacing="10" styleClass="status-card, status-card-warning">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="⚠️" style="-fx-font-size: 24;"/>
+                                <Label text="Security Alerts" style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+                            </HBox>
+                            <Separator/>
+                            <GridPane hgap="15" vgap="8">
+                                <Label text="Blocked Today:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <Label fx:id="dashBlockedToday" text="0" styleClass="text-danger"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                                <Label text="Failed Auth:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <Label fx:id="dashFailedAuth" text="0"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                <Label text="Unregistered Attempts:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                <Label fx:id="dashUnregisteredAttempts" text="0"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            </GridPane>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Recent Activity Section -->
+                    <VBox spacing="10" styleClass="wizard-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="📋" style="-fx-font-size: 20;"/>
+                            <Label text="Recent Gateway Activity" style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="View All" onAction="#handleViewAllActivity" styleClass="button-link"/>
+                        </HBox>
+                        <Separator/>
+                        <TableView fx:id="recentActivityTable" prefHeight="200">
+                            <columns>
+                                <TableColumn fx:id="activityTimeCol" text="Time" prefWidth="150"/>
+                                <TableColumn fx:id="activityDeviceCol" text="Device" prefWidth="200"/>
+                                <TableColumn fx:id="activityTypeCol" text="Type" prefWidth="150"/>
+                                <TableColumn fx:id="activityStatusCol" text="Status" prefWidth="100"/>
+                                <TableColumn fx:id="activityDetailsCol" text="Details" prefWidth="300"/>
+                            </columns>
+                            <placeholder>
+                                <Label text="No recent activity"/>
+                            </placeholder>
+                        </TableView>
+                    </VBox>
+
+                    <!-- Quick Actions -->
+                    <VBox spacing="10" styleClass="wizard-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="⚡" style="-fx-font-size: 20;"/>
+                            <Label text="Quick Actions" style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+                        </HBox>
+                        <Separator/>
+                        <HBox spacing="15">
+                            <Button text="➕ Register New Device" onAction="#handleQuickRegisterDevice"
+                                    styleClass="button-success" prefWidth="180"/>
+                            <Button text="✅ Approve Pending" onAction="#handleQuickApprovePending"
+                                    styleClass="button-primary" prefWidth="180"/>
+                            <Button text="🔍 Security Scan" onAction="#handleSecurityScan"
+                                    styleClass="button-info" prefWidth="180"/>
+                            <Button text="📊 Export Audit Log" onAction="#handleExportAuditLog"
+                                    prefWidth="180"/>
+                            <Button text="🔒 Emergency Lockdown" onAction="#handleEmergencyLockdown"
+                                    styleClass="button-danger" prefWidth="180"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <!-- ==================== TAB 2: DEVICE MANAGEMENT ==================== -->
+        <Tab text="📱 Device Management">
+            <VBox spacing="0">
+                <!-- Device Toolbar -->
+                <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar-section">
+                    <padding>
+                        <Insets top="15" right="20" bottom="15" left="20"/>
+                    </padding>
+                    <Button text="➕ Register Device" onAction="#handleRegisterDevice"
+                            styleClass="button-success"/>
+                    <Button text="✅ Approve Selected" onAction="#handleApproveDevice"
+                            styleClass="button-primary"/>
+                    <Button text="⏸️ Suspend Selected" onAction="#handleSuspendDevice"
+                            styleClass="button-warning"/>
+                    <Button text="🚫 Revoke Selected" onAction="#handleRevokeDevice"
+                            styleClass="button-danger"/>
+                    <Separator orientation="VERTICAL"/>
+                    <Button text="🔄 Renew Registration" onAction="#handleRenewDevice"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <TextField fx:id="deviceSearchField" promptText="🔍 Search devices..."
+                               prefWidth="250"/>
+                    <ComboBox fx:id="deviceStatusFilter" promptText="Filter by status" prefWidth="150"/>
+                    <ComboBox fx:id="deviceTypeFilter" promptText="Filter by type" prefWidth="150"/>
+                </HBox>
+
+                <!-- Device Table -->
+                <TableView fx:id="deviceTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="devSelectCol" text="" prefWidth="40"/>
+                        <TableColumn fx:id="devStatusCol" text="Status" prefWidth="100"/>
+                        <TableColumn fx:id="devNameCol" text="Device Name" prefWidth="200"/>
+                        <TableColumn fx:id="devTypeCol" text="Type" prefWidth="140"/>
+                        <TableColumn fx:id="devOrgCol" text="Organization" prefWidth="180"/>
+                        <TableColumn fx:id="devPermissionsCol" text="Permissions" prefWidth="200"/>
+                        <TableColumn fx:id="devLastTransCol" text="Last Transmission" prefWidth="150"/>
+                        <TableColumn fx:id="devTransCountCol" text="Trans. Count" prefWidth="100"/>
+                        <TableColumn fx:id="devExpiresCol" text="Expires" prefWidth="120"/>
+                        <TableColumn fx:id="devActionsCol" text="Actions" prefWidth="120"/>
+                    </columns>
+                    <placeholder>
+                        <Label text="No registered devices. Click 'Register Device' to add one."/>
+                    </placeholder>
+                </TableView>
+
+                <!-- Device Details Panel (shown when device selected) -->
+                <TitledPane fx:id="deviceDetailsPane" text="Device Details" expanded="false"
+                            styleClass="details-pane">
+                    <GridPane hgap="20" vgap="12">
+                        <padding>
+                            <Insets top="15" right="20" bottom="15" left="20"/>
+                        </padding>
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="150"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                            <ColumnConstraints minWidth="150"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Device ID:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <Label fx:id="detailDeviceId" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <Label text="Admin Email:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                        <Label fx:id="detailAdminEmail" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                        <Label text="Public Key Hash:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <Label fx:id="detailPubKeyHash" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <Label text="Allowed IPs:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                        <Label fx:id="detailAllowedIPs" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                        <Label text="Registered:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <Label fx:id="detailRegistered" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <Label text="Approved By:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                        <Label fx:id="detailApprovedBy" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+
+                        <Label text="Failed Transmissions:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <Label fx:id="detailFailedTrans" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <Label text="Notes:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                        <Label fx:id="detailNotes" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+                    </GridPane>
+                </TitledPane>
+            </VBox>
+        </Tab>
+
+        <!-- ==================== TAB 3: NETWORK RESTRICTIONS ==================== -->
+        <Tab text="🌐 Network Restrictions">
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="25" bottom="20" left="25"/>
+                    </padding>
+
+                    <!-- Offline Mode Card -->
+                    <VBox spacing="15" styleClass="wizard-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="🔌" style="-fx-font-size: 24;"/>
+                            <VBox>
+                                <Label text="Offline Mode Configuration" style="-fx-font-weight: bold; -fx-font-size: 18;"/>
+                                <Label text="Control network isolation settings" styleClass="text-muted"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <VBox alignment="CENTER_RIGHT">
+                                <HBox spacing="10" alignment="CENTER_RIGHT">
+                                    <Label text="Offline Mode:" style="-fx-font-weight: bold;"/>
+                                    <ToggleButton fx:id="offlineModeToggle" text="ENABLED"
+                                                  styleClass="toggle-switch" onAction="#handleToggleOfflineMode"/>
+                                </HBox>
+                            </VBox>
+                        </HBox>
+                        <Separator/>
+                        <GridPane hgap="30" vgap="15">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+
+                            <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <CheckBox fx:id="blockExternalHttpCb" text="Block External HTTP/HTTPS Calls"
+                                          onAction="#handleNetworkSettingChange"/>
+                                <Label text="Prevents all outbound HTTP requests to external hosts"
+                                       styleClass="text-muted" style="-fx-padding: 0 0 0 24;"/>
+                            </VBox>
+
+                            <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <CheckBox fx:id="disableWebhooksCb" text="Disable Webhooks"
+                                          onAction="#handleNetworkSettingChange"/>
+                                <Label text="Prevents webhook delivery to external systems"
+                                       styleClass="text-muted" style="-fx-padding: 0 0 0 24;"/>
+                            </VBox>
+
+                            <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <CheckBox fx:id="disableEmailCb" text="Disable Email Notifications"
+                                          onAction="#handleNetworkSettingChange"/>
+                                <Label text="Prevents sending emails through SMTP"
+                                       styleClass="text-muted" style="-fx-padding: 0 0 0 24;"/>
+                            </VBox>
+
+                            <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <CheckBox fx:id="disableStateLookupsCb" text="Disable State Education Lookups"
+                                          onAction="#handleNetworkSettingChange"/>
+                                <Label text="Blocks external API calls to state education departments"
+                                       styleClass="text-muted" style="-fx-padding: 0 0 0 24;"/>
+                            </VBox>
+
+                            <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                <CheckBox fx:id="useLocalAssetsCb" text="Use Local Assets Only"
+                                          onAction="#handleNetworkSettingChange"/>
+                                <Label text="Serve CSS/JS from local vendor directory instead of CDN"
+                                       styleClass="text-muted" style="-fx-padding: 0 0 0 24;"/>
+                            </VBox>
+
+                            <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <CheckBox fx:id="localAiOnlyCb" text="Local AI Only"
+                                          onAction="#handleNetworkSettingChange"/>
+                                <Label text="Only use local Ollama, block cloud AI services"
+                                       styleClass="text-muted" style="-fx-padding: 0 0 0 24;"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Allowed Hosts Card -->
+                    <VBox spacing="15" styleClass="wizard-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="✅" style="-fx-font-size: 24;"/>
+                            <VBox>
+                                <Label text="Allowed Hosts" style="-fx-font-weight: bold; -fx-font-size: 18;"/>
+                                <Label text="Hosts that are always allowed for internal communication"
+                                       styleClass="text-muted"/>
+                            </VBox>
+                        </HBox>
+                        <Separator/>
+                        <HBox spacing="20">
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label text="Default Allowed Hosts:" style="-fx-font-weight: bold;"/>
+                                <ListView fx:id="allowedHostsList" prefHeight="120">
+                                    <placeholder>
+                                        <Label text="localhost, 127.0.0.1, ::1, host.docker.internal"/>
+                                    </placeholder>
+                                </ListView>
+                            </VBox>
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label text="Allowed IP Patterns:" style="-fx-font-weight: bold;"/>
+                                <ListView fx:id="allowedPatternsList" prefHeight="120">
+                                    <placeholder>
+                                        <Label text="heronix-*, 172.28.*, 192.168.*, 10.*"/>
+                                    </placeholder>
+                                </ListView>
+                            </VBox>
+                        </HBox>
+                        <HBox spacing="10">
+                            <TextField fx:id="newAllowedHostField" promptText="Enter hostname or IP pattern"
+                                       HBox.hgrow="ALWAYS"/>
+                            <Button text="➕ Add" onAction="#handleAddAllowedHost" styleClass="button-success"/>
+                            <Button text="➖ Remove Selected" onAction="#handleRemoveAllowedHost"
+                                    styleClass="button-danger"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Content Security Policy Card -->
+                    <VBox spacing="15" styleClass="wizard-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="🛡️" style="-fx-font-size: 24;"/>
+                            <VBox>
+                                <Label text="Content Security Policy (CSP)" style="-fx-font-weight: bold; -fx-font-size: 18;"/>
+                                <Label text="Browser security headers for web interface"
+                                       styleClass="text-muted"/>
+                            </VBox>
+                        </HBox>
+                        <Separator/>
+                        <GridPane hgap="15" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="150"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="default-src:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <TextField fx:id="cspDefaultSrc" text="'self'" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                            <Label text="script-src:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <TextField fx:id="cspScriptSrc" text="'self' 'unsafe-inline'" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                            <Label text="style-src:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <TextField fx:id="cspStyleSrc" text="'self' 'unsafe-inline'" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                            <Label text="connect-src:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <TextField fx:id="cspConnectSrc" text="'self'" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                            <Label text="frame-ancestors:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                            <TextField fx:id="cspFrameAncestors" text="'none'" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                        </GridPane>
+                        <HBox spacing="10">
+                            <Button text="💾 Save CSP Settings" onAction="#handleSaveCSP" styleClass="button-primary"/>
+                            <Button text="🔄 Reset to Defaults" onAction="#handleResetCSP"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Rate Limiting Card -->
+                    <VBox spacing="15" styleClass="wizard-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="⏱️" style="-fx-font-size: 24;"/>
+                            <VBox>
+                                <Label text="Rate Limiting" style="-fx-font-weight: bold; -fx-font-size: 18;"/>
+                                <Label text="Control request limits to prevent abuse"
+                                       styleClass="text-muted"/>
+                            </VBox>
+                        </HBox>
+                        <Separator/>
+                        <GridPane hgap="20" vgap="12">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="250"/>
+                                <ColumnConstraints prefWidth="150"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="Authenticated Users (req/hour):" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Spinner fx:id="authRateLimitSpinner" min="100" max="50000" initialValue="5000"
+                                     editable="true" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                            <Label text="Unauthenticated (req/hour):" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Spinner fx:id="unauthRateLimitSpinner" min="10" max="1000" initialValue="100"
+                                     editable="true" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                            <Label text="Burst Capacity:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Spinner fx:id="burstCapacitySpinner" min="10" max="500" initialValue="100"
+                                     editable="true" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        </GridPane>
+                        <Button text="💾 Apply Rate Limits" onAction="#handleApplyRateLimits"
+                                styleClass="button-primary"/>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <!-- ==================== TAB 4: DATA PERMISSIONS ==================== -->
+        <Tab text="🔐 Data Permissions">
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="25" bottom="20" left="25"/>
+                    </padding>
+
+                    <!-- Permission Definitions -->
+                    <VBox spacing="15" styleClass="wizard-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="📋" style="-fx-font-size: 24;"/>
+                            <Label text="Data Permission Definitions" style="-fx-font-weight: bold; -fx-font-size: 18;"/>
+                        </HBox>
+                        <Separator/>
+                        <TableView fx:id="permissionDefTable" prefHeight="300">
+                            <columns>
+                                <TableColumn fx:id="permNameCol" text="Permission" prefWidth="220"/>
+                                <TableColumn fx:id="permCategoryCol" text="Category" prefWidth="150"/>
+                                <TableColumn fx:id="permDescCol" text="Description" prefWidth="400"/>
+                                <TableColumn fx:id="permRiskCol" text="Risk Level" prefWidth="100"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+
+                    <!-- Device Permissions Matrix -->
+                    <VBox spacing="15" styleClass="wizard-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="📊" style="-fx-font-size: 24;"/>
+                            <Label text="Device Permissions Matrix" style="-fx-font-weight: bold; -fx-font-size: 18;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <ComboBox fx:id="permMatrixDeviceFilter" promptText="Select device..." prefWidth="250"/>
+                        </HBox>
+                        <Separator/>
+                        <GridPane fx:id="permissionMatrixGrid" hgap="10" vgap="10">
+                            <!-- Dynamically populated -->
+                        </GridPane>
+                        <HBox spacing="10">
+                            <Button text="💾 Save Permissions" onAction="#handleSavePermissions"
+                                    styleClass="button-primary"/>
+                            <Button text="📋 Copy from Device" onAction="#handleCopyPermissions"/>
+                            <Button text="🚫 Revoke All" onAction="#handleRevokeAllPermissions"
+                                    styleClass="button-danger"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Sanitization Rules -->
+                    <VBox spacing="15" styleClass="wizard-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="🧹" style="-fx-font-size: 24;"/>
+                            <Label text="Data Sanitization Rules" style="-fx-font-weight: bold; -fx-font-size: 18;"/>
+                        </HBox>
+                        <Separator/>
+                        <Label text="Fields that are ALWAYS removed before external transmission:"
+                               style="-fx-font-weight: bold;"/>
+                        <FlowPane fx:id="removedFieldsPane" hgap="8" vgap="8">
+                            <!-- Populated with field tags -->
+                        </FlowPane>
+                        <Separator/>
+                        <Label text="Fields that are MASKED (partial data shown):" style="-fx-font-weight: bold;"/>
+                        <FlowPane fx:id="maskedFieldsPane" hgap="8" vgap="8">
+                            <!-- Populated with field tags -->
+                        </FlowPane>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <!-- ==================== TAB 5: TRANSMISSION AUDIT ==================== -->
+        <Tab text="📜 Audit Log">
+            <VBox spacing="0">
+                <!-- Audit Toolbar -->
+                <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar-section">
+                    <padding>
+                        <Insets top="15" right="20" bottom="15" left="20"/>
+                    </padding>
+                    <Label text="Date Range:"/>
+                    <DatePicker fx:id="auditStartDate" promptText="From"/>
+                    <DatePicker fx:id="auditEndDate" promptText="To"/>
+                    <Separator orientation="VERTICAL"/>
+                    <ComboBox fx:id="auditStatusFilter" promptText="Status" prefWidth="120"/>
+                    <ComboBox fx:id="auditDeviceFilter" promptText="Device" prefWidth="180"/>
+                    <Button text="🔍 Search" onAction="#handleSearchAudit" styleClass="button-primary"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="📥 Export CSV" onAction="#handleExportAuditCSV"/>
+                    <Button text="📥 Export PDF" onAction="#handleExportAuditPDF"/>
+                    <Button text="🗑️ Purge Old Logs" onAction="#handlePurgeAuditLogs"
+                            styleClass="button-danger"/>
+                </HBox>
+
+                <!-- Audit Summary -->
+                <HBox spacing="20" styleClass="audit-summary">
+                    <padding>
+                        <Insets top="10" right="20" bottom="10" left="20"/>
+                    </padding>
+                    <VBox alignment="CENTER">
+                        <Label fx:id="auditTotalCount" text="0" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+                        <Label text="Total" styleClass="text-muted"/>
+                    </VBox>
+                    <Separator orientation="VERTICAL"/>
+                    <VBox alignment="CENTER">
+                        <Label fx:id="auditSuccessCount" text="0" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #28a745;"/>
+                        <Label text="Success" styleClass="text-muted"/>
+                    </VBox>
+                    <Separator orientation="VERTICAL"/>
+                    <VBox alignment="CENTER">
+                        <Label fx:id="auditBlockedCount" text="0" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #ffc107;"/>
+                        <Label text="Blocked" styleClass="text-muted"/>
+                    </VBox>
+                    <Separator orientation="VERTICAL"/>
+                    <VBox alignment="CENTER">
+                        <Label fx:id="auditFailedCount" text="0" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #dc3545;"/>
+                        <Label text="Failed" styleClass="text-muted"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Audit Table -->
+                <TableView fx:id="auditTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="auditTimeCol" text="Timestamp" prefWidth="180"/>
+                        <TableColumn fx:id="auditTransIdCol" text="Transmission ID" prefWidth="200"/>
+                        <TableColumn fx:id="auditDeviceCol" text="Device" prefWidth="180"/>
+                        <TableColumn fx:id="auditDataTypeCol" text="Data Type" prefWidth="150"/>
+                        <TableColumn fx:id="auditStatusTableCol" text="Status" prefWidth="100"/>
+                        <TableColumn fx:id="auditOrigFieldsCol" text="Orig Fields" prefWidth="90"/>
+                        <TableColumn fx:id="auditSanitizedFieldsCol" text="Sanitized" prefWidth="90"/>
+                        <TableColumn fx:id="auditReasonCol" text="Block Reason" prefWidth="200"/>
+                    </columns>
+                    <placeholder>
+                        <Label text="No audit records found for the selected criteria"/>
+                    </placeholder>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- ==================== TAB 6: ENCRYPTION SETTINGS ==================== -->
+        <Tab text="🔑 Encryption">
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20" right="25" bottom="20" left="25"/>
+                    </padding>
+
+                    <!-- Master Key Status -->
+                    <VBox spacing="15" styleClass="wizard-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="🔐" style="-fx-font-size: 24;"/>
+                            <VBox>
+                                <Label text="Master Encryption Key" style="-fx-font-weight: bold; -fx-font-size: 18;"/>
+                                <Label text="Used to encrypt device symmetric keys at rest"
+                                       styleClass="text-muted"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="masterKeyStatus" text="● Configured" styleClass="status-active"/>
+                        </HBox>
+                        <Separator/>
+                        <GridPane hgap="15" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="180"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="Key Status:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label fx:id="encKeyStatusLabel" text="Active (from environment)" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                            <Label text="Key Algorithm:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Label text="AES-256" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                            <Label text="Last Rotated:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Label fx:id="encLastRotated" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        </GridPane>
+                        <HBox spacing="10">
+                            <Button text="🔄 Rotate Master Key" onAction="#handleRotateMasterKey"
+                                    styleClass="button-warning"/>
+                            <Button text="📋 Generate New Key" onAction="#handleGenerateNewKey"/>
+                        </HBox>
+                        <Label text="⚠️ Warning: Rotating the master key requires re-encrypting all device keys."
+                               styleClass="text-warning"/>
+                    </VBox>
+
+                    <!-- Encryption Algorithms -->
+                    <VBox spacing="15" styleClass="wizard-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="🔢" style="-fx-font-size: 24;"/>
+                            <Label text="Encryption Configuration" style="-fx-font-weight: bold; -fx-font-size: 18;"/>
+                        </HBox>
+                        <Separator/>
+                        <GridPane hgap="30" vgap="15">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+
+                            <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Symmetric Encryption" style="-fx-font-weight: bold;"/>
+                                <Label text="Algorithm: AES-256-GCM"/>
+                                <Label text="IV Length: 12 bytes"/>
+                                <Label text="Tag Length: 128 bits"/>
+                                <Label text="Status: ✅ FIPS Compliant" styleClass="status-active"/>
+                            </VBox>
+
+                            <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="Asymmetric Encryption" style="-fx-font-weight: bold;"/>
+                                <Label text="Algorithm: RSA-2048"/>
+                                <Label text="Padding: OAEP-SHA256"/>
+                                <Label text="Signatures: SHA256withRSA"/>
+                                <Label text="Status: ✅ FIPS Compliant" styleClass="status-active"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Key Generation Tool -->
+                    <VBox spacing="15" styleClass="wizard-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="🔧" style="-fx-font-size: 24;"/>
+                            <Label text="Key Generation Tools" style="-fx-font-weight: bold; -fx-font-size: 18;"/>
+                        </HBox>
+                        <Separator/>
+                        <HBox spacing="15">
+                            <Button text="Generate AES-256 Key" onAction="#handleGenerateAESKey"
+                                    styleClass="button-primary"/>
+                            <Button text="Generate RSA Key Pair" onAction="#handleGenerateRSAKeyPair"
+                                    styleClass="button-primary"/>
+                            <Button text="Generate Device Certificate" onAction="#handleGenerateDeviceCert"/>
+                        </HBox>
+                        <TextArea fx:id="generatedKeyArea" promptText="Generated key will appear here..."
+                                  prefRowCount="6" editable="false" wrapText="true"/>
+                        <HBox spacing="10">
+                            <Button text="📋 Copy to Clipboard" onAction="#handleCopyGeneratedKey"/>
+                            <Button text="💾 Save to File" onAction="#handleSaveGeneratedKey"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+    </TabPane>
+
+    <!-- Status Bar -->
+    <HBox spacing="20" alignment="CENTER_LEFT" styleClass="status-bar">
+        <padding>
+            <Insets top="8" right="20" bottom="8" left="20"/>
+        </padding>
+        <Label fx:id="statusMessage" text="Ready"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="connectionStatus" text="● Connected to Gateway"/>
+        <Separator orientation="VERTICAL"/>
+        <Label fx:id="userLabel" text="Admin: system"/>
+    </HBox>
+</VBox>

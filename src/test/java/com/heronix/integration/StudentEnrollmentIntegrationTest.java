@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @version 1.0.0
  * @since December 20, 2025 - Integration Testing Phase
  */
-@SpringBootTest(classes = com.heronix.HeronixSchedulerApiApplication.class)
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @ActiveProfiles("test")
 @Transactional
 public class StudentEnrollmentIntegrationTest {

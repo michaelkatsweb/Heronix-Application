@@ -1,7 +1,9 @@
 package com.heronix.ui.controller;
 
 import com.heronix.model.domain.AttendanceRecord;
+import com.heronix.model.domain.AttendanceRecord.AttendanceStatus;
 import com.heronix.model.domain.Student;
+import com.heronix.repository.AttendanceRecordRepository;
 import com.heronix.service.impl.AttendanceService;
 import com.heronix.service.StudentService;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -15,6 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +29,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class AttendanceReportsController {
 
@@ -34,6 +38,9 @@ public class AttendanceReportsController {
 
     @Autowired
     private StudentService studentService;
+
+    @Autowired
+    private AttendanceRecordRepository attendanceRecordRepository;
 
     // Left Panel - Filters
     @FXML private ComboBox<String> reportTypeComboBox;
@@ -190,10 +197,12 @@ public class AttendanceReportsController {
     }
 
     private void loadStudents() {
-        // Load all students for student filter
-        // In production, load from service
         allStudents.clear();
-        // allStudents.addAll(studentService.findAllActiveStudents());
+        try {
+            allStudents.addAll(studentService.getActiveStudents());
+        } catch (Exception e) {
+            log.warn("Failed to load students for filter: {}", e.getMessage());
+        }
         studentComboBox.setItems(allStudents);
     }
 
@@ -308,7 +317,7 @@ public class AttendanceReportsController {
 
         reportTableView.getColumns().addAll(dateColumn, presentColumn, absentColumn, tardyColumn, rateColumn);
 
-        // Generate sample data
+        // Query real attendance data per day
         LocalDate currentDate = startDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
 
@@ -316,15 +325,18 @@ public class AttendanceReportsController {
         int totalAbsent = 0;
         int totalTardy = 0;
 
-        Random random = new Random();
+        List<AttendanceRecord> allRecords = attendanceRecordRepository.findByDateRange(currentDate, endDate);
+        Map<LocalDate, List<AttendanceRecord>> byDate = allRecords.stream()
+                .collect(Collectors.groupingBy(AttendanceRecord::getAttendanceDate));
 
         while (!currentDate.isAfter(endDate)) {
             if (currentDate.getDayOfWeek() != DayOfWeek.SATURDAY &&
                 currentDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
 
-                int present = 450 + random.nextInt(50);
-                int absent = 20 + random.nextInt(30);
-                int tardy = 10 + random.nextInt(20);
+                List<AttendanceRecord> dayRecords = byDate.getOrDefault(currentDate, Collections.emptyList());
+                int present = (int) dayRecords.stream().filter(AttendanceRecord::isPresent).count();
+                int absent = (int) dayRecords.stream().filter(AttendanceRecord::isAbsent).count();
+                int tardy = (int) dayRecords.stream().filter(r -> r.getStatus() == AttendanceStatus.TARDY).count();
                 int total = present + absent;
                 double rate = total > 0 ? (present * 100.0 / total) : 0;
 
@@ -398,38 +410,38 @@ public class AttendanceReportsController {
         reportTableView.getColumns().addAll(studentIdColumn, studentNameColumn, gradeColumn,
                 absencesColumn, tardiesColumn, rateColumn);
 
-        // Generate sample student data
-        String[] firstNames = {"John", "Emma", "Michael", "Sophia", "William", "Olivia", "James", "Ava"};
-        String[] lastNames = {"Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis"};
-        String[] grades = {"9th Grade", "10th Grade", "11th Grade", "12th Grade"};
+        // Query real student attendance data
+        LocalDate start = startDatePicker.getValue();
+        LocalDate end = endDatePicker.getValue();
+        List<Student> students = filterStudentList();
 
-        Random random = new Random();
         int totalPresent = 0;
         int totalAbsent = 0;
         int totalTardy = 0;
 
-        for (int i = 0; i < 50; i++) {
-            String studentId = "S" + String.format("%05d", 10000 + i);
-            String studentName = lastNames[random.nextInt(lastNames.length)] + ", " +
-                    firstNames[random.nextInt(firstNames.length)];
-            String grade = grades[random.nextInt(grades.length)];
+        for (Student student : students) {
+            try {
+                AttendanceService.AttendanceSummary summary =
+                        attendanceService.getStudentAttendanceSummary(student.getId(), start, end);
+                int absences = summary.getDaysAbsent();
+                int tardies = summary.getDaysTardy();
+                int present = summary.getDaysPresent();
+                double rate = summary.getAttendanceRate();
 
-            int absences = random.nextInt(15);
-            int tardies = random.nextInt(10);
-            int daysInPeriod = 20;
-            int present = daysInPeriod - absences;
-            double rate = (present * 100.0 / daysInPeriod);
+                totalPresent += present;
+                totalAbsent += absences;
+                totalTardy += tardies;
 
-            totalPresent += present;
-            totalAbsent += absences;
-            totalTardy += tardies;
-
-            reportData.add(new AttendanceReportRow(
-                    studentId, studentName, grade,
-                    String.valueOf(absences),
-                    String.valueOf(tardies),
-                    String.format("%.2f%%", rate)
-            ));
+                reportData.add(new AttendanceReportRow(
+                        student.getStudentId(), student.getFullName(),
+                        student.getGradeLevel() != null ? student.getGradeLevel() : "",
+                        String.valueOf(absences),
+                        String.valueOf(tardies),
+                        String.format("%.2f%%", rate)
+                ));
+            } catch (Exception e) {
+                log.warn("Failed to get attendance for student {}: {}", student.getStudentId(), e.getMessage());
+            }
         }
 
         reportTableView.setItems(reportData);
@@ -484,27 +496,28 @@ public class AttendanceReportsController {
         reportSubtitleLabel.setText("Perfect attendance - " + formatDateRange());
 
         ObservableList<PerfectAttendanceRow> perfectStudents = FXCollections.observableArrayList();
+        LocalDate start = startDatePicker.getValue();
+        LocalDate end = endDatePicker.getValue();
 
-        String[] firstNames = {"John", "Emma", "Michael", "Sophia", "William", "Olivia"};
-        String[] lastNames = {"Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia"};
-        String[] grades = {"9th Grade", "10th Grade", "11th Grade", "12th Grade"};
-        String[] homerooms = {"101", "102", "103", "104", "105"};
-
-        Random random = new Random();
-
-        for (int i = 0; i < 25; i++) {
-            String studentId = "S" + String.format("%05d", 10000 + i);
-            String studentName = lastNames[random.nextInt(lastNames.length)] + ", " +
-                    firstNames[random.nextInt(firstNames.length)];
-            String grade = grades[random.nextInt(grades.length)];
-            String homeroom = homerooms[random.nextInt(homerooms.length)];
-            int daysPresent = 20;
-            int tardies = random.nextInt(3); // Max 2 for perfect attendance
-            int streak = 10 + random.nextInt(30);
-
-            perfectStudents.add(new PerfectAttendanceRow(
-                    studentId, studentName, grade, homeroom, daysPresent, tardies, streak
-            ));
+        try {
+            List<Student> students = filterStudentList();
+            for (Student student : students) {
+                AttendanceService.AttendanceSummary summary =
+                        attendanceService.getStudentAttendanceSummary(student.getId(), start, end);
+                if (summary.getDaysAbsent() == 0 && summary.getTotalDays() > 0) {
+                    perfectStudents.add(new PerfectAttendanceRow(
+                            student.getStudentId(),
+                            student.getFullName(),
+                            student.getGradeLevel() != null ? student.getGradeLevel() : "",
+                            "",
+                            summary.getDaysPresent(),
+                            summary.getDaysTardy(),
+                            summary.getDaysPresent() // streak approximation
+                    ));
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to load perfect attendance data", e);
         }
 
         perfectAttendanceTableView.setItems(perfectStudents);
@@ -576,69 +589,72 @@ public class AttendanceReportsController {
     }
 
     private void generateChronicAbsentStudentData() {
-        Random random = new Random();
-        String[] firstNames = {"John", "Emma", "Michael", "Sophia"};
-        String[] lastNames = {"Smith", "Johnson", "Williams", "Brown"};
-        String[] grades = {"9th Grade", "10th Grade", "11th Grade", "12th Grade"};
-
-        for (int i = 0; i < 15; i++) {
-            String studentId = "S" + String.format("%05d", 20000 + i);
-            String studentName = lastNames[random.nextInt(lastNames.length)] + ", " +
-                    firstNames[random.nextInt(firstNames.length)];
-            String grade = grades[random.nextInt(grades.length)];
-            int absences = 3 + random.nextInt(10); // 3-12 absences
-            int daysInPeriod = 20;
-            double rate = ((daysInPeriod - absences) * 100.0 / daysInPeriod);
-
-            reportData.add(new AttendanceReportRow(
-                    studentId, studentName, grade,
-                    String.valueOf(absences),
-                    String.format("%.2f%%", rate)
-            ));
+        LocalDate start = startDatePicker.getValue();
+        LocalDate end = endDatePicker.getValue();
+        try {
+            List<AttendanceService.ChronicAbsenceAlert> alerts =
+                    attendanceService.getChronicAbsenceAlerts(start, end, 3);
+            for (AttendanceService.ChronicAbsenceAlert alert : alerts) {
+                Long absences = attendanceRecordRepository.countAbsencesByStudentIdAndDateRange(
+                        alert.getStudentId(), start, end);
+                Double rate = attendanceRecordRepository.calculateAttendanceRateByStudentIdAndDateRange(
+                        alert.getStudentId(), start, end);
+                reportData.add(new AttendanceReportRow(
+                        String.valueOf(alert.getStudentId()),
+                        alert.getStudentName(),
+                        alert.getGradeLevel() != null ? alert.getGradeLevel() : "",
+                        String.valueOf(absences != null ? absences : alert.getTotalAbsences()),
+                        String.format("%.2f%%", rate != null ? rate : 0.0)
+                ));
+            }
+        } catch (Exception e) {
+            log.error("Failed to load chronic absenteeism data", e);
         }
     }
 
     private void generateTruancyData() {
-        Random random = new Random();
-        String[] firstNames = {"James", "Sarah", "Robert", "Lisa"};
-        String[] lastNames = {"Davis", "Miller", "Wilson", "Moore"};
-        String[] grades = {"9th Grade", "10th Grade", "11th Grade", "12th Grade"};
-
-        for (int i = 0; i < 12; i++) {
-            String studentId = "S" + String.format("%05d", 30000 + i);
-            String studentName = lastNames[random.nextInt(lastNames.length)] + ", " +
-                    firstNames[random.nextInt(firstNames.length)];
-            String grade = grades[random.nextInt(grades.length)];
-            int unexcusedAbsences = 5 + random.nextInt(10);
-            int daysInPeriod = 20;
-            double rate = ((daysInPeriod - unexcusedAbsences) * 100.0 / daysInPeriod);
-
-            reportData.add(new AttendanceReportRow(
-                    studentId, studentName, grade,
-                    String.valueOf(unexcusedAbsences) + " unexcused",
-                    String.format("%.2f%%", rate)
-            ));
+        LocalDate start = startDatePicker.getValue();
+        LocalDate end = endDatePicker.getValue();
+        try {
+            List<Student> students = filterStudentList();
+            for (Student student : students) {
+                Long unexcused = attendanceRecordRepository.countUnexcusedAbsencesByStudentIdAndDateRange(
+                        student.getId(), start, end);
+                if (unexcused != null && unexcused >= 3) {
+                    Double rate = attendanceRecordRepository.calculateAttendanceRateByStudentIdAndDateRange(
+                            student.getId(), start, end);
+                    reportData.add(new AttendanceReportRow(
+                            student.getStudentId(), student.getFullName(),
+                            student.getGradeLevel() != null ? student.getGradeLevel() : "",
+                            unexcused + " unexcused",
+                            String.format("%.2f%%", rate != null ? rate : 0.0)
+                    ));
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to load truancy data", e);
         }
     }
 
     private void generateTardyData() {
-        Random random = new Random();
-        String[] firstNames = {"David", "Jennifer", "Daniel", "Maria"};
-        String[] lastNames = {"Anderson", "Thomas", "Jackson", "White"};
-        String[] grades = {"9th Grade", "10th Grade", "11th Grade", "12th Grade"};
-
-        for (int i = 0; i < 20; i++) {
-            String studentId = "S" + String.format("%05d", 40000 + i);
-            String studentName = lastNames[random.nextInt(lastNames.length)] + ", " +
-                    firstNames[random.nextInt(firstNames.length)];
-            String grade = grades[random.nextInt(grades.length)];
-            int tardies = 5 + random.nextInt(15);
-
-            reportData.add(new AttendanceReportRow(
-                    studentId, studentName, grade,
-                    String.valueOf(tardies) + " tardies",
-                    "N/A"
-            ));
+        LocalDate start = startDatePicker.getValue();
+        LocalDate end = endDatePicker.getValue();
+        try {
+            List<Student> students = filterStudentList();
+            for (Student student : students) {
+                Long tardies = attendanceRecordRepository.countTardiesByStudentIdAndDateRange(
+                        student.getId(), start, end);
+                if (tardies != null && tardies >= 3) {
+                    reportData.add(new AttendanceReportRow(
+                            student.getStudentId(), student.getFullName(),
+                            student.getGradeLevel() != null ? student.getGradeLevel() : "",
+                            tardies + " tardies",
+                            "N/A"
+                    ));
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to load tardy data", e);
         }
     }
 
@@ -648,20 +664,47 @@ public class AttendanceReportsController {
         ObservableList<String> tardyList = FXCollections.observableArrayList();
         ObservableList<String> warningList = FXCollections.observableArrayList();
 
-        chronicList.add("Smith, John (S10001) - 12 absences (60% attendance)");
-        chronicList.add("Johnson, Emma (S10002) - 10 absences (50% attendance)");
-        chronicList.add("Williams, Michael (S10003) - 8 absences (60% attendance)");
+        LocalDate start = startDatePicker.getValue();
+        LocalDate end = endDatePicker.getValue();
 
-        truancyList.add("Brown, Sophia (S10004) - 8 unexcused absences");
-        truancyList.add("Jones, William (S10005) - 7 unexcused absences");
+        try {
+            // Chronic absenteeism (>= 5 absences)
+            List<AttendanceService.ChronicAbsenceAlert> alerts =
+                    attendanceService.getChronicAbsenceAlerts(start, end, 5);
+            for (AttendanceService.ChronicAbsenceAlert alert : alerts) {
+                Double rate = attendanceRecordRepository.calculateAttendanceRateByStudentIdAndDateRange(
+                        alert.getStudentId(), start, end);
+                chronicList.add(String.format("%s - %d absences (%.0f%% attendance)",
+                        alert.getStudentName(), alert.getTotalAbsences(),
+                        rate != null ? rate : 0.0));
+            }
 
-        tardyList.add("Garcia, Olivia (S10006) - 15 tardies");
-        tardyList.add("Miller, James (S10007) - 12 tardies");
-        tardyList.add("Davis, Ava (S10008) - 10 tardies");
+            // Truancy (unexcused >= 3), tardies (>= 5), early warning (3-4 absences)
+            List<Student> students = filterStudentList();
+            for (Student student : students) {
+                Long unexcused = attendanceRecordRepository.countUnexcusedAbsencesByStudentIdAndDateRange(
+                        student.getId(), start, end);
+                Long tardies = attendanceRecordRepository.countTardiesByStudentIdAndDateRange(
+                        student.getId(), start, end);
+                Long absences = attendanceRecordRepository.countAbsencesByStudentIdAndDateRange(
+                        student.getId(), start, end);
 
-        warningList.add("Martinez, Isabella (S10009) - 4 absences");
-        warningList.add("Rodriguez, Liam (S10010) - 3 absences");
-        warningList.add("Hernandez, Mia (S10011) - 3 absences");
+                if (unexcused != null && unexcused >= 3) {
+                    truancyList.add(String.format("%s (%s) - %d unexcused absences",
+                            student.getFullName(), student.getStudentId(), unexcused));
+                }
+                if (tardies != null && tardies >= 5) {
+                    tardyList.add(String.format("%s (%s) - %d tardies",
+                            student.getFullName(), student.getStudentId(), tardies));
+                }
+                if (absences != null && absences >= 3 && absences <= 4) {
+                    warningList.add(String.format("%s (%s) - %d absences",
+                            student.getFullName(), student.getStudentId(), absences));
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to generate intervention lists", e);
+        }
 
         chronicAbsenteeismList.setItems(chronicList);
         truancyRiskList.setItems(truancyList);
@@ -824,6 +867,25 @@ public class AttendanceReportsController {
                     endDatePicker.getValue().format(formatter);
         }
         return "";
+    }
+
+    /**
+     * Returns students filtered by grade level and student combo box selections.
+     */
+    private List<Student> filterStudentList() {
+        // If a specific student is selected, return just that student
+        if (studentComboBox.getValue() != null) {
+            return List.of(studentComboBox.getValue());
+        }
+        List<Student> students = allStudents.isEmpty() ? studentService.getActiveStudents() : new ArrayList<>(allStudents);
+        String gradeFilter = gradeLevelComboBox.getValue();
+        if (gradeFilter != null && !"All Grades".equals(gradeFilter)) {
+            // Extract numeric grade or match by name
+            students = students.stream()
+                    .filter(s -> gradeFilter.contains(s.getGradeLevel() != null ? s.getGradeLevel() : ""))
+                    .collect(Collectors.toList());
+        }
+        return students;
     }
 
     private void showAlert(Alert.AlertType type, String title, String content) {

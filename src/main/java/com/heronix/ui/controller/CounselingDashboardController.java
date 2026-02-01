@@ -5,6 +5,7 @@ import com.heronix.model.domain.Teacher;
 import com.heronix.model.domain.CounselingReferral;
 import com.heronix.service.CounselingManagementService;
 import com.heronix.service.CounselingSessionService;
+import com.heronix.service.export.AnalyticsExportService;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -19,6 +20,7 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -49,6 +52,9 @@ public class CounselingDashboardController {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private AnalyticsExportService analyticsExportService;
 
     // Statistics Labels
     @FXML private Label totalReferralsLabel;
@@ -744,8 +750,39 @@ public class CounselingDashboardController {
 
     @FXML
     private void handleExport() {
-        // TODO: Implement export functionality
-        showInfo("Export", "Export functionality will be implemented in a future update.");
+        if (filteredReferrals.isEmpty()) {
+            showInfo("Export", "No referrals to export. Please adjust filters or date range.");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export Counseling Referrals");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"));
+        fileChooser.setInitialFileName("counseling-referrals-" +
+                LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ".xlsx");
+
+        File file = fileChooser.showSaveDialog(referralsTable.getScene().getWindow());
+        if (file != null) {
+            logger.info("Exporting counseling referrals to {}", file.getAbsolutePath());
+
+            new Thread(() -> {
+                try {
+                    LocalDate startDate = startDatePicker.getValue();
+                    LocalDate endDate = endDatePicker.getValue();
+                    byte[] excelData = analyticsExportService.exportCounselingReferralsExcel(
+                            filteredReferrals, startDate, endDate);
+                    analyticsExportService.writeToFile(excelData, file);
+                    javafx.application.Platform.runLater(() ->
+                            showInfo("Export Complete", "Counseling referrals exported successfully to:\n" +
+                                    file.getName() + "\n\nTotal referrals: " + filteredReferrals.size()));
+                } catch (Exception e) {
+                    logger.error("Error exporting counseling referrals", e);
+                    javafx.application.Platform.runLater(() ->
+                            showError("Failed to export: " + e.getMessage()));
+                }
+            }).start();
+        }
     }
 
     private void handleViewReferral(CounselingReferral referral) {

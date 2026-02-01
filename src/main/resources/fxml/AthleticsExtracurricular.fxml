@@ -13,7 +13,7 @@
 
     <top>
         <VBox spacing="15" styleClass="header-gradient">
-            <Label text="Athletics & Extracurricular Activities" styleClass="page-title-white"/>
+            <Label text="Athletics and Extracurricular Activities" styleClass="page-title-white"/>
             <HBox spacing="15">
                 <VBox spacing="3" HBox.hgrow="ALWAYS" styleClass="card-transparent">
                     <Label text="Teams/Clubs" styleClass="text-white"/>
@@ -29,21 +29,27 @@
 
     <center>
         <TabPane tabClosingPolicy="UNAVAILABLE">
-            <Tab text="Teams & Clubs">
+            <Tab text="Teams and Clubs">
                 <TableView fx:id="teamsTableView" style="-fx-padding: 15;">
                     <columns>
-                        <TableColumn fx:id="nameColumn" text="Name" prefWidth="200"/>
+                        <TableColumn fx:id="teamNameColumn" text="Name" prefWidth="200"/>
+                        <TableColumn fx:id="sportColumn" text="Sport" prefWidth="100"/>
+                        <TableColumn fx:id="seasonColumn" text="Season" prefWidth="80"/>
                         <TableColumn fx:id="coachColumn" text="Coach/Advisor" prefWidth="150"/>
-                        <TableColumn fx:id="membersColumn" text="Members" prefWidth="80"/>
+                        <TableColumn fx:id="rosterSizeColumn" text="Members" prefWidth="80"/>
+                        <TableColumn fx:id="recordColumn" text="Record" prefWidth="80"/>
                     </columns>
                 </TableView>
             </Tab>
             <Tab text="Schedules">
                 <TableView fx:id="scheduleTableView" style="-fx-padding: 15;">
                     <columns>
-                        <TableColumn fx:id="eventColumn" text="Event" prefWidth="200"/>
-                        <TableColumn fx:id="dateColumn" text="Date" prefWidth="100"/>
-                        <TableColumn fx:id="locationColumn" text="Location" prefWidth="150"/>
+                        <TableColumn fx:id="eventNameColumn" text="Event" prefWidth="200"/>
+                        <TableColumn fx:id="eventTeamColumn" text="Team" prefWidth="120"/>
+                        <TableColumn fx:id="eventDateColumn" text="Date" prefWidth="150"/>
+                        <TableColumn fx:id="eventTypeColumn" text="Type" prefWidth="100"/>
+                        <TableColumn fx:id="opponentColumn" text="Opponent" prefWidth="120"/>
+                        <TableColumn fx:id="resultColumn" text="Result" prefWidth="100"/>
                     </columns>
                 </TableView>
             </Tab>

@@ -1836,7 +1836,7 @@ public class MainController {
     @FXML
     public void loadSPEDDashboard() {
         log.info("Action: SPED Dashboard");
-        loadView("SPED Dashboard", "/fxml/SPEDDashboard.fxml");
+        loadView("SPED Dashboard", "/fxml/sped-dashboard.fxml");
     }
 
     /**
@@ -3040,7 +3040,7 @@ public class MainController {
     @FXML private void handleRestorativePractices() { loadView("Restorative Practices", "/fxml/BehaviorDashboard.fxml"); }
     @FXML private void handleDisciplineReports() { loadView("Discipline Reports", "/fxml/DisciplineReports.fxml"); }
     @FXML private void handleRTI() { loadView("RTI (Response to Intervention)", "/fxml/at-risk-students.fxml"); }
-    @FXML private void handleSpecialEdServices() { loadView("Special Ed Services", "/fxml/SPEDDashboard.fxml"); }
+    @FXML private void handleSpecialEdServices() { loadView("Special Ed Services", "/fxml/sped-dashboard.fxml"); }
     @FXML private void handleSPEDCompliance() { loadView("SPED Compliance & Reporting", "/fxml/sped-dashboard.fxml"); }
     @FXML private void handleELLServices() { loadView("ELL/ESL Services", "/fxml/ELLDashboard.fxml"); }
     @FXML private void handleGiftedTalented() { loadView("Gifted & Talented", "/fxml/GiftedDashboard.fxml"); }
@@ -3100,7 +3100,7 @@ public class MainController {
     @FXML private void handleStandardAttendanceReports() { loadView("Attendance Reports", "/fxml/AttendanceReports.fxml"); }
     @FXML private void handleStandardGradeReports() { loadView("Grade Reports", "/fxml/AssignmentReports.fxml"); }
     @FXML private void handleStandardDisciplineReports() { loadView("Discipline Reports", "/fxml/DisciplineReports.fxml"); }
-    @FXML private void handleStandardSPEDReports() { loadView("Special Ed Reports", "/fxml/SPEDDashboard.fxml"); }
+    @FXML private void handleStandardSPEDReports() { loadView("Special Ed Reports", "/fxml/sped-dashboard.fxml"); }
     @FXML private void handleCustomReports() { loadView("Custom Report Builder", "/fxml/ReportGenerationDialog.fxml"); }
     @FXML private void handleStateReporting() { loadView("State Reporting", "/fxml/SISExport.fxml"); }
     @FXML private void handleFederalReporting() { loadView("Federal Reporting", "/fxml/SISExport.fxml"); }

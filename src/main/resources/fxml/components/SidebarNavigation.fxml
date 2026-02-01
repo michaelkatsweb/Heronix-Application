@@ -267,6 +267,10 @@
                 <Label fx:id="navSecureSyncLabel" text="Secure Sync"/>
             </HBox>
 
+            <HBox fx:id="navSecureAudit" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSecureAudit">
+                <Label fx:id="navSecureAuditLabel" text="Security Audit"/>
+            </HBox>
+
         </VBox>
     </ScrollPane>
 

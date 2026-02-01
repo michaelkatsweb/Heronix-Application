@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  *
  * NOTE: @Transactional removed to persist data
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 public class CreatePhase2BTestData {
 
     @Autowired

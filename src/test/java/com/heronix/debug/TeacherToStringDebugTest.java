@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since December 15, 2025 - Bug Fix Session
  */
 @Slf4j
-@SpringBootTest(classes = com.heronix.HeronixSchedulerApiApplication.class)
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 public class TeacherToStringDebugTest {
 
     @Autowired

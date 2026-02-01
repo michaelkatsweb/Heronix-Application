@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * Phase 2B Test Data Verification
  * Verifies all required data exists for end-to-end testing
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 public class VerifyPhase2BTestData {
 
     @Autowired

@@ -669,7 +669,7 @@ public class AttendanceAnalyticsController {
 
         File file = fileChooser.showSaveDialog(analyticsTabs.getScene().getWindow());
         if (file != null) {
-            setStatus("PDF export coming soon");
+            exportAttendanceDataToFile(file, "Attendance Analytics Report (PDF format not supported - exported as CSV)");
         }
     }
 
@@ -678,12 +678,12 @@ public class AttendanceAnalyticsController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Export Attendance Analytics Data");
         fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"));
-        fileChooser.setInitialFileName("attendance-analytics-data.xlsx");
+                new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        fileChooser.setInitialFileName("attendance-analytics-data.csv");
 
         File file = fileChooser.showSaveDialog(analyticsTabs.getScene().getWindow());
         if (file != null) {
-            setStatus("Excel export coming soon");
+            exportAttendanceDataToFile(file, "Attendance Analytics Data");
         }
     }
 
@@ -697,17 +697,75 @@ public class AttendanceAnalyticsController {
 
         File file = fileChooser.showSaveDialog(analyticsTabs.getScene().getWindow());
         if (file != null) {
-            setStatus("CSV export coming soon");
+            exportAttendanceDataToFile(file, "Attendance Analytics Data");
         }
     }
 
     @FXML
     private void handleExportChronicList() {
-        setStatus("Chronic absenteeism list export coming soon");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export Chronic Absenteeism List");
+        fileChooser.setInitialFileName("chronic_absenteeism_list.csv");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        File file = fileChooser.showSaveDialog(analyticsTabs.getScene().getWindow());
+        if (file != null) {
+            exportTableToFile(file, chronicAbsentTable, "Chronic Absenteeism List");
+        }
     }
 
     @FXML
     private void handleExportTardyList() {
-        setStatus("Frequent tardy list export coming soon");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export Frequent Tardy List");
+        fileChooser.setInitialFileName("frequent_tardy_list.csv");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        File file = fileChooser.showSaveDialog(analyticsTabs.getScene().getWindow());
+        if (file != null) {
+            exportTableToFile(file, frequentTardyTable, "Frequent Tardy List");
+        }
+    }
+
+    private void exportAttendanceDataToFile(File file, String title) {
+        try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.OutputStreamWriter(
+                new java.io.FileOutputStream(file), java.nio.charset.StandardCharsets.UTF_8))) {
+            pw.write('\ufeff');
+            pw.println(title);
+            pw.println("Generated: " + java.time.LocalDate.now());
+            pw.println();
+            if (chronicAbsentTable != null && chronicAbsentTable.getItems() != null) {
+                pw.println("Chronic Absenteeism");
+                for (var row : chronicAbsentTable.getItems()) {
+                    pw.println(row.values().stream().map(String::valueOf).collect(java.util.stream.Collectors.joining(",")));
+                }
+            }
+            pw.println();
+            if (frequentTardyTable != null && frequentTardyTable.getItems() != null) {
+                pw.println("Frequent Tardy");
+                for (var row : frequentTardyTable.getItems()) {
+                    pw.println(row.values().stream().map(String::valueOf).collect(java.util.stream.Collectors.joining(",")));
+                }
+            }
+            setStatus("Exported to " + file.getName());
+        } catch (Exception e) {
+            setStatus("Export failed: " + e.getMessage());
+        }
+    }
+
+    private void exportTableToFile(File file, TableView<Map<String, Object>> table, String title) {
+        try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.OutputStreamWriter(
+                new java.io.FileOutputStream(file), java.nio.charset.StandardCharsets.UTF_8))) {
+            pw.write('\ufeff');
+            pw.println(title);
+            pw.println("Generated: " + java.time.LocalDate.now());
+            pw.println();
+            if (table != null && table.getItems() != null) {
+                for (var row : table.getItems()) {
+                    pw.println(row.values().stream().map(String::valueOf).collect(java.util.stream.Collectors.joining(",")));
+                }
+            }
+            setStatus("Exported " + (table != null ? table.getItems().size() : 0) + " records to " + file.getName());
+        } catch (Exception e) {
+            setStatus("Export failed: " + e.getMessage());
+        }
     }
 }

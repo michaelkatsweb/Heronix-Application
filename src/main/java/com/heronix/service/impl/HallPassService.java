@@ -269,6 +269,72 @@ public class HallPassService {
     }
 
     /**
+     * Manually end a hall pass session (for admin/teacher override without QR scan)
+     *
+     * @param sessionId ID of the hall pass session to end
+     * @param returnRoom Room student is returning to (optional)
+     * @param reason Reason for manual end (required for audit)
+     * @return Hall pass result with completion details
+     */
+    @Transactional
+    public HallPassResult manualEndHallPass(Long sessionId, String returnRoom, String reason) {
+        log.info("Manually ending hall pass: sessionId={}, reason={}", sessionId, reason);
+
+        // ✅ NULL SAFE: Validate session ID
+        if (sessionId == null) {
+            return HallPassResult.failure("Session ID is required");
+        }
+
+        // ✅ NULL SAFE: Validate reason for audit trail
+        if (reason == null || reason.trim().isEmpty()) {
+            return HallPassResult.failure("Reason is required for manual end");
+        }
+
+        // Step 1: Find the hall pass session
+        HallPassSession session = hallPassRepository.findById(sessionId).orElse(null);
+        if (session == null) {
+            log.warn("Hall pass session not found: {}", sessionId);
+            return HallPassResult.failure("Hall pass session not found");
+        }
+
+        // Step 2: Verify session is active or overdue (can end both)
+        if (session.getStatus() != SessionStatus.ACTIVE && session.getStatus() != SessionStatus.OVERDUE) {
+            log.warn("Cannot end hall pass - invalid status: {}", session.getStatus());
+            return HallPassResult.failure("Hall pass is not active (status: " + session.getStatus() + ")");
+        }
+
+        // Step 3: Get student for notifications
+        Student student = session.getStudent();
+        if (student == null) {
+            log.warn("Student not found for session {}", sessionId);
+            return HallPassResult.failure("Student not found for this hall pass");
+        }
+
+        // Step 4: Complete the session without facial recognition
+        session.setReturnTime(LocalDateTime.now());
+        session.setStatus(SessionStatus.COMPLETED);
+        session.calculateDuration();
+        session.setArrivalRoom(returnRoom);
+
+        // Add manual end note for audit trail
+        String existingNotes = session.getNotes() != null ? session.getNotes() + "\n" : "";
+        session.setNotes(existingNotes + "[MANUAL END] " + reason + " - " + LocalDateTime.now());
+
+        session = hallPassRepository.save(session);
+
+        // Step 5: Send return notification to parent
+        if (parentNotificationEnabled) {
+            sendReturnNotification(student, session);
+        }
+
+        log.info("Hall pass manually ended for student {} - duration: {} minutes (reason: {})",
+            student.getId(), session.getDurationMinutes(), reason);
+
+        return HallPassResult.completed(student, session, null,
+            String.format("Hall pass manually ended - Duration: %s", session.getFormattedDuration()));
+    }
+
+    /**
      * Get all active hall pass sessions
      */
     public List<HallPassSession> getActiveSessions() {

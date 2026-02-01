@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @version 1.0.0
  * @since Phase 1 Repository Testing
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Phase1RepositoryTests {
 

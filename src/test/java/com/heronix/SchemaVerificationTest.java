@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Test to verify database schema was created correctly
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @TestPropertySource(properties = {
     "spring.jpa.hibernate.ddl-auto=update",
     "logging.level.org.hibernate.SQL=INFO"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
@@ -9,22 +9,94 @@
     <top>
         <VBox spacing="10" styleClass="card">
             <Label text="Transcript Management" styleClass="page-title-white"/>
+            <Label text="Generate official transcripts, view academic history, GPA, and graduation status" style="-fx-text-fill: #cccccc;"/>
         </VBox>
     </top>
+
     <center>
-        <VBox spacing="10" style="-fx-padding: 15;">
-            <HBox spacing="10">
-                <TextField fx:id="studentSearchField" promptText="Search student..."/>
-                <Button text="Generate Transcript" onAction="#handleGenerateTranscript"/>
+        <VBox spacing="15" style="-fx-padding: 15;">
+            <!-- Student Search Row -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="studentSearchField" promptText="Search student by name or ID..." prefWidth="300"/>
+                <Button text="Search" onAction="#handleSearchStudents" styleClass="btn-primary"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="generateBtn" text="Generate Transcript" onAction="#handleGenerateTranscript" styleClass="btn-primary" disable="true"/>
+                <Button fx:id="exportPdfBtn" text="Export PDF" onAction="#handleExportPdf" styleClass="btn-secondary" disable="true"/>
+                <Button fx:id="printBtn" text="Print" onAction="#handlePrint" styleClass="btn-secondary" disable="true"/>
             </HBox>
+
+            <!-- Student Selection Table -->
+            <TableView fx:id="studentTableView" prefHeight="150" maxHeight="180">
+                <columns>
+                    <TableColumn fx:id="colStudentId" text="Student ID" prefWidth="120"/>
+                    <TableColumn fx:id="colStudentName" text="Name" prefWidth="200"/>
+                    <TableColumn fx:id="colGradeLevel" text="Grade" prefWidth="80"/>
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="100"/>
+                </columns>
+                <placeholder><Label text="Search for a student above"/></placeholder>
+            </TableView>
+
+            <!-- Student Info Header (shown after selection) -->
+            <HBox fx:id="studentInfoPane" spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 10; -fx-background-color: #2a2a3e; -fx-background-radius: 8;" visible="false" managed="false">
+                <VBox spacing="3">
+                    <Label text="Student" style="-fx-text-fill: #888888; -fx-font-size: 11;"/>
+                    <Label fx:id="lblStudentName" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;"/>
+                </VBox>
+                <VBox spacing="3">
+                    <Label text="Student ID" style="-fx-text-fill: #888888; -fx-font-size: 11;"/>
+                    <Label fx:id="lblStudentNumber" style="-fx-text-fill: white; -fx-font-size: 14;"/>
+                </VBox>
+                <VBox spacing="3">
+                    <Label text="Grade Level" style="-fx-text-fill: #888888; -fx-font-size: 11;"/>
+                    <Label fx:id="lblGradeLevel" style="-fx-text-fill: white; -fx-font-size: 14;"/>
+                </VBox>
+                <Separator orientation="VERTICAL"/>
+                <VBox spacing="3">
+                    <Label text="Cumulative GPA" style="-fx-text-fill: #888888; -fx-font-size: 11;"/>
+                    <Label fx:id="lblCumulativeGpa" style="-fx-text-fill: #4fc3f7; -fx-font-size: 16; -fx-font-weight: bold;"/>
+                </VBox>
+                <VBox spacing="3">
+                    <Label text="Weighted GPA" style="-fx-text-fill: #888888; -fx-font-size: 11;"/>
+                    <Label fx:id="lblWeightedGpa" style="-fx-text-fill: #81c784; -fx-font-size: 16; -fx-font-weight: bold;"/>
+                </VBox>
+                <VBox spacing="3">
+                    <Label text="Credits Earned" style="-fx-text-fill: #888888; -fx-font-size: 11;"/>
+                    <Label fx:id="lblCreditsEarned" style="-fx-text-fill: white; -fx-font-size: 14;"/>
+                </VBox>
+                <VBox spacing="3">
+                    <Label text="Class Rank" style="-fx-text-fill: #888888; -fx-font-size: 11;"/>
+                    <Label fx:id="lblClassRank" style="-fx-text-fill: white; -fx-font-size: 14;"/>
+                </VBox>
+                <Separator orientation="VERTICAL"/>
+                <VBox spacing="3">
+                    <Label text="Graduation Status" style="-fx-text-fill: #888888; -fx-font-size: 11;"/>
+                    <Label fx:id="lblGradStatus" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Transcript Course Table -->
             <TableView fx:id="transcriptTableView" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn text="Year" prefWidth="80"/>
-                    <TableColumn text="Course" prefWidth="200"/>
-                    <TableColumn text="Grade" prefWidth="80"/>
-                    <TableColumn text="Credits" prefWidth="80"/>
+                    <TableColumn fx:id="colYear" text="Academic Year" prefWidth="120"/>
+                    <TableColumn fx:id="colSemester" text="Semester" prefWidth="90"/>
+                    <TableColumn fx:id="colCourseCode" text="Code" prefWidth="90"/>
+                    <TableColumn fx:id="colCourseName" text="Course" prefWidth="220"/>
+                    <TableColumn fx:id="colCourseType" text="Type" prefWidth="90"/>
+                    <TableColumn fx:id="colTeacher" text="Teacher" prefWidth="150"/>
+                    <TableColumn fx:id="colLetterGrade" text="Grade" prefWidth="70"/>
+                    <TableColumn fx:id="colNumericGrade" text="Numeric" prefWidth="80"/>
+                    <TableColumn fx:id="colGradePoints" text="GPA Pts" prefWidth="80"/>
+                    <TableColumn fx:id="colCreditsAttempted" text="Cr. Att." prefWidth="70"/>
+                    <TableColumn fx:id="colCreditsEarned" text="Cr. Earned" prefWidth="80"/>
                 </columns>
+                <placeholder><Label text="Select a student to view transcript"/></placeholder>
             </TableView>
+
+            <!-- Status bar -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label fx:id="lblStatus" text="Ready" style="-fx-text-fill: #888888;"/>
+                <ProgressIndicator fx:id="progressIndicator" prefWidth="18" prefHeight="18" visible="false"/>
+            </HBox>
         </VBox>
     </center>
 </BorderPane>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.DismissalMonitorController"
+            prefWidth="1200" prefHeight="800">
+
+    <!-- Top: Header and Controls -->
+    <top>
+        <VBox spacing="10" styleClass="catalog-header">
+            <padding>
+                <Insets top="20" right="20" bottom="10" left="20"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="Dismissal &amp; Arrival Monitor" styleClass="welcome-title">
+                    <font><Font name="System Bold" size="24"/></font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="dateLabel" text="" styleClass="card-title">
+                    <font><Font size="14"/></font>
+                </Label>
+                <CheckBox fx:id="autoRefreshToggle" text="Auto-Refresh (10s)" selected="true"/>
+                <ProgressIndicator fx:id="loadingIndicator" prefWidth="24" prefHeight="24" visible="false"/>
+            </HBox>
+
+            <!-- Stats Bar -->
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <VBox alignment="CENTER" spacing="2" styleClass="stat-card">
+                    <padding><Insets top="8" right="15" bottom="8" left="15"/></padding>
+                    <Label fx:id="statBusArrivals" text="0" styleClass="stat-value">
+                        <font><Font name="System Bold" size="20"/></font>
+                    </Label>
+                    <Label text="Buses Arrived"><font><Font size="11"/></font></Label>
+                </VBox>
+                <VBox alignment="CENTER" spacing="2" styleClass="stat-card">
+                    <padding><Insets top="8" right="15" bottom="8" left="15"/></padding>
+                    <Label fx:id="statCarPickups" text="0" styleClass="stat-value">
+                        <font><Font name="System Bold" size="20"/></font>
+                    </Label>
+                    <Label text="Car Pickups"><font><Font size="11"/></font></Label>
+                </VBox>
+                <VBox alignment="CENTER" spacing="2" styleClass="stat-card">
+                    <padding><Insets top="8" right="15" bottom="8" left="15"/></padding>
+                    <Label fx:id="statWalkers" text="0" styleClass="stat-value">
+                        <font><Font name="System Bold" size="20"/></font>
+                    </Label>
+                    <Label text="Walkers"><font><Font size="11"/></font></Label>
+                </VBox>
+                <VBox alignment="CENTER" spacing="2" styleClass="stat-card">
+                    <padding><Insets top="8" right="15" bottom="8" left="15"/></padding>
+                    <Label fx:id="statAftercare" text="0" styleClass="stat-value">
+                        <font><Font name="System Bold" size="20"/></font>
+                    </Label>
+                    <Label text="Aftercare"><font><Font size="11"/></font></Label>
+                </VBox>
+                <VBox alignment="CENTER" spacing="2" styleClass="stat-card">
+                    <padding><Insets top="8" right="15" bottom="8" left="15"/></padding>
+                    <Label fx:id="statAthletics" text="0" styleClass="stat-value">
+                        <font><Font name="System Bold" size="20"/></font>
+                    </Label>
+                    <Label text="Athletics"><font><Font size="11"/></font></Label>
+                </VBox>
+                <VBox alignment="CENTER" spacing="2" styleClass="stat-card">
+                    <padding><Insets top="8" right="15" bottom="8" left="15"/></padding>
+                    <Label fx:id="statCounselor" text="0" styleClass="stat-value">
+                        <font><Font name="System Bold" size="20"/></font>
+                    </Label>
+                    <Label text="Counselor"><font><Font size="11"/></font></Label>
+                </VBox>
+                <VBox alignment="CENTER" spacing="2" styleClass="stat-card">
+                    <padding><Insets top="8" right="15" bottom="8" left="15"/></padding>
+                    <Label fx:id="statPending" text="0" styleClass="stat-value">
+                        <font><Font name="System Bold" size="20"/></font>
+                    </Label>
+                    <Label text="Pending"><font><Font size="11"/></font></Label>
+                </VBox>
+                <VBox alignment="CENTER" spacing="2" styleClass="stat-card">
+                    <padding><Insets top="8" right="15" bottom="8" left="15"/></padding>
+                    <Label fx:id="statDeparted" text="0" styleClass="stat-value">
+                        <font><Font name="System Bold" size="20"/></font>
+                    </Label>
+                    <Label text="Departed"><font><Font size="11"/></font></Label>
+                </VBox>
+            </HBox>
+
+            <!-- Barcode Scan + Quick Actions -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Scan Bus Barcode:"><font><Font name="System Bold" size="13"/></font></Label>
+                <TextField fx:id="barcodeScanField" promptText="Scan or enter bus barcode..." prefWidth="250"
+                           onAction="#handleBarcodeScan"/>
+                <Button text="Register Bus" onAction="#handleBarcodeScan" styleClass="nav-button-active">
+                    <font><Font name="System Bold" size="13"/></font>
+                </Button>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Add Car Pickup" onAction="#handleAddCarPickup" styleClass="nav-button">
+                    <font><Font size="13"/></font>
+                </Button>
+                <Button text="Add Walker" onAction="#handleAddWalker" styleClass="nav-button">
+                    <font><Font size="13"/></font>
+                </Button>
+                <Button text="Add Aftercare" onAction="#handleAddAftercare" styleClass="nav-button">
+                    <font><Font size="13"/></font>
+                </Button>
+                <Button text="Add Athletics" onAction="#handleAddAthletics" styleClass="nav-button">
+                    <font><Font size="13"/></font>
+                </Button>
+                <Button text="Counselor Summon" onAction="#handleCounselorSummon" styleClass="nav-button">
+                    <font><Font size="13"/></font>
+                </Button>
+            </HBox>
+
+            <!-- Filter Bar -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Filter:"><font><Font size="13"/></font></Label>
+                <ComboBox fx:id="typeFilter" promptText="All Types" prefWidth="150"/>
+                <ComboBox fx:id="statusFilter" promptText="All Statuses" prefWidth="150"/>
+                <TextField fx:id="searchField" promptText="Search..." prefWidth="200"/>
+                <Button text="Clear Filters" onAction="#handleClearFilters" styleClass="nav-button">
+                    <font><Font size="12"/></font>
+                </Button>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Refresh" onAction="#handleRefresh" styleClass="nav-button">
+                    <font><Font size="12"/></font>
+                </Button>
+                <Label fx:id="recordCountLabel" text="No events" styleClass="card-title">
+                    <font><Font size="13"/></font>
+                </Label>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Events Table -->
+    <center>
+        <VBox>
+            <padding>
+                <Insets top="5" right="20" bottom="20" left="20"/>
+            </padding>
+            <TableView fx:id="eventsTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="typeColumn" text="Type" prefWidth="100" minWidth="80"/>
+                    <TableColumn fx:id="busNumberColumn" text="Bus #" prefWidth="80" minWidth="60"/>
+                    <TableColumn fx:id="studentNameColumn" text="Student Name" prefWidth="200" minWidth="150"/>
+                    <TableColumn fx:id="parentNameColumn" text="Parent" prefWidth="150" minWidth="120"/>
+                    <TableColumn fx:id="vehicleInfoColumn" text="Vehicle Info" prefWidth="150" minWidth="100"/>
+                    <TableColumn fx:id="sportMeetingColumn" text="Sport / Meeting" prefWidth="140" minWidth="100"/>
+                    <TableColumn fx:id="statusColumn" text="Status" prefWidth="100" minWidth="80"/>
+                    <TableColumn fx:id="arrivalTimeColumn" text="Arrival Time" prefWidth="120" minWidth="100"/>
+                    <TableColumn fx:id="calledTimeColumn" text="Called Time" prefWidth="120" minWidth="100"/>
+                    <TableColumn fx:id="laneColumn" text="Lane" prefWidth="60" minWidth="50"/>
+                    <TableColumn fx:id="notesColumn" text="Notes" prefWidth="150" minWidth="100"/>
+                    <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="200" minWidth="180" sortable="false"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+</BorderPane>

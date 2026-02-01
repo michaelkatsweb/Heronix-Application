@@ -1,9 +1,209 @@
-// ============================================================================
-// FILE: README.md (VS Code Specific Section)
-// LOCATION: /heronix-pro/README.md
-// ============================================================================
+# Heronix School Information System (SIS)
 
-# Heronix Scheduling System - VS Code Setup
+AI-Powered School Scheduling System by Heronix Educational Systems LLC
+
+## Overview
+
+Heronix SIS is a comprehensive school management platform featuring:
+- **AI-Powered Scheduling** - OptaPlanner constraint solver for optimal schedule generation
+- **Teacher Management** - Certifications, qualifications, workload tracking
+- **Course Management** - Multi-subject support, room assignments, sections
+- **Student Management** - Enrollment, attendance tracking, QR code authentication
+- **REST API** - Full API with JWT authentication and rate limiting
+- **Real-time Updates** - WebSocket support for live attendance updates
+
+## Quick Start
+
+### Prerequisites
+
+- Java 21 or higher
+- Maven 3.9+
+- Docker & Docker Compose (for containerized deployment)
+- PostgreSQL 16+ (or use H2 for development)
+
+### Option 1: Docker Deployment (Recommended for Production)
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/heronix-sis.git
+cd heronix-sis
+
+# Create environment file
+cp .env.example .env
+# Edit .env and set secure passwords
+
+# Build and start all services
+docker-compose up -d
+
+# Check service status
+docker-compose ps
+
+# View logs
+docker-compose logs -f heronix-api
+```
+
+The API will be available at `http://localhost:8080`
+
+### Option 2: Local Development
+
+```bash
+# Clone and navigate
+cd heronix-sis
+
+# Build the project
+mvn clean install
+
+# Run with H2 database (development)
+mvn spring-boot:run
+
+# Or run the JavaFX desktop application
+mvn javafx:run
+```
+
+## API Endpoints
+
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/login` | Authenticate user |
+| POST | `/api/auth/refresh` | Refresh JWT token |
+
+### Teachers
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/teachers` | List all teachers |
+| GET | `/api/teachers/{id}` | Get teacher by ID |
+| POST | `/api/teachers` | Create teacher |
+| PUT | `/api/teachers/{id}` | Update teacher |
+| DELETE | `/api/teachers/{id}` | Delete teacher |
+
+### Courses
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/courses` | List all courses |
+| POST | `/api/courses` | Create course |
+| PUT | `/api/courses/{id}` | Update course |
+
+### Schedules
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/schedules` | List all schedules |
+| POST | `/api/schedules/generate` | Generate optimized schedule |
+
+### Health & Monitoring
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/actuator/health` | Health check |
+| GET | `/actuator/info` | Application info |
+| GET | `/swagger-ui.html` | API documentation |
+
+## Configuration
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `SPRING_PROFILES_ACTIVE` | Active profile | `production` |
+| `SPRING_DATASOURCE_URL` | Database URL | `jdbc:h2:file:./data/heronix` |
+| `SPRING_DATASOURCE_USERNAME` | Database user | `admin` |
+| `SPRING_DATASOURCE_PASSWORD` | Database password | `admin123` |
+| `JWT_SECRET` | JWT signing key | (required in production) |
+| `JWT_EXPIRATION` | Token expiration (ms) | `86400000` |
+
+### Production Checklist
+
+- [ ] Set strong `JWT_SECRET` (256-bit minimum)
+- [ ] Use PostgreSQL instead of H2
+- [ ] Enable HTTPS/TLS
+- [ ] Configure proper CORS origins
+- [ ] Set up database backups
+- [ ] Configure log aggregation
+- [ ] Enable rate limiting
+- [ ] Review security audit logs
+
+## Architecture
+
+```
+heronix-sis/
+├── src/main/java/com/heronix/
+│   ├── config/          # Spring configuration
+│   ├── controller/      # REST API controllers
+│   ├── model/           # Domain entities
+│   ├── repository/      # Data access layer
+│   ├── security/        # Authentication & authorization
+│   ├── service/         # Business logic
+│   └── ui/              # JavaFX desktop UI
+├── src/main/resources/
+│   ├── fxml/            # JavaFX UI layouts
+│   ├── db/migration/    # Flyway database migrations
+│   └── application.yml  # Configuration
+├── Dockerfile           # Container build
+├── docker-compose.yml   # Multi-container setup
+└── pom.xml              # Maven dependencies
+```
+
+## Development
+
+### Running Tests
+
+```bash
+# All tests
+mvn test
+
+# With coverage report
+mvn test jacoco:report
+
+# View coverage: target/site/jacoco/index.html
+```
+
+### Database Migrations
+
+Flyway handles schema migrations automatically on startup.
+
+```bash
+# Migrate manually
+mvn flyway:migrate
+
+# View migration status
+mvn flyway:info
+```
+
+### Building for Production
+
+```bash
+# Create optimized JAR
+mvn clean package -Pprod -DskipTests
+
+# Build Docker image
+docker build -t heronix-sis:latest .
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Port 8080 already in use**
+```bash
+# Windows
+netstat -ano | findstr :8080
+taskkill /PID <pid> /F
+
+# Linux/Mac
+lsof -ti:8080 | xargs kill -9
+```
+
+**Database connection failed**
+- Check PostgreSQL is running
+- Verify credentials in environment variables
+- Ensure database exists
+
+**JWT token invalid**
+- Token may be expired (default 24h)
+- Check `JWT_SECRET` matches between instances
+
+---
+
+# VS Code Development Setup
 
 ## Prerequisites
 

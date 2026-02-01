@@ -1,12 +1,15 @@
 package com.heronix.ui.controller;
 
+import com.heronix.model.domain.SchoolConfiguration;
 import com.heronix.model.domain.StateCourseCode;
 import com.heronix.model.enums.CourseCategory;
 import com.heronix.model.enums.CourseType;
 import com.heronix.model.enums.EducationLevel;
 import com.heronix.model.enums.GradeLevel;
 import com.heronix.model.enums.SCEDSubjectArea;
+import com.heronix.model.enums.SchoolType;
 import com.heronix.model.enums.USState;
+import com.heronix.repository.SchoolConfigurationRepository;
 import com.heronix.repository.StateCourseCodeRepository;
 import com.heronix.service.StateCourseCodeService;
 import javafx.application.Platform;
@@ -33,9 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -108,6 +109,13 @@ public class StateCourseCodeCatalogController {
     @FXML private Label statCTECourses;
     @FXML private Label statElectives;
 
+    // School offering controls
+    @FXML private CheckBox schoolLevelFilterToggle;
+    @FXML private Label schoolLevelInfoLabel;
+    @FXML private Label addedCountLabel;
+    @FXML private TableColumn<StateCourseCode, Boolean> selectColumn;
+    @FXML private TableColumn<StateCourseCode, String> addedColumn;
+
     // ========================================================================
     // SERVICES AND DATA
     // ========================================================================
@@ -118,10 +126,16 @@ public class StateCourseCodeCatalogController {
     @Autowired
     private StateCourseCodeRepository stateCourseCodeRepository;
 
+    @Autowired(required = false)
+    private SchoolConfigurationRepository schoolConfigurationRepository;
+
     private Stage stage;
     private ObservableList<StateCourseCode> allCourses = FXCollections.observableArrayList();
     private FilteredList<StateCourseCode> filteredCourses;
     private USState selectedState;
+    private SchoolType schoolType;
+    private Set<String> localCatalogCodes = new HashSet<>();
+    private Set<StateCourseCode> selectedForBatchAdd = new HashSet<>();
 
     // ========================================================================
     // INITIALIZATION
@@ -129,12 +143,15 @@ public class StateCourseCodeCatalogController {
 
     @FXML
     public void initialize() {
+        loadSchoolConfiguration();
+        loadLocalCatalogCodes();
         setupStateSelector();
         setupFilters();
         setupTableColumns();
         setupTableSelection();
         setupSearch();
         setupFilteredList();
+        setupSchoolLevelFilter();
 
         // Initially hide loading indicator
         if (loadingIndicator != null) {
@@ -142,6 +159,47 @@ public class StateCourseCodeCatalogController {
         }
 
         log.info("StateCourseCodeCatalogController initialized");
+    }
+
+    private void loadSchoolConfiguration() {
+        if (schoolConfigurationRepository != null) {
+            try {
+                SchoolConfiguration config = schoolConfigurationRepository.findAll().stream().findFirst().orElse(null);
+                if (config != null) {
+                    schoolType = config.getSchoolType();
+                    log.info("School type loaded: {}", schoolType);
+                }
+            } catch (Exception e) {
+                log.warn("Could not load school configuration: {}", e.getMessage());
+            }
+        }
+    }
+
+    private void loadLocalCatalogCodes() {
+        try {
+            localCatalogCodes = stateCourseCodeService.getLocalCatalogStateCodes();
+            log.info("Loaded {} existing local catalog course codes", localCatalogCodes.size());
+        } catch (Exception e) {
+            log.warn("Could not load local catalog codes: {}", e.getMessage());
+        }
+    }
+
+    private void setupSchoolLevelFilter() {
+        if (schoolLevelFilterToggle != null) {
+            if (schoolType != null) {
+                schoolLevelFilterToggle.setText("Show only " + schoolType.getDisplayName() + " courses");
+                schoolLevelFilterToggle.setOnAction(e -> applyFilters());
+
+                if (schoolLevelInfoLabel != null) {
+                    schoolLevelInfoLabel.setText("School: " + schoolType.getDisplayName()
+                            + " (" + schoolType.getGradeRangeDisplay() + ")");
+                }
+            } else {
+                schoolLevelFilterToggle.setDisable(true);
+                schoolLevelFilterToggle.setText("Configure school type in settings first");
+            }
+        }
+        updateAddedCount();
     }
 
     public void setStage(Stage stage) {
@@ -280,6 +338,60 @@ public class StateCourseCodeCatalogController {
             return new SimpleStringProperty(cat != null ? cat.name() : "CORE");
         });
 
+        // "Already Added" indicator column
+        if (addedColumn != null) {
+            addedColumn.setCellValueFactory(cellData -> {
+                boolean added = localCatalogCodes.contains(cellData.getValue().getStateCourseCode());
+                return new SimpleStringProperty(added ? "In Catalog" : "");
+            });
+            addedColumn.setCellFactory(col -> new TableCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null || item.isEmpty()) {
+                        setText(null);
+                        setStyle("");
+                    } else {
+                        setText(item);
+                        setStyle("-fx-text-fill: #10B981; -fx-font-weight: bold;");
+                    }
+                }
+            });
+        }
+
+        // Select checkbox column
+        if (selectColumn != null) {
+            selectColumn.setCellFactory(col -> new TableCell<>() {
+                private final CheckBox checkBox = new CheckBox();
+                {
+                    checkBox.setOnAction(e -> {
+                        StateCourseCode course = getTableView().getItems().get(getIndex());
+                        if (checkBox.isSelected()) {
+                            selectedForBatchAdd.add(course);
+                        } else {
+                            selectedForBatchAdd.remove(course);
+                        }
+                    });
+                }
+                @Override
+                protected void updateItem(Boolean item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        StateCourseCode course = getTableView().getItems().get(getIndex());
+                        boolean alreadyAdded = localCatalogCodes.contains(course.getStateCourseCode());
+                        checkBox.setDisable(alreadyAdded);
+                        checkBox.setSelected(selectedForBatchAdd.contains(course));
+                        setGraphic(checkBox);
+                    }
+                }
+            });
+        }
+
+        // Enable multi-select
+        courseTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
         // Make columns sortable
         courseTable.getSortOrder().add(courseNameColumn);
     }
@@ -388,6 +500,21 @@ public class StateCourseCodeCatalogController {
 
     private void applyFilters() {
         filteredCourses.setPredicate(course -> {
+            // School level filter (auto-filter by school type)
+            if (schoolLevelFilterToggle != null && schoolLevelFilterToggle.isSelected() && schoolType != null) {
+                int minGrade = schoolType.getMinGradeValue();
+                int maxGrade = schoolType.getMaxGradeValue();
+                Integer courseMin = course.getMinGradeLevel();
+                Integer courseMax = course.getMaxGradeLevel();
+                if (courseMin != null || courseMax != null) {
+                    int cMin = courseMin != null ? courseMin : -1;
+                    int cMax = courseMax != null ? courseMax : 12;
+                    if (cMin > maxGrade || cMax < minGrade) {
+                        return false;
+                    }
+                }
+            }
+
             // Search filter
             String search = searchField != null ? searchField.getText() : "";
             if (!search.isEmpty()) {
@@ -734,8 +861,107 @@ public class StateCourseCodeCatalogController {
             return;
         }
 
-        // TODO: Implement copying to local Course entity
-        showInfo("Feature Coming Soon", "Copying courses to local catalog will be available in the next update.");
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Copy to Local Catalog");
+        confirm.setHeaderText("Copy State Course to Local Catalog");
+        confirm.setContentText("Copy \"" + selected.getCourseName() + "\" (" + selected.getStateCourseCode() + ") to the local course catalog?");
+
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    stateCourseCodeService.copyToLocalCatalog(selected);
+                    showInfo("Success", "Course \"" + selected.getCourseName() + "\" has been copied to the local catalog.");
+                } catch (Exception e) {
+                    log.error("Failed to copy course to local catalog", e);
+                    showError("Copy Failed", "Could not copy course: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    // ========================================================================
+    // BATCH ADD TO SCHOOL CATALOG
+    // ========================================================================
+
+    @FXML
+    private void handleBatchAddToSchool() {
+        if (selectedForBatchAdd.isEmpty()) {
+            showError("No Selection", "Please select courses to add using the checkboxes.");
+            return;
+        }
+
+        // Filter out already-added courses
+        List<StateCourseCode> toAdd = selectedForBatchAdd.stream()
+                .filter(c -> !localCatalogCodes.contains(c.getStateCourseCode()))
+                .collect(Collectors.toList());
+
+        if (toAdd.isEmpty()) {
+            showInfo("Nothing to Add", "All selected courses are already in the school catalog.");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Add Courses to School Catalog");
+        confirm.setHeaderText("Add " + toAdd.size() + " courses to school catalog?");
+        StringBuilder details = new StringBuilder();
+        toAdd.stream().limit(10).forEach(c ->
+                details.append("  - ").append(c.getCourseName()).append("\n"));
+        if (toAdd.size() > 10) {
+            details.append("  ... and ").append(toAdd.size() - 10).append(" more\n");
+        }
+        confirm.setContentText(details.toString());
+
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                showLoading(true);
+
+                Task<StateCourseCodeService.BatchCopyResult> batchTask = new Task<>() {
+                    @Override
+                    protected StateCourseCodeService.BatchCopyResult call() {
+                        return stateCourseCodeService.copyMultipleToLocalCatalog(toAdd);
+                    }
+                };
+
+                batchTask.setOnSucceeded(e -> {
+                    showLoading(false);
+                    StateCourseCodeService.BatchCopyResult result = batchTask.getValue();
+                    showInfo("Batch Add Complete", result.getSummary());
+                    selectedForBatchAdd.clear();
+                    loadLocalCatalogCodes();
+                    updateAddedCount();
+                    // Refresh table to update "In Catalog" indicators
+                    courseTable.refresh();
+                });
+
+                batchTask.setOnFailed(e -> {
+                    showLoading(false);
+                    log.error("Batch add failed", batchTask.getException());
+                    showError("Batch Add Failed", "Error: " + batchTask.getException().getMessage());
+                });
+
+                new Thread(batchTask).start();
+            }
+        });
+    }
+
+    @FXML
+    private void handleSelectAllVisible() {
+        selectedForBatchAdd.addAll(filteredCourses.stream()
+                .filter(c -> !localCatalogCodes.contains(c.getStateCourseCode()))
+                .collect(Collectors.toSet()));
+        courseTable.refresh();
+    }
+
+    @FXML
+    private void handleDeselectAll() {
+        selectedForBatchAdd.clear();
+        courseTable.refresh();
+    }
+
+    private void updateAddedCount() {
+        if (addedCountLabel != null) {
+            addedCountLabel.setText(localCatalogCodes.size() + " courses in school catalog");
+        }
     }
 
     // ========================================================================

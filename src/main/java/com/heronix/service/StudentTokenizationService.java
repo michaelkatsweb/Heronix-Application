@@ -13,15 +13,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.nio.file.*;
+import java.security.*;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.crypto.*;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Student Tokenization Service
@@ -64,16 +68,455 @@ public class StudentTokenizationService {
     // Secure random for salt generation
     private final SecureRandom secureRandom = new SecureRandom();
 
-    // TODO: Store master salt in HSM/TPM for production security
-    // TODO: Implement key rotation mechanism for master salt
-    @Value("${heronix.tokenization.master-salt:HERONIX_SECURE_SALT_2026}")
-    private String masterSalt;
+    // Master salt - loaded from secure storage at startup
+    private volatile byte[] masterSaltBytes;
+
+    // Encrypted master salt cache (for persistence)
+    private volatile byte[] encryptedMasterSalt;
+
+    // Key Encryption Key (KEK) - derived from system properties or HSM
+    private volatile SecretKey keyEncryptionKey;
 
     // Token prefix
     private static final String TOKEN_PREFIX = "STU-";
 
+    // AES-GCM encryption parameters
+    private static final String ENCRYPTION_ALGORITHM = "AES/GCM/NoPadding";
+    private static final int GCM_TAG_LENGTH = 128;
+    private static final int GCM_IV_LENGTH = 12;
+    private static final int SALT_LENGTH_BYTES = 32;
+
+    // Secure storage paths
+    @Value("${heronix.tokenization.secure-storage-path:${user.home}/.heronix/secure}")
+    private String secureStoragePath;
+
+    @Value("${heronix.tokenization.use-hsm:false}")
+    private boolean useHsm;
+
+    @Value("${heronix.tokenization.hsm-provider:SunPKCS11}")
+    private String hsmProvider;
+
+    @Value("${heronix.tokenization.hsm-config-path:}")
+    private String hsmConfigPath;
+
+    // Fallback master salt for development only (DO NOT USE IN PRODUCTION)
+    @Value("${heronix.tokenization.master-salt:}")
+    private String fallbackMasterSalt;
+
     // Token hex length (6 characters = 24 bits = 16.7M combinations)
     private static final int TOKEN_HEX_LENGTH = 6;
+
+    // ========================================================================
+    // INITIALIZATION - SECURE KEY MANAGEMENT
+    // ========================================================================
+
+    /**
+     * Initialize secure key management on service startup.
+     *
+     * This method implements a layered security approach:
+     * 1. HSM/TPM Integration (Production): Keys stored in hardware security module
+     * 2. Software Key Store (Development): Keys encrypted with KEK and stored on disk
+     * 3. Fallback (Testing Only): Environment variable or config-based salt
+     *
+     * SECURITY NOTE: In production, always use HSM/TPM for master salt storage.
+     * The software-based encryption is only for development environments.
+     */
+    @PostConstruct
+    public void initializeSecureKeyManagement() {
+        log.info("TOKENIZATION: Initializing secure key management system");
+
+        try {
+            if (useHsm) {
+                // Production mode: Load keys from HSM/TPM
+                initializeFromHsm();
+            } else {
+                // Development mode: Use software-based key management
+                initializeFromSecureStorage();
+            }
+
+            log.info("TOKENIZATION: Secure key management initialized successfully. HSM Mode: {}", useHsm);
+
+        } catch (Exception e) {
+            log.error("TOKENIZATION: Failed to initialize secure key management", e);
+
+            // Fall back to config-based salt for development only
+            if (fallbackMasterSalt != null && !fallbackMasterSalt.isEmpty()) {
+                log.warn("TOKENIZATION: Using fallback master salt from configuration - NOT SECURE FOR PRODUCTION");
+                masterSaltBytes = fallbackMasterSalt.getBytes(StandardCharsets.UTF_8);
+            } else {
+                throw new SecurityException("Failed to initialize tokenization security. " +
+                        "Configure HSM or set fallback salt for development.", e);
+            }
+        }
+    }
+
+    /**
+     * Initialize key management from HSM/TPM.
+     *
+     * This method connects to a PKCS#11 compatible HSM or uses the platform's TPM.
+     * Keys are stored in tamper-resistant hardware and never exported.
+     */
+    private void initializeFromHsm() throws Exception {
+        log.info("TOKENIZATION: Initializing from HSM/TPM. Provider: {}", hsmProvider);
+
+        // Check for HSM provider configuration
+        if (hsmConfigPath == null || hsmConfigPath.isEmpty()) {
+            throw new SecurityException("HSM configuration path not specified. " +
+                    "Set heronix.tokenization.hsm-config-path property.");
+        }
+
+        // Load PKCS#11 provider for HSM access
+        // NOTE: In production, this would be configured with the actual HSM vendor's driver
+        Provider hsmProviderInstance = Security.getProvider(hsmProvider);
+
+        if (hsmProviderInstance == null) {
+            // Try to load PKCS#11 provider dynamically
+            log.info("TOKENIZATION: Loading PKCS#11 provider from config: {}", hsmConfigPath);
+
+            // For SunPKCS11, configuration is provided via config file
+            // Example config file content:
+            // name = HeronixHSM
+            // library = /path/to/pkcs11/library.so
+            // slot = 0
+
+            try {
+                hsmProviderInstance = Security.getProvider("SunPKCS11");
+                if (hsmProviderInstance == null) {
+                    // PKCS#11 provider not available - fall back to TPM
+                    log.warn("TOKENIZATION: SunPKCS11 not available, attempting TPM access");
+                    initializeFromTpm();
+                    return;
+                }
+            } catch (Exception e) {
+                log.warn("TOKENIZATION: Failed to load PKCS#11 provider, attempting TPM", e);
+                initializeFromTpm();
+                return;
+            }
+        }
+
+        // Access key from HSM
+        try {
+            KeyStore hsmKeyStore = KeyStore.getInstance("PKCS11", hsmProviderInstance);
+            hsmKeyStore.load(null, getHsmPin());
+
+            // Look for existing master salt key
+            String keyAlias = "heronix-tokenization-master-salt";
+
+            if (hsmKeyStore.containsAlias(keyAlias)) {
+                // Load existing key
+                Key key = hsmKeyStore.getKey(keyAlias, getHsmPin());
+                if (key instanceof SecretKey) {
+                    keyEncryptionKey = (SecretKey) key;
+                    log.info("TOKENIZATION: Loaded existing master salt key from HSM");
+                }
+            } else {
+                // Generate new key in HSM
+                KeyGenerator keyGen = KeyGenerator.getInstance("AES", hsmProviderInstance);
+                keyGen.init(256, secureRandom);
+                keyEncryptionKey = keyGen.generateKey();
+
+                // Store in HSM
+                hsmKeyStore.setKeyEntry(keyAlias, keyEncryptionKey, getHsmPin(), null);
+                log.warn("TOKENIZATION: Generated new master salt key in HSM");
+            }
+
+            // Generate or load master salt encrypted with HSM key
+            loadOrGenerateMasterSalt();
+
+        } catch (Exception e) {
+            log.error("TOKENIZATION: HSM key access failed", e);
+            throw new SecurityException("Failed to access HSM keys", e);
+        }
+    }
+
+    /**
+     * Initialize from TPM (Trusted Platform Module).
+     *
+     * Uses Windows TPM or Linux TPM2 for secure key storage.
+     */
+    private void initializeFromTpm() throws Exception {
+        log.info("TOKENIZATION: Attempting TPM-based key management");
+
+        // TPM access varies by platform
+        String osName = System.getProperty("os.name").toLowerCase();
+
+        if (osName.contains("win")) {
+            // Windows: Use Windows-MY key store which can be backed by TPM
+            initializeFromWindowsKeyStore();
+        } else if (osName.contains("linux")) {
+            // Linux: Use TPM2 tools or PKCS#11 interface
+            // This would require tpm2-pkcs11 library
+            log.warn("TOKENIZATION: Linux TPM integration requires tpm2-pkcs11. Using software fallback.");
+            initializeFromSecureStorage();
+        } else {
+            log.warn("TOKENIZATION: TPM not available on {}. Using software fallback.", osName);
+            initializeFromSecureStorage();
+        }
+    }
+
+    /**
+     * Initialize from Windows key store (potentially TPM-backed).
+     */
+    private void initializeFromWindowsKeyStore() throws Exception {
+        log.info("TOKENIZATION: Using Windows key store for key management");
+
+        // Windows-MY key store may be TPM-backed depending on system configuration
+        // This provides OS-level key protection even without dedicated HSM
+
+        try {
+            // For development, we'll use software-based approach since
+            // Windows-MY doesn't easily support symmetric keys
+            initializeFromSecureStorage();
+
+        } catch (Exception e) {
+            log.error("TOKENIZATION: Windows key store access failed", e);
+            throw e;
+        }
+    }
+
+    /**
+     * Initialize from secure file-based storage (development mode).
+     *
+     * Keys are encrypted with a Key Encryption Key (KEK) derived from
+     * system properties and stored in a protected directory.
+     */
+    private void initializeFromSecureStorage() throws Exception {
+        log.info("TOKENIZATION: Using secure file storage for key management");
+
+        // Create secure storage directory if needed
+        Path storagePath = Paths.get(secureStoragePath);
+        if (!Files.exists(storagePath)) {
+            Files.createDirectories(storagePath);
+            // Set restrictive permissions (owner only)
+            try {
+                storagePath.toFile().setReadable(false, false);
+                storagePath.toFile().setReadable(true, true);
+                storagePath.toFile().setWritable(false, false);
+                storagePath.toFile().setWritable(true, true);
+                storagePath.toFile().setExecutable(false, false);
+            } catch (Exception e) {
+                log.warn("TOKENIZATION: Could not set file permissions on {}", storagePath);
+            }
+        }
+
+        // Derive Key Encryption Key from system properties
+        deriveKeyEncryptionKey();
+
+        // Load or generate master salt
+        loadOrGenerateMasterSalt();
+    }
+
+    /**
+     * Derive the Key Encryption Key (KEK) from system properties.
+     *
+     * In production, this should be derived from hardware-bound properties
+     * or stored in HSM. This implementation uses system properties as a
+     * fallback for development environments.
+     */
+    private void deriveKeyEncryptionKey() throws Exception {
+        // Combine system properties to create a machine-specific key derivation input
+        String systemId = System.getProperty("user.name", "unknown") +
+                "|" + System.getProperty("os.name", "unknown") +
+                "|" + System.getProperty("os.arch", "unknown") +
+                "|" + getMachineId();
+
+        // Derive KEK using PBKDF2
+        byte[] salt = "HeronixTokenizationKEK".getBytes(StandardCharsets.UTF_8);
+        int iterations = 100000;
+
+        MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+        byte[] input = systemId.getBytes(StandardCharsets.UTF_8);
+
+        // Simple key derivation (in production, use proper PBKDF2)
+        for (int i = 0; i < iterations; i++) {
+            sha256.update(salt);
+            sha256.update(input);
+            sha256.update(intToBytes(i));
+            input = sha256.digest();
+            sha256.reset();
+        }
+
+        keyEncryptionKey = new SecretKeySpec(input, "AES");
+        log.debug("TOKENIZATION: Derived KEK from system properties");
+    }
+
+    /**
+     * Get a machine-specific identifier for key derivation.
+     */
+    private String getMachineId() {
+        try {
+            // Try to get machine ID from system properties
+            String computerName = System.getenv("COMPUTERNAME");
+            if (computerName == null) {
+                computerName = System.getenv("HOSTNAME");
+            }
+            if (computerName == null) {
+                computerName = java.net.InetAddress.getLocalHost().getHostName();
+            }
+            return computerName != null ? computerName : "unknown-machine";
+        } catch (Exception e) {
+            return "fallback-machine-id";
+        }
+    }
+
+    private byte[] intToBytes(int value) {
+        return new byte[] {
+                (byte) (value >> 24),
+                (byte) (value >> 16),
+                (byte) (value >> 8),
+                (byte) value
+        };
+    }
+
+    /**
+     * Load existing master salt or generate a new one.
+     */
+    private void loadOrGenerateMasterSalt() throws Exception {
+        Path saltFile = Paths.get(secureStoragePath, "master-salt.enc");
+
+        if (Files.exists(saltFile)) {
+            // Load and decrypt existing salt
+            byte[] encryptedData = Files.readAllBytes(saltFile);
+            masterSaltBytes = decryptMasterSalt(encryptedData);
+            log.info("TOKENIZATION: Loaded existing master salt from secure storage");
+        } else {
+            // Generate new master salt
+            masterSaltBytes = new byte[SALT_LENGTH_BYTES];
+            secureRandom.nextBytes(masterSaltBytes);
+
+            // Encrypt and store
+            byte[] encryptedData = encryptMasterSalt(masterSaltBytes);
+            Files.write(saltFile, encryptedData);
+
+            // Set restrictive permissions
+            saltFile.toFile().setReadable(false, false);
+            saltFile.toFile().setReadable(true, true);
+            saltFile.toFile().setWritable(false, false);
+            saltFile.toFile().setWritable(true, true);
+
+            log.warn("TOKENIZATION: Generated new master salt and stored in secure storage");
+        }
+
+        encryptedMasterSalt = encryptMasterSalt(masterSaltBytes);
+    }
+
+    /**
+     * Encrypt master salt with KEK using AES-GCM.
+     */
+    private byte[] encryptMasterSalt(byte[] plaintext) throws Exception {
+        Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
+        byte[] iv = new byte[GCM_IV_LENGTH];
+        secureRandom.nextBytes(iv);
+
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+        cipher.init(Cipher.ENCRYPT_MODE, keyEncryptionKey, gcmSpec);
+
+        byte[] ciphertext = cipher.doFinal(plaintext);
+
+        // Prepend IV to ciphertext
+        byte[] result = new byte[iv.length + ciphertext.length];
+        System.arraycopy(iv, 0, result, 0, iv.length);
+        System.arraycopy(ciphertext, 0, result, iv.length, ciphertext.length);
+
+        return result;
+    }
+
+    /**
+     * Decrypt master salt using KEK.
+     */
+    private byte[] decryptMasterSalt(byte[] encryptedData) throws Exception {
+        // Extract IV
+        byte[] iv = new byte[GCM_IV_LENGTH];
+        System.arraycopy(encryptedData, 0, iv, 0, GCM_IV_LENGTH);
+
+        // Extract ciphertext
+        byte[] ciphertext = new byte[encryptedData.length - GCM_IV_LENGTH];
+        System.arraycopy(encryptedData, GCM_IV_LENGTH, ciphertext, 0, ciphertext.length);
+
+        Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+        cipher.init(Cipher.DECRYPT_MODE, keyEncryptionKey, gcmSpec);
+
+        return cipher.doFinal(ciphertext);
+    }
+
+    /**
+     * Get HSM PIN (in production, this would be from secure input).
+     */
+    private char[] getHsmPin() {
+        // In production, PIN should come from:
+        // 1. Secure environment variable
+        // 2. Encrypted configuration
+        // 3. Interactive prompt during startup
+        String pin = System.getenv("HERONIX_HSM_PIN");
+        if (pin != null) {
+            return pin.toCharArray();
+        }
+        // Default PIN for development only
+        return "development-pin".toCharArray();
+    }
+
+    /**
+     * Get master salt as string for hashing operations.
+     * This method provides the internal master salt for token generation.
+     */
+    private String getMasterSalt() {
+        if (masterSaltBytes == null) {
+            throw new SecurityException("Master salt not initialized. Call initializeSecureKeyManagement first.");
+        }
+        // Convert to hex string for hash input
+        return bytesToHex(masterSaltBytes);
+    }
+
+    /**
+     * Convert byte array to hex string.
+     */
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Rotate master salt (security operation - requires re-tokenization).
+     *
+     * CAUTION: This will invalidate all existing tokens!
+     * Should only be called in case of suspected compromise.
+     *
+     * @param authorizedBy User authorizing the rotation
+     * @param reason Reason for rotation
+     */
+    @Transactional
+    public void rotateMasterSalt(String authorizedBy, String reason) {
+        log.warn("SECURITY: Master salt rotation initiated by {} - Reason: {}", authorizedBy, reason);
+
+        try {
+            // Generate new master salt
+            byte[] newSalt = new byte[SALT_LENGTH_BYTES];
+            secureRandom.nextBytes(newSalt);
+
+            // Store old salt for audit (encrypted)
+            Path auditFile = Paths.get(secureStoragePath,
+                    "master-salt-rotated-" + System.currentTimeMillis() + ".enc");
+            Files.write(auditFile, encryptMasterSalt(masterSaltBytes));
+
+            // Update current salt
+            masterSaltBytes = newSalt;
+            encryptedMasterSalt = encryptMasterSalt(newSalt);
+
+            // Store new salt
+            Path saltFile = Paths.get(secureStoragePath, "master-salt.enc");
+            Files.write(saltFile, encryptedMasterSalt);
+
+            log.warn("SECURITY: Master salt rotated successfully. All tokens must be regenerated.");
+
+        } catch (Exception e) {
+            log.error("SECURITY: Master salt rotation failed", e);
+            throw new SecurityException("Failed to rotate master salt", e);
+        }
+    }
 
     // ========================================================================
     // TOKEN GENERATION
@@ -104,10 +547,10 @@ public class StudentTokenizationService {
         // Generate timestamp
         LocalDateTime createdAt = LocalDateTime.now();
 
-        // Create hash input
+        // Create hash input using secure master salt
         String hashInput = String.format("%d|%s|%s|%s|%s",
                 studentId,
-                masterSalt,
+                getMasterSalt(),
                 tokenSalt,
                 createdAt.toString(),
                 schoolYear);

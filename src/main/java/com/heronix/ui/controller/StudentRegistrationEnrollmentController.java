@@ -605,7 +605,20 @@ public class StudentRegistrationEnrollmentController {
             // Student Information
             incomplete.setStudentFirstName(firstNameField.getText().trim());
             incomplete.setStudentLastName(lastNameField.getText().trim());
-            incomplete.setGradeLevel(gradeLevelComboBox.getValue());
+
+            // Convert display name (e.g., "9th Grade") to short code (e.g., "9")
+            String gradeLevelDisplayInc = gradeLevelComboBox.getValue();
+            GradeLevel gradeEnumInc = GradeLevel.fromString(gradeLevelDisplayInc);
+            if (gradeEnumInc != null) {
+                String shortCodeInc = switch (gradeEnumInc) {
+                    case PRE_K -> "PK";
+                    case KINDERGARTEN -> "K";
+                    default -> String.valueOf(gradeEnumInc.getNumericValue());
+                };
+                incomplete.setGradeLevel(shortCodeInc);
+            } else {
+                incomplete.setGradeLevel(gradeLevelDisplayInc);
+            }
 
             if (birthDatePicker.getValue() != null) {
                 incomplete.setDateOfBirth(birthDatePicker.getValue());
@@ -778,7 +791,21 @@ public class StudentRegistrationEnrollmentController {
             student.setPreferredFirstName(preferredNameField.getText() != null ? preferredNameField.getText().trim() : null);
             student.setDateOfBirth(birthDatePicker.getValue());
             student.setGender(genderComboBox.getValue());
-            student.setGradeLevel(gradeLevelComboBox.getValue());
+
+            // Convert display name (e.g., "9th Grade") to short code (e.g., "9")
+            String gradeLevelDisplay = gradeLevelComboBox.getValue();
+            GradeLevel gradeEnum = GradeLevel.fromString(gradeLevelDisplay);
+            if (gradeEnum != null) {
+                // Use short code: "PK", "K", "1", "2", ... "12"
+                String shortCode = switch (gradeEnum) {
+                    case PRE_K -> "PK";
+                    case KINDERGARTEN -> "K";
+                    default -> String.valueOf(gradeEnum.getNumericValue());
+                };
+                student.setGradeLevel(shortCode);
+            } else {
+                student.setGradeLevel(gradeLevelDisplay); // Fallback
+            }
 
             // Set student as active
             student.setStudentStatus(Student.StudentStatus.ACTIVE);

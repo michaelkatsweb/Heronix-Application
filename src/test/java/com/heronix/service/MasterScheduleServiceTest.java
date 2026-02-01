@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.*;
  * Comprehensive unit tests for MasterScheduleService
  * Tests singleton scheduling, section balancing, waitlist processing, and planning time assignment
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @TestPropertySource(properties = {
     "spring.jpa.hibernate.ddl-auto=update",
     "logging.level.com.heronix=DEBUG"

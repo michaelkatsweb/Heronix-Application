@@ -43,7 +43,10 @@ import org.springframework.test.web.servlet.MockMvc;
  * @version 1.0
  * @since Phase 41 - API Documentation & Testing
  */
-@SpringBootTest
+@SpringBootTest(
+    classes = com.heronix.config.TestConfiguration.class,
+    webEnvironment = SpringBootTest.WebEnvironment.MOCK
+)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public abstract class BaseApiIntegrationTest {

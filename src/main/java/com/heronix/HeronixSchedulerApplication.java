@@ -16,34 +16,41 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import com.heronix.config.ApplicationProperties;
 
 /**
- * Heronix Scheduling System - Main Application Entry Point
+ * Heronix Scheduling System - Desktop Application
  * Location: src/main/java/com/heronix/HeronixSchedulerApplication.java
  *
  * A product of Heronix Educational Systems LLC
  *
- * COMPLETE & IMPROVED VERSION
- * ✅ Auto-loads Dashboard on startup
- * ✅ Proper Spring context lifecycle
- * ✅ Enhanced error handling
- * ✅ Resource cleanup
- * ✅ Dashboard metrics caching enabled
+ * This is the JavaFX desktop client for Heronix SIS.
+ *
+ * Modes:
+ * - STANDALONE: Runs with embedded server (default, for single-user/development)
+ * - CLIENT: Connects to external Heronix-SIS-Server (for enterprise deployment)
+ *
+ * To run in CLIENT mode:
+ *   Set environment variable: SIS_CLIENT_MODE=true
+ *   Set server URL: SIS_SERVER_URL=http://server-ip:9590
  *
  * @author Heronix Educational Systems LLC
- * @version 5.0.0 - REBRANDED
- * @since 2025-12-21
+ * @version 6.0.0 - Client/Server Architecture
+ * @since 2026-01
  */
 @Slf4j
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.heronix")
 @EnableConfigurationProperties(ApplicationProperties.class)
 @EnableCaching
 @EnableScheduling
+@EntityScan(basePackages = "com.heronix")
+@EnableJpaRepositories(basePackages = "com.heronix")
 public class HeronixSchedulerApplication extends Application {
 
     private ConfigurableApplicationContext springContext;
@@ -61,12 +68,14 @@ public class HeronixSchedulerApplication extends Application {
     public void init() throws Exception {
         log.info("Initializing Spring Boot context...");
 
-        // Configure Spring Boot for JavaFX desktop application (not web)
+        // Configure Spring Boot for JavaFX desktop application WITH embedded web server
+        // This enables REST API endpoints for Teacher Portal (Heronix-Talk) integration
         SpringApplication app = new SpringApplication(HeronixSchedulerApplication.class);
-        app.setWebApplicationType(org.springframework.boot.WebApplicationType.NONE);
+        app.setWebApplicationType(org.springframework.boot.WebApplicationType.SERVLET);
 
         springContext = app.run();
         log.info("Spring Boot context initialized successfully!");
+        log.info("REST API server is now available on port 9580 for Teacher Portal integration");
 
         // Initialize default users (super admin)
         UserService userService = springContext.getBean(UserService.class);

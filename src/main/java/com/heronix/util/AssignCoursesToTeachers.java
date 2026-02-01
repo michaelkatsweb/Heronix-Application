@@ -1,14 +1,12 @@
 package com.heronix.util;
 
+import com.heronix.HeronixSchedulerApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -22,8 +20,7 @@ import java.util.Map;
  * This utility assigns courses to existing teachers based on their departments.
  * No UI required - runs as a command-line tool.
  *
- * Usage:
- * cd h:\Heronix Scheduler\eduscheduler-pro
+ * IMPORTANT: This is a standalone utility. Run it separately from the main application:
  * mvn exec:java -Dexec.mainClass=com.heronix.util.AssignCoursesToTeachers
  *
  * @author Heronix Scheduling System Team
@@ -31,19 +28,20 @@ import java.util.Map;
  * @since 2025-11-18
  */
 @Slf4j
-@SpringBootApplication
-@ComponentScan(basePackages = "com.heronix")
-@EntityScan(basePackages = "com.heronix.model")
-@EnableJpaRepositories(basePackages = "com.heronix.repository")
+@Component
 public class AssignCoursesToTeachers implements CommandLineRunner {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    private static boolean runAsStandalone = false;
+
     public static void main(String[] args) {
+        runAsStandalone = true;
         // Disable GUI
         System.setProperty("java.awt.headless", "true");
-        SpringApplication app = new SpringApplication(AssignCoursesToTeachers.class);
+        // Use the main application's configuration
+        SpringApplication app = new SpringApplication(HeronixSchedulerApplication.class);
         app.setWebApplicationType(org.springframework.boot.WebApplicationType.NONE);
         app.run(args);
     }
@@ -51,6 +49,11 @@ public class AssignCoursesToTeachers implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
+        // Only run when invoked as standalone utility, not during main app startup
+        if (!runAsStandalone) {
+            return;
+        }
+
         log.info("╔══════════════════════════════════════════════════════════════════════════╗");
         log.info("║ ASSIGN COURSES TO TEACHERS - Starting...                                 ║");
         log.info("╚══════════════════════════════════════════════════════════════════════════╝");

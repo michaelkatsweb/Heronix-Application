@@ -62,15 +62,15 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     /**
-     * Get all teachers (including inactive)
+     * Get all teachers (including inactive but excluding soft-deleted)
      *
-     * @return List of all teachers
+     * @return List of all non-deleted teachers
      */
     @Override
     @Transactional(readOnly = true)
     public List<Teacher> findAll() {
-        log.debug("Fetching all teachers (including inactive)");
-        List<Teacher> teachers = teacherRepository.findAllActive();
+        log.debug("Fetching all teachers (including inactive, excluding deleted)");
+        List<Teacher> teachers = teacherRepository.findAllNonDeleted();
         log.info("Found {} total teachers", teachers.size());
         return teachers;
     }

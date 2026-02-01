@@ -4,6 +4,7 @@ import com.heronix.model.domain.StateCourseCode;
 import com.heronix.model.enums.CourseCategory;
 import com.heronix.model.enums.CourseType;
 import com.heronix.model.enums.EducationLevel;
+import com.heronix.model.enums.SchoolType;
 import com.heronix.model.enums.SCEDSubjectArea;
 import com.heronix.model.enums.USState;
 import com.heronix.repository.StateCourseCodeRepository;
@@ -53,6 +54,7 @@ import java.util.stream.Collectors;
 public class StateCourseCodeService {
 
     private final StateCourseCodeRepository repository;
+    private final com.heronix.repository.CourseRepository courseRepository;
 
     // ========================================================================
     // CSV IMPORT
@@ -700,6 +702,138 @@ public class StateCourseCodeService {
         stats.put("schoolYears", repository.findSchoolYears(state));
 
         return stats;
+    }
+
+    // ========================================================================
+    // COPY TO LOCAL CATALOG
+    // ========================================================================
+
+    /**
+     * Copy a state course code to the local course catalog.
+     * Creates a new Course entity linked to the state course code.
+     */
+    @Transactional
+    public void copyToLocalCatalog(StateCourseCode stateCourse) {
+        com.heronix.model.domain.Course course = new com.heronix.model.domain.Course();
+        course.setCourseCode(stateCourse.getStateCourseCode());
+        course.setCourseName(stateCourse.getCourseName());
+        course.setDescription(stateCourse.getDescription());
+        course.setSubject(stateCourse.getStateSubjectName());
+        course.setStateCourseCode(stateCourse);
+        course.setStateCode(stateCourse.getStateCourseCode());
+        course.setScedCode(stateCourse.getScedCode());
+        course.setScedSubjectArea(stateCourse.getSubjectArea());
+        course.setRegisteredState(stateCourse.getState());
+        if (stateCourse.getEducationLevel() != null) {
+            course.setLevel(stateCourse.getEducationLevel());
+        }
+        if (stateCourse.getCourseType() != null) {
+            course.setCourseType(stateCourse.getCourseType());
+        }
+        if (stateCourse.getCredits() != null) {
+            course.setDescription((course.getDescription() != null ? course.getDescription() + "\n" : "")
+                    + "Credits: " + stateCourse.getCredits());
+        }
+
+        courseRepository.save(course);
+        log.info("Copied state course '{}' ({}) to local catalog as course ID {}",
+                stateCourse.getCourseName(), stateCourse.getStateCourseCode(), course.getId());
+    }
+
+    /**
+     * Batch copy multiple state course codes to local catalog.
+     * Skips courses that are already in the local catalog.
+     *
+     * @param stateCourses List of state courses to add
+     * @return BatchCopyResult with counts of added, skipped, and failed
+     */
+    @Transactional
+    public BatchCopyResult copyMultipleToLocalCatalog(List<StateCourseCode> stateCourses) {
+        BatchCopyResult result = new BatchCopyResult();
+        Set<String> existingCodes = new HashSet<>(courseRepository.findAllStateCodes());
+
+        for (StateCourseCode stateCourse : stateCourses) {
+            try {
+                if (existingCodes.contains(stateCourse.getStateCourseCode())) {
+                    result.incrementSkipped();
+                    continue;
+                }
+                copyToLocalCatalog(stateCourse);
+                existingCodes.add(stateCourse.getStateCourseCode());
+                result.incrementAdded();
+            } catch (Exception e) {
+                log.error("Failed to copy state course '{}': {}", stateCourse.getStateCourseCode(), e.getMessage());
+                result.incrementFailed();
+                result.addError(stateCourse.getStateCourseCode() + ": " + e.getMessage());
+            }
+        }
+
+        log.info("Batch copy completed: {} added, {} skipped (duplicates), {} failed",
+                result.getAddedCount(), result.getSkippedCount(), result.getFailedCount());
+        return result;
+    }
+
+    /**
+     * Check if a state course code already exists in the local catalog
+     */
+    public boolean isAlreadyInLocalCatalog(String stateCourseCode) {
+        return courseRepository.existsByStateCode(stateCourseCode);
+    }
+
+    /**
+     * Get all state course codes that are already in the local catalog
+     */
+    public Set<String> getLocalCatalogStateCodes() {
+        return new HashSet<>(courseRepository.findAllStateCodes());
+    }
+
+    /**
+     * Find state courses eligible for a specific school type's grade range
+     */
+    public List<StateCourseCode> findEligibleForSchool(USState state, SchoolType schoolType) {
+        int minGrade = schoolType.getMinGradeValue();
+        int maxGrade = schoolType.getMaxGradeValue();
+
+        return repository.findByStateOrderByStateCourseCodeAsc(state).stream()
+                .filter(sc -> Boolean.TRUE.equals(sc.getActive()))
+                .filter(sc -> {
+                    // If no grade range specified, include it (could be any level)
+                    if (sc.getMinGradeLevel() == null && sc.getMaxGradeLevel() == null) {
+                        return true;
+                    }
+                    // Check overlap: course grade range overlaps with school grade range
+                    int courseMin = sc.getMinGradeLevel() != null ? sc.getMinGradeLevel() : -1;
+                    int courseMax = sc.getMaxGradeLevel() != null ? sc.getMaxGradeLevel() : 12;
+                    return courseMin <= maxGrade && courseMax >= minGrade;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Result object for batch copy operations
+     */
+    public static class BatchCopyResult {
+        private int addedCount = 0;
+        private int skippedCount = 0;
+        private int failedCount = 0;
+        private List<String> errors = new ArrayList<>();
+
+        public void incrementAdded() { addedCount++; }
+        public void incrementSkipped() { skippedCount++; }
+        public void incrementFailed() { failedCount++; }
+        public void addError(String error) { errors.add(error); }
+
+        public int getAddedCount() { return addedCount; }
+        public int getSkippedCount() { return skippedCount; }
+        public int getFailedCount() { return failedCount; }
+        public int getTotalProcessed() { return addedCount + skippedCount + failedCount; }
+        public List<String> getErrors() { return errors; }
+        public boolean hasErrors() { return !errors.isEmpty(); }
+
+        public String getSummary() {
+            return String.format("%d added, %d already existed, %d failed",
+                    addedCount, skippedCount, failedCount);
+        }
     }
 
     // ========================================================================

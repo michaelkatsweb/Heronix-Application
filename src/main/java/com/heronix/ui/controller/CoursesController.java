@@ -519,7 +519,18 @@ public class CoursesController {
             coursesList.addAll(courses);
             allCourses.clear();
             allCourses.addAll(courses);
-            // coursesTable.setItems is now handled by filteredCourses in setupStatusFilters()
+
+            // Ensure table is properly updated
+            // Re-apply current filter predicate to refresh the view
+            if (filteredCourses != null) {
+                // Force refresh by resetting predicate to show all
+                filteredCourses.setPredicate(null);
+                filteredCourses.setPredicate(course -> true);
+            }
+
+            // Force table refresh
+            coursesTable.refresh();
+
             updateRecordCount();
             log.info("Loaded {} courses", courses.size());
         } catch (Exception e) {
@@ -980,7 +991,14 @@ public class CoursesController {
     }
 
     private void updateRecordCount() {
-        recordCountLabel.setText("Total: " + coursesList.size());
+        // Use filteredCourses if available, otherwise use allCourses
+        int count = filteredCourses != null ? filteredCourses.size() : allCourses.size();
+        int total = allCourses.size();
+        if (count == total) {
+            recordCountLabel.setText("Total: " + total);
+        } else {
+            recordCountLabel.setText("Showing: " + count + " / " + total);
+        }
     }
 
     private void showError(String title, String message) {

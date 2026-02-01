@@ -19,7 +19,7 @@
                 <Separator orientation="VERTICAL" />
 
                 <Label text="View:" style="-fx-font-weight: bold; -fx-padding: 0 10 0 10;" />
-                <ComboBox fx:id="viewModeComboBox" prefWidth="150" />
+                <ComboBox fx:id="viewTypeCombo" prefWidth="150" />
 
                 <Separator orientation="VERTICAL" />
 
@@ -52,7 +52,7 @@
 
     <!-- CENTER: SCHEDULE GRID -->
     <center>
-        <ScrollPane fx:id="scheduleScrollPane" fitToWidth="true" fitToHeight="true">
+        <ScrollPane fx:id="calendarScrollPane" fitToWidth="true" fitToHeight="true">
             <GridPane fx:id="scheduleGrid" />
         </ScrollPane>
     </center>

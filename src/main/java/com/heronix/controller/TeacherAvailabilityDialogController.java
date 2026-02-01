@@ -96,7 +96,7 @@ public class TeacherAvailabilityDialogController {
     private void handleAddBlock() {
         try {
             // Load the block dialog
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/heronix/view/UnavailableTimeBlockDialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/eduscheduler/view/UnavailableTimeBlockDialog.fxml"));
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Add Unavailable Time Block");
             dialogStage.initModality(Modality.WINDOW_MODAL);
@@ -143,7 +143,7 @@ public class TeacherAvailabilityDialogController {
 
         try {
             // Load the block dialog
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/heronix/view/UnavailableTimeBlockDialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/eduscheduler/view/UnavailableTimeBlockDialog.fxml"));
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Edit Unavailable Time Block");
             dialogStage.initModality(Modality.WINDOW_MODAL);

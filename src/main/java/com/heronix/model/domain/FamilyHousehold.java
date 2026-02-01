@@ -401,7 +401,7 @@ public class FamilyHousehold {
         if (children != null) {
             totalChildren = children.size();
             enrolledChildren = (int) children.stream()
-                    .filter(s -> "ACTIVE".equals(s.getGradeLevel())) // TODO: Check actual enrollment status
+                    .filter(s -> s.getStudentStatus() != null && s.getStudentStatus() == Student.StudentStatus.ACTIVE)
                     .count();
             pendingChildren = totalChildren - enrolledChildren;
         }

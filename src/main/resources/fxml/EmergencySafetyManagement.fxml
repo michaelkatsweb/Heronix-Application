@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -11,24 +9,51 @@
 
     <top>
         <VBox spacing="10" styleClass="card">
-            <Label text="Emergency & Safety Management" styleClass="page-title-white"/>
+            <Label text="Emergency &amp; Safety Management" styleClass="page-title-white"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField" promptText="Search student or contact name..." prefWidth="350"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="totalLabel" text="Total: 0" style="-fx-font-weight: bold;"/>
+                <Button text="Refresh" onAction="#handleRefresh"/>
+            </HBox>
         </VBox>
     </top>
+
     <center>
         <TabPane tabClosingPolicy="UNAVAILABLE">
             <Tab text="Emergency Contacts">
-                <TableView fx:id="contactsTableView" style="-fx-padding: 15;">
-                    <columns>
-                        <TableColumn text="Student" prefWidth="150"/>
-                        <TableColumn text="Contact Name" prefWidth="150"/>
-                        <TableColumn text="Phone" prefWidth="120"/>
-                    </columns>
-                </TableView>
-            </Tab>
-            <Tab text="Drills & Procedures">
                 <VBox spacing="10" style="-fx-padding: 15;">
-                    <Button text="Record Fire Drill" onAction="#handleFireDrill"/>
-                    <Button text="Record Lockdown Drill" onAction="#handleLockdownDrill"/>
+                    <TableView fx:id="contactsTableView" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colStudent" text="Student" prefWidth="160"/>
+                            <TableColumn fx:id="colGrade" text="Grade" prefWidth="70"/>
+                            <TableColumn fx:id="colContactName" text="Contact Name" prefWidth="160"/>
+                            <TableColumn fx:id="colRelationship" text="Relationship" prefWidth="110"/>
+                            <TableColumn fx:id="colPhone" text="Primary Phone" prefWidth="130"/>
+                            <TableColumn fx:id="colAltPhone" text="Alt Phone" prefWidth="130"/>
+                            <TableColumn fx:id="colEmail" text="Email" prefWidth="200"/>
+                        </columns>
+                    </TableView>
+                    <Label fx:id="contactsStatusLabel" text="Ready"/>
+                </VBox>
+            </Tab>
+            <Tab text="Drills &amp; Procedures">
+                <VBox spacing="15" style="-fx-padding: 15;">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button text="Record Fire Drill" onAction="#handleFireDrill" style="-fx-background-color: #FF5722; -fx-text-fill: white;"/>
+                        <Button text="Record Lockdown Drill" onAction="#handleLockdownDrill" style="-fx-background-color: #F44336; -fx-text-fill: white;"/>
+                        <Button text="Record Tornado Drill" onAction="#handleTornadoDrill" style="-fx-background-color: #FF9800; -fx-text-fill: white;"/>
+                        <Button text="Record Evacuation Drill" onAction="#handleEvacuationDrill" style="-fx-background-color: #9C27B0; -fx-text-fill: white;"/>
+                    </HBox>
+                    <Label text="Drill Log" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+                    <TableView fx:id="drillLogTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colDrillType" text="Drill Type" prefWidth="150"/>
+                            <TableColumn fx:id="colDrillDate" text="Date/Time" prefWidth="180"/>
+                            <TableColumn fx:id="colDrillDuration" text="Duration" prefWidth="100"/>
+                            <TableColumn fx:id="colDrillNotes" text="Notes" prefWidth="400"/>
+                        </columns>
+                    </TableView>
                 </VBox>
             </Tab>
         </TabPane>

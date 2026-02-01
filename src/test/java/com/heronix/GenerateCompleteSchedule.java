@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * This test triggers actual schedule generation and shows the results.
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 public class GenerateCompleteSchedule {
 
     @Autowired

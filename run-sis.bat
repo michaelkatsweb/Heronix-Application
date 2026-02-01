@@ -1,9 +1,9 @@
 @echo off
 setlocal EnableDelayedExpansion
-title Heronix SIS - Student Information System
+title Heronix SIS - Clean, Compile, Run
 
 echo ============================================
-echo    Heronix SIS - Student Information System
+echo    Heronix SIS - Clean, Compile, and Run
 echo ============================================
 echo.
 
@@ -39,7 +39,37 @@ echo Maven version:
 mvn -version 2>&1 | findstr /i "Apache Maven"
 echo.
 
-echo Starting Heronix SIS...
+echo ============================================
+echo    Step 1: Maven Clean
+echo ============================================
+echo.
+call mvn clean -q
+if %ERRORLEVEL% NEQ 0 (
+    echo ERROR: Maven clean failed!
+    echo.
+    pause
+    exit /b 1
+)
+echo Clean completed successfully.
+echo.
+
+echo ============================================
+echo    Step 2: Maven Compile
+echo ============================================
+echo.
+call mvn compile -q
+if %ERRORLEVEL% NEQ 0 (
+    echo ERROR: Maven compile failed!
+    echo.
+    pause
+    exit /b 1
+)
+echo Compile completed successfully.
+echo.
+
+echo ============================================
+echo    Step 3: Starting Heronix SIS
+echo ============================================
 echo.
 echo JavaFX Desktop Application with Embedded Server
 echo REST API will be available at: http://localhost:9580
@@ -51,7 +81,7 @@ echo Press Ctrl+C to stop the application
 echo ============================================
 echo.
 
-:: Run with Maven JavaFX plugin (compiles and runs the JavaFX app)
+:: Run with Maven JavaFX plugin
 call mvn javafx:run
 
 :: Check if the command failed

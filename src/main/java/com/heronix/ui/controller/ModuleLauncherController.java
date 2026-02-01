@@ -143,8 +143,23 @@ public class ModuleLauncherController {
      * Filter modules based on search text
      */
     private void filterModules(String searchText) {
-        // TODO: Implement filtering logic to show/hide module tiles
-        // For now, this is a placeholder
+        if (searchField.getScene() == null || searchField.getScene().getRoot() == null) return;
+        String query = searchText == null ? "" : searchText.toLowerCase().trim();
+        // Find all module tiles (VBox with styleClass "module-tile") and toggle visibility
+        searchField.getScene().getRoot().lookupAll(".module-tile").forEach(node -> {
+            if (query.isEmpty()) {
+                node.setVisible(true);
+                node.setManaged(true);
+            } else {
+                // Check if any label child contains the search text
+                boolean matches = node.lookupAll(".label").stream()
+                        .filter(n -> n instanceof Label)
+                        .map(n -> ((Label) n).getText())
+                        .anyMatch(text -> text != null && text.toLowerCase().contains(query));
+                node.setVisible(matches);
+                node.setManaged(matches);
+            }
+        });
     }
 
     // ========== Module Navigation Handlers ==========
@@ -176,7 +191,7 @@ public class ModuleLauncherController {
 
     @FXML
     private void handleSpecialPrograms(MouseEvent event) {
-        navigateToView("SPEDDashboard.fxml", "Special Programs");
+        navigateToView("sped-dashboard.fxml", "Special Programs");
     }
 
     @FXML

@@ -61,4 +61,27 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
      */
     @Query("SELECT DISTINCT c FROM Course c LEFT JOIN FETCH c.teacher LEFT JOIN FETCH c.room")
     List<Course> findAllWithTeacherAndRoom();
+
+    // ========================================================================
+    // SCHOOL COURSE OFFERING QUERIES
+    // ========================================================================
+
+    /**
+     * Find all state course codes that have already been added to the local catalog
+     */
+    @Query("SELECT c.stateCode FROM Course c WHERE c.stateCode IS NOT NULL")
+    List<String> findAllStateCodes();
+
+    /**
+     * Check if a state course code already exists in the local catalog
+     */
+    boolean existsByStateCode(String stateCode);
+
+    /**
+     * Find active courses eligible for a grade level range
+     */
+    @Query("SELECT c FROM Course c WHERE c.active = true AND " +
+           "(c.minGradeLevel IS NULL OR c.minGradeLevel <= :maxGrade) AND " +
+           "(c.maxGradeLevel IS NULL OR c.maxGradeLevel >= :minGrade)")
+    List<Course> findActiveByGradeRange(int minGrade, int maxGrade);
 }

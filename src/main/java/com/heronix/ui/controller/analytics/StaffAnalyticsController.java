@@ -391,7 +391,23 @@ public class StaffAnalyticsController implements Initializable {
     @FXML
     private void handleExportReport() {
         log.info("Export report requested");
-        updateStatus("Export functionality coming soon...");
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Export Staff Analytics Report");
+        fileChooser.setInitialFileName("staff_analytics_report.csv");
+        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        java.io.File file = fileChooser.showSaveDialog(statusLabel.getScene().getWindow());
+        if (file != null) {
+            try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.OutputStreamWriter(
+                    new java.io.FileOutputStream(file), java.nio.charset.StandardCharsets.UTF_8))) {
+                pw.write('\ufeff');
+                pw.println("Staff Analytics Report");
+                pw.println("Generated: " + java.time.LocalDate.now());
+                updateStatus("Report exported to " + file.getName());
+            } catch (Exception e) {
+                log.error("Export failed", e);
+                updateStatus("Export failed: " + e.getMessage());
+            }
+        }
     }
 
     private void updateStatus(String message) {

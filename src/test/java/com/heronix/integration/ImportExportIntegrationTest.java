@@ -1,6 +1,5 @@
 package com.heronix.integration;
 
-import com.heronix.HeronixSchedulerApiApplication;
 import com.heronix.model.domain.*;
 import com.heronix.model.dto.ImportResult;
 import com.heronix.model.enums.*;
@@ -31,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Heronix Scheduler Integration Testing Team
  * @since December 20, 2025
  */
-@SpringBootTest(classes = HeronixSchedulerApiApplication.class)
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @ActiveProfiles("test")
 @Transactional
 public class ImportExportIntegrationTest {

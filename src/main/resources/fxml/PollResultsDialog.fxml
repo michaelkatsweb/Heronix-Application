@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.PollResultsDialogController"
+            prefWidth="650" prefHeight="550">
+
+    <top>
+        <VBox spacing="8">
+            <padding><Insets top="15" right="20" bottom="10" left="20"/></padding>
+            <Label fx:id="pollTitle" text="Poll Results">
+                <font><Font name="System Bold" size="18"/></font>
+            </Label>
+            <HBox spacing="15">
+                <Label fx:id="totalResponsesLabel" text="Total responses: 0">
+                    <font><Font size="13"/></font>
+                </Label>
+                <Label fx:id="statusLabel" text="">
+                    <font><Font size="13"/></font>
+                </Label>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox fx:id="resultsContainer" spacing="15">
+                <padding><Insets top="10" right="20" bottom="20" left="20"/></padding>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_RIGHT">
+            <padding><Insets top="10" right="20" bottom="15" left="20"/></padding>
+            <Button text="Close" onAction="#handleClose" styleClass="nav-button"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

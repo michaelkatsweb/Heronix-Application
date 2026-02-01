@@ -15,13 +15,30 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.security.auth.x500.X500Principal;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.*;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 /**
  * Device Authentication Service
@@ -62,9 +79,28 @@ public class DeviceAuthenticationService {
     private static final Pattern MAC_PATTERN = Pattern.compile(
             "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
 
+    // RSA key size for device certificates
+    private static final int RSA_KEY_SIZE = 2048;
+
+    // Certificate signature algorithm
+    private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
+
+    // CA Distinguished Name
+    private static final String CA_ISSUER_DN = "CN=Heronix Device CA, O=Heronix Educational Systems, OU=Device Authentication, C=US";
+
     // Certificate validity period (days)
     @Value("${heronix.device.certificate.validity-days:365}")
     private int certificateValidityDays;
+
+    // CA private key for signing (in production, this would be loaded from HSM/TPM)
+    private KeyPair caKeyPair;
+
+    // Static initializer to register BouncyCastle provider
+    static {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+    }
 
     @Autowired
     private RegisteredDeviceRepository deviceRepository;
@@ -544,22 +580,185 @@ public class DeviceAuthenticationService {
         return "DEV-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
-    private CertificateInfo generateCertificateInfo(RegisteredDevice device) {
-        // TODO: Integrate with actual PKI/CA system for certificate generation
-        // TODO: Use HSM/TPM for private key storage and signing operations
-        // TODO: Implement proper X.509 certificate with 2048-bit RSA key pair
-        // MOCK IMPLEMENTATION - Replace with real PKI integration
-        String serial = "CERT-" + UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
-        LocalDateTime expiresAt = LocalDateTime.now().plusDays(certificateValidityDays);
-        String fingerprint = "SHA256:" + UUID.randomUUID().toString().replace("-", "").toUpperCase();
+    /**
+     * Initialize the CA key pair for certificate signing.
+     * In production, this should load from HSM/TPM or secure key store.
+     *
+     * NOTE: This is called lazily on first certificate generation.
+     * For production, implement proper key management with HSM integration.
+     */
+    private synchronized void initializeCAKeyPair() {
+        if (caKeyPair != null) {
+            return;
+        }
 
-        return CertificateInfo.builder()
-                .serialNumber(serial)
-                .expiresAt(expiresAt)
-                .fingerprint(fingerprint)
-                .keyAlgorithm("RSA-2048")
-                .signatureAlgorithm("SHA256withRSA")
-                .build();
+        try {
+            log.info("PKI: Initializing CA key pair for device certificate signing");
+
+            // TODO: In production, load CA key pair from HSM/TPM or PKCS#12 keystore
+            // For now, generate a self-signed CA key pair
+            // Production implementation should use:
+            // - Hardware Security Module (HSM) for key storage
+            // - PKCS#11 provider for HSM integration
+            // - Key ceremony with multiple custodians
+
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", BouncyCastleProvider.PROVIDER_NAME);
+            keyPairGenerator.initialize(RSA_KEY_SIZE, new SecureRandom());
+            caKeyPair = keyPairGenerator.generateKeyPair();
+
+            log.info("PKI: CA key pair initialized successfully (RSA-{})", RSA_KEY_SIZE);
+
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            log.error("PKI: Failed to initialize CA key pair", e);
+            throw new SecurityException("Failed to initialize PKI system", e);
+        }
+    }
+
+    /**
+     * Generate X.509 certificate information for a registered device.
+     *
+     * This method generates a proper X.509 v3 certificate with:
+     * - 2048-bit RSA key pair for the device
+     * - SHA256withRSA signature algorithm
+     * - Proper certificate extensions (Key Usage, Extended Key Usage)
+     * - Certificate serial number derived from secure random
+     * - SHA-256 fingerprint of the certificate
+     *
+     * @param device The registered device to generate certificate for
+     * @return CertificateInfo containing certificate details
+     */
+    private CertificateInfo generateCertificateInfo(RegisteredDevice device) {
+        log.info("PKI: Generating X.509 certificate for device {}", device.getDeviceId());
+
+        try {
+            // Ensure CA key pair is initialized
+            initializeCAKeyPair();
+
+            // Generate device key pair (2048-bit RSA)
+            KeyPairGenerator deviceKeyGen = KeyPairGenerator.getInstance("RSA", BouncyCastleProvider.PROVIDER_NAME);
+            deviceKeyGen.initialize(RSA_KEY_SIZE, new SecureRandom());
+            KeyPair deviceKeyPair = deviceKeyGen.generateKeyPair();
+
+            // Generate certificate serial number (cryptographically random)
+            BigInteger serialNumber = new BigInteger(128, new SecureRandom());
+            String serialHex = serialNumber.toString(16).toUpperCase();
+            String formattedSerial = "CERT-" + serialHex.substring(0, Math.min(16, serialHex.length()));
+
+            // Set validity period
+            Date notBefore = new Date();
+            LocalDateTime expiresAt = LocalDateTime.now().plusDays(certificateValidityDays);
+            Date notAfter = Date.from(expiresAt.atZone(ZoneId.systemDefault()).toInstant());
+
+            // Build X.500 Distinguished Names
+            X500Name issuerDN = new X500Name(CA_ISSUER_DN);
+            X500Name subjectDN = new X500Name(String.format(
+                    "CN=%s, O=Heronix Device, OU=%s, SERIALNUMBER=%s",
+                    device.getDeviceId(),
+                    device.getDeviceType() != null ? device.getDeviceType() : "Unknown",
+                    device.getMacAddress().replace(":", "")
+            ));
+
+            // Build X.509 v3 certificate
+            X509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(
+                    issuerDN,
+                    serialNumber,
+                    notBefore,
+                    notAfter,
+                    subjectDN,
+                    deviceKeyPair.getPublic()
+            );
+
+            // Add certificate extensions
+            // Key Usage: Digital Signature, Key Encipherment
+            certBuilder.addExtension(
+                    Extension.keyUsage,
+                    true,
+                    new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyEncipherment)
+            );
+
+            // Extended Key Usage: Client Authentication
+            certBuilder.addExtension(
+                    Extension.extendedKeyUsage,
+                    false,
+                    new ExtendedKeyUsage(KeyPurposeId.id_kp_clientAuth)
+            );
+
+            // Basic Constraints: Not a CA
+            certBuilder.addExtension(
+                    Extension.basicConstraints,
+                    true,
+                    new BasicConstraints(false)
+            );
+
+            // Subject Key Identifier
+            SubjectKeyIdentifier subjectKeyId = new SubjectKeyIdentifier(
+                    MessageDigest.getInstance("SHA-1").digest(deviceKeyPair.getPublic().getEncoded())
+            );
+            certBuilder.addExtension(Extension.subjectKeyIdentifier, false, subjectKeyId);
+
+            // Sign the certificate with CA private key
+            ContentSigner signer = new JcaContentSignerBuilder(SIGNATURE_ALGORITHM)
+                    .setProvider(BouncyCastleProvider.PROVIDER_NAME)
+                    .build(caKeyPair.getPrivate());
+
+            X509CertificateHolder certHolder = certBuilder.build(signer);
+
+            // Convert to X509Certificate
+            X509Certificate certificate = new JcaX509CertificateConverter()
+                    .setProvider(BouncyCastleProvider.PROVIDER_NAME)
+                    .getCertificate(certHolder);
+
+            // Generate SHA-256 fingerprint
+            MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+            byte[] certBytes = certificate.getEncoded();
+            byte[] fingerprintBytes = sha256.digest(certBytes);
+            String fingerprint = "SHA256:" + bytesToHex(fingerprintBytes);
+
+            log.info("PKI: Generated X.509 certificate for device {}. Serial: {}, Fingerprint: {}",
+                    device.getDeviceId(), formattedSerial, fingerprint.substring(0, 30) + "...");
+
+            // Store the device's public key for future verification (base64 encoded)
+            String publicKeyBase64 = Base64.getEncoder().encodeToString(deviceKeyPair.getPublic().getEncoded());
+
+            return CertificateInfo.builder()
+                    .serialNumber(formattedSerial)
+                    .expiresAt(expiresAt)
+                    .fingerprint(fingerprint)
+                    .keyAlgorithm("RSA-" + RSA_KEY_SIZE)
+                    .signatureAlgorithm(SIGNATURE_ALGORITHM)
+                    .publicKeyBase64(publicKeyBase64)
+                    .certificateBase64(Base64.getEncoder().encodeToString(certBytes))
+                    .subjectDN(subjectDN.toString())
+                    .issuerDN(issuerDN.toString())
+                    .build();
+
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            log.error("PKI: Cryptographic algorithm not available", e);
+            throw new SecurityException("PKI initialization failed: Algorithm not available", e);
+        } catch (OperatorCreationException e) {
+            log.error("PKI: Failed to create certificate signer", e);
+            throw new SecurityException("PKI certificate signing failed", e);
+        } catch (CertificateEncodingException e) {
+            log.error("PKI: Failed to encode certificate", e);
+            throw new SecurityException("PKI certificate encoding failed", e);
+        } catch (IOException e) {
+            log.error("PKI: Failed to add certificate extension", e);
+            throw new SecurityException("PKI certificate extension failed", e);
+        } catch (Exception e) {
+            log.error("PKI: Unexpected error during certificate generation", e);
+            throw new SecurityException("PKI certificate generation failed", e);
+        }
+    }
+
+    /**
+     * Convert byte array to hexadecimal string.
+     */
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02X", b));
+        }
+        return sb.toString();
     }
 
     private String generateCRLChecksum(List<CRLEntry> entries) {
@@ -697,6 +896,11 @@ public class DeviceAuthenticationService {
         private String fingerprint;
         private String keyAlgorithm;
         private String signatureAlgorithm;
+        // X.509 certificate fields for PKI integration
+        private String publicKeyBase64;      // Device's public key (Base64 encoded)
+        private String certificateBase64;    // Full X.509 certificate (Base64 encoded DER)
+        private String subjectDN;            // Certificate subject distinguished name
+        private String issuerDN;             // Certificate issuer distinguished name
     }
 
     @Data

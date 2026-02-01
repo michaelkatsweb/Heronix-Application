@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Integration tests for StudentProgressMonitoringService
  * Tests the fixed methods from December 10, 2025 (Progress Monitoring fixes)
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @ActiveProfiles("test")
 @Transactional
 public class StudentProgressMonitoringServiceTest {

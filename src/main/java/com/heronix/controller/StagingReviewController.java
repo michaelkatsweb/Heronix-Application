@@ -5,10 +5,12 @@ import com.heronix.service.StagingDataImportService.ImportResult;
 import com.heronix.service.StagingDataImportService.StagedSubmission;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +45,9 @@ import java.util.Map;
 public class StagingReviewController {
 
     private final StagingDataImportService stagingImportService;
+
+    @Value("${heronix.staging.server-url:http://localhost:8090}")
+    private String stagingServerUrl;
 
     /**
      * Get pending submissions from staging server
@@ -217,15 +222,16 @@ public class StagingReviewController {
         response.put("message", "Staging server integration not yet configured");
         response.put("note", "This endpoint will check connectivity when staging server is deployed");
 
-        // TODO: Implement actual health check
-        // try {
-        //     ResponseEntity<String> healthCheck = restTemplate.getForEntity(
-        //         stagingServerUrl + "/actuator/health", String.class);
-        //     response.put("stagingServerConnected", healthCheck.getStatusCode().is2xxSuccessful());
-        // } catch (Exception e) {
-        //     response.put("stagingServerConnected", false);
-        //     response.put("error", e.getMessage());
-        // }
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> healthCheck = restTemplate.getForEntity(
+                stagingServerUrl + "/actuator/health", String.class);
+            response.put("stagingServerConnected", healthCheck.getStatusCode().is2xxSuccessful());
+            response.put("message", "Staging server is reachable");
+        } catch (Exception e) {
+            response.put("stagingServerConnected", false);
+            response.put("message", "Staging server unreachable: " + e.getMessage());
+        }
 
         return ResponseEntity.ok(response);
     }

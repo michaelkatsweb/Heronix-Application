@@ -15,7 +15,7 @@ import java.util.Map;
  * Apply fix for NULL teacher names
  * December 5, 2025
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 public class ApplyTeacherNameFix {
 
     @Autowired

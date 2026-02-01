@@ -25,7 +25,19 @@ import java.util.stream.Collectors;
  * @author Heronix Scheduling System Team
  * @version 1.0.0
  * @since December 12, 2025
+ *
+ * @deprecated This service duplicates functionality in {@link SmartTeacherAssignmentService}.
+ *             Use SmartTeacherAssignmentService instead, which has:
+ *             - Updated workload limits (2-3 courses per teacher)
+ *             - Better shortage handling
+ *             - More detailed logging and result tracking
+ *
+ *             Migration: Replace IntelligentTeacherAssignmentService.autoAssignCoursesByCertifications()
+ *             with SmartTeacherAssignmentService.autoAssignCoursesToTeachers()
+ *
+ *             This service will be removed in version 2.0.0
  */
+@Deprecated(since = "1.1.0", forRemoval = true)
 @Service
 @Slf4j
 public class IntelligentTeacherAssignmentService {

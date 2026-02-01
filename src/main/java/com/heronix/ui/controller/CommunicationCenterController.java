@@ -1,10 +1,13 @@
 package com.heronix.ui.controller;
 
+import com.heronix.service.TalkApiService;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.util.StringConverter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -13,7 +16,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class CommunicationCenterController {
+
+    @Autowired(required = false)
+    private TalkApiService talkApiService;
 
     // Header Stats
     @FXML private Label unreadMessagesLabel;
@@ -66,16 +73,189 @@ public class CommunicationCenterController {
     private ObservableList<Message> filteredMessages = FXCollections.observableArrayList();
     private Message selectedMessage = null;
     private String currentFolder = "Inbox";
+    private List<Map<String, Object>> channels = new ArrayList<>();
 
     @FXML
     public void initialize() {
         setupMessageList();
         setupComposeTab();
-        loadSampleData();
-        loadAnnouncements();
         loadTemplates();
-        updateStatistics();
         updateLastUpdated();
+
+        // Connect to Talk server and load messages in background
+        connectAndLoadMessages();
+    }
+
+    private void connectAndLoadMessages() {
+        if (talkApiService == null) {
+            statusLabel.setText("Talk service not available. Showing offline data.");
+            loadOfflineData();
+            loadOfflineAnnouncements();
+            updateStatistics();
+            return;
+        }
+
+        statusLabel.setText("Connecting to Talk server...");
+
+        Thread thread = new Thread(() -> {
+            boolean connected = talkApiService != null && talkApiService.isConnected() || talkApiService.login("admin", "admin123");
+
+            Platform.runLater(() -> {
+                if (connected) {
+                    statusLabel.setText("Connected to Talk server. Loading messages...");
+                    loadMessagesFromServer();
+                    loadAnnouncementsFromServer();
+                } else {
+                    statusLabel.setText("Could not connect to Talk server. Showing offline data.");
+                    loadOfflineData();
+                    loadOfflineAnnouncements();
+                }
+                updateStatistics();
+            });
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void loadMessagesFromServer() {
+        Thread thread = new Thread(() -> {
+            try {
+                channels = talkApiService.getChannels();
+                List<Map<String, Object>> serverMessages = talkApiService.getAllMessages();
+
+                List<Message> messages = new ArrayList<>();
+                for (Map<String, Object> msg : serverMessages) {
+                    messages.add(convertServerMessage(msg));
+                }
+
+                Platform.runLater(() -> {
+                    allMessages.clear();
+                    allMessages.addAll(messages);
+                    filterMessages("Inbox");
+                    updateStatistics();
+                    statusLabel.setText("Loaded " + messages.size() + " message(s) from Talk server");
+                    updateLastUpdated();
+                });
+            } catch (Exception e) {
+                log.error("Error loading messages from server", e);
+                Platform.runLater(() -> {
+                    statusLabel.setText("Error loading messages: " + e.getMessage());
+                    loadOfflineData();
+                });
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private Message convertServerMessage(Map<String, Object> msg) {
+        String id = String.valueOf(msg.getOrDefault("id", "0"));
+        String senderName = (String) msg.getOrDefault("senderName", "Unknown");
+        String channelName = (String) msg.getOrDefault("channelName", "");
+        String content = (String) msg.getOrDefault("content", "");
+        String timestamp = (String) msg.getOrDefault("timestamp", "");
+        boolean pinned = Boolean.TRUE.equals(msg.get("pinned"));
+        boolean important = Boolean.TRUE.equals(msg.get("important"));
+
+        LocalDateTime dateTime;
+        try {
+            dateTime = LocalDateTime.parse(timestamp);
+        } catch (Exception e) {
+            dateTime = LocalDateTime.now();
+        }
+
+        String subject = channelName;
+        String body = content;
+        if (content.startsWith("**") && content.contains("**\n")) {
+            int end = content.indexOf("**\n");
+            subject = content.substring(2, end);
+            body = content.substring(end + 3).trim();
+        }
+
+        String preview = body.length() > 80 ? body.substring(0, 80) + "..." : body;
+
+        Long senderId = msg.get("senderId") != null ? ((Number) msg.get("senderId")).longValue() : null;
+        boolean isSent = senderId != null && senderId.equals(talkApiService.getUserId());
+
+        return new Message(id, senderName, channelName, subject, preview, body,
+                dateTime, !isSent, pinned || important, false, isSent, false);
+    }
+
+    private void loadAnnouncementsFromServer() {
+        Thread thread = new Thread(() -> {
+            try {
+                List<Map<String, Object>> news = talkApiService.getNewsItems();
+                List<Map<String, Object>> alerts = talkApiService.getAlerts();
+
+                Platform.runLater(() -> {
+                    ObservableList<String> announcements = FXCollections.observableArrayList();
+
+                    for (Map<String, Object> alert : alerts) {
+                        String title = (String) alert.getOrDefault("title", "Alert");
+                        String message = (String) alert.getOrDefault("message", "");
+                        String level = (String) alert.getOrDefault("alertLevel", "NORMAL");
+                        announcements.add("[" + level + "] " + title + "\n" + message);
+                    }
+
+                    for (Map<String, Object> item : news) {
+                        String headline = (String) item.getOrDefault("headline", "News");
+                        String itemContent = (String) item.getOrDefault("content", "");
+                        announcements.add(headline + "\n" + itemContent);
+                    }
+
+                    if (announcements.isEmpty()) {
+                        announcements.add("No announcements at this time");
+                    }
+
+                    announcementsListView.setItems(announcements);
+                    setupAnnouncementsCellFactory();
+
+                    activeAnnouncementsLabel.setText(String.valueOf(news.size()));
+                    pendingAlertsLabel.setText(String.valueOf(alerts.size()));
+                });
+            } catch (Exception e) {
+                log.debug("Could not load announcements from server", e);
+                Platform.runLater(this::loadOfflineAnnouncements);
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void loadOfflineData() {
+        LocalDateTime now = LocalDateTime.now();
+        allMessages.addAll(
+                new Message("M001", "System", "All", "Welcome to Heronix Communication Center",
+                        "The Communication Center is not connected to the Talk server...",
+                        "The Communication Center could not connect to the Talk server at this time. " +
+                                "Please ensure the Talk server is running on port 9680.",
+                        now, true, false, false, false, false)
+        );
+        filterMessages("Inbox");
+    }
+
+    private void loadOfflineAnnouncements() {
+        ObservableList<String> announcements = FXCollections.observableArrayList();
+        announcements.add("Talk server is offline\nCannot load announcements at this time");
+        announcementsListView.setItems(announcements);
+        setupAnnouncementsCellFactory();
+    }
+
+    private void setupAnnouncementsCellFactory() {
+        announcementsListView.setCellFactory(lv -> new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(item);
+                    setStyle("-fx-padding: 12; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0; " +
+                            "-fx-background-color: #fff3e0;");
+                }
+            }
+        });
     }
 
     private void setupMessageList() {
@@ -90,11 +270,11 @@ public class CommunicationCenterController {
                     setStyle("");
                 } else {
                     String text = String.format("%s%s\nFrom: %s\n%s\n%s",
-                            msg.isUnread() ? "● " : "",
+                            msg.isUnread() ? "* " : "",
                             msg.getSubject(),
                             msg.getFrom(),
                             msg.getPreview(),
-                            msg.getTimestamp());
+                            msg.getTimestamp().format(DateTimeFormatter.ofPattern("MMM dd, h:mm a")));
 
                     setText(text);
 
@@ -125,87 +305,14 @@ public class CommunicationCenterController {
         recipientTypeComboBox.getSelectionModel().selectFirst();
     }
 
-    private void loadSampleData() {
-        LocalDateTime now = LocalDateTime.now();
-
-        allMessages.addAll(
-                new Message("M001", "Sarah Anderson", "Me", "Meeting Request: Emma's Progress",
-                        "I would like to schedule a meeting to discuss Emma's recent test scores...",
-                        "Could we meet next week to discuss Emma's progress in Algebra II? I'm concerned about her recent quiz scores.",
-                        now.minusHours(2), true, false, false),
-
-                new Message("M002", "Principal Martinez", "All Teachers", "Reminder: Staff Meeting Tomorrow",
-                        "Don't forget our staff meeting tomorrow at 3:00 PM in the conference room...",
-                        "This is a reminder about our monthly staff meeting tomorrow. We'll be discussing the upcoming parent-teacher conferences.",
-                        now.minusHours(5), true, true, false),
-
-                new Message("M003", "John Smith (Parent)", "Me", "Question about Homework Assignment",
-                        "My son mentioned there was confusion about the homework for Chapter 5...",
-                        "Hi, my son Liam mentioned there was some confusion in class today about the homework assignment for Chapter 5. Could you clarify?",
-                        now.minusHours(8), true, false, false),
-
-                new Message("M004", "Ms. Johnson (Chemistry)", "Science Department", "Lab Safety Reminder",
-                        "Please remind students about proper lab safety procedures before tomorrow's experiment...",
-                        "All science teachers, please take 5 minutes at the start of class tomorrow to review lab safety procedures.",
-                        now.minusDays(1), false, false, false),
-
-                new Message("M005", "Athletic Director", "All Coaches", "Updated Practice Schedule",
-                        "Due to facility maintenance, practice schedules have been adjusted for next week...",
-                        "The gym will be closed for floor maintenance next Tuesday and Wednesday. Please adjust practice schedules accordingly.",
-                        now.minusDays(1), false, false, false),
-
-                new Message("M006", "IT Department", "All Staff", "System Maintenance Saturday",
-                        "Scheduled maintenance on Saturday night will affect email and gradebook systems...",
-                        "Please be aware that we will be performing system upgrades on Saturday from 10 PM to 6 AM. Email and gradebook will be unavailable.",
-                        now.minusDays(2), false, false, false),
-
-                new Message("M007", "Emma Anderson (Student)", "Me", "Absent Tomorrow - Doctor Appointment",
-                        "I have a doctor's appointment tomorrow and will miss Period 2...",
-                        "Hi Ms. Rodriguez, I wanted to let you know I have a doctor's appointment tomorrow morning and will miss your class. Can I make up the quiz?",
-                        now.minusDays(2), false, false, false),
-
-                new Message("M008", "Counseling Office", "Homeroom Teachers", "Progress Report Deadline",
-                        "Progress reports are due by Friday. Please complete all grade entries...",
-                        "This is a reminder that progress reports are due this Friday. Please ensure all grades are entered in the system by Thursday evening.",
-                        now.minusDays(3), true, true, false)
-        );
-
-        filterMessages("Inbox");
-    }
-
-    private void loadAnnouncements() {
-        ObservableList<String> announcements = FXCollections.observableArrayList();
-        announcements.add("📢 Winter Break Schedule\nSchool closes Dec 15 • Resumes Jan 6\nPosted: Dec 1, 2024");
-        announcements.add("📢 Parent-Teacher Conferences\nDec 5 & 10 • 3:00 PM - 6:00 PM\nPosted: Nov 28, 2024");
-        announcements.add("📢 Final Exams Schedule Released\nDec 13-15 • Check student portal\nPosted: Nov 25, 2024");
-        announcements.add("📢 Holiday Concert\nDec 18 • 7:00 PM • Main Hall\nPosted: Nov 20, 2024");
-        announcements.add("📢 Yearbook Photos - Retakes\nDec 9 • Morning only\nPosted: Nov 18, 2024");
-
-        announcementsListView.setItems(announcements);
-        announcementsListView.setCellFactory(lv -> new ListCell<String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setStyle("");
-                } else {
-                    setText(item);
-                    setStyle("-fx-padding: 12; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0; " +
-                            "-fx-background-color: #fff3e0;");
-                }
-            }
-        });
-    }
-
     private void loadTemplates() {
         ObservableList<String> templates = FXCollections.observableArrayList();
-        templates.add("📄 Absence Excuse Request\nTemplate for requesting student absence documentation");
-        templates.add("📄 Parent Meeting Request\nStandard template for scheduling parent meetings");
-        templates.add("📄 Grade Concern Notice\nNotification for parents about low grades");
-        templates.add("📄 Positive Behavior Recognition\nTemplate for praising student achievements");
-        templates.add("📄 Homework Reminder\nReminder about missing homework assignments");
-        templates.add("📄 Field Trip Permission\nField trip permission slip and details");
+        templates.add("Absence Excuse Request\nTemplate for requesting student absence documentation");
+        templates.add("Parent Meeting Request\nStandard template for scheduling parent meetings");
+        templates.add("Grade Concern Notice\nNotification for parents about low grades");
+        templates.add("Positive Behavior Recognition\nTemplate for praising student achievements");
+        templates.add("Homework Reminder\nReminder about missing homework assignments");
+        templates.add("Field Trip Permission\nField trip permission slip and details");
 
         templatesListView.setItems(templates);
         templatesListView.setCellFactory(lv -> new ListCell<String>() {
@@ -288,34 +395,27 @@ public class CommunicationCenterController {
         previewDateLabel.setText(msg.getTimestamp().format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy 'at' h:mm a")));
         previewBodyArea.setText(msg.getBody());
 
-        // Mark as read
         if (msg.isUnread()) {
             msg.setUnread(false);
             updateStatistics();
             messageListView.refresh();
         }
 
-        // Switch to preview tab
         rightPanelTabPane.getSelectionModel().select(0);
-
         statusLabel.setText("Viewing message: " + msg.getSubject());
     }
 
     private void updateStatistics() {
         long unread = allMessages.stream().filter(Message::isUnread).count();
         long drafts = allMessages.stream().filter(Message::isDraft).count();
-        long sentToday = allMessages.stream()
-                .filter(m -> m.isSent() && m.getTimestamp().toLocalDate().equals(LocalDateTime.now().toLocalDate()))
-                .count();
+        long sentCount = allMessages.stream().filter(Message::isSent).count();
 
         unreadMessagesLabel.setText(String.valueOf(unread));
         draftMessagesLabel.setText(String.valueOf(drafts));
-        sentTodayLabel.setText(String.valueOf(sentToday));
-        activeAnnouncementsLabel.setText("5");
-        pendingAlertsLabel.setText("2");
+        sentTodayLabel.setText(String.valueOf(sentCount));
 
         totalMessagesLabel.setText("Total: " + allMessages.size() + " messages");
-        storageUsedLabel.setText("Storage: 125 MB / 5 GB");
+        storageUsedLabel.setText(talkApiService != null && talkApiService.isConnected() ? "Connected to Talk" : "Offline");
     }
 
     private void updatePagination() {
@@ -330,36 +430,27 @@ public class CommunicationCenterController {
     // Event Handlers - Folders
 
     @FXML
-    private void handleInbox() {
-        filterMessages("Inbox");
-    }
+    private void handleInbox() { filterMessages("Inbox"); }
 
     @FXML
-    private void handleSent() {
-        filterMessages("Sent");
-    }
+    private void handleSent() { filterMessages("Sent"); }
 
     @FXML
-    private void handleDrafts() {
-        filterMessages("Drafts");
-    }
+    private void handleDrafts() { filterMessages("Drafts"); }
 
     @FXML
-    private void handleStarred() {
-        filterMessages("Starred");
-    }
+    private void handleStarred() { filterMessages("Starred"); }
 
     @FXML
-    private void handleTrash() {
-        filterMessages("Trash");
-    }
+    private void handleTrash() { filterMessages("Trash"); }
 
     @FXML
     private void handleFromParents() {
         folderTitleLabel.setText("From Parents");
         filteredMessages.clear();
         filteredMessages.addAll(allMessages.stream()
-                .filter(m -> m.getFrom().contains("Parent") || m.getFrom().contains("Anderson") || m.getFrom().contains("Smith"))
+                .filter(m -> m.getFrom().toLowerCase().contains("parent") ||
+                        m.getTo().toLowerCase().contains("parent"))
                 .collect(Collectors.toList()));
         updatePagination();
         statusLabel.setText("Viewing messages from parents");
@@ -370,7 +461,9 @@ public class CommunicationCenterController {
         folderTitleLabel.setText("From Teachers");
         filteredMessages.clear();
         filteredMessages.addAll(allMessages.stream()
-                .filter(m -> m.getFrom().contains("Ms.") || m.getFrom().contains("Mr."))
+                .filter(m -> m.getFrom().toLowerCase().contains("teacher") ||
+                        m.getFrom().toLowerCase().contains("ms.") ||
+                        m.getFrom().toLowerCase().contains("mr."))
                 .collect(Collectors.toList()));
         updatePagination();
         statusLabel.setText("Viewing messages from teachers");
@@ -381,8 +474,9 @@ public class CommunicationCenterController {
         folderTitleLabel.setText("From Staff");
         filteredMessages.clear();
         filteredMessages.addAll(allMessages.stream()
-                .filter(m -> m.getFrom().contains("Principal") || m.getFrom().contains("Department") ||
-                        m.getFrom().contains("Office") || m.getFrom().contains("Director"))
+                .filter(m -> m.getFrom().toLowerCase().contains("admin") ||
+                        m.getFrom().toLowerCase().contains("principal") ||
+                        m.getFrom().toLowerCase().contains("department"))
                 .collect(Collectors.toList()));
         updatePagination();
         statusLabel.setText("Viewing messages from staff");
@@ -393,7 +487,7 @@ public class CommunicationCenterController {
         folderTitleLabel.setText("From Students");
         filteredMessages.clear();
         filteredMessages.addAll(allMessages.stream()
-                .filter(m -> m.getFrom().contains("Student") || m.getFrom().contains("Emma"))
+                .filter(m -> m.getFrom().toLowerCase().contains("student"))
                 .collect(Collectors.toList()));
         updatePagination();
         statusLabel.setText("Viewing messages from students");
@@ -403,20 +497,40 @@ public class CommunicationCenterController {
 
     @FXML
     private void handleSearch() {
-        String query = messageSearchField.getText().toLowerCase();
+        String query = messageSearchField.getText().trim();
         if (query.isEmpty()) {
             filterMessages(currentFolder);
             return;
         }
 
-        filteredMessages.clear();
-        filteredMessages.addAll(allMessages.stream()
-                .filter(m -> m.getSubject().toLowerCase().contains(query) ||
-                        m.getFrom().toLowerCase().contains(query) ||
-                        m.getBody().toLowerCase().contains(query))
-                .collect(Collectors.toList()));
-        updatePagination();
-        statusLabel.setText("Search results: " + filteredMessages.size() + " message(s)");
+        if (talkApiService != null && talkApiService.isConnected()) {
+            statusLabel.setText("Searching Talk server...");
+            Thread thread = new Thread(() -> {
+                List<Map<String, Object>> results = talkApiService.searchMessages(query);
+                List<Message> messages = results.stream()
+                        .map(this::convertServerMessage)
+                        .collect(Collectors.toList());
+
+                Platform.runLater(() -> {
+                    filteredMessages.clear();
+                    filteredMessages.addAll(messages);
+                    updatePagination();
+                    statusLabel.setText("Search results: " + filteredMessages.size() + " message(s)");
+                });
+            });
+            thread.setDaemon(true);
+            thread.start();
+        } else {
+            String q = query.toLowerCase();
+            filteredMessages.clear();
+            filteredMessages.addAll(allMessages.stream()
+                    .filter(m -> m.getSubject().toLowerCase().contains(q) ||
+                            m.getFrom().toLowerCase().contains(q) ||
+                            m.getBody().toLowerCase().contains(q))
+                    .collect(Collectors.toList()));
+            updatePagination();
+            statusLabel.setText("Search results: " + filteredMessages.size() + " message(s)");
+        }
     }
 
     @FXML
@@ -515,7 +629,6 @@ public class CommunicationCenterController {
             showAlert("No Subject", "Please enter a subject before saving draft");
             return;
         }
-
         statusLabel.setText("Draft saved: " + subject);
         showAlert("Draft Saved", "Your message has been saved to drafts");
     }
@@ -530,15 +643,47 @@ public class CommunicationCenterController {
             showAlert("No Recipient", "Please enter at least one recipient");
             return;
         }
-
         if (subject.isEmpty()) {
             showAlert("No Subject", "Please enter a subject");
             return;
         }
 
-        clearComposeForm();
-        statusLabel.setText("Message sent to " + recipient);
-        showAlert("Message Sent", "Your message has been sent successfully");
+        if (talkApiService == null || !talkApiService.isConnected()) {
+            showAlert("Not Connected", "Cannot send message - Talk server is not connected");
+            return;
+        }
+
+        statusLabel.setText("Sending message...");
+
+        Thread thread = new Thread(() -> {
+            String content = "**" + subject + "**\n\n" + body;
+            Long targetChannel = 1L; // General channel default
+
+            // Try to find a matching channel by name
+            for (Map<String, Object> ch : channels) {
+                String name = (String) ch.getOrDefault("name", "");
+                if (name.toLowerCase().contains(recipient.toLowerCase())) {
+                    targetChannel = ((Number) ch.get("id")).longValue();
+                    break;
+                }
+            }
+
+            Map<String, Object> result = talkApiService.sendMessage(targetChannel, content);
+
+            Platform.runLater(() -> {
+                if (result != null) {
+                    clearComposeForm();
+                    statusLabel.setText("Message sent successfully to " + recipient);
+                    showAlert("Message Sent", "Your message has been sent via Talk server");
+                    loadMessagesFromServer();
+                } else {
+                    statusLabel.setText("Failed to send message");
+                    showAlert("Send Failed", "Could not send message. Please try again.");
+                }
+            });
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @FXML
@@ -546,10 +691,10 @@ public class CommunicationCenterController {
         statusLabel.setText("Opening announcement builder...");
         showAlert("Create Announcement",
                 "Create school-wide announcement:\n" +
-                        "• Choose audience (All/Students/Parents/Staff)\n" +
-                        "• Set priority level\n" +
-                        "• Schedule posting time\n" +
-                        "• Add attachments");
+                        "- Choose audience (All/Students/Parents/Staff)\n" +
+                        "- Set priority level\n" +
+                        "- Schedule posting time\n" +
+                        "- Add attachments");
     }
 
     @FXML
@@ -564,9 +709,14 @@ public class CommunicationCenterController {
 
     @FXML
     private void handleRefresh() {
-        updateStatistics();
+        if (talkApiService != null && talkApiService.isConnected()) {
+            loadMessagesFromServer();
+            loadAnnouncementsFromServer();
+        } else {
+            connectAndLoadMessages();
+        }
         updateLastUpdated();
-        statusLabel.setText("Messages refreshed");
+        statusLabel.setText("Refreshing messages...");
     }
 
     @FXML
@@ -574,11 +724,11 @@ public class CommunicationCenterController {
         statusLabel.setText("Opening communication settings...");
         showAlert("Communication Settings",
                 "Configure:\n" +
-                        "• Email signature\n" +
-                        "• Auto-reply messages\n" +
-                        "• Notification preferences\n" +
-                        "• Message templates\n" +
-                        "• Folder organization");
+                        "- Email signature\n" +
+                        "- Auto-reply messages\n" +
+                        "- Notification preferences\n" +
+                        "- Message templates\n" +
+                        "- Folder organization");
     }
 
     private void clearComposeForm() {
@@ -616,6 +766,12 @@ public class CommunicationCenterController {
 
         public Message(String id, String from, String to, String subject, String preview, String body,
                        LocalDateTime timestamp, boolean unread, boolean priority, boolean starred) {
+            this(id, from, to, subject, preview, body, timestamp, unread, priority, starred, false, false);
+        }
+
+        public Message(String id, String from, String to, String subject, String preview, String body,
+                       LocalDateTime timestamp, boolean unread, boolean priority, boolean starred,
+                       boolean sent, boolean draft) {
             this.id = id;
             this.from = from;
             this.to = to;
@@ -626,8 +782,8 @@ public class CommunicationCenterController {
             this.unread = unread;
             this.priority = priority;
             this.starred = starred;
-            this.sent = false;
-            this.draft = false;
+            this.sent = sent;
+            this.draft = draft;
         }
 
         public String getId() { return id; }

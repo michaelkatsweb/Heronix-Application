@@ -93,13 +93,14 @@ public class ApiSecurityConfig {
                 .requestMatchers("/swagger-ui/**").permitAll()          // Swagger UI
                 .requestMatchers("/v3/api-docs/**").permitAll()         // OpenAPI spec
 
-                // Inter-service sync endpoints - internal service communication
-                .requestMatchers("/api/sync/**").permitAll()            // Service sync endpoints
-                .requestMatchers("/api/teacher/all").permitAll()        // Teacher sync for Heronix-Talk
-                .requestMatchers("/api/teacher/employee/**").permitAll() // Teacher lookup for Heronix-Talk auth
-                .requestMatchers("/api/teacher/sync/**").permitAll()    // Teacher portal sync
-                .requestMatchers("/api/config/discovery").permitAll()   // Service discovery
-                .requestMatchers("/api/config/client").permitAll()      // Client configuration
+                // Inter-service sync endpoints - SECURED with service scope
+                // These require API key with 'service:sync' scope for inter-service communication
+                .requestMatchers("/api/sync/**").hasAuthority("SCOPE_service:sync")
+                .requestMatchers("/api/teacher/all").hasAuthority("SCOPE_service:sync")
+                .requestMatchers("/api/teacher/employee/**").hasAuthority("SCOPE_service:sync")
+                .requestMatchers("/api/teacher/sync/**").hasAuthority("SCOPE_service:sync")
+                .requestMatchers("/api/config/discovery").hasAuthority("SCOPE_service:sync")
+                .requestMatchers("/api/config/client").hasAuthority("SCOPE_service:sync")
 
                 // Protected endpoints - require authentication
                 .requestMatchers("/api/**").authenticated()

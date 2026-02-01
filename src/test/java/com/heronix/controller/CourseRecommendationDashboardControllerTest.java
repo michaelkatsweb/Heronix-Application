@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Heronix Scheduling System Team
  * @since December 20, 2025
  */
-@SpringBootTest(classes = com.heronix.HeronixSchedulerApiApplication.class)
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 @ActiveProfiles("test")
 @Transactional
 public class CourseRecommendationDashboardControllerTest {

@@ -670,8 +670,37 @@ public class AttendanceController {
     }
 
     private void handleViewStudentDetails(Long studentId) {
-        // TODO: Open student details dialog or navigate to student view
-        showInfo("Student details view - Student ID: " + studentId);
+        try {
+            LocalDate end = LocalDate.now();
+            LocalDate start = end.minusDays(30);
+            AttendanceService.AttendanceSummary summary =
+                    attendanceService.getStudentAttendanceSummary(studentId, start, end);
+
+            String details = String.format(
+                    "Student ID: %d\n\n" +
+                    "Period: %s to %s\n" +
+                    "Total Days: %d\n" +
+                    "Days Present: %d\n" +
+                    "Days Absent: %d\n" +
+                    "Days Tardy: %d\n" +
+                    "Attendance Rate: %.1f%%\n" +
+                    "Chronic Absent: %s",
+                    studentId, start, end,
+                    summary.getTotalDays(), summary.getDaysPresent(),
+                    summary.getDaysAbsent(), summary.getDaysTardy(),
+                    summary.getAttendanceRate(),
+                    summary.isChronicAbsent() ? "Yes" : "No");
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Student Attendance Details");
+            alert.setHeaderText("30-Day Attendance Summary");
+            alert.setContentText(details);
+            alert.getDialogPane().setMinWidth(400);
+            alert.showAndWait();
+        } catch (Exception e) {
+            log.error("Error loading student details for ID: {}", studentId, e);
+            showError("Failed to load student details: " + e.getMessage());
+        }
     }
 
     // ========================================================================

@@ -26,11 +26,11 @@ public class StudentService {
     private final StudentRepository studentRepository;
 
     /**
-     * Get all students
+     * Get all students (excluding soft-deleted)
      */
     public List<Student> getAllStudents() {
-        log.debug("Getting all students");
-        return studentRepository.findAll();
+        log.debug("Getting all students (excluding deleted)");
+        return studentRepository.findAllNonDeleted();
     }
 
     /**

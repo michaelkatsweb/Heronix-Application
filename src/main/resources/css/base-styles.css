@@ -145,6 +145,36 @@
     -fx-font-weight: 700;
 }
 
+.metric-info {
+    -fx-background-color: derive(var(--accent-primary), 90%);
+    -fx-border-color: derive(var(--accent-primary), 60%);
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10;
+}
+
+/* Text Utility Classes */
+.text-muted {
+    -fx-text-fill: var(--text-tertiary);
+    -fx-font-size: 13px;
+}
+
+.text-muted-10 {
+    -fx-text-fill: var(--text-tertiary);
+    -fx-font-size: 10px;
+}
+
+.text-muted-12 {
+    -fx-text-fill: var(--text-tertiary);
+    -fx-font-size: 12px;
+}
+
+.text-hint-10 {
+    -fx-text-fill: var(--text-tertiary);
+    -fx-font-size: 10px;
+    -fx-font-style: italic;
+}
+
 /* ============================================================================
  * 3. BUTTONS
  * ============================================================================ */
@@ -2172,4 +2202,158 @@
     -fx-background-radius: 6;
     -fx-padding: 10 12;
     -fx-effect: dropshadow(gaussian, var(--shadow-md), 6, 0, 0, 2);
+}
+
+/* ============================================================================
+ * 19. COMMUNICATION CENTER STYLES
+ * ============================================================================ */
+
+/* Header Gradient */
+.header-gradient {
+    -fx-background-color: linear-gradient(to right, var(--accent-primary), #764ba2);
+    -fx-padding: 20;
+    -fx-background-radius: 0;
+}
+
+/* White Text Variants */
+.page-title-white {
+    -fx-font-size: 28px;
+    -fx-font-weight: 700;
+    -fx-text-fill: white;
+}
+
+.text-white {
+    -fx-text-fill: white;
+}
+
+/* Transparent Card */
+.card-transparent {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-background-radius: 8;
+    -fx-padding: 12;
+}
+
+/* Padding Variants */
+.padding-15-white {
+    -fx-padding: 15;
+    -fx-background-color: var(--bg-secondary);
+}
+
+.content-padding-10 {
+    -fx-padding: 10;
+}
+
+/* Folder Buttons */
+.button-folder {
+    -fx-background-color: transparent;
+    -fx-text-fill: var(--text-primary);
+    -fx-font-size: 13px;
+    -fx-padding: 10 15;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.button-folder:hover {
+    -fx-background-color: var(--bg-hover);
+}
+
+.button-folder-active {
+    -fx-background-color: var(--accent-primary);
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 10 15;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.button-folder-active:hover {
+    -fx-background-color: var(--accent-primary-hover, derive(var(--accent-primary), -10%));
+}
+
+/* Category Buttons */
+.button-category {
+    -fx-background-color: transparent;
+    -fx-text-fill: var(--text-secondary);
+    -fx-font-size: 12px;
+    -fx-padding: 8 15;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.button-category:hover {
+    -fx-background-color: var(--bg-hover);
+    -fx-text-fill: var(--text-primary);
+}
+
+/* Icon Button */
+.button-icon {
+    -fx-background-color: var(--bg-tertiary);
+    -fx-text-fill: var(--text-secondary);
+    -fx-font-size: 14px;
+    -fx-padding: 8;
+    -fx-min-width: 36;
+    -fx-min-height: 36;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.button-icon:hover {
+    -fx-background-color: var(--accent-primary);
+    -fx-text-fill: white;
+}
+
+/* Toolbar Button */
+.button-toolbar {
+    -fx-background-color: var(--bg-tertiary);
+    -fx-text-fill: var(--text-primary);
+    -fx-font-size: 12px;
+    -fx-padding: 6 12;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.button-toolbar:hover {
+    -fx-background-color: var(--bg-hover);
+}
+
+/* Action Button */
+.button-action {
+    -fx-background-color: var(--bg-tertiary);
+    -fx-text-fill: var(--text-primary);
+    -fx-font-size: 12px;
+    -fx-padding: 8 14;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.button-action:hover {
+    -fx-background-color: var(--accent-primary);
+    -fx-text-fill: white;
+}
+
+/* Label Size Variants */
+.label-10 {
+    -fx-font-size: 10px;
+    -fx-text-fill: var(--text-tertiary);
+}
+
+.label-11 {
+    -fx-font-size: 11px;
+    -fx-text-fill: var(--text-secondary);
+}
+
+.label-11-bold {
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-text-fill: var(--text-primary);
+}
+
+.label-12-bold {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: var(--text-primary);
 }

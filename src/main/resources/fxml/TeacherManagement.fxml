@@ -51,6 +51,7 @@
                 <TableColumn fx:id="roleColumn" text="Role" prefWidth="110" minWidth="90"/>
                 <TableColumn fx:id="departmentColumn" text="Department" prefWidth="120" minWidth="100"/>
                 <TableColumn fx:id="subjectAreasColumn" text="Subjects" prefWidth="130" minWidth="100"/>
+                <TableColumn fx:id="certificationsColumn" text="Certifications" prefWidth="120" minWidth="100"/>
                 <TableColumn fx:id="emailColumn" text="Email" prefWidth="180" minWidth="150"/>
                 <TableColumn fx:id="phoneColumn" text="Phone" prefWidth="110" minWidth="100"/>
                 <TableColumn fx:id="workloadColumn" text="Load" prefWidth="70" minWidth="60"/>

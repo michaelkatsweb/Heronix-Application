@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.EnrollmentReportsFormController"
             styleClass="content-pane">
-
 
     <top>
         <VBox styleClass="header-section" spacing="10">
@@ -18,27 +16,65 @@
                 <Insets top="15" right="20" bottom="15" left="20"/>
             </padding>
             <Label text="Enrollment Reports and Analytics" styleClass="page-title"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label fx:id="totalEnrollmentLabel" text="Total Enrolled: --" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Refresh" onAction="#handleRefresh"/>
+                <Button text="Export CSV" onAction="#handleExportCSV"/>
+            </HBox>
         </VBox>
     </top>
 
     <center>
         <ScrollPane fitToWidth="true">
-            <VBox spacing="20" styleClass="form-container">
-                <padding>
-                    <Insets top="20" right="20" bottom="20" left="20"/>
-                </padding>
+            <VBox spacing="20" style="-fx-padding: 20;">
 
-                <Label text="Enrollment Analytics Dashboard - Coming Soon" style="-fx-font-size: 18px;"/>
-                <Label text="This feature will include:" style="-fx-font-size: 14px;"/>
-                <VBox spacing="5">
-                    <Label text="• Enrollment statistics by grade level"/>
-                    <Label text="• Application status breakdown"/>
-                    <Label text="• Monthly enrollment trends"/>
-                    <Label text="• Demographic reports"/>
-                    <Label text="• Special services tracking"/>
+                <!-- Enrollment by Grade Level -->
+                <VBox spacing="10" styleClass="card" style="-fx-padding: 15;">
+                    <Label text="Enrollment by Grade Level" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+                    <HBox spacing="15">
+                        <BarChart fx:id="gradeLevelChart" HBox.hgrow="ALWAYS" prefHeight="280" animated="false">
+                            <xAxis><CategoryAxis fx:id="glXAxis" label="Grade Level"/></xAxis>
+                            <yAxis><NumberAxis fx:id="glYAxis" label="Students"/></yAxis>
+                        </BarChart>
+                        <TableView fx:id="gradeLevelTable" prefWidth="300" prefHeight="280">
+                            <columns>
+                                <TableColumn fx:id="colGradeLevel" text="Grade" prefWidth="100"/>
+                                <TableColumn fx:id="colGradeCount" text="Count" prefWidth="80"/>
+                                <TableColumn fx:id="colGradeAvgGpa" text="Avg GPA" prefWidth="90"/>
+                            </columns>
+                        </TableView>
+                    </HBox>
                 </VBox>
+
+                <!-- Special Services and Demographics side by side -->
+                <HBox spacing="20">
+                    <VBox spacing="10" styleClass="card" style="-fx-padding: 15;" HBox.hgrow="ALWAYS">
+                        <Label text="Special Services" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+                        <Label fx:id="iepLabel" text="IEP Students: --"/>
+                        <Label fx:id="plan504Label" text="504 Plan: --"/>
+                        <Label fx:id="giftedLabel" text="Gifted: --"/>
+                        <Label fx:id="ellLabel" text="English Learners: --"/>
+                    </VBox>
+                    <VBox spacing="10" styleClass="card" style="-fx-padding: 15;" HBox.hgrow="ALWAYS">
+                        <Label text="Gender Distribution" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+                        <TableView fx:id="genderTable" prefHeight="150">
+                            <columns>
+                                <TableColumn fx:id="colGender" text="Gender" prefWidth="120"/>
+                                <TableColumn fx:id="colGenderCount" text="Count" prefWidth="80"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    <VBox spacing="10" styleClass="card" style="-fx-padding: 15;" HBox.hgrow="ALWAYS">
+                        <Label text="Student Status" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+                        <Label fx:id="activeLabel" text="Active: --"/>
+                        <Label fx:id="inactiveLabel" text="Inactive: --"/>
+                        <Label fx:id="graduatedLabel" text="Graduated: --"/>
+                    </VBox>
+                </HBox>
+
+                <Label fx:id="statusLabel" text="Ready"/>
             </VBox>
         </ScrollPane>
     </center>
-
 </BorderPane>

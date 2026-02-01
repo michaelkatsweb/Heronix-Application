@@ -67,7 +67,7 @@ public class WithdrawalService {
                 .status(WithdrawalStatus.DRAFT)
                 .student(student)
                 .currentGrade(student.getGradeLevel())
-                .currentStatus("ACTIVE") // TODO: Get actual enrollment status
+                .currentStatus(student.getStudentStatus() != null ? student.getStudentStatus().getDisplayName() : "Active")
                 .withdrawalDate(withdrawalDate)
                 .isTransferring(false)
                 .totalClearanceItems(24)

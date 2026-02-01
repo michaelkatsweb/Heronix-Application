@@ -22,7 +22,7 @@ import java.util.Map;
  *
  * December 6, 2025
  */
-@SpringBootTest
+@SpringBootTest(classes = com.heronix.config.TestConfiguration.class)
 public class FixNullRoomTypes {
 
     @Autowired
