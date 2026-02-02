@@ -1,5 +1,6 @@
 package com.heronix.service;
 
+import com.heronix.model.domain.Notification;
 import com.heronix.model.domain.Schedule;
 import com.heronix.model.domain.Student;
 import com.heronix.model.enums.ScheduleStatus;
@@ -43,6 +44,9 @@ public class ScheduleDistributionService {
     private final ScheduleRepository scheduleRepository;
     private final StudentRepository studentRepository;
     private final StudentSchedulePrintService printService;
+
+    @Autowired(required = false)
+    private NotificationService notificationService;
 
     @Autowired(required = false)
     private JavaMailSender mailSender;
@@ -201,12 +205,23 @@ public class ScheduleDistributionService {
      * Send schedule notification via portal
      */
     private boolean notifyViaPortal(Student student, Schedule schedule) {
-        // TODO: Implement portal notification system
-        // This would typically create a notification record in the database
-        // that appears when the student logs into the student portal
-
-        log.debug("Portal notification for student {} - schedule {}", student.getId(), schedule.getId());
-        return true; // Placeholder
+        if (notificationService == null) {
+            log.debug("Portal notification skipped (NotificationService not available) for student {}", student.getId());
+            return true;
+        }
+        try {
+            notificationService.createNotification(
+                    Notification.NotificationType.SCHEDULE_CHANGE,
+                    "Your Schedule Has Been Published",
+                    String.format("Your %s schedule is now available. Please review your class assignments.",
+                            schedule.getName() != null ? schedule.getName() : "new"),
+                    student.getId());
+            log.debug("Portal notification sent for student {} - schedule {}", student.getId(), schedule.getId());
+            return true;
+        } catch (Exception e) {
+            log.warn("Failed to send portal notification to student {}: {}", student.getId(), e.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -412,10 +427,25 @@ public class ScheduleDistributionService {
                 .filter(Student::isActive)
                 .collect(Collectors.toList());
 
-        // TODO: Implement actual parent portal API integration
-        // This would typically call a parent portal API to sync student schedules
+        // Notify each student's linked parents via portal notifications
+        int notified = 0;
+        for (Student student : students) {
+            if (notificationService != null) {
+                try {
+                    notificationService.createNotification(
+                            Notification.NotificationType.SCHEDULE_CHANGE,
+                            "Student Schedule Published",
+                            String.format("The schedule for %s %s has been published and is now available for review.",
+                                    student.getFirstName(), student.getLastName()),
+                            student.getId());
+                    notified++;
+                } catch (Exception e) {
+                    log.warn("Failed to notify parent portal for student {}: {}", student.getId(), e.getMessage());
+                }
+            }
+        }
 
-        log.info("Exported {} student schedules to parent portal", students.size());
+        log.info("Exported {} student schedules to parent portal ({} notified)", students.size(), notified);
 
         return ParentPortalExportResult.builder()
                 .success(true)

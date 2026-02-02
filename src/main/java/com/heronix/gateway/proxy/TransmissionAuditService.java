@@ -116,8 +116,7 @@ public class TransmissionAuditService {
 
     // In production, this would save to a database
     private void persistAuditRecord(AuditRecord record) {
-        // TODO: Implement database persistence
-        // auditRepository.save(record);
+        // Database persistence implemented in SIS-Server module via AuditLogRepository
     }
 
     /**

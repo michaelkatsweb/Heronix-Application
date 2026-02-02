@@ -2959,8 +2959,7 @@ public class MainController {
     // ========================================================================
     // STUB HANDLERS FOR NEW MENU ITEMS
     // ========================================================================
-    // These are placeholder handlers for the comprehensive menu structure
-    // TODO: Implement full functionality for each service area
+    // Placeholder handlers — each loads its respective FXML view when available
 
     @FXML private void handleNewSchoolYear() { loadView("New School Year", "/fxml/AcademicYearManagement.fxml"); }
     @FXML private void handleDatabaseBackup() { loadView("Database Backup", "/fxml/DatabaseManagement.fxml"); }

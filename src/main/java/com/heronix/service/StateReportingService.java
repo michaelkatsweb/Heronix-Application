@@ -259,8 +259,12 @@ public class StateReportingService {
                         } else if (vType.contains("VARICELLA")) {
                             vaccineStatus.put("Varicella", Boolean.TRUE.equals(imm.getMeetsStateRequirement()) ? "COMPLETE" : "PARTIAL");
                         }
-                        if (imm.getExemptionType() != null && !"NONE".equals(imm.getExemptionType().name())) {
-                            exemptionType = imm.getExemptionType().name();
+                        if (Boolean.TRUE.equals(imm.getIsMedicalExemption())) {
+                            exemptionType = "MEDICAL";
+                        } else if (Boolean.TRUE.equals(imm.getIsReligiousExemption())) {
+                            exemptionType = "RELIGIOUS";
+                        } else if (Boolean.TRUE.equals(imm.getIsPhilosophicalExemption())) {
+                            exemptionType = "PHILOSOPHICAL";
                         }
                     }
 

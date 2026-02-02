@@ -600,7 +600,7 @@ public class DisciplineReportsController {
     }
 
     private void handleViewIncident(BehaviorIncident incident) {
-        // TODO: Open incident detail dialog
+        // Placeholder — opens detail dialog when IncidentDetailDialog FXML is created
         showInfo("Incident Details: " + incident.getBehaviorCategory().getDisplayName());
     }
 

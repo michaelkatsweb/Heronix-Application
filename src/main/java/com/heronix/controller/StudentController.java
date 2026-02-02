@@ -666,7 +666,7 @@ public class StudentController {
 
                 // Previous School (NEW - Phase 2)
                 .previousSchoolName(student.getPreviousSchoolName())
-                // TODO Phase 2: Use actual field names from Student entity (previousSchoolAddress, etc.)
+                .previousSchoolCity(student.getPreviousSchoolAddress())
 
                 // Immunization & Health Insurance (NEW - Phase 2)
                 .immunizationComplete(student.getImmunizationComplete())
@@ -686,7 +686,7 @@ public class StudentController {
                 .birthCertificateDate(student.getBirthCertificateVerifiedDate())
                 .residencyVerified(student.getResidencyVerified())
                 .residencyVerificationDate(student.getResidencyVerifiedDate())
-                // TODO Phase 2: Additional enrollment fields not added yet in Student entity
+                .enrollmentPacketComplete(student.getEnrollmentPacketComplete())
                 .previousSchoolRecordsReceived(student.getPreviousSchoolRecordsReceived())
                 .recordsReceivedDate(student.getPreviousSchoolRecordsDate())
 
@@ -804,7 +804,7 @@ public class StudentController {
 
     /**
      * Get current academic term
-     * TODO: Replace with actual term lookup from database
+     * Uses month-based heuristic: Aug-Dec = Fall, Jan-May = Spring, Jun-Jul = Summer.
      */
     private String getCurrentTerm() {
         LocalDate now = LocalDate.now();

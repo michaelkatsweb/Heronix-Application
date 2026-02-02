@@ -595,12 +595,8 @@ public class DeviceAuthenticationService {
         try {
             log.info("PKI: Initializing CA key pair for device certificate signing");
 
-            // TODO: In production, load CA key pair from HSM/TPM or PKCS#12 keystore
-            // For now, generate a self-signed CA key pair
-            // Production implementation should use:
-            // - Hardware Security Module (HSM) for key storage
-            // - PKCS#11 provider for HSM integration
-            // - Key ceremony with multiple custodians
+            // PRODUCTION NOTE: Replace self-signed CA with HSM/TPM-backed key pair
+            // (PKCS#11 provider, PKCS#12 keystore, or key ceremony with multiple custodians)
 
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", BouncyCastleProvider.PROVIDER_NAME);
             keyPairGenerator.initialize(RSA_KEY_SIZE, new SecureRandom());

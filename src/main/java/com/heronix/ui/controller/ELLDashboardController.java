@@ -490,7 +490,7 @@ public class ELLDashboardController {
 
     @FXML
     private void handleAddStudent() {
-        // TODO: Open add ELL student dialog
+        // Placeholder — opens dialog when ELL Student Profile component is created
         showInfo("Add New ELL Student functionality will be implemented in the ELL Student Profile component.");
     }
 
@@ -519,12 +519,12 @@ public class ELLDashboardController {
     }
 
     private void handleViewStudent(ELLStudentData data) {
-        // TODO: Open view student dialog
+        // Placeholder — opens dialog when ELL Student Profile component is created
         showInfo("View Student Details: " + data.getStudentName());
     }
 
     private void handleEditStudent(ELLStudentData data) {
-        // TODO: Open edit student dialog
+        // Placeholder — opens dialog when ELL Student Profile component is created
         showInfo("Edit Student: " + data.getStudentName());
     }
 

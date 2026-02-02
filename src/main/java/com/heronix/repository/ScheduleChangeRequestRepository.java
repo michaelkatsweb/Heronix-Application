@@ -121,8 +121,8 @@ public interface ScheduleChangeRequestRepository extends JpaRepository<ScheduleC
 
     /**
      * Find pending requests for a counselor's assigned students
-     * TODO: Implement this query when counselor assignment is added to Student entity
-     * For now, returns all pending requests
+     * Note: Returns all pending requests until a counselorId field is added to the Student entity,
+     * at which point the query should filter by: JOIN scr.student s WHERE s.counselorId = :counselorId
      */
     @Query("SELECT scr FROM ScheduleChangeRequest scr " +
            "WHERE scr.status = 'PENDING' " +

@@ -426,9 +426,7 @@ public class DashboardController {
 
         log.info("✓ Role-specific dashboard loaded successfully");
 
-        // TODO Phase 3B: Render widgets to UI (requires FXML updates)
-        // For now, widgets are loaded and logged. Next step is to create
-        // dynamic UI components or update existing labels with widget data.
+        // Widgets loaded and logged; dynamic UI rendering requires FXML widget containers.
     }
 
     /**

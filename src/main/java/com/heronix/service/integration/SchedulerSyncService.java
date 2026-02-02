@@ -779,13 +779,38 @@ public class SchedulerSyncService {
                         .startTime(period.getStartTime())
                         .endTime(period.getEndTime())
                         .durationMinutes(period.getDurationMinutes())
-                        .dayOfWeek(0) // 0 = all days (TODO: Parse from daysOfWeek if needed)
+                        .dayOfWeek(parseDayOfWeek(period.getDaysOfWeek()))
                         .isLunchPeriod(period.getPeriodNumber() == -1)
                         .isPassingPeriod(false)
                         .isPlanningPeriod(false)
                         .isInstructionalPeriod(period.getPeriodNumber() >= 1)
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Parse daysOfWeek string (e.g. "MON,TUE,WED,THU,FRI") into a single int.
+     * Returns 0 for all weekdays, or 1-7 (Mon-Sun) if only one day is specified.
+     */
+    private int parseDayOfWeek(String daysOfWeek) {
+        if (daysOfWeek == null || daysOfWeek.isEmpty()
+                || "MON,TUE,WED,THU,FRI".equals(daysOfWeek)) {
+            return 0; // all weekdays
+        }
+        String[] days = daysOfWeek.split(",");
+        if (days.length == 1) {
+            return switch (days[0].trim().toUpperCase()) {
+                case "MON" -> 1;
+                case "TUE" -> 2;
+                case "WED" -> 3;
+                case "THU" -> 4;
+                case "FRI" -> 5;
+                case "SAT" -> 6;
+                case "SUN" -> 7;
+                default -> 0;
+            };
+        }
+        return 0; // multiple days but not all weekdays — DTO only supports single day, default to all
     }
 
     /**

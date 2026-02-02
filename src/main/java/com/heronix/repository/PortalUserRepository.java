@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,12 +40,8 @@ public interface PortalUserRepository extends JpaRepository<PortalUser, Long> {
 
     Optional<PortalUser> findByPasswordResetToken(String token);
 
-    // TODO: Uncomment when needed for portal user cleanup
-    // Date arithmetic in JPQL is database-specific and complex
-    // For now, this functionality can be implemented in the service layer
-    // @Query("SELECT p FROM PortalUser p WHERE p.emailVerified = false " +
-    //        "AND p.createdAt < FUNCTION('DATEADD', 'DAY', -7, CURRENT_TIMESTAMP)")
-    // List<PortalUser> findUnverifiedAccountsOlderThan7Days();
+    @Query("SELECT p FROM PortalUser p WHERE p.emailVerified = false AND p.createdAt < :cutoff")
+    List<PortalUser> findUnverifiedAccountsOlderThan(@Param("cutoff") LocalDateTime cutoff);
 
     @Query("SELECT COUNT(p) FROM PortalUser p WHERE p.active = true " +
            "AND p.userType = :userType")

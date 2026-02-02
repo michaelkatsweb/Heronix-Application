@@ -4,6 +4,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.text.Text?>
 
 <!--
@@ -25,7 +27,11 @@
 
     <!-- Sidebar Header with Logo -->
     <HBox fx:id="sidebarHeader" styleClass="sidebar-header" alignment="CENTER_LEFT" spacing="12">
-        <Text fx:id="logoIcon" text="H" styleClass="sidebar-logo-icon"/>
+        <ImageView fx:id="logoImageView" fitHeight="40" preserveRatio="true">
+            <image>
+                <Image url="@../../images/Icon.png"/>
+            </image>
+        </ImageView>
         <VBox fx:id="logoTextContainer" spacing="0">
             <Label fx:id="logoText" text="Heronix" styleClass="sidebar-logo"/>
             <Label text="Student Information System" styleClass="sidebar-subtitle"/>

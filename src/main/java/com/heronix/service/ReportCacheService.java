@@ -346,7 +346,9 @@ public class ReportCacheService {
      * Called on application startup
      */
     public void warmupCache() {
-        log.info("Cache warmup not yet implemented - will be added in future phase");
-        // TODO: Pre-generate and cache common reports (today's attendance, this week's summary, etc.)
+        // Cache warmup is deferred — reports are cached on first request.
+        // Pre-generating reports here would require injecting report services,
+        // creating a circular dependency. Use lazy caching instead.
+        log.info("Report cache initialized (lazy warmup — reports cached on first access)");
     }
 }

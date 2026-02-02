@@ -547,9 +547,8 @@ public class AttendanceReportingService {
     }
 
     private int calculateDaysEnrolled(Student student, LocalDate startDate, LocalDate endDate) {
-        // Student entity doesn't have enrollmentDate/withdrawalDate fields
-        // For now, assume student was enrolled for entire period
-        // TODO: Add enrollment tracking fields to Student entity if needed
+        // Student entity lacks enrollmentDate/withdrawalDate fields.
+        // Assumes student was enrolled for entire period until those fields are added.
         LocalDate enrollStart = startDate;
         LocalDate enrollEnd = endDate;
 

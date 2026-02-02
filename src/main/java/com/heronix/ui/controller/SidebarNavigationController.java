@@ -47,7 +47,7 @@ public class SidebarNavigationController {
 
     @FXML private VBox sidebarContainer;
     @FXML private HBox sidebarHeader;
-    @FXML private Text logoIcon;
+    @FXML private javafx.scene.image.ImageView logoImageView;
     @FXML private VBox logoTextContainer;
     @FXML private Label logoText;
     @FXML private Button collapseBtn;
@@ -224,8 +224,8 @@ public class SidebarNavigationController {
         }
 
         // Add click handler on logo icon to expand when collapsed
-        if (logoIcon != null) {
-            logoIcon.setOnMouseClicked(event -> {
+        if (logoImageView != null) {
+            logoImageView.setOnMouseClicked(event -> {
                 if (isCollapsed) {
                     expandSidebar();
                 }

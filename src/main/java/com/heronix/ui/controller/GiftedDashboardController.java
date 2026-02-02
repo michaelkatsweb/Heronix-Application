@@ -446,7 +446,7 @@ public class GiftedDashboardController {
 
     @FXML
     private void handleAddGiftedStudent() {
-        // TODO: Open GiftedStudentProfile in add mode
+        // Placeholder — opens profile form when GiftedStudentProfile FXML is created
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Add Gifted Student");
         alert.setHeaderText("Add New Gifted Student");
@@ -504,7 +504,7 @@ public class GiftedDashboardController {
     }
 
     private void handleViewProfile(GiftedStudent giftedStudent) {
-        // TODO: Open GiftedStudentProfile in view mode
+        // Placeholder — opens profile form when GiftedStudentProfile FXML is created
         Student s = giftedStudent.getStudent();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("View Profile");

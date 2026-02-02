@@ -448,8 +448,7 @@ public class SchedulePrintDialogController {
      */
     private void generateScheduleForStudent(Schedule schedule, Student student, String format, String layout) {
         try {
-            // For now, we'll export the full schedule
-            // TODO: Implement student-specific schedule filtering and export
+            // Exports full schedule — student-specific filtering requires per-student export methods
             File outputFile;
             switch (format) {
                 case "PDF":

@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -536,8 +537,9 @@ public class StateReportingApiController {
         }
 
         // Check if already configured
-        StateConfiguration existing = stateConfigurationRepository.findByState(state);
-        if (existing != null) {
+        Optional<StateConfiguration> existingOpt = stateConfigurationRepository.findByState(state);
+        if (existingOpt.isPresent()) {
+            StateConfiguration existing = existingOpt.get();
             existing.setActive(true);
             stateConfigurationRepository.save(existing);
             response.put("success", true);
