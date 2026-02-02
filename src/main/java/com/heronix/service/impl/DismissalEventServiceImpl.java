@@ -214,6 +214,41 @@ public class DismissalEventServiceImpl implements DismissalEventService {
         return stats;
     }
 
+    @Override
+    @Transactional
+    public DismissalEvent parentArrivedNotification(Long studentId) {
+        // Find the student's pending car pickup event for today
+        List<DismissalEvent> events = dismissalEventRepository.findByEventDateAndStudentId(LocalDate.now(), studentId);
+        DismissalEvent pickupEvent = events.stream()
+                .filter(e -> e.getEventType() == DismissalEventType.CAR_PICKUP)
+                .filter(e -> e.getStatus() == DismissalEventStatus.PENDING)
+                .findFirst()
+                .orElse(null);
+
+        if (pickupEvent != null) {
+            pickupEvent.setStatus(DismissalEventStatus.ARRIVED);
+            pickupEvent.setArrivalTime(LocalDateTime.now());
+            log.info("Parent arrived for student pickup: {}", pickupEvent.getStudentName());
+            return dismissalEventRepository.save(pickupEvent);
+        }
+
+        // No pending pickup — create a new car pickup event
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found: " + studentId));
+
+        DismissalEvent event = DismissalEvent.builder()
+                .eventDate(LocalDate.now())
+                .eventType(DismissalEventType.CAR_PICKUP)
+                .student(student)
+                .studentName(student.getFirstName() + " " + student.getLastName())
+                .status(DismissalEventStatus.ARRIVED)
+                .arrivalTime(LocalDateTime.now())
+                .build();
+
+        log.info("Parent arrived (new event) for student: {}", event.getStudentName());
+        return dismissalEventRepository.save(event);
+    }
+
     private DismissalEvent getEventById(Long eventId) {
         return dismissalEventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Dismissal event not found: " + eventId));

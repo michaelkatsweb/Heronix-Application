@@ -41,4 +41,6 @@ public interface DismissalEventService {
     DismissalEvent getStudentDismissalStatus(Long studentId);
 
     Map<String, Object> getTodaysBoardStats();
+
+    DismissalEvent parentArrivedNotification(Long studentId);
 }
