@@ -28,7 +28,7 @@
     -fx-text-fill: #FFFFFF;
     -fx-text-base-color: #FFFFFF;
     -fx-text-inner-color: #FFFFFF;
-    -fx-prompt-text-fill: #6B6B6B;
+    -fx-prompt-text-fill: #8E8E8E;
     -fx-selection-bar: #264F78;
     -fx-selection-bar-non-focused: #37373D;
     -fx-background-color: #1E1E1E;
@@ -111,7 +111,7 @@
 
 .button:disabled {
     -fx-background-color: #2D2D30;
-    -fx-text-fill: #6B6B6B;
+    -fx-text-fill: #8E8E8E;
     -fx-opacity: 0.6;
 }
 
@@ -247,7 +247,7 @@
 .password-field {
     -fx-background-color: #1E1E1E;
     -fx-text-fill: #FFFFFF;
-    -fx-prompt-text-fill: #6B6B6B;
+    -fx-prompt-text-fill: #8E8E8E;
     -fx-border-color: #3E3E42;
     -fx-border-width: 1;
     -fx-border-radius: 5;
@@ -275,7 +275,7 @@
 .text-area:disabled,
 .password-field:disabled {
     -fx-background-color: #2D2D30;
-    -fx-text-fill: #6B6B6B;
+    -fx-text-fill: #8E8E8E;
     -fx-opacity: 0.6;
 }
 
@@ -1209,7 +1209,7 @@
 }
 
 .breadcrumb-separator {
-    -fx-text-fill: #6B6B6B;
+    -fx-text-fill: #8E8E8E;
 }
 
 /* Page Header */
@@ -1273,7 +1273,7 @@
 }
 
 .sidebar-section-title {
-    -fx-text-fill: #6B6B6B;
+    -fx-text-fill: #8E8E8E;
     -fx-font-size: 11px;
     -fx-font-weight: bold;
     -fx-padding: 16 16 8 16;
@@ -1429,7 +1429,7 @@
 }
 
 .table-view .placeholder .label {
-    -fx-text-fill: #6B6B6B;
+    -fx-text-fill: #8E8E8E;
 }
 
 /* ============================================================================
@@ -1566,7 +1566,7 @@
 /* Label Size Variants */
 .label-10 {
     -fx-font-size: 10px;
-    -fx-text-fill: #6B6B6B;
+    -fx-text-fill: #8E8E8E;
 }
 
 .label-11 {
@@ -1731,7 +1731,7 @@
 
 .help-breadcrumb-sep {
     -fx-font-size: 12px;
-    -fx-text-fill: #6B6B6B;
+    -fx-text-fill: #8E8E8E;
 }
 
 .help-breadcrumb-current {
@@ -1785,7 +1785,7 @@
 
 .help-card-count {
     -fx-font-size: 11px;
-    -fx-text-fill: #6B6B6B;
+    -fx-text-fill: #8E8E8E;
 }
 
 /* Category Header */
@@ -1837,7 +1837,7 @@
 
 .help-tags-label {
     -fx-font-size: 12px;
-    -fx-text-fill: #6B6B6B;
+    -fx-text-fill: #8E8E8E;
 }
 
 /* Article Detail */
@@ -1929,7 +1929,7 @@
 
 .help-see-also {
     -fx-font-size: 12px;
-    -fx-text-fill: #6B6B6B;
+    -fx-text-fill: #8E8E8E;
 }
 
 .help-related-link {
@@ -1974,7 +1974,7 @@
 
 .help-no-content {
     -fx-font-size: 14px;
-    -fx-text-fill: #6B6B6B;
+    -fx-text-fill: #8E8E8E;
     -fx-font-style: italic;
     -fx-padding: 24 0;
 }
@@ -1993,7 +1993,7 @@
 
 .help-footer-sep {
     -fx-font-size: 12px;
-    -fx-text-fill: #6B6B6B;
+    -fx-text-fill: #8E8E8E;
 }
 
 /* Help Split Pane */
