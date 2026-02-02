@@ -37,7 +37,7 @@
             <Label text="Student Information System" styleClass="sidebar-subtitle"/>
         </VBox>
         <Region HBox.hgrow="ALWAYS"/>
-        <Button fx:id="collapseBtn" text="⟨" styleClass="sidebar-toggle-btn" onAction="#handleToggleSidebar">
+        <Button fx:id="collapseBtn" text="&#x27E8;" styleClass="sidebar-toggle-btn" onAction="#handleToggleSidebar">
             <tooltip><Tooltip text="Collapse Sidebar (Ctrl+B)"/></tooltip>
         </Button>
     </HBox>
@@ -62,6 +62,7 @@
 
             <HBox fx:id="navDashboard" styleClass="sidebar-nav-item, sidebar-nav-item-active"
                   onMouseClicked="#handleNavDashboard">
+                <Label text="&#x1F4CA;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navDashboardLabel" text="Dashboard"/>
             </HBox>
 
@@ -69,22 +70,26 @@
             <Label text="PEOPLE" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 
             <HBox fx:id="navStudents" styleClass="sidebar-nav-item" onMouseClicked="#handleNavStudents">
+                <Label text="&#x1F393;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navStudentsLabel" text="Student Roster"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <Label fx:id="studentCount" text="" styleClass="sidebar-count"/>
             </HBox>
 
             <HBox fx:id="navTeachers" styleClass="sidebar-nav-item" onMouseClicked="#handleNavTeachers">
+                <Label text="&#x1F468;&#x200D;&#x1F3EB;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navTeachersLabel" text="Teachers"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <Label fx:id="teacherCount" text="" styleClass="sidebar-count"/>
             </HBox>
 
             <HBox fx:id="navStaff" styleClass="sidebar-nav-item" onMouseClicked="#handleNavStaff">
+                <Label text="&#x1F465;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navStaffLabel" text="Staff"/>
             </HBox>
 
             <HBox fx:id="navSubstitutes" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSubstitutes">
+                <Label text="&#x1F504;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navSubstitutesLabel" text="Substitutes"/>
             </HBox>
 
@@ -92,26 +97,32 @@
             <Label text="ACADEMICS" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 
             <HBox fx:id="navCourses" styleClass="sidebar-nav-item" onMouseClicked="#handleNavCourses">
+                <Label text="&#x1F4DA;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navCoursesLabel" text="Courses"/>
             </HBox>
 
             <HBox fx:id="navSchedules" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSchedules">
+                <Label text="&#x1F4C5;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navSchedulesLabel" text="Schedules"/>
             </HBox>
 
             <HBox fx:id="navGradebook" styleClass="sidebar-nav-item" onMouseClicked="#handleNavGradebook">
+                <Label text="&#x1F4DD;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navGradebookLabel" text="Gradebook"/>
             </HBox>
 
             <HBox fx:id="navAttendance" styleClass="sidebar-nav-item" onMouseClicked="#handleNavAttendance">
+                <Label text="&#x2705;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navAttendanceLabel" text="Attendance"/>
             </HBox>
 
             <HBox fx:id="navTranscripts" styleClass="sidebar-nav-item" onMouseClicked="#handleNavTranscripts">
+                <Label text="&#x1F4C4;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navTranscriptsLabel" text="Transcripts"/>
             </HBox>
 
             <HBox fx:id="navAthletics" styleClass="sidebar-nav-item" onMouseClicked="#handleNavAthletics">
+                <Label text="&#x26BD;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navAthleticsLabel" text="Athletics"/>
             </HBox>
 
@@ -119,18 +130,22 @@
             <Label text="BEHAVIOR" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 
             <HBox fx:id="navDiscipline" styleClass="sidebar-nav-item" onMouseClicked="#handleNavDiscipline">
+                <Label text="&#x26A0;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navDisciplineLabel" text="Discipline"/>
             </HBox>
 
             <HBox fx:id="navSuspensions" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSuspensions">
+                <Label text="&#x1F6AB;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navSuspensionsLabel" text="Suspensions"/>
             </HBox>
 
             <HBox fx:id="navHallPass" styleClass="sidebar-nav-item" onMouseClicked="#handleNavHallPass">
+                <Label text="&#x1F3AB;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navHallPassLabel" text="Hall Pass"/>
             </HBox>
 
             <HBox fx:id="navCounseling" styleClass="sidebar-nav-item" onMouseClicked="#handleNavCounseling">
+                <Label text="&#x1F4AC;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navCounselingLabel" text="Counseling"/>
             </HBox>
 
@@ -138,14 +153,17 @@
             <Label text="REGISTRATION" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 
             <HBox fx:id="navNewStudentReg" styleClass="sidebar-nav-item" onMouseClicked="#handleNavNewStudentReg">
+                <Label text="&#x2795;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navNewStudentRegLabel" text="New Student Registration"/>
             </HBox>
 
             <HBox fx:id="navIncompleteRegs" styleClass="sidebar-nav-item" onMouseClicked="#handleNavIncompleteRegs">
+                <Label text="&#x23F3;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navIncompleteRegsLabel" text="Incomplete Registrations"/>
             </HBox>
 
             <HBox fx:id="navCourseEnrollment" styleClass="sidebar-nav-item" onMouseClicked="#handleNavCourseEnrollment">
+                <Label text="&#x1F4CB;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navCourseEnrollmentLabel" text="Course Enrollment"/>
             </HBox>
 
@@ -153,10 +171,12 @@
             <Label text="FACILITIES" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 
             <HBox fx:id="navRooms" styleClass="sidebar-nav-item" onMouseClicked="#handleNavRooms">
+                <Label text="&#x1F3E2;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navRoomsLabel" text="Rooms"/>
             </HBox>
 
             <HBox fx:id="navEvents" styleClass="sidebar-nav-item" onMouseClicked="#handleNavEvents">
+                <Label text="&#x1F389;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navEventsLabel" text="Events"/>
             </HBox>
 
@@ -164,22 +184,27 @@
             <Label text="SPECIAL PROGRAMS" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 
             <HBox fx:id="navIEP" styleClass="sidebar-nav-item" onMouseClicked="#handleNavIEP">
+                <Label text="&#x1F4D1;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navIEPLabel" text="IEP Management"/>
             </HBox>
 
             <HBox fx:id="nav504" styleClass="sidebar-nav-item" onMouseClicked="#handleNav504">
+                <Label text="&#x1F4D8;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="nav504Label" text="504 Plans"/>
             </HBox>
 
             <HBox fx:id="navSPED" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSPED">
+                <Label text="&#x2B50;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navSPEDLabel" text="SPED Dashboard"/>
             </HBox>
 
             <HBox fx:id="navELL" styleClass="sidebar-nav-item" onMouseClicked="#handleNavELL">
+                <Label text="&#x1F30D;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navELLLabel" text="ELL Dashboard"/>
             </HBox>
 
             <HBox fx:id="navGifted" styleClass="sidebar-nav-item" onMouseClicked="#handleNavGifted">
+                <Label text="&#x1F3C6;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navGiftedLabel" text="Gifted &amp; Talented"/>
             </HBox>
 
@@ -187,14 +212,17 @@
             <Label text="HEALTH &amp; SERVICES" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 
             <HBox fx:id="navHealthOffice" styleClass="sidebar-nav-item" onMouseClicked="#handleNavHealthOffice">
+                <Label text="&#x1F3E5;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navHealthOfficeLabel" text="Health Office"/>
             </HBox>
 
             <HBox fx:id="navMedications" styleClass="sidebar-nav-item" onMouseClicked="#handleNavMedications">
+                <Label text="&#x1F48A;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navMedicationsLabel" text="Medications"/>
             </HBox>
 
             <HBox fx:id="navImmunizations" styleClass="sidebar-nav-item" onMouseClicked="#handleNavImmunizations">
+                <Label text="&#x1F489;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navImmunizationsLabel" text="Immunizations"/>
             </HBox>
 
@@ -202,14 +230,17 @@
             <Label text="OPERATIONS" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 
             <HBox fx:id="navTransportation" styleClass="sidebar-nav-item" onMouseClicked="#handleNavTransportation">
+                <Label text="&#x1F68C;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navTransportationLabel" text="Transportation"/>
             </HBox>
 
             <HBox fx:id="navCafeteria" styleClass="sidebar-nav-item" onMouseClicked="#handleNavCafeteria">
+                <Label text="&#x1F372;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navCafeteriaLabel" text="Cafeteria"/>
             </HBox>
 
             <HBox fx:id="navLibrary" styleClass="sidebar-nav-item" onMouseClicked="#handleNavLibrary">
+                <Label text="&#x1F4DA;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navLibraryLabel" text="Library"/>
             </HBox>
 
@@ -217,10 +248,12 @@
             <Label text="COMMUNICATION" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 
             <HBox fx:id="navNotifications" styleClass="sidebar-nav-item" onMouseClicked="#handleNavNotifications">
+                <Label text="&#x1F514;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navNotificationsLabel" text="Notifications"/>
             </HBox>
 
             <HBox fx:id="navCommunication" styleClass="sidebar-nav-item" onMouseClicked="#handleNavCommunication">
+                <Label text="&#x2709;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navCommunicationLabel" text="Communication Center"/>
             </HBox>
 
@@ -228,10 +261,12 @@
             <Label text="REPORTS" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 
             <HBox fx:id="navReports" styleClass="sidebar-nav-item" onMouseClicked="#handleNavReports">
+                <Label text="&#x1F4CA;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navReportsLabel" text="Reports"/>
             </HBox>
 
             <HBox fx:id="navAnalytics" styleClass="sidebar-nav-item" onMouseClicked="#handleNavAnalytics">
+                <Label text="&#x1F4C8;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navAnalyticsLabel" text="Analytics"/>
             </HBox>
 
@@ -239,14 +274,17 @@
             <Label text="SYSTEM" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 
             <HBox fx:id="navImport" styleClass="sidebar-nav-item" onMouseClicked="#handleNavImport">
+                <Label text="&#x1F4E5;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navImportLabel" text="Import Data"/>
             </HBox>
 
             <HBox fx:id="navDataGenerator" styleClass="sidebar-nav-item" onMouseClicked="#handleNavDataGenerator">
+                <Label text="&#x1F9EA;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navDataGeneratorLabel" text="Generate Sample Data"/>
             </HBox>
 
             <HBox fx:id="navSettings" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSettings">
+                <Label text="&#x2699;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navSettingsLabel" text="Settings"/>
             </HBox>
 
@@ -254,26 +292,32 @@
             <Label text="ADMINISTRATION" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 
             <HBox fx:id="navUserManagement" styleClass="sidebar-nav-item" onMouseClicked="#handleNavUserManagement">
+                <Label text="&#x1F464;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navUserManagementLabel" text="User Management"/>
             </HBox>
 
             <HBox fx:id="navAuditLog" styleClass="sidebar-nav-item" onMouseClicked="#handleNavAuditLog">
+                <Label text="&#x1F4DC;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navAuditLogLabel" text="Audit Log"/>
             </HBox>
 
             <HBox fx:id="navDatabase" styleClass="sidebar-nav-item" onMouseClicked="#handleNavDatabase">
+                <Label text="&#x1F5C4;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navDatabaseLabel" text="Database"/>
             </HBox>
 
             <HBox fx:id="navNetworkPanel" styleClass="sidebar-nav-item" onMouseClicked="#handleNavNetworkPanel">
+                <Label text="&#x1F310;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navNetworkPanelLabel" text="Network Panel"/>
             </HBox>
 
             <HBox fx:id="navSecureSync" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSecureSync">
+                <Label text="&#x1F504;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navSecureSyncLabel" text="Secure Sync"/>
             </HBox>
 
             <HBox fx:id="navSecureAudit" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSecureAudit">
+                <Label text="&#x1F6E1;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navSecureAuditLabel" text="Security Audit"/>
             </HBox>
 

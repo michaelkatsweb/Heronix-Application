@@ -362,12 +362,15 @@ public class SidebarNavigationController {
             parent.setPrefWidth(COLLAPSED_WIDTH);
         }
 
-        // Hide text elements
+        // Hide text elements, shrink logo for collapsed width
         logoTextContainer.setVisible(false);
         logoTextContainer.setManaged(false);
+        if (logoImageView != null) {
+            logoImageView.setFitHeight(24);
+        }
 
-        quickSearchBtn.setText("Search");
-        quickSearchBtn.setStyle("-fx-min-width: 64; -fx-max-width: 64;");
+        quickSearchBtn.setText("\uD83D\uDD0D");
+        quickSearchBtn.setStyle("-fx-min-width: 32; -fx-max-width: 32; -fx-padding: 8 0; -fx-alignment: CENTER;");
 
         // Hide all nav labels
         hideNavLabels();
@@ -409,9 +412,12 @@ public class SidebarNavigationController {
             parent.setPrefWidth(EXPANDED_WIDTH);
         }
 
-        // Show text elements
+        // Show text elements, restore logo size
         logoTextContainer.setVisible(true);
         logoTextContainer.setManaged(true);
+        if (logoImageView != null) {
+            logoImageView.setFitHeight(40);
+        }
 
         quickSearchBtn.setText("Quick Search...");
         quickSearchBtn.setStyle("-fx-alignment: CENTER_LEFT; -fx-pref-width: 228;");
@@ -470,9 +476,15 @@ public class SidebarNavigationController {
             });
         }
 
-        // Adjust header for collapsed mode
+        // Adjust header for collapsed mode - hide spacer Region
         if (sidebarHeader != null) {
             sidebarHeader.setStyle("-fx-padding: 16 0; -fx-alignment: CENTER;");
+            for (Node child : sidebarHeader.getChildren()) {
+                if (child instanceof Region && !(child instanceof javafx.scene.layout.Pane)) {
+                    child.setVisible(false);
+                    child.setManaged(false);
+                }
+            }
         }
 
         // Hide collapse button, show expand on click anywhere
@@ -530,9 +542,15 @@ public class SidebarNavigationController {
             });
         }
 
-        // Reset header styling
+        // Reset header styling - restore spacer Region
         if (sidebarHeader != null) {
             sidebarHeader.setStyle("-fx-padding: 16 20;");
+            for (Node child : sidebarHeader.getChildren()) {
+                if (child instanceof Region && !(child instanceof javafx.scene.layout.Pane)) {
+                    child.setVisible(true);
+                    child.setManaged(true);
+                }
+            }
         }
 
         // Show collapse button

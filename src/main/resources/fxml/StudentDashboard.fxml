@@ -10,7 +10,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.heronix.ui.controller.StudentDashboardController"
-            prefWidth="1600" prefHeight="950">
+            >
 
 
     <!-- Top: Header -->
