@@ -1,16 +1,22 @@
 package com.heronix.controller.api;
 
+import com.heronix.model.domain.StateConfiguration;
+import com.heronix.model.enums.USState;
+import com.heronix.repository.StateConfigurationRepository;
 import com.heronix.service.StateReportingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * REST API Controller for State Reporting
@@ -42,10 +48,12 @@ import java.util.Map;
 public class StateReportingApiController {
 
     private final StateReportingService stateReportingService;
+    private final StateConfigurationRepository stateConfigurationRepository;
 
     // ==================== Export Generation ====================
 
     @PostMapping("/enrollment-report")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PRINCIPAL', 'REGISTRAR')")
     public ResponseEntity<Map<String, Object>> generateEnrollmentReport(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
             @RequestParam String exportDirectory,
@@ -104,6 +112,7 @@ public class StateReportingApiController {
     }
 
     @PostMapping("/immunization-report")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PRINCIPAL', 'NURSE')")
     public ResponseEntity<Map<String, Object>> generateImmunizationReport(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
             @RequestParam String exportDirectory,
@@ -152,6 +161,7 @@ public class StateReportingApiController {
     }
 
     @PostMapping("/crdc-report")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PRINCIPAL')")
     public ResponseEntity<Map<String, Object>> generateCRDCReport(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate schoolYearStart,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate schoolYearEnd,
@@ -204,6 +214,7 @@ public class StateReportingApiController {
     // ==================== Export Validation ====================
 
     @PostMapping("/validate-directory")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PRINCIPAL', 'REGISTRAR', 'NURSE')")
     public ResponseEntity<Map<String, Object>> validateExportDirectory(
             @RequestParam String directory) {
 
@@ -467,5 +478,211 @@ public class StateReportingApiController {
         ));
 
         return ResponseEntity.ok(help);
+    }
+
+    // ==================== State Configuration Setup (IT Admin) ====================
+
+    @GetMapping("/setup/states")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Map<String, String>>> listAvailableStates() {
+        List<Map<String, String>> states = Arrays.stream(USState.values())
+                .filter(s -> s != USState.NBPTS && s != USState.INTERSTATE && s != USState.OTHER)
+                .map(s -> Map.of(
+                        "code", s.name(),
+                        "name", s.getDisplayName(),
+                        "agency", s.getCertifyingAgency() != null ? s.getCertifyingAgency() : ""
+                ))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(states);
+    }
+
+    @GetMapping("/setup/current")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Object>> getCurrentStateConfig() {
+        StateConfiguration config = stateReportingService.getActiveStateConfiguration();
+        Map<String, Object> response = new HashMap<>();
+
+        if (config == null) {
+            response.put("configured", false);
+            response.put("message", "No state reporting system has been configured. Please select your state to set up reporting.");
+            return ResponseEntity.ok(response);
+        }
+
+        response.put("configured", true);
+        response.put("state", config.getState().name());
+        response.put("stateName", config.getStateName());
+        response.put("reportingSystem", config.getStateReportingSystem());
+        response.put("educationDepartment", config.getEducationDepartment());
+        response.put("departmentAbbreviation", config.getDepartmentAbbreviation());
+        response.put("studentIdLabel", config.getStudentIdLabelOrDefault());
+        response.put("courseCodeLabel", config.getCourseCodeLabelOrDefault());
+        response.put("reportingPeriodsPerYear", config.getReportingPeriodsPerYear());
+        response.put("active", config.getActive());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/setup/select-state")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Object>> selectState(@RequestParam String stateCode) {
+        Map<String, Object> response = new HashMap<>();
+
+        USState state;
+        try {
+            state = USState.valueOf(stateCode.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            response.put("success", false);
+            response.put("error", "Invalid state code: " + stateCode);
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // Check if already configured
+        StateConfiguration existing = stateConfigurationRepository.findByState(state);
+        if (existing != null) {
+            existing.setActive(true);
+            stateConfigurationRepository.save(existing);
+            response.put("success", true);
+            response.put("message", "State reporting activated for " + state.getDisplayName());
+            response.put("reportingSystem", existing.getStateReportingSystem());
+            return ResponseEntity.ok(response);
+        }
+
+        // Create new configuration with state-specific defaults
+        StateConfiguration config = new StateConfiguration();
+        config.setState(state);
+        config.setStateName(state.getDisplayName());
+        config.setEducationDepartment(state.getCertifyingAgency());
+        config.setActive(true);
+
+        applyStateDefaults(config, state);
+
+        stateConfigurationRepository.save(config);
+
+        response.put("success", true);
+        response.put("message", "State reporting configured for " + state.getDisplayName());
+        response.put("reportingSystem", config.getStateReportingSystem());
+        response.put("nextSteps", List.of(
+                "Review configuration at GET /api/state-reporting/setup/current",
+                "Customize settings with PUT /api/state-reporting/setup/configure",
+                "Generate reports from the State Reporting dashboard"
+        ));
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/setup/configure")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Object>> updateStateConfig(@RequestBody Map<String, Object> updates) {
+        StateConfiguration config = stateReportingService.getActiveStateConfiguration();
+        Map<String, Object> response = new HashMap<>();
+
+        if (config == null) {
+            response.put("success", false);
+            response.put("error", "No state is configured. Use POST /setup/select-state first.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // Apply updates
+        if (updates.containsKey("reportingSystem")) config.setStateReportingSystem((String) updates.get("reportingSystem"));
+        if (updates.containsKey("studentIdLabel")) config.setStudentIdLabel((String) updates.get("studentIdLabel"));
+        if (updates.containsKey("courseCodeLabel")) config.setCourseCodeLabel((String) updates.get("courseCodeLabel"));
+        if (updates.containsKey("studentIdFormat")) config.setStudentIdFormat((String) updates.get("studentIdFormat"));
+        if (updates.containsKey("courseCodeFormat")) config.setCourseCodeFormat((String) updates.get("courseCodeFormat"));
+        if (updates.containsKey("reportingPeriodsPerYear")) config.setReportingPeriodsPerYear((Integer) updates.get("reportingPeriodsPerYear"));
+        if (updates.containsKey("departmentUrl")) config.setDepartmentUrl((String) updates.get("departmentUrl"));
+
+        stateConfigurationRepository.save(config);
+
+        response.put("success", true);
+        response.put("message", "State configuration updated");
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Apply well-known defaults for common state reporting systems.
+     */
+    private void applyStateDefaults(StateConfiguration config, USState state) {
+        switch (state) {
+            case TX -> {
+                config.setStateReportingSystem("PEIMS");
+                config.setDepartmentAbbreviation("TEA");
+                config.setStudentIdSystemName("PEIMS ID");
+                config.setStudentIdLabel("PEIMS Student ID");
+                config.setStudentIdFormat("#########");
+                config.setStudentIdLength(9);
+                config.setCourseCodeSystemName("PEIMS Service IDs");
+                config.setCourseCodeLabel("Service ID");
+                config.setCourseCodeFormat("########");
+                config.setCourseCodeLength(8);
+                config.setSchoolIdSystemName("Campus ID");
+                config.setSchoolIdLabel("Campus Number");
+                config.setReportingPeriodsPerYear(6);
+                config.setEllLabel("Emergent Bilingual");
+            }
+            case CA -> {
+                config.setStateReportingSystem("CALPADS");
+                config.setDepartmentAbbreviation("CDE");
+                config.setStudentIdSystemName("SSID");
+                config.setStudentIdLabel("Statewide Student ID (SSID)");
+                config.setStudentIdFormat("##########");
+                config.setStudentIdLength(10);
+                config.setCourseCodeSystemName("CALPADS Course Codes");
+                config.setCourseCodeLabel("State Course Code");
+                config.setSchoolIdSystemName("CDS Code");
+                config.setSchoolIdLabel("County-District-School Code");
+                config.setReportingPeriodsPerYear(4);
+            }
+            case OH -> {
+                config.setStateReportingSystem("EMIS");
+                config.setDepartmentAbbreviation("ODE");
+                config.setStudentIdSystemName("SSID");
+                config.setStudentIdLabel("State Student ID (SSID)");
+                config.setStudentIdFormat("#########");
+                config.setStudentIdLength(9);
+                config.setSchoolIdSystemName("IRN");
+                config.setSchoolIdLabel("Information Retrieval Number");
+                config.setReportingPeriodsPerYear(5);
+            }
+            case MA -> {
+                config.setStateReportingSystem("SIMS");
+                config.setDepartmentAbbreviation("DESE");
+                config.setStudentIdSystemName("SASID");
+                config.setStudentIdLabel("State Assigned Student ID");
+                config.setStudentIdFormat("##########");
+                config.setStudentIdLength(10);
+                config.setReportingPeriodsPerYear(3);
+            }
+            case NY -> {
+                config.setStateReportingSystem("SIRS");
+                config.setDepartmentAbbreviation("NYSED");
+                config.setStudentIdSystemName("NYSSIS ID");
+                config.setStudentIdLabel("NYSSIS Student ID");
+                config.setStudentIdFormat("##########");
+                config.setStudentIdLength(10);
+                config.setSchoolIdSystemName("BEDS Code");
+                config.setSchoolIdLabel("BEDS Code");
+                config.setReportingPeriodsPerYear(4);
+            }
+            case FL -> {
+                config.setStateReportingSystem("FASTER");
+                config.setDepartmentAbbreviation("FLDOE");
+                config.setStudentIdSystemName("Florida Student ID");
+                config.setStudentIdLabel("Florida Student ID");
+                config.setStudentIdFormat("##########");
+                config.setStudentIdLength(10);
+                config.setSpecialEdLabel("Exceptional Student Education");
+                config.setReportingPeriodsPerYear(4);
+            }
+            case NM -> {
+                config.setStateReportingSystem("STARS");
+                config.setDepartmentAbbreviation("PED");
+                config.setStudentIdSystemName("STARS ID");
+                config.setStudentIdLabel("STARS Student ID");
+                config.setReportingPeriodsPerYear(4);
+            }
+            default -> {
+                config.setStateReportingSystem(state.name() + " State Reporting");
+                config.setStudentIdLabel("State Student ID");
+                config.setCourseCodeLabel("State Course Code");
+            }
+        }
     }
 }

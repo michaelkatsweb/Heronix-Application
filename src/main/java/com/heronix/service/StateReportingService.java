@@ -9,11 +9,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.heronix.model.domain.Immunization;
+import com.heronix.model.domain.StateConfiguration;
+import com.heronix.model.enums.USState;
+import com.heronix.repository.StateConfigurationRepository;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -60,6 +68,16 @@ public class StateReportingService {
     @Autowired
     private CRDCExportService crdcExportService;
 
+    @Autowired
+    private StateConfigurationRepository stateConfigurationRepository;
+
+    /**
+     * Allowed base directories for export. Configurable via application properties.
+     */
+    private static final List<String> ALLOWED_EXPORT_ROOTS = List.of(
+            "C:\\SecureExports", "C:\\HeronixExports", "/var/heronix/exports", "/tmp/heronix-exports"
+    );
+
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
@@ -99,7 +117,9 @@ public class StateReportingService {
                 Files.createDirectories(exportPath);
             }
 
-            String fileName = String.format("STATE_Enrollment_%s_%s.csv",
+            String prefix = getReportingSystemPrefix();
+            String fileName = String.format("%s_Enrollment_%s_%s.csv",
+                    prefix,
                     reportDate.format(DATE_FORMATTER),
                     LocalDateTime.now().format(TIMESTAMP_FORMATTER));
 
@@ -113,24 +133,33 @@ public class StateReportingService {
                         "Grade,EnrollmentDate,EnrollmentStatus,Race,Ethnicity," +
                         "SpecialEducation,Section504,EnglishLearner,FreeReducedLunch\n");
 
-                // Write student records
+                // Write student records using actual model fields
                 for (Student student : students) {
+                    String stateId = student.getStateStudentId() != null
+                            ? student.getStateStudentId() : student.getStudentId();
+                    String enrollmentStatus = student.getStudentStatus() != null
+                            ? student.getStudentStatus().name() : "";
+                    String enrollmentDate = student.getEnrollmentCompletionDate() != null
+                            ? student.getEnrollmentCompletionDate().format(DATE_FORMATTER) : "";
+                    String specialEd = Boolean.TRUE.equals(student.getHasIEP()) ? "Y" : "N";
+                    String ell = Boolean.TRUE.equals(student.getIsEnglishLearner()) ? "Y" : "N";
+
                     String line = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
-                            escapeCsv(student.getStudentId()),
+                            escapeCsv(stateId),
                             escapeCsv(student.getLastName()),
                             escapeCsv(student.getFirstName()),
-                            "", // MiddleName - field may not exist
+                            escapeCsv(student.getMiddleName()),
                             student.getDateOfBirth() != null ? student.getDateOfBirth().format(DATE_FORMATTER) : "",
                             escapeCsv(student.getGender()),
                             student.getGradeLevel(),
-                            "", // EnrollmentDate - field may not exist
-                            "", // EnrollmentStatus - field may not exist
+                            enrollmentDate,
+                            enrollmentStatus,
                             escapeCsv(student.getRace()),
                             escapeCsv(student.getEthnicity()),
-                            "", // SpecialEducation - would need to check SPED records
+                            specialEd,
                             student.getHas504Plan() != null && student.getHas504Plan() ? "Y" : "N",
-                            "", // EnglishLearner - would need to check EL status
-                            "" // FreeReducedLunch - would need to check lunch status
+                            ell,
+                            "" // FreeReducedLunch - not tracked on Student entity
                     );
                     writer.write(line);
                 }
@@ -189,7 +218,9 @@ public class StateReportingService {
                 Files.createDirectories(exportPath);
             }
 
-            String fileName = String.format("STATE_Immunization_Compliance_%s_%s.csv",
+            String prefix = getReportingSystemPrefix();
+            String fileName = String.format("%s_Immunization_Compliance_%s_%s.csv",
+                    prefix,
                     reportDate.format(DATE_FORMATTER),
                     LocalDateTime.now().format(TIMESTAMP_FORMATTER));
 
@@ -202,14 +233,52 @@ public class StateReportingService {
                 writer.write("StateStudentID,LastName,FirstName,Grade,DTaP_Status,Polio_Status," +
                         "MMR_Status,HepB_Status,Varicella_Status,Compliant,ExemptionType\n");
 
-                // Write compliance records
+                // Write compliance records using actual immunization data
                 for (Student student : students) {
-                    // Get immunization compliance status (simplified - would use ImmunizationService)
-                    String line = String.format("%s,%s,%s,%s,COMPLETE,COMPLETE,COMPLETE,COMPLETE,COMPLETE,Y,NONE\n",
+                    List<Immunization> immunizations = immunizationRepository.findByStudent(student);
+
+                    // Build vaccine status map from actual records
+                    Map<String, String> vaccineStatus = new HashMap<>();
+                    vaccineStatus.put("DTaP", "MISSING");
+                    vaccineStatus.put("Polio", "MISSING");
+                    vaccineStatus.put("MMR", "MISSING");
+                    vaccineStatus.put("HepB", "MISSING");
+                    vaccineStatus.put("Varicella", "MISSING");
+
+                    String exemptionType = "NONE";
+                    for (Immunization imm : immunizations) {
+                        String vType = imm.getVaccineType() != null ? imm.getVaccineType().name() : "";
+                        if (vType.contains("DTAP") || vType.contains("TDAP")) {
+                            vaccineStatus.put("DTaP", Boolean.TRUE.equals(imm.getMeetsStateRequirement()) ? "COMPLETE" : "PARTIAL");
+                        } else if (vType.contains("POLIO") || vType.contains("IPV")) {
+                            vaccineStatus.put("Polio", Boolean.TRUE.equals(imm.getMeetsStateRequirement()) ? "COMPLETE" : "PARTIAL");
+                        } else if (vType.contains("MMR")) {
+                            vaccineStatus.put("MMR", Boolean.TRUE.equals(imm.getMeetsStateRequirement()) ? "COMPLETE" : "PARTIAL");
+                        } else if (vType.contains("HEP_B") || vType.contains("HEPATITIS_B")) {
+                            vaccineStatus.put("HepB", Boolean.TRUE.equals(imm.getMeetsStateRequirement()) ? "COMPLETE" : "PARTIAL");
+                        } else if (vType.contains("VARICELLA")) {
+                            vaccineStatus.put("Varicella", Boolean.TRUE.equals(imm.getMeetsStateRequirement()) ? "COMPLETE" : "PARTIAL");
+                        }
+                        if (imm.getExemptionType() != null && !"NONE".equals(imm.getExemptionType().name())) {
+                            exemptionType = imm.getExemptionType().name();
+                        }
+                    }
+
+                    boolean compliant = vaccineStatus.values().stream().allMatch("COMPLETE"::equals)
+                            || !"NONE".equals(exemptionType);
+
+                    String line = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
                             escapeCsv(student.getStudentId()),
                             escapeCsv(student.getLastName()),
                             escapeCsv(student.getFirstName()),
-                            student.getGradeLevel()
+                            student.getGradeLevel(),
+                            vaccineStatus.get("DTaP"),
+                            vaccineStatus.get("Polio"),
+                            vaccineStatus.get("MMR"),
+                            vaccineStatus.get("HepB"),
+                            vaccineStatus.get("Varicella"),
+                            compliant ? "Y" : "N",
+                            exemptionType
                     );
                     writer.write(line);
                 }
@@ -300,7 +369,25 @@ public class StateReportingService {
         ExportValidation validation = new ExportValidation();
 
         try {
-            Path path = Paths.get(directory);
+            Path path = Paths.get(directory).toAbsolutePath().normalize();
+            String pathString = path.toString();
+
+            // SECURITY: Block path traversal attacks
+            if (directory.contains("..") || directory.contains("%2e") || directory.contains("%2E")) {
+                validation.valid = false;
+                validation.securityWarning = true;
+                validation.message = "SECURITY: Path traversal detected in export directory";
+                log.warn("SECURITY: Path traversal attempt in export directory: {}", directory);
+                return validation;
+            }
+
+            // SECURITY: Block network drives and UNC paths
+            if (pathString.startsWith("\\\\") || pathString.startsWith("//")) {
+                validation.valid = false;
+                validation.securityWarning = true;
+                validation.message = "SECURITY WARNING: Network paths are not allowed. Use local secure storage only.";
+                return validation;
+            }
 
             // Check if path exists
             if (!Files.exists(path)) {
@@ -323,13 +410,11 @@ public class StateReportingService {
                 return validation;
             }
 
-            // SECURITY: Warn if directory is on network drive (potential security risk)
-            String pathString = path.toAbsolutePath().toString();
-            if (pathString.startsWith("\\\\") || pathString.contains("network")) {
+            // SECURITY: Check symlinks
+            if (Files.isSymbolicLink(path)) {
                 validation.valid = false;
                 validation.securityWarning = true;
-                validation.message = "SECURITY WARNING: Export directory appears to be on network drive. " +
-                        "Use local secure storage only.";
+                validation.message = "SECURITY WARNING: Symbolic links are not allowed for export directories.";
                 return validation;
             }
 
@@ -351,10 +436,45 @@ public class StateReportingService {
      * @return checksum string
      */
     private String calculateFileChecksum(Path filePath) throws IOException {
-        // Simplified checksum - would use SHA-256 in production
-        long fileSize = Files.size(filePath);
-        LocalDateTime now = LocalDateTime.now();
-        return String.format("CRC-%d-%s", fileSize, now.format(TIMESTAMP_FORMATTER));
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            try (InputStream is = Files.newInputStream(filePath)) {
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = is.read(buffer)) != -1) {
+                    digest.update(buffer, 0, bytesRead);
+                }
+            }
+            byte[] hashBytes = digest.digest();
+            StringBuilder sb = new StringBuilder("SHA256-");
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IOException("SHA-256 algorithm not available", e);
+        }
+    }
+
+    /**
+     * Gets the active state configuration, if one is set up.
+     * Returns null if no state has been configured yet.
+     */
+    public StateConfiguration getActiveStateConfiguration() {
+        List<StateConfiguration> configs = stateConfigurationRepository.findByActiveTrueOrderByStateName();
+        return configs.isEmpty() ? null : configs.get(0);
+    }
+
+    /**
+     * Gets the state-specific reporting system name (e.g., "PEIMS", "CALPADS").
+     * Falls back to "STATE" if not configured.
+     */
+    private String getReportingSystemPrefix() {
+        StateConfiguration config = getActiveStateConfiguration();
+        if (config != null && config.getStateReportingSystem() != null && !config.getStateReportingSystem().isBlank()) {
+            return config.getStateReportingSystem().toUpperCase().replaceAll("[^A-Z0-9]", "");
+        }
+        return "STATE";
     }
 
     /**
