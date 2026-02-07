@@ -192,6 +192,54 @@ public class Teacher {
     @Column(name = "substitute_date")
     private java.time.LocalDate substituteDate;
 
+    // ========================================================================
+    // PIN AUTHENTICATION (SubConnect Security)
+    // ========================================================================
+
+    /**
+     * Teacher PIN (BCrypt encrypted)
+     * 4-digit PIN for enhanced security when activating SubConnect sessions
+     * Format: BCrypt hash of 4-digit PIN
+     *
+     * @since PIN Authentication System - SubConnect Security
+     */
+    @Column(name = "pin_hash", length = 60)
+    private String pinHash;
+
+    /**
+     * Whether PIN is required for this teacher
+     * If true, teacher must enter PIN after QR scan during SubConnect activation
+     * If false, QR scan is sufficient
+     *
+     * Default: false (PIN optional)
+     */
+    @Column(name = "pin_required")
+    private Boolean pinRequired = false;
+
+    /**
+     * Count of consecutive failed PIN attempts
+     * Incremented on each wrong PIN entry
+     * Reset to 0 on successful PIN entry
+     * Account locked when reaches 3 failed attempts
+     */
+    @Column(name = "failed_pin_attempts")
+    private Integer failedPinAttempts = 0;
+
+    /**
+     * Timestamp when account will be auto-unlocked
+     * Set to 30 minutes after 3rd failed PIN attempt
+     * Null if account is not locked
+     */
+    @Column(name = "pin_locked_until")
+    private java.time.LocalDateTime pinLockedUntil;
+
+    /**
+     * Timestamp of last successful PIN verification
+     * Used for audit trail and security monitoring
+     */
+    @Column(name = "last_pin_verification")
+    private java.time.LocalDateTime lastPinVerification;
+
     /**
      * Minimum number of different courses this teacher should teach per day
      * Default: 3 courses
