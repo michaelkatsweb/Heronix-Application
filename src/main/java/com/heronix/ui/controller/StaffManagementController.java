@@ -411,17 +411,20 @@ public class StaffManagementController implements Initializable {
             dialog.setTitle(staff == null ? "Add New Staff Member" : "Edit Staff Member");
 
             // Get controller and set data
+            com.heronix.ui.controller.dialogs.StaffFormDialogController formController = null;
             Object controller = loader.getController();
-            if (controller instanceof com.heronix.ui.controller.dialogs.StaffFormDialogController formController) {
+            if (controller instanceof com.heronix.ui.controller.dialogs.StaffFormDialogController fc) {
+                formController = fc;
                 if (staff != null) {
                     formController.setStaff(staff);
                 }
             }
 
             Optional<ButtonType> result = dialog.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                // Reload data
-                loadStaffData();
+            if (result.isPresent() && result.get() == ButtonType.OK && formController != null) {
+                if (formController.save()) {
+                    loadStaffData();
+                }
             }
         } catch (IOException e) {
             log.error("Error showing staff form dialog", e);

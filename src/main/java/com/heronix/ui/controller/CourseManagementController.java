@@ -151,6 +151,14 @@ public class CourseManagementController {
         maxStudentsColumn.setCellValueFactory(new PropertyValueFactory<>("maxStudents"));
         enrollmentColumn.setCellValueFactory(new PropertyValueFactory<>("currentEnrollment"));
         activeColumn.setCellValueFactory(new PropertyValueFactory<>("active"));
+
+        roomColumn.setCellValueFactory(cellData -> {
+            Room room = cellData.getValue().getRoom();
+            return new javafx.beans.property.SimpleStringProperty(
+                    room != null ? room.getRoomNumber() : "Unassigned");
+        });
+
+        durationColumn.setCellValueFactory(new PropertyValueFactory<>("duration"));
     }
 
     private void setupFilters() {

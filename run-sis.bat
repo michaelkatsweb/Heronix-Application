@@ -40,6 +40,17 @@ mvn -version 2>&1 | findstr /i "Apache Maven"
 echo.
 
 echo ============================================
+echo    Step 0: Kill previous Heronix SIS instance
+echo ============================================
+echo.
+:: Find and kill any java.exe holding target files (previous SIS run)
+for /f "tokens=2" %%p in ('wmic process where "name='java.exe' and commandline like '%%heronix%%'" get processid /value 2^>nul ^| findstr ProcessId') do (
+    echo Killing previous Heronix process: PID %%p
+    taskkill /F /PID %%p >nul 2>&1
+)
+echo.
+
+echo ============================================
 echo    Step 1: Maven Clean
 echo ============================================
 echo.

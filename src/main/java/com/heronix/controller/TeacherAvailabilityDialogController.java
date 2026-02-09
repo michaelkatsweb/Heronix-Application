@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
@@ -42,6 +43,9 @@ public class TeacherAvailabilityDialogController {
 
     @Autowired
     private TeacherRepository teacherRepository;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     private Teacher teacher;
     private ObservableList<UnavailableTimeBlock> blocks;
@@ -97,6 +101,7 @@ public class TeacherAvailabilityDialogController {
         try {
             // Load the block dialog
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/eduscheduler/view/UnavailableTimeBlockDialog.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Add Unavailable Time Block");
             dialogStage.initModality(Modality.WINDOW_MODAL);
@@ -144,6 +149,7 @@ public class TeacherAvailabilityDialogController {
         try {
             // Load the block dialog
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/eduscheduler/view/UnavailableTimeBlockDialog.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Edit Unavailable Time Block");
             dialogStage.initModality(Modality.WINDOW_MODAL);
