@@ -47,7 +47,7 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class ReportGenerationDialogController {
 
-    @Value("${api.base-url:http://localhost:8080}")
+    @Value("${api.base-url:http://localhost:9590}")
     private String apiBaseUrl;
 
     private final HttpClient httpClient = HttpClient.newBuilder()

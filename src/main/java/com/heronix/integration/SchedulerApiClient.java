@@ -34,7 +34,7 @@ public class SchedulerApiClient {
         this.objectMapper = objectMapper;
     }
 
-    @Value("${heronix.scheduler.api-url:http://localhost:8080}")
+    @Value("${heronix.scheduler.api-url:http://localhost:8090}")
     private String schedulerApiUrl;
 
     @Value("${heronix.scheduler.timeout-seconds:300}")
