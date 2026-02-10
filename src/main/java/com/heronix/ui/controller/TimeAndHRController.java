@@ -122,7 +122,8 @@ public class TimeAndHRController {
         alTypeCol.setCellValueFactory(d -> toStr(d.getValue(), "accessType"));
         alLocationCol.setCellValueFactory(d -> {
             Object loc = d.getValue().get("accessLocation");
-            String name = loc instanceof Map ? String.valueOf(((Map<?, ?>) loc).getOrDefault("locationName", "")) : "";
+            Object locName = loc instanceof Map ? ((Map<?, ?>) loc).get("locationName") : null;
+            String name = locName != null ? String.valueOf(locName) : "";
             return new SimpleStringProperty(name);
         });
         alMethodCol.setCellValueFactory(d -> toStr(d.getValue(), "verificationMethod"));
@@ -204,7 +205,8 @@ public class TimeAndHRController {
             Map<?, ?> nested = (Map<?, ?>) val;
             if (nested.containsKey("fullName")) return new SimpleStringProperty(String.valueOf(nested.get("fullName")));
             if (nested.containsKey("firstName")) {
-                return new SimpleStringProperty(nested.get("firstName") + " " + nested.getOrDefault("lastName", ""));
+                Object lastName = nested.get("lastName");
+                return new SimpleStringProperty(nested.get("firstName") + " " + (lastName != null ? lastName : ""));
             }
             if (nested.containsKey("id")) return new SimpleStringProperty("ID: " + nested.get("id"));
         }

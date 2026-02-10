@@ -75,6 +75,7 @@
                 <Menu text="Academics">
                     <Menu text="Course Management">
                         <MenuItem text="Course Catalog" onAction="#loadCourses"/>
+                        <MenuItem text="Manage Courses" onAction="#handleCourseManagement"/>
                         <MenuItem text="Course Sections" onAction="#handleCourseSections"/>
                         <MenuItem text="Section Enrollment" onAction="#handleSectionEnrollment"/>
                     </Menu>

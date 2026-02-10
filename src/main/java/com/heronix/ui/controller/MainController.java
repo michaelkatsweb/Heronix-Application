@@ -3008,6 +3008,7 @@ public class MainController {
     @FXML private void handleStudentRelationships() { loadView("Student Relationships", "/fxml/StudentRelationshipsForm.fxml"); }
     @FXML private void handleStudentSearch() { loadView("Student Search", "/fxml/Students.fxml"); }
     @FXML private void handleCourseSections() { loadView("Course Sections", "/fxml/SectionManagementDialog.fxml"); }
+    @FXML private void handleCourseManagement() { loadView("Course Management", "/fxml/CourseManagement.fxml"); }
     @FXML private void handleSectionEnrollment() { loadView("Section Enrollment", "/fxml/StudentEnrollment.fxml"); }
     @FXML private void handleCourseRequests() { loadView("Course Requests", "/fxml/CourseRecommendationDashboard.fxml"); }
     @FXML private void handleScheduleGeneration() { loadView("Schedule Generation", "/fxml/ScheduleGenerationDialog.fxml"); }

@@ -58,6 +58,7 @@ Reorganized menu structure based on 32 service categories
         <Menu text="Academics">
             <Menu text="Course Management">
                 <MenuItem text="Course Catalog" onAction="#handleCourseCatalog"/>
+                <MenuItem text="Manage Courses" onAction="#handleCourseManagement"/>
                 <MenuItem text="Course Sections" onAction="#handleCourseSections"/>
                 <MenuItem text="Section Enrollment" onAction="#handleSectionEnrollment"/>
             </Menu>
