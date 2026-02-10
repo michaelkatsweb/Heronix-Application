@@ -57,8 +57,7 @@
                             </columnConstraints>
 
                             <!-- Active Visits -->
-                            <VBox spacing="10" styleClass="stat-card"
-                                  styleClass="card, metric-warning"
+                            <VBox spacing="10" styleClass="stat-card, card, metric-warning"
                                   GridPane.columnIndex="0" GridPane.rowIndex="0">
                                 <Label text="Active Visits" styleClass="stat-label"/>
                                 <Label fx:id="activeVisitsLabel" text="0"

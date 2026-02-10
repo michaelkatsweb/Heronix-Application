@@ -249,7 +249,7 @@
 
                 <Separator/>
 
-                <HBox spacing="10" wrap="true">
+                <HBox spacing="10">
                     <Button text="🔄 Refresh Connection Info" onAction="#handleRefreshInfo"
                             style="-fx-padding: 10 20; -fx-cursor: hand;"/>
                     <Button text="📝 Export DB Schema" onAction="#handleExportSchema"

@@ -606,6 +606,15 @@ public class ImmunizationTrackingController {
     // ========================================================================
 
     @FXML
+    private void handleViewRecord() {
+        if (currentStudent == null) {
+            showError("Please select a student first.");
+            return;
+        }
+        loadStudentImmunizationRecord(currentStudent);
+    }
+
+    @FXML
     private void handleBrowseDocument() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Immunization Documentation");

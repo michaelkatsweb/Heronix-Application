@@ -292,7 +292,7 @@
                             <Label fx:id="driverStatusLabel" text="—" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
                         </GridPane>
 
-                        <Label text="Certifications & Training" styleClass="form-label"/>
+                        <Label text="Certifications &amp; Training" styleClass="form-label"/>
                         <ListView fx:id="certificationsListView" prefHeight="150">
                             <placeholder>
                                 <Label text="No certifications" styleClass="text-muted"/>

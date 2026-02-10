@@ -482,7 +482,7 @@ public class UserManagementController {
             loader.setLocation(getClass().getResource("/fxml/UserDialog.fxml"));
             loader.setControllerFactory(param -> userDialogController);
 
-            javafx.scene.layout.BorderPane page = loader.load();
+            javafx.scene.Parent page = loader.load();
 
             // Create dialog stage
             javafx.stage.Stage dialogStage = new javafx.stage.Stage();
@@ -523,7 +523,7 @@ public class UserManagementController {
             loader.setLocation(getClass().getResource("/fxml/UserDialog.fxml"));
             loader.setControllerFactory(param -> userDialogController);
 
-            javafx.scene.layout.BorderPane page = loader.load();
+            javafx.scene.Parent page = loader.load();
 
             // Create dialog stage
             javafx.stage.Stage dialogStage = new javafx.stage.Stage();

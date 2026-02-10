@@ -63,8 +63,7 @@
                         </VBox>
 
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="3">
-                            <Label text="Medication Details" styleClass="field-label"
-                                   styleClass="form-label"/>
+                            <Label text="Medication Details" styleClass="field-label, form-label"/>
                             <TextArea fx:id="medicationDetailsTextArea" editable="false"
                                       wrapText="true" prefRowCount="2"
                                       styleClass="main-container"/>

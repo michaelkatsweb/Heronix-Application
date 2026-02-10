@@ -1,6 +1,7 @@
 package com.heronix.ui.controller;
 
 import com.heronix.model.domain.Plan504;
+import com.heronix.model.domain.Student;
 import com.heronix.model.enums.Plan504Status;
 import com.heronix.service.Plan504Service;
 import com.heronix.ui.controller.dialogs.Plan504DialogController;
@@ -94,8 +95,14 @@ public class Plan504Controller {
 
     private void setupTable() {
         // Configure columns
-        studentColumn.setCellValueFactory(data ->
-            new SimpleStringProperty(data.getValue().getStudent().getFullName()));
+        studentColumn.setCellValueFactory(data -> {
+            try {
+                Student student = data.getValue().getStudent();
+                return new SimpleStringProperty(student != null ? student.getFullName() : "N/A");
+            } catch (Exception e) {
+                return new SimpleStringProperty("N/A");
+            }
+        });
 
         planNumberColumn.setCellValueFactory(data ->
             new SimpleStringProperty(data.getValue().getPlanNumber() != null ?
