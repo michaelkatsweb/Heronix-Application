@@ -479,9 +479,9 @@ public class ScheduleExportApiController {
         ));
 
         help.put("examples", Map.of(
-            "viewFormats", "curl http://localhost:8080/api/schedule-export/schedules/1/formats",
-            "downloadPDF", "curl -O http://localhost:8080/api/schedule-export/schedules/1/pdf",
-            "dashboard", "curl http://localhost:8080/api/schedule-export/dashboard"
+            "viewFormats", "curl http://localhost:9590/api/schedule-export/schedules/1/formats",
+            "downloadPDF", "curl -O http://localhost:9590/api/schedule-export/schedules/1/pdf",
+            "dashboard", "curl http://localhost:9590/api/schedule-export/dashboard"
         ));
 
         help.put("tips", Map.of(

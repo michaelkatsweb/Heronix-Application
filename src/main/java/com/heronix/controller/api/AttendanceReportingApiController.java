@@ -423,9 +423,9 @@ public class AttendanceReportingApiController {
         ));
 
         help.put("examples", Map.of(
-            "monthlyADA", "curl 'http://localhost:8080/api/attendance-reporting/ada?startDate=2025-01-01&endDate=2025-01-31'",
-            "schoolSpecific", "curl 'http://localhost:8080/api/attendance-reporting/funding-report?schoolId=1&startDate=2025-01-01&endDate=2025-01-31'",
-            "dashboard", "curl 'http://localhost:8080/api/attendance-reporting/dashboard'"
+            "monthlyADA", "curl 'http://localhost:9590/api/attendance-reporting/ada?startDate=2025-01-01&endDate=2025-01-31'",
+            "schoolSpecific", "curl 'http://localhost:9590/api/attendance-reporting/funding-report?schoolId=1&startDate=2025-01-01&endDate=2025-01-31'",
+            "dashboard", "curl 'http://localhost:9590/api/attendance-reporting/dashboard'"
         ));
 
         return ResponseEntity.ok(help);

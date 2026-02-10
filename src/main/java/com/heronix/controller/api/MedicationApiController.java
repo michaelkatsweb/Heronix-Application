@@ -729,9 +729,9 @@ public class MedicationApiController {
         ));
 
         help.put("examples", Map.of(
-            "createMedication", "curl -X POST http://localhost:8080/api/medication/medications -H 'Content-Type: application/json' -d '{\"studentId\":123,\"medicationName\":\"Albuterol\",\"dosage\":\"2 puffs\",\"purpose\":\"Asthma\",\"prescribingPhysician\":\"Dr. Smith\",\"startDate\":\"2025-09-01\",\"createdByStaffId\":1}'",
-            "administer", "curl -X POST http://localhost:8080/api/medication/administration/administer -H 'Content-Type: application/json' -d '{\"medicationId\":1,\"studentId\":123,\"doseGiven\":\"2 puffs\",\"administrationRoute\":\"INHALATION\",\"administrationReason\":\"SCHEDULED\",\"administeredByStaffId\":5,\"administratorName\":\"Nurse Jones\",\"administratorTitle\":\"RN\"}'",
-            "getDueToday", "curl http://localhost:8080/api/medication/medications/due-today"
+            "createMedication", "curl -X POST http://localhost:9590/api/medication/medications -H 'Content-Type: application/json' -d '{\"studentId\":123,\"medicationName\":\"Albuterol\",\"dosage\":\"2 puffs\",\"purpose\":\"Asthma\",\"prescribingPhysician\":\"Dr. Smith\",\"startDate\":\"2025-09-01\",\"createdByStaffId\":1}'",
+            "administer", "curl -X POST http://localhost:9590/api/medication/administration/administer -H 'Content-Type: application/json' -d '{\"medicationId\":1,\"studentId\":123,\"doseGiven\":\"2 puffs\",\"administrationRoute\":\"INHALATION\",\"administrationReason\":\"SCHEDULED\",\"administeredByStaffId\":5,\"administratorName\":\"Nurse Jones\",\"administratorTitle\":\"RN\"}'",
+            "getDueToday", "curl http://localhost:9590/api/medication/medications/due-today"
         ));
 
         help.put("notes", Map.of(

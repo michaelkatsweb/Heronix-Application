@@ -120,9 +120,9 @@ public class DataGeneratorApiController {
         ));
 
         guide.put("exampleCurl", Map.of(
-            "validateFile", "curl -F 'file=@teachers.csv' http://localhost:8080/api/import/validate",
-            "importTeachers", "curl -F 'file=@teachers.csv' http://localhost:8080/api/import/teachers",
-            "importCourses", "curl -F 'file=@courses.csv' http://localhost:8080/api/import/courses"
+            "validateFile", "curl -F 'file=@teachers.csv' http://localhost:9590/api/import/validate",
+            "importTeachers", "curl -F 'file=@teachers.csv' http://localhost:9590/api/import/teachers",
+            "importCourses", "curl -F 'file=@courses.csv' http://localhost:9590/api/import/courses"
         ));
 
         guide.put("supportedFormats", List.of("CSV", "XLSX"));

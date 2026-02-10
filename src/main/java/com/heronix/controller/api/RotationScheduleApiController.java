@@ -425,10 +425,10 @@ public class RotationScheduleApiController {
         ));
 
         help.put("examples", Map.of(
-            "generateDaily", "curl -X POST http://localhost:8080/api/rotation-schedule/generate -H 'Content-Type: application/json' -d '{\"gradeLevel\":3,\"rotationType\":\"DAILY\",\"subjects\":[\"ART\",\"MUSIC\",\"PE\",\"LIBRARY\"],\"periodsPerWeek\":5}'",
-            "generateMultiGrade", "curl -X POST http://localhost:8080/api/rotation-schedule/generate-multi-grade -H 'Content-Type: application/json' -d '{\"grades\":[1,2,3,4,5],\"rotationType\":\"DAILY\",\"subjects\":[\"ART\",\"MUSIC\",\"PE\",\"LIBRARY\"],\"periodsPerWeek\":5}'",
-            "preview", "curl 'http://localhost:8080/api/rotation-schedule/pattern/preview?gradeLevel=3&rotationType=DAILY&periodsPerWeek=5'",
-            "getDaySubjects", "curl 'http://localhost:8080/api/rotation-schedule/pattern/3/day/1?rotationType=DAILY&periodsPerWeek=5'"
+            "generateDaily", "curl -X POST http://localhost:9590/api/rotation-schedule/generate -H 'Content-Type: application/json' -d '{\"gradeLevel\":3,\"rotationType\":\"DAILY\",\"subjects\":[\"ART\",\"MUSIC\",\"PE\",\"LIBRARY\"],\"periodsPerWeek\":5}'",
+            "generateMultiGrade", "curl -X POST http://localhost:9590/api/rotation-schedule/generate-multi-grade -H 'Content-Type: application/json' -d '{\"grades\":[1,2,3,4,5],\"rotationType\":\"DAILY\",\"subjects\":[\"ART\",\"MUSIC\",\"PE\",\"LIBRARY\"],\"periodsPerWeek\":5}'",
+            "preview", "curl 'http://localhost:9590/api/rotation-schedule/pattern/preview?gradeLevel=3&rotationType=DAILY&periodsPerWeek=5'",
+            "getDaySubjects", "curl 'http://localhost:9590/api/rotation-schedule/pattern/3/day/1?rotationType=DAILY&periodsPerWeek=5'"
         ));
 
         help.put("notes", Map.of(

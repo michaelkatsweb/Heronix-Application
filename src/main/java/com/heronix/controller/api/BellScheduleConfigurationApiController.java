@@ -470,9 +470,9 @@ public class BellScheduleConfigurationApiController {
         ));
 
         help.put("examples", Map.of(
-            "viewAllSchedules", "curl http://localhost:8080/api/bell-schedule-configuration/schedules",
-            "checkTodaySchedule", "curl 'http://localhost:8080/api/bell-schedule-configuration/schedules/for-date?date=2025-01-15&campusId=1'",
-            "dashboard", "curl http://localhost:8080/api/bell-schedule-configuration/dashboard"
+            "viewAllSchedules", "curl http://localhost:9590/api/bell-schedule-configuration/schedules",
+            "checkTodaySchedule", "curl 'http://localhost:9590/api/bell-schedule-configuration/schedules/for-date?date=2025-01-15&campusId=1'",
+            "dashboard", "curl http://localhost:9590/api/bell-schedule-configuration/dashboard"
         ));
 
         return ResponseEntity.ok(help);

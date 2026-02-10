@@ -473,9 +473,9 @@ public class StateReportingApiController {
         ));
 
         help.put("examples", Map.of(
-            "validateDirectory", "curl -X POST 'http://localhost:8080/api/state-reporting/validate-directory?directory=C:/SecureExports'",
-            "enrollmentReport", "curl -X POST 'http://localhost:8080/api/state-reporting/enrollment-report?reportDate=2025-01-31&exportDirectory=C:/SecureExports&exportedByStaffId=123'",
-            "dashboard", "curl 'http://localhost:8080/api/state-reporting/dashboard'"
+            "validateDirectory", "curl -X POST 'http://localhost:9590/api/state-reporting/validate-directory?directory=C:/SecureExports'",
+            "enrollmentReport", "curl -X POST 'http://localhost:9590/api/state-reporting/enrollment-report?reportDate=2025-01-31&exportDirectory=C:/SecureExports&exportedByStaffId=123'",
+            "dashboard", "curl 'http://localhost:9590/api/state-reporting/dashboard'"
         ));
 
         return ResponseEntity.ok(help);

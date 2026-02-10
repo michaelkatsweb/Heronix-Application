@@ -405,9 +405,9 @@ public class DatabaseMaintenanceApiController {
         ));
 
         help.put("examples", Map.of(
-            "checkStatus", "curl http://localhost:8080/api/database-maintenance/assignments/status",
-            "clearAll", "curl -X POST http://localhost:8080/api/database-maintenance/clear-assignments",
-            "clearCourses", "curl -X POST http://localhost:8080/api/database-maintenance/clear-assignments/courses -H 'Content-Type: application/json' -d '[\"MATH101\",\"ENG101\"]'"
+            "checkStatus", "curl http://localhost:9590/api/database-maintenance/assignments/status",
+            "clearAll", "curl -X POST http://localhost:9590/api/database-maintenance/clear-assignments",
+            "clearCourses", "curl -X POST http://localhost:9590/api/database-maintenance/clear-assignments/courses -H 'Content-Type: application/json' -d '[\"MATH101\",\"ENG101\"]'"
         ));
 
         help.put("warnings", Map.of(

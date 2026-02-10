@@ -427,9 +427,9 @@ public class AttendanceConfigurationApiController {
         ));
 
         help.put("examples", Map.of(
-            "viewConfiguration", "curl http://localhost:8080/api/attendance-configuration/all",
-            "getDefaultProfile", "curl http://localhost:8080/api/attendance-configuration/profiles/default",
-            "dashboard", "curl http://localhost:8080/api/attendance-configuration/dashboard"
+            "viewConfiguration", "curl http://localhost:9590/api/attendance-configuration/all",
+            "getDefaultProfile", "curl http://localhost:9590/api/attendance-configuration/profiles/default",
+            "dashboard", "curl http://localhost:9590/api/attendance-configuration/dashboard"
         ));
 
         return ResponseEntity.ok(help);

@@ -276,9 +276,9 @@ public class ParentGuardianApiController {
         ));
 
         help.put("examples", Map.of(
-            "createParent", "curl -X POST http://localhost:8080/api/parent-guardian -H 'Content-Type: application/json' -d '{\"firstName\":\"John\",\"lastName\":\"Doe\",\"relationship\":\"Father\",\"primaryPhone\":\"555-1234\",\"email\":\"john@example.com\",\"createdByStaffId\":1}'",
-            "searchByName", "curl http://localhost:8080/api/parent-guardian/search?name=Smith",
-            "searchByEmail", "curl http://localhost:8080/api/parent-guardian/search?email=john@example.com"
+            "createParent", "curl -X POST http://localhost:9590/api/parent-guardian -H 'Content-Type: application/json' -d '{\"firstName\":\"John\",\"lastName\":\"Doe\",\"relationship\":\"Father\",\"primaryPhone\":\"555-1234\",\"email\":\"john@example.com\",\"createdByStaffId\":1}'",
+            "searchByName", "curl http://localhost:9590/api/parent-guardian/search?name=Smith",
+            "searchByEmail", "curl http://localhost:9590/api/parent-guardian/search?email=john@example.com"
         ));
 
         help.put("notes", Map.of(

@@ -465,11 +465,11 @@ public class ScheduleDistributionApiController {
         ));
 
         help.put("examples", Map.of(
-            "quickDistribution", "curl -X POST http://localhost:8080/api/schedule-distribution/schedules/1/distribute",
-            "publishOnly", "curl -X POST http://localhost:8080/api/schedule-distribution/schedules/1/publish",
-            "notifyStudents", "curl -X POST http://localhost:8080/api/schedule-distribution/schedules/1/notify-students",
-            "sendIndividualEmail", "curl -X POST http://localhost:8080/api/schedule-distribution/students/123/schedules/1/send-email",
-            "viewChannels", "curl http://localhost:8080/api/schedule-distribution/reference/channels"
+            "quickDistribution", "curl -X POST http://localhost:9590/api/schedule-distribution/schedules/1/distribute",
+            "publishOnly", "curl -X POST http://localhost:9590/api/schedule-distribution/schedules/1/publish",
+            "notifyStudents", "curl -X POST http://localhost:9590/api/schedule-distribution/schedules/1/notify-students",
+            "sendIndividualEmail", "curl -X POST http://localhost:9590/api/schedule-distribution/students/123/schedules/1/send-email",
+            "viewChannels", "curl http://localhost:9590/api/schedule-distribution/reference/channels"
         ));
 
         help.put("configuration", Map.of(

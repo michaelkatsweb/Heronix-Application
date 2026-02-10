@@ -790,10 +790,10 @@ public class HealthOfficeApiController {
         ));
 
         help.put("examples", Map.of(
-            "checkIn", "curl -X POST http://localhost:8080/api/health-office/nurse-visits/check-in -H 'Content-Type: application/json' -d '{\"studentId\":123,\"sendingTeacherId\":5,\"visitReason\":\"ILLNESS\",\"symptoms\":\"Headache, nausea\",\"arrivalTime\":\"10:30:00\",\"nurseStaffId\":1}'",
-            "recordTemperature", "curl -X POST 'http://localhost:8080/api/health-office/nurse-visits/1/record-temperature?temperature=99.5'",
-            "checkOut", "curl -X POST 'http://localhost:8080/api/health-office/nurse-visits/1/check-out?disposition=RETURNED_TO_CLASS'",
-            "visionScreening", "curl -X POST 'http://localhost:8080/api/health-office/health-records/1/vision-screening?result=PASS&notes=20/20%20vision&staffId=1'"
+            "checkIn", "curl -X POST http://localhost:9590/api/health-office/nurse-visits/check-in -H 'Content-Type: application/json' -d '{\"studentId\":123,\"sendingTeacherId\":5,\"visitReason\":\"ILLNESS\",\"symptoms\":\"Headache, nausea\",\"arrivalTime\":\"10:30:00\",\"nurseStaffId\":1}'",
+            "recordTemperature", "curl -X POST 'http://localhost:9590/api/health-office/nurse-visits/1/record-temperature?temperature=99.5'",
+            "checkOut", "curl -X POST 'http://localhost:9590/api/health-office/nurse-visits/1/check-out?disposition=RETURNED_TO_CLASS'",
+            "visionScreening", "curl -X POST 'http://localhost:9590/api/health-office/health-records/1/vision-screening?result=PASS&notes=20/20%20vision&staffId=1'"
         ));
 
         help.put("notes", Map.of(

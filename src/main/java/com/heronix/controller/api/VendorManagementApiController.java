@@ -768,10 +768,10 @@ public class VendorManagementApiController {
         ));
 
         help.put("examples", Map.of(
-            "createVendor", "curl -X POST 'http://localhost:8080/api/vendor-management/vendors?createdByUser=admin' -H 'Content-Type: application/json' -d '{\"name\":\"Office Supplies Inc\",\"vendorCode\":\"OSI001\",\"email\":\"sales@officesupplies.com\"}'",
-            "approveVendor", "curl -X POST 'http://localhost:8080/api/vendor-management/vendors/1/approve?approvedByUser=admin'",
-            "searchVendors", "curl 'http://localhost:8080/api/vendor-management/vendors/search?name=Office'",
-            "checkLimits", "curl 'http://localhost:8080/api/vendor-management/vendors/1/within-limits?amount=5000.00'"
+            "createVendor", "curl -X POST 'http://localhost:9590/api/vendor-management/vendors?createdByUser=admin' -H 'Content-Type: application/json' -d '{\"name\":\"Office Supplies Inc\",\"vendorCode\":\"OSI001\",\"email\":\"sales@officesupplies.com\"}'",
+            "approveVendor", "curl -X POST 'http://localhost:9590/api/vendor-management/vendors/1/approve?approvedByUser=admin'",
+            "searchVendors", "curl 'http://localhost:9590/api/vendor-management/vendors/search?name=Office'",
+            "checkLimits", "curl 'http://localhost:9590/api/vendor-management/vendors/1/within-limits?amount=5000.00'"
         ));
 
         help.put("notes", Map.of(

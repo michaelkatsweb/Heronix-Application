@@ -833,11 +833,11 @@ public class StudentWithdrawalApiController {
         ));
 
         help.put("examples", Map.of(
-            "create", "curl -X POST http://localhost:8080/api/student-withdrawal/withdrawals -H 'Content-Type: application/json' -d '{\"studentId\":123,\"withdrawalDate\":\"2025-12-29\",\"createdByStaffId\":1}'",
-            "startClearance", "curl -X POST 'http://localhost:8080/api/student-withdrawal/withdrawals/1/start-clearance?updatedByStaffId=1'",
-            "updateItem", "curl -X POST 'http://localhost:8080/api/student-withdrawal/withdrawals/1/clearance/update-item?itemName=finalGradesRecorded&checked=true&updatedByStaffId=1'",
-            "complete", "curl -X POST 'http://localhost:8080/api/student-withdrawal/withdrawals/1/complete?finalStatus=TRANSFERRED&completedByStaffId=1'",
-            "getStatistics", "curl http://localhost:8080/api/student-withdrawal/statistics"
+            "create", "curl -X POST http://localhost:9590/api/student-withdrawal/withdrawals -H 'Content-Type: application/json' -d '{\"studentId\":123,\"withdrawalDate\":\"2025-12-29\",\"createdByStaffId\":1}'",
+            "startClearance", "curl -X POST 'http://localhost:9590/api/student-withdrawal/withdrawals/1/start-clearance?updatedByStaffId=1'",
+            "updateItem", "curl -X POST 'http://localhost:9590/api/student-withdrawal/withdrawals/1/clearance/update-item?itemName=finalGradesRecorded&checked=true&updatedByStaffId=1'",
+            "complete", "curl -X POST 'http://localhost:9590/api/student-withdrawal/withdrawals/1/complete?finalStatus=TRANSFERRED&completedByStaffId=1'",
+            "getStatistics", "curl http://localhost:9590/api/student-withdrawal/statistics"
         ));
 
         help.put("notes", Map.of(

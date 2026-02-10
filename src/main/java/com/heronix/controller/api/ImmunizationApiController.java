@@ -600,10 +600,10 @@ public class ImmunizationApiController {
         ));
 
         help.put("examples", Map.of(
-            "createRecord", "curl -X POST http://localhost:8080/api/immunization/records -H 'Content-Type: application/json' -d '{\"studentId\":123,\"vaccineType\":\"MMR\",\"doseNumber\":1,\"administrationDate\":\"2025-09-15\",\"administeredBy\":\"Dr. Smith\",\"enteredByStaffId\":1}'",
-            "checkCompliance", "curl http://localhost:8080/api/immunization/compliance/student/123",
-            "getNonCompliant", "curl http://localhost:8080/api/immunization/compliance/non-compliant",
-            "recordExemption", "curl -X POST 'http://localhost:8080/api/immunization/records/1/exemption/medical?exemptionReason=Allergic%20reaction&physicianName=Dr.%20Jones&enteredByStaffId=1'"
+            "createRecord", "curl -X POST http://localhost:9590/api/immunization/records -H 'Content-Type: application/json' -d '{\"studentId\":123,\"vaccineType\":\"MMR\",\"doseNumber\":1,\"administrationDate\":\"2025-09-15\",\"administeredBy\":\"Dr. Smith\",\"enteredByStaffId\":1}'",
+            "checkCompliance", "curl http://localhost:9590/api/immunization/compliance/student/123",
+            "getNonCompliant", "curl http://localhost:9590/api/immunization/compliance/non-compliant",
+            "recordExemption", "curl -X POST 'http://localhost:9590/api/immunization/records/1/exemption/medical?exemptionReason=Allergic%20reaction&physicianName=Dr.%20Jones&enteredByStaffId=1'"
         ));
 
         help.put("notes", Map.of(

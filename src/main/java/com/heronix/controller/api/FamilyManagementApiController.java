@@ -832,10 +832,10 @@ public class FamilyManagementApiController {
         ));
 
         help.put("examples", Map.of(
-            "createFamily", "curl -X POST 'http://localhost:8080/api/family-management/families?createdByStaffId=1' -H 'Content-Type: application/json' -d '{\"familyName\":\"Smith Family\"}'",
-            "linkSiblings", "curl -X POST 'http://localhost:8080/api/family-management/siblings/link?createdByStaffId=1' -H 'Content-Type: application/json' -d '{\"studentIds\":[101,102,103],\"familyName\":\"Smith Family\"}'",
-            "applyDiscounts", "curl -X POST http://localhost:8080/api/family-management/discounts/apply-to-eligible?updatedByStaffId=1",
-            "getStatistics", "curl http://localhost:8080/api/family-management/statistics"
+            "createFamily", "curl -X POST 'http://localhost:9590/api/family-management/families?createdByStaffId=1' -H 'Content-Type: application/json' -d '{\"familyName\":\"Smith Family\"}'",
+            "linkSiblings", "curl -X POST 'http://localhost:9590/api/family-management/siblings/link?createdByStaffId=1' -H 'Content-Type: application/json' -d '{\"studentIds\":[101,102,103],\"familyName\":\"Smith Family\"}'",
+            "applyDiscounts", "curl -X POST http://localhost:9590/api/family-management/discounts/apply-to-eligible?updatedByStaffId=1",
+            "getStatistics", "curl http://localhost:9590/api/family-management/statistics"
         ));
 
         help.put("discountRules", Map.of(

@@ -509,10 +509,10 @@ public class ScheduleChangeRequestApiController {
         ));
 
         help.put("examples", Map.of(
-            "submitRequest", "curl -X POST 'http://localhost:8080/api/schedule-change-requests/submit?studentId=1' -H 'Content-Type: application/json' -d '{\"requestType\":\"ADD\",\"requestedCourseId\":101,\"reason\":\"Need AP Calculus for college prep\"}'",
-            "approveRequest", "curl -X POST 'http://localhost:8080/api/schedule-change-requests/5/approve?reviewerId=10' -H 'Content-Type: application/json' -d '{\"notes\":\"Approved - meets prerequisites\"}'",
-            "denyRequest", "curl -X POST 'http://localhost:8080/api/schedule-change-requests/5/deny?reviewerId=10' -H 'Content-Type: application/json' -d '{\"reason\":\"Schedule conflict with required course\"}'",
-            "viewDashboard", "curl http://localhost:8080/api/schedule-change-requests/dashboard"
+            "submitRequest", "curl -X POST 'http://localhost:9590/api/schedule-change-requests/submit?studentId=1' -H 'Content-Type: application/json' -d '{\"requestType\":\"ADD\",\"requestedCourseId\":101,\"reason\":\"Need AP Calculus for college prep\"}'",
+            "approveRequest", "curl -X POST 'http://localhost:9590/api/schedule-change-requests/5/approve?reviewerId=10' -H 'Content-Type: application/json' -d '{\"notes\":\"Approved - meets prerequisites\"}'",
+            "denyRequest", "curl -X POST 'http://localhost:9590/api/schedule-change-requests/5/deny?reviewerId=10' -H 'Content-Type: application/json' -d '{\"reason\":\"Schedule conflict with required course\"}'",
+            "viewDashboard", "curl http://localhost:9590/api/schedule-change-requests/dashboard"
         ));
 
         help.put("requestTypes", Map.of(
