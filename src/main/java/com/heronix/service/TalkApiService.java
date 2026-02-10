@@ -209,7 +209,7 @@ public class TalkApiService {
         try {
             HttpEntity<Void> entity = new HttpEntity<>(authHeaders());
             ResponseEntity<String> response = restTemplate.exchange(
-                    talkBaseUrl + "/api/alerts/active",
+                    talkBaseUrl + "/api/alerts",
                     HttpMethod.GET, entity, String.class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
@@ -247,10 +247,9 @@ public class TalkApiService {
      */
     public Map<String, Object> getOrCreateDm(Long otherUserId) {
         try {
-            Map<String, Object> body = Map.of("targetUserId", otherUserId);
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, authHeaders());
+            HttpEntity<Void> entity = new HttpEntity<>(authHeaders());
             ResponseEntity<String> response = restTemplate.postForEntity(
-                    talkBaseUrl + "/api/channels/dm",
+                    talkBaseUrl + "/api/channels/dm/" + otherUserId,
                     entity, String.class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
