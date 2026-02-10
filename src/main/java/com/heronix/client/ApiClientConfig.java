@@ -27,7 +27,7 @@ import java.time.Duration;
  * - Supports both local and remote API endpoints
  *
  * Configuration Properties:
- * - api.base-url: Base URL for REST API (default: http://localhost:9580/api)
+ * - api.base-url: Base URL for REST API (default: http://localhost:9590/api)
  * - api.timeout.connect: Connection timeout in seconds (default: 10)
  * - api.timeout.read: Read timeout in seconds (default: 30)
  *
@@ -38,7 +38,7 @@ import java.time.Duration;
 @Configuration
 public class ApiClientConfig {
 
-    @Value("${api.base-url:http://localhost:9580/api}")
+    @Value("${api.base-url:http://localhost:9590/api}")
     private String apiBaseUrl;
 
     @Value("${api.timeout.connect:10}")

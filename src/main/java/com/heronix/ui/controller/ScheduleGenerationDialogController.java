@@ -214,7 +214,7 @@ public class ScheduleGenerationDialogController {
                 boolean available = schedulerApiClient.isSchedulerAvailable();
                 String reason = available ?
                     "SchedulerV2 is online and ready for AI scheduling" :
-                    "SchedulerV2 service is not accessible (check if running on localhost:8080)";
+                    "SchedulerV2 service is not accessible (check if running on localhost:8090)";
 
                 Platform.runLater(() -> {
                     aiAvailable = available;

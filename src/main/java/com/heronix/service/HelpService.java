@@ -1032,7 +1032,7 @@ public class HelpService {
                     **Solutions:**
                     - Wait for scheduled sync (every 5 minutes)
                     - Admin can trigger manual sync
-                    - Verify SIS API server is running (port 9580)
+                    - Verify SIS API server is running (port 9590)
 
                     ## Schedule Conflicts
 

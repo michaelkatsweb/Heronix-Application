@@ -42,7 +42,7 @@ import java.util.function.Consumer;
 @Slf4j
 public class WebSocketClientService {
 
-    @Value("${api.base-url:http://localhost:9580}")
+    @Value("${api.base-url:http://localhost:9590}")
     private String apiBaseUrl;
 
     private WebSocket webSocket;

@@ -115,7 +115,7 @@ public class MainControllerV2 {
     private GlobalSearchService globalSearchService;
 
     // Server URL for client mode
-    @Value("${sis.server.url:http://localhost:9580}")
+    @Value("${sis.server.url:http://localhost:9590}")
     private String serverUrl;
 
     @Value("${sis.client.mode:false}")

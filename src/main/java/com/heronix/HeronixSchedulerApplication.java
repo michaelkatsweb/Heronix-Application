@@ -75,7 +75,7 @@ public class HeronixSchedulerApplication extends Application {
 
         springContext = app.run();
         log.info("Spring Boot context initialized successfully!");
-        log.info("REST API server is now available on port 9580 for Teacher Portal integration");
+        log.info("REST API server is now available on port 9590 for Teacher Portal integration");
 
         // Initialize default users (super admin)
         UserService userService = springContext.getBean(UserService.class);
