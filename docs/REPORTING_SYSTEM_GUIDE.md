@@ -143,7 +143,7 @@ GET /api/reports/attendance/daily/excel?date=2025-12-30
 
 **Example:**
 ```bash
-curl -O "http://localhost:8080/api/reports/attendance/daily/excel?date=2025-12-30"
+curl -O "http://localhost:9590/api/reports/attendance/daily/excel?date=2025-12-30"
 ```
 
 #### Generate Daily Attendance Report (PDF)
@@ -472,7 +472,7 @@ CREATE TABLE report_history (
 
 ```properties
 # API Base URL
-api.base-url=http://localhost:8080
+api.base-url=http://localhost:9590
 
 # Report Storage
 reports.storage.path=reports/attendance

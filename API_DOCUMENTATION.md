@@ -2,7 +2,7 @@
 
 **Version:** 1.0.0
 **Last Updated:** December 30, 2025
-**Base URL:** `http://localhost:8080/api` (Development) | `https://api.heronixedu.com/api` (Production)
+**Base URL:** `http://localhost:9590/api` (Development) | `https://api.heronixedu.com/api` (Production)
 
 ## Table of Contents
 
@@ -302,8 +302,8 @@ X-API-Version: v1
 ## OpenAPI / Swagger Documentation
 
 Interactive API documentation available at:
-- Swagger UI: `http://localhost:8080/swagger-ui.html`
-- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+- Swagger UI: `http://localhost:9590/swagger-ui.html`
+- OpenAPI JSON: `http://localhost:9590/v3/api-docs`
 
 ---
 

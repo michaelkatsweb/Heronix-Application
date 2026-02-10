@@ -42,7 +42,7 @@ docker-compose ps
 docker-compose logs -f heronix-api
 ```
 
-The API will be available at `http://localhost:8080`
+The API will be available at `http://localhost:9590`
 
 ### Option 2: Local Development
 
@@ -401,7 +401,7 @@ Add to `.vscode/tasks.json` for quick access
 
 ### Access H2 Console
 1. Start application
-2. Open browser: http://localhost:8080/h2-console
+2. Open browser: http://localhost:9590/h2-console
 3. JDBC URL: `jdbc:h2:file:./data/heronix`
 4. Username: `admin`
 5. Password: `admin123`

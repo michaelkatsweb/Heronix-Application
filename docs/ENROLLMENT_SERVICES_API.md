@@ -4,7 +4,7 @@
 
 This document provides comprehensive documentation for the Heronix SIS Enrollment Services REST API. These services handle all enrollment-related operations including transfer students, re-enrollments, enrollment verifications, and transfer-out documentation.
 
-**Base URL**: `http://localhost:8080/api`
+**Base URL**: `http://localhost:9590/api`
 
 **Version**: 1.0.0
 

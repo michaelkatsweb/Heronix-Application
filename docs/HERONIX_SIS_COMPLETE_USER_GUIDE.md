@@ -47,10 +47,10 @@ Heronix SIS is a comprehensive Student Information System designed for K-12 scho
 
 | Interface | URL | Purpose |
 |-----------|-----|---------|
-| **API Server** | `http://localhost:8080` | REST API endpoints |
-| **Health Check** | `http://localhost:8080/actuator/health` | System status |
-| **H2 Console** | `http://localhost:8080/h2-console` | Database admin |
-| **API Discovery** | `http://localhost:8080/api/config/discovery` | Available endpoints |
+| **API Server** | `http://localhost:9590` | REST API endpoints |
+| **Health Check** | `http://localhost:9590/actuator/health` | System status |
+| **H2 Console** | `http://localhost:9590/h2-console` | Database admin |
+| **API Discovery** | `http://localhost:9590/api/config/discovery` | Available endpoints |
 
 ### 1.3 User Roles
 
@@ -1579,8 +1579,8 @@ X-API-Key: <api_key>
 
 **For technical support, contact:**
 - Email: support@heronix.edu
-- Documentation: [API Docs](http://localhost:8080/swagger-ui.html)
-- Health Status: [Health Check](http://localhost:8080/actuator/health)
+- Documentation: [API Docs](http://localhost:9590/swagger-ui.html)
+- Health Status: [Health Check](http://localhost:9590/actuator/health)
 
 ---
 

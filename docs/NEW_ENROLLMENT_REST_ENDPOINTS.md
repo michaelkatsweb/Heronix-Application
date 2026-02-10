@@ -352,7 +352,7 @@ Error responses include descriptive messages in the logs.
 ## Next Steps
 
 1. **OpenAPI/Swagger Documentation** - All endpoints are automatically documented via SpringDoc OpenAPI
-2. **Access Documentation** - Visit `http://localhost:8080/swagger-ui.html` when application is running
+2. **Access Documentation** - Visit `http://localhost:9590/swagger-ui.html` when application is running
 3. **API Testing** - Use Postman, curl, or the Swagger UI to test endpoints
 4. **Integration** - Frontend applications can now integrate with all enrollment services
 
@@ -364,7 +364,7 @@ Error responses include descriptive messages in the logs.
 
 ```bash
 # 1. Create draft application
-curl -X POST http://localhost:8080/api/enrollment-applications \
+curl -X POST http://localhost:9590/api/enrollment-applications \
   -H "Content-Type: application/json" \
   -d '{
     "enrollmentType": "NEW_STUDENT",
@@ -374,7 +374,7 @@ curl -X POST http://localhost:8080/api/enrollment-applications \
   }'
 
 # 2. Update with student information
-curl -X PUT http://localhost:8080/api/enrollment-applications/1?staffId=1 \
+curl -X PUT http://localhost:9590/api/enrollment-applications/1?staffId=1 \
   -H "Content-Type: application/json" \
   -d '{
     "studentFirstName": "John",
@@ -384,19 +384,19 @@ curl -X PUT http://localhost:8080/api/enrollment-applications/1?staffId=1 \
   }'
 
 # 3. Submit for documents
-curl -X POST http://localhost:8080/api/enrollment-applications/1/submit-for-documents?staffId=1
+curl -X POST http://localhost:9590/api/enrollment-applications/1/submit-for-documents?staffId=1
 
 # 4. Move to verification
-curl -X POST http://localhost:8080/api/enrollment-applications/1/move-to-verification?staffId=1
+curl -X POST http://localhost:9590/api/enrollment-applications/1/move-to-verification?staffId=1
 
 # 5. Submit for approval
-curl -X POST http://localhost:8080/api/enrollment-applications/1/submit-for-approval?staffId=1
+curl -X POST http://localhost:9590/api/enrollment-applications/1/submit-for-approval?staffId=1
 
 # 6. Approve application
-curl -X POST "http://localhost:8080/api/enrollment-applications/1/approve?adminStaffId=1&approvalNotes=Approved"
+curl -X POST "http://localhost:9590/api/enrollment-applications/1/approve?adminStaffId=1&approvalNotes=Approved"
 
 # 7. Enroll student (create Student account)
-curl -X POST http://localhost:8080/api/enrollment-applications/1/enroll?staffId=1
+curl -X POST http://localhost:9590/api/enrollment-applications/1/enroll?staffId=1
 ```
 
 ---

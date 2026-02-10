@@ -512,7 +512,7 @@ public TransferStudent markRecordReceived(Long id, String type, Long staffId) {
 // In your JavaFX Controller
 @FXML
 private void handleCreateTransfer() {
-    String apiUrl = "http://localhost:8080/api/transfer-students";
+    String apiUrl = "http://localhost:9590/api/transfer-students";
 
     Map<String, Object> requestData = new HashMap<>();
     requestData.put("studentFirstName", firstNameField.getText());
