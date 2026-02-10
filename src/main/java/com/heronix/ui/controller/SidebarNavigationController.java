@@ -87,6 +87,7 @@ public class SidebarNavigationController {
     @FXML private HBox navTransportation;
     @FXML private HBox navCafeteria;
     @FXML private HBox navLibrary;
+    @FXML private HBox navTimeHR;
     @FXML private HBox navAthletics;
     @FXML private HBox navNotifications;
     @FXML private HBox navCommunication;
@@ -133,6 +134,7 @@ public class SidebarNavigationController {
     @FXML private Label navTransportationLabel;
     @FXML private Label navCafeteriaLabel;
     @FXML private Label navLibraryLabel;
+    @FXML private Label navTimeHRLabel;
     @FXML private Label navAthleticsLabel;
     @FXML private Label navNotificationsLabel;
     @FXML private Label navCommunicationLabel;
@@ -269,6 +271,7 @@ public class SidebarNavigationController {
         navItemsMap.put("transportation", navTransportation);
         navItemsMap.put("cafeteria", navCafeteria);
         navItemsMap.put("library", navLibrary);
+        navItemsMap.put("time-hr", navTimeHR);
         navItemsMap.put("athletics", navAthletics);
         navItemsMap.put("notifications", navNotifications);
         navItemsMap.put("communication", navCommunication);
@@ -771,6 +774,11 @@ public class SidebarNavigationController {
     @FXML
     private void handleNavLibrary(MouseEvent event) {
         navigateTo("library", navLibrary);
+    }
+
+    @FXML
+    private void handleNavTimeHR(MouseEvent event) {
+        navigateTo("time-hr", navTimeHR);
     }
 
     @FXML

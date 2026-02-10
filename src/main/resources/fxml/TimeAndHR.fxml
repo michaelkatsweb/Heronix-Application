@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.heronix.ui.controller.TimeAndHRController">
+
+    <center>
+        <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+
+            <!-- Dashboard Tab -->
+            <Tab text="Dashboard">
+                <VBox spacing="20">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <Label text="Time &amp; HR Dashboard" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+                    <!-- Summary Cards -->
+                    <HBox spacing="20">
+                        <VBox styleClass="card" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS"
+                              style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;">
+                            <Label fx:id="activeStaffLabel" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #00695C;"/>
+                            <Label text="Staff Clocked In" style="-fx-font-size: 12px; -fx-text-fill: #757575;"/>
+                        </VBox>
+                        <VBox styleClass="card" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS"
+                              style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;">
+                            <Label fx:id="pendingRequestsLabel" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #E65100;"/>
+                            <Label text="Pending Leave Requests" style="-fx-font-size: 12px; -fx-text-fill: #757575;"/>
+                        </VBox>
+                        <VBox styleClass="card" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS"
+                              style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;">
+                            <Label fx:id="expiringDocsLabel" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #C62828;"/>
+                            <Label text="Expiring Documents" style="-fx-font-size: 12px; -fx-text-fill: #757575;"/>
+                        </VBox>
+                        <VBox styleClass="card" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS"
+                              style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;">
+                            <Label fx:id="activeLocationsLabel" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1565C0;"/>
+                            <Label text="Active Locations" style="-fx-font-size: 12px; -fx-text-fill: #757575;"/>
+                        </VBox>
+                    </HBox>
+
+                    <Button text="Refresh Dashboard" onAction="#handleRefreshDashboard"
+                            style="-fx-background-color: #009688; -fx-text-fill: white; -fx-padding: 8 20;"/>
+                </VBox>
+            </Tab>
+
+            <!-- Time Entries Tab -->
+            <Tab text="Time Entries">
+                <VBox spacing="15">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Staff ID:"/>
+                        <TextField fx:id="timeStaffIdField" promptText="Staff ID" prefWidth="100"/>
+                        <Label text="From:"/>
+                        <DatePicker fx:id="timeStartDate"/>
+                        <Label text="To:"/>
+                        <DatePicker fx:id="timeEndDate"/>
+                        <Button text="Search" onAction="#handleSearchEntries"
+                                style="-fx-background-color: #009688; -fx-text-fill: white;"/>
+                    </HBox>
+
+                    <TableView fx:id="timeEntriesTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="teStaffCol" text="Staff" prefWidth="150"/>
+                            <TableColumn fx:id="teClockInCol" text="Clock In" prefWidth="160"/>
+                            <TableColumn fx:id="teClockOutCol" text="Clock Out" prefWidth="160"/>
+                            <TableColumn fx:id="teDurationCol" text="Duration" prefWidth="100"/>
+                            <TableColumn fx:id="teMethodCol" text="Method" prefWidth="100"/>
+                            <TableColumn fx:id="teStatusCol" text="Status" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- Leave Requests Tab -->
+            <Tab text="Leave Requests">
+                <VBox spacing="15">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button text="Show Pending" onAction="#handleShowPending"
+                                style="-fx-background-color: #009688; -fx-text-fill: white;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <TableView fx:id="leaveRequestsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="lrStaffCol" text="Staff" prefWidth="150"/>
+                            <TableColumn fx:id="lrTypeCol" text="Type" prefWidth="120"/>
+                            <TableColumn fx:id="lrStartCol" text="Start" prefWidth="110"/>
+                            <TableColumn fx:id="lrEndCol" text="End" prefWidth="110"/>
+                            <TableColumn fx:id="lrDaysCol" text="Days" prefWidth="70"/>
+                            <TableColumn fx:id="lrStatusCol" text="Status" prefWidth="100"/>
+                            <TableColumn fx:id="lrActionsCol" text="Actions" prefWidth="200"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- Documents Tab -->
+            <Tab text="Documents">
+                <VBox spacing="15">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Staff ID:"/>
+                        <TextField fx:id="docStaffIdField" promptText="Staff ID" prefWidth="100"/>
+                        <Button text="Search" onAction="#handleSearchDocuments"
+                                style="-fx-background-color: #009688; -fx-text-fill: white;"/>
+                    </HBox>
+
+                    <TableView fx:id="documentsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="docStaffCol" text="Staff" prefWidth="150"/>
+                            <TableColumn fx:id="docNameCol" text="File Name" prefWidth="180"/>
+                            <TableColumn fx:id="docTypeCol" text="Type" prefWidth="140"/>
+                            <TableColumn fx:id="docVerifiedCol" text="Verified" prefWidth="100"/>
+                            <TableColumn fx:id="docExpirationCol" text="Expiration" prefWidth="120"/>
+                            <TableColumn fx:id="docActionsCol" text="Actions" prefWidth="120"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- Access Log Tab -->
+            <Tab text="Access Log">
+                <VBox spacing="15">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Staff ID:"/>
+                        <TextField fx:id="accessStaffIdField" promptText="Staff ID" prefWidth="100"/>
+                        <Label text="Date:"/>
+                        <DatePicker fx:id="accessDatePicker"/>
+                        <Button text="Search" onAction="#handleSearchAccessLog"
+                                style="-fx-background-color: #009688; -fx-text-fill: white;"/>
+                    </HBox>
+
+                    <TableView fx:id="accessLogTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="alStaffCol" text="Staff" prefWidth="150"/>
+                            <TableColumn fx:id="alTimeCol" text="Time" prefWidth="160"/>
+                            <TableColumn fx:id="alTypeCol" text="Type" prefWidth="80"/>
+                            <TableColumn fx:id="alLocationCol" text="Location" prefWidth="180"/>
+                            <TableColumn fx:id="alMethodCol" text="Method" prefWidth="120"/>
+                            <TableColumn fx:id="alGrantedCol" text="Granted" prefWidth="80"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>

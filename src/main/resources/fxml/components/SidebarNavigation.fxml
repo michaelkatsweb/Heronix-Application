@@ -244,6 +244,11 @@
                 <Label fx:id="navLibraryLabel" text="Library"/>
             </HBox>
 
+            <HBox fx:id="navTimeHR" styleClass="sidebar-nav-item" onMouseClicked="#handleNavTimeHR">
+                <Label text="&#x1F552;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
+                <Label fx:id="navTimeHRLabel" text="Time &amp; HR"/>
+            </HBox>
+
             <!-- COMMUNICATION Section -->
             <Label text="COMMUNICATION" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 

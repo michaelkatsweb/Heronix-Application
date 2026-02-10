@@ -178,6 +178,7 @@ public class MainControllerV2 {
         VIEW_METADATA.put("transportation", new ViewMetadata("Transportation", "Bus routes and transportation management", "/fxml/TransportationManagement.fxml"));
         VIEW_METADATA.put("cafeteria", new ViewMetadata("Cafeteria", "Cafeteria and meal management", "/fxml/CafeteriaMealManagement.fxml"));
         VIEW_METADATA.put("library", new ViewMetadata("Library", "Library management and checkout", "/fxml/LibraryManagement.fxml"));
+        VIEW_METADATA.put("time-hr", new ViewMetadata("Time & HR", "Staff time tracking and HR management", "/fxml/TimeAndHR.fxml"));
         VIEW_METADATA.put("athletics", new ViewMetadata("Athletics", "Athletics and extracurricular activities", "/fxml/AthleticsExtracurricular.fxml"));
         VIEW_METADATA.put("notifications", new ViewMetadata("Notifications", "Notification center", "/fxml/NotificationCenter.fxml"));
         VIEW_METADATA.put("communication", new ViewMetadata("Communication Center", "Parent and staff communication", "/fxml/CommunicationCenter.fxml"));
