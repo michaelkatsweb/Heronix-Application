@@ -72,7 +72,7 @@ public class RoomServiceImpl implements RoomService {
     @Transactional(readOnly = true)
     public List<Room> findAll() {
         log.debug("Fetching all rooms (including inactive)");
-        List<Room> rooms = roomRepository.findAll();
+        List<Room> rooms = roomRepository.findAllWithTeacher();
         log.info("Found {} total rooms", rooms.size());
         return rooms;
     }

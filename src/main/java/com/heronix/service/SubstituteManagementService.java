@@ -11,9 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.heronix.dto.SubstituteAssignmentDTO;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Service for managing Substitute entities and their assignments
@@ -340,5 +343,66 @@ public class SubstituteManagementService {
     public Double getTotalPayForSubstitute(Long substituteId, LocalDate startDate, LocalDate endDate) {
         Double total = assignmentRepository.getTotalPayForSubstituteInDateRange(substituteId, startDate, endDate);
         return total != null ? total : 0.0;
+    }
+
+    // ==================== DTO METHODS ====================
+
+    /**
+     * Get all assignments as DTOs with relationships pre-resolved.
+     * Safe to use outside transaction boundaries (e.g., in JavaFX controllers).
+     */
+    @Transactional(readOnly = true)
+    public List<SubstituteAssignmentDTO> getAllAssignmentDTOs() {
+        logger.debug("Fetching all assignment DTOs");
+        return assignmentRepository.findAllWithRelationships().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get assignments between dates as DTOs with relationships pre-resolved.
+     */
+    @Transactional(readOnly = true)
+    public List<SubstituteAssignmentDTO> getAssignmentDTOsBetweenDates(LocalDate startDate, LocalDate endDate) {
+        logger.debug("Fetching assignment DTOs between {} and {}", startDate, endDate);
+        return assignmentRepository.findByDateRangeWithRelationships(startDate, endDate).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Convert a SubstituteAssignment entity to a flat DTO.
+     * Must be called within a @Transactional boundary.
+     */
+    private SubstituteAssignmentDTO convertToDTO(SubstituteAssignment assignment) {
+        SubstituteAssignmentDTO dto = new SubstituteAssignmentDTO();
+        dto.setId(assignment.getId());
+        dto.setAssignmentDate(assignment.getAssignmentDate());
+        dto.setStartTime(assignment.getStartTime());
+        dto.setEndTime(assignment.getEndTime());
+        dto.setTotalHours(assignment.getTotalHours());
+        dto.setNotes(assignment.getNotes());
+        dto.setIsFloater(assignment.getIsFloater());
+        dto.setStatus(assignment.getStatus());
+        dto.setStatusDisplay(assignment.getStatus() != null ? assignment.getStatus().getDisplayName() : "");
+        dto.setDurationDisplay(assignment.getDurationType() != null ? assignment.getDurationType().getDisplayName() : "");
+        dto.setAbsenceReasonDisplay(assignment.getAbsenceReason() != null ? assignment.getAbsenceReason().getDisplayName() : "");
+
+        if (assignment.getSubstitute() != null) {
+            dto.setSubstituteId(assignment.getSubstitute().getId());
+            dto.setSubstituteName(assignment.getSubstitute().getFullName());
+        } else {
+            dto.setSubstituteName("");
+        }
+
+        dto.setReplacedStaffName(assignment.getReplacedPersonName());
+
+        if (assignment.getRoom() != null) {
+            dto.setRoomNumber(assignment.getRoom().getRoomNumber());
+        } else {
+            dto.setRoomNumber("");
+        }
+
+        return dto;
     }
 }

@@ -1,5 +1,6 @@
 package com.heronix.ui.controller.dialogs;
 
+import com.heronix.dto.StudentSummaryDTO;
 import com.heronix.model.domain.Plan504;
 import com.heronix.model.domain.Student;
 import com.heronix.model.enums.Plan504Status;
@@ -36,7 +37,7 @@ public class Plan504DialogController {
     private Plan504Service plan504Service;
 
     // Form Fields
-    @FXML private ComboBox<Student> studentComboBox;
+    @FXML private ComboBox<StudentSummaryDTO> studentComboBox;
     @FXML private Label studentErrorLabel;
     @FXML private TextField planNumberField;
     @FXML private ComboBox<Plan504Status> statusComboBox;
@@ -84,18 +85,18 @@ public class Plan504DialogController {
     }
 
     private void setupStudentComboBox() {
-        List<Student> students = studentRepository.findAll();
+        List<StudentSummaryDTO> students = plan504Service.getAllStudentSummaries();
         studentComboBox.getItems().addAll(students);
 
         studentComboBox.setConverter(new StringConverter<>() {
             @Override
-            public String toString(Student student) {
+            public String toString(StudentSummaryDTO student) {
                 if (student == null) return "";
                 return student.getFullName() + " (" + student.getStudentId() + ")";
             }
 
             @Override
-            public Student fromString(String string) {
+            public StudentSummaryDTO fromString(String string) {
                 return null;
             }
         });
@@ -119,7 +120,7 @@ public class Plan504DialogController {
     }
 
     private boolean validateStudent() {
-        Student selected = studentComboBox.getValue();
+        StudentSummaryDTO selected = studentComboBox.getValue();
         if (selected == null) {
             return false;
         }
@@ -144,7 +145,14 @@ public class Plan504DialogController {
         this.currentPlan = plan;
         this.isEditMode = true;
 
-        studentComboBox.setValue(plan.getStudent());
+        // Find the matching StudentSummaryDTO for this plan's student
+        if (plan.getStudent() != null) {
+            Long studentDbId = plan.getStudent().getId();
+            studentComboBox.getItems().stream()
+                .filter(dto -> dto.getId().equals(studentDbId))
+                .findFirst()
+                .ifPresent(studentComboBox::setValue);
+        }
         studentComboBox.setDisable(true);
         planNumberField.setText(plan.getPlanNumber());
         statusComboBox.setValue(plan.getStatus());
@@ -163,7 +171,12 @@ public class Plan504DialogController {
     public Plan504 getPlan() {
         Plan504 plan = currentPlan != null ? currentPlan : new Plan504();
 
-        plan.setStudent(studentComboBox.getValue());
+        // Load the Student entity by ID from the selected DTO
+        StudentSummaryDTO selectedStudent = studentComboBox.getValue();
+        if (selectedStudent != null) {
+            Student student = studentRepository.findById(selectedStudent.getId()).orElse(null);
+            plan.setStudent(student);
+        }
         plan.setPlanNumber(planNumberField.getText().isEmpty() ? null : planNumberField.getText());
         plan.setStatus(statusComboBox.getValue());
         plan.setStartDate(startDatePicker.getValue());

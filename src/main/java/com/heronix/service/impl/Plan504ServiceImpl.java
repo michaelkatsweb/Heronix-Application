@@ -1,8 +1,12 @@
 package com.heronix.service.impl;
 
+import com.heronix.dto.Plan504DTO;
+import com.heronix.dto.StudentSummaryDTO;
 import com.heronix.model.domain.Plan504;
+import com.heronix.model.domain.Student;
 import com.heronix.model.enums.Plan504Status;
 import com.heronix.repository.Plan504Repository;
+import com.heronix.repository.StudentRepository;
 import com.heronix.service.Plan504Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Plan 504 Service Implementation
@@ -30,6 +35,9 @@ public class Plan504ServiceImpl implements Plan504Service {
 
     @Autowired
     private Plan504Repository plan504Repository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     // ========== CRUD OPERATIONS ==========
 
@@ -325,5 +333,60 @@ public class Plan504ServiceImpl implements Plan504Service {
     @Transactional(readOnly = true)
     public boolean hasActivePlan(Long studentId) {
         return findActivePlanForStudent(studentId).isPresent();
+    }
+
+    // ========== DTO METHODS ==========
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Plan504DTO> findAllPlanDTOs() {
+        log.debug("Fetching all plan DTOs");
+        // Load active, draft, and pending review plans with student eagerly loaded
+        List<Plan504> activePlans = plan504Repository.findAllActivePlansWithStudent(LocalDate.now());
+        List<Plan504> draftPlans = plan504Repository.findByStatusWithStudent(Plan504Status.DRAFT);
+        List<Plan504> pendingPlans = plan504Repository.findByStatusWithStudent(Plan504Status.PENDING_REVIEW);
+
+        List<Plan504DTO> dtos = new ArrayList<>();
+        dtos.addAll(activePlans.stream().map(this::convertToDTO).collect(Collectors.toList()));
+        dtos.addAll(draftPlans.stream().map(this::convertToDTO).collect(Collectors.toList()));
+        dtos.addAll(pendingPlans.stream().map(this::convertToDTO).collect(Collectors.toList()));
+        return dtos;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<StudentSummaryDTO> getAllStudentSummaries() {
+        log.debug("Fetching all student summaries for ComboBox");
+        return studentRepository.findAll().stream()
+                .map(s -> new StudentSummaryDTO(s.getId(), s.getStudentId(), s.getFullName()))
+                .collect(Collectors.toList());
+    }
+
+    private Plan504DTO convertToDTO(Plan504 plan) {
+        Plan504DTO dto = new Plan504DTO();
+        dto.setId(plan.getId());
+        dto.setPlanNumber(plan.getPlanNumber());
+        dto.setStatus(plan.getStatus());
+        dto.setStatusDisplay(plan.getStatus() != null ? plan.getStatus().getDisplayName() : "");
+        dto.setStartDate(plan.getStartDate());
+        dto.setEndDate(plan.getEndDate());
+        dto.setNextReviewDate(plan.getNextReviewDate());
+        dto.setDisability(plan.getDisability());
+        dto.setCoordinator(plan.getCoordinator());
+        dto.setAccommodations(plan.getAccommodations());
+        dto.setNotes(plan.getNotes());
+
+        if (plan.getStudent() != null) {
+            dto.setStudentId(plan.getStudent().getId());
+            dto.setStudentName(plan.getStudent().getFullName());
+            dto.setStudentStudentId(plan.getStudent().getStudentId());
+            dto.setStudentGradeLevel(plan.getStudent().getGradeLevel());
+        } else {
+            dto.setStudentName("N/A");
+            dto.setStudentStudentId("");
+            dto.setStudentGradeLevel("");
+        }
+
+        return dto;
     }
 }

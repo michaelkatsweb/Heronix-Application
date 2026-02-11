@@ -907,7 +907,13 @@ public class StudentsController {
         Tab parentsTab = new Tab("Parents/Guardians", parentsVBox);
 
         // TAB 8: Emergency Contacts (NEW - TableView with Priority)
-        VBox emergencyContactsVBox = createEmergencyContactsTab(existingStudent);
+        // Re-fetch student with emergency contacts eagerly loaded to avoid LazyInitializationException
+        Student studentWithContacts = existingStudent;
+        if (existingStudent != null && existingStudent.getId() != null) {
+            studentWithContacts = studentService.findByIdWithEmergencyContacts(existingStudent.getId())
+                    .orElse(existingStudent);
+        }
+        VBox emergencyContactsVBox = createEmergencyContactsTab(studentWithContacts);
         Tab emergencyContactsTab = new Tab("Emergency Contacts", emergencyContactsVBox);
 
         tabPane.getTabs().addAll(basicTab, demographicsTab, addressTab, specialCircumstancesTab, academicTab, specialEdTab, parentsTab, emergencyContactsTab);

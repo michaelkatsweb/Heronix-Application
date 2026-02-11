@@ -1,6 +1,7 @@
 // Location: src/main/java/com/heronix/service/impl/TeacherServiceImpl.java
 package com.heronix.service.impl;
 
+import com.heronix.dto.TeacherTableDTO;
 import com.heronix.model.domain.Teacher;
 import com.heronix.repository.TeacherRepository;
 import com.heronix.service.TeacherService;
@@ -9,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Teacher Service Implementation
@@ -321,6 +324,63 @@ public class TeacherServiceImpl implements TeacherService {
 
         log.debug("Loaded {} teachers with all collections", teachers.size());
         return teachers;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TeacherTableDTO> findAllTeacherTableDTOs() {
+        log.debug("Loading all teacher table DTOs");
+        List<Teacher> teachers = findAllWithCollectionsForUI();
+        return teachers.stream().map(this::convertToTableDTO).collect(Collectors.toList());
+    }
+
+    private TeacherTableDTO convertToTableDTO(Teacher teacher) {
+        TeacherTableDTO dto = new TeacherTableDTO();
+        dto.setId(teacher.getId());
+        dto.setName(teacher.getName());
+        dto.setEmployeeId(teacher.getEmployeeId());
+        dto.setRole(teacher.getRole());
+        dto.setRoleDisplay(teacher.getRole() != null ? teacher.getRole().getDisplayName() : "Lead Teacher");
+        dto.setDepartment(teacher.getDepartment());
+        dto.setEmail(teacher.getEmail());
+        dto.setPhoneNumber(teacher.getPhoneNumber());
+        dto.setMaxHoursPerWeek(teacher.getMaxHoursPerWeek());
+        dto.setActive(teacher.getActive());
+
+        // Pre-resolve lazy collections
+        try {
+            dto.setCertificationsDisplay(teacher.getCertificationsDisplay());
+        } catch (Exception e) {
+            dto.setCertificationsDisplay("--");
+        }
+
+        try {
+            List<String> subjects = teacher.getCertifiedSubjects();
+            dto.setCertifiedSubjects(subjects != null ? new ArrayList<>(subjects) : new ArrayList<>());
+        } catch (Exception e) {
+            dto.setCertifiedSubjects(new ArrayList<>());
+        }
+
+        try {
+            int count = teacher.getCourseCount();
+            dto.setCourseCount(count);
+            if (count == 0) {
+                dto.setCourseCountDisplay("None");
+            } else {
+                dto.setCourseCountDisplay(count + " course" + (count > 1 ? "s" : ""));
+            }
+        } catch (Exception e) {
+            dto.setCourseCount(0);
+            dto.setCourseCountDisplay("--");
+        }
+
+        try {
+            dto.setWorkloadIndicator(teacher.getWorkloadIndicator());
+        } catch (Exception e) {
+            dto.setWorkloadIndicator("--");
+        }
+
+        return dto;
     }
 
     // ========================================================================

@@ -124,4 +124,23 @@ public interface Plan504Repository extends JpaRepository<Plan504, Long> {
      * Find plans by coordinator
      */
     List<Plan504> findByCoordinator(String coordinator);
+
+    /**
+     * Find all plans with student eagerly loaded
+     */
+    @Query("SELECT DISTINCT p FROM Plan504 p LEFT JOIN FETCH p.student")
+    List<Plan504> findAllWithStudent();
+
+    /**
+     * Find plans by status with student eagerly loaded
+     */
+    @Query("SELECT DISTINCT p FROM Plan504 p LEFT JOIN FETCH p.student WHERE p.status = :status")
+    List<Plan504> findByStatusWithStudent(@Param("status") Plan504Status status);
+
+    /**
+     * Find all active plans with student eagerly loaded
+     */
+    @Query("SELECT DISTINCT p FROM Plan504 p LEFT JOIN FETCH p.student WHERE p.status = 'ACTIVE' " +
+           "AND p.startDate <= :today AND p.endDate >= :today")
+    List<Plan504> findAllActivePlansWithStudent(@Param("today") LocalDate today);
 }

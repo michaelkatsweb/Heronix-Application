@@ -1,5 +1,7 @@
 package com.heronix.service;
 
+import com.heronix.dto.Plan504DTO;
+import com.heronix.dto.StudentSummaryDTO;
 import com.heronix.model.domain.Plan504;
 import com.heronix.model.enums.Plan504Status;
 
@@ -199,4 +201,17 @@ public interface Plan504Service {
      * @return true if student has an active 504 plan
      */
     boolean hasActivePlan(Long studentId);
+
+    // ========== DTO METHODS ==========
+
+    /**
+     * Get all plans as DTOs with student data pre-resolved.
+     * Safe to use outside transaction boundaries (e.g., in JavaFX controllers).
+     */
+    List<Plan504DTO> findAllPlanDTOs();
+
+    /**
+     * Get all student summaries for ComboBox selection.
+     */
+    List<StudentSummaryDTO> getAllStudentSummaries();
 }

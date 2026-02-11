@@ -1,7 +1,7 @@
 package com.heronix.ui.controller;
 
+import com.heronix.dto.Plan504DTO;
 import com.heronix.model.domain.Plan504;
-import com.heronix.model.domain.Student;
 import com.heronix.model.enums.Plan504Status;
 import com.heronix.service.Plan504Service;
 import com.heronix.ui.controller.dialogs.Plan504DialogController;
@@ -59,17 +59,17 @@ public class Plan504Controller {
     @FXML private ComboBox<String> coordinatorFilter;
 
     // Table and Columns
-    @FXML private TableView<Plan504> planTable;
-    @FXML private TableColumn<Plan504, String> studentColumn;
-    @FXML private TableColumn<Plan504, String> planNumberColumn;
-    @FXML private TableColumn<Plan504, String> statusColumn;
-    @FXML private TableColumn<Plan504, String> startDateColumn;
-    @FXML private TableColumn<Plan504, String> endDateColumn;
-    @FXML private TableColumn<Plan504, String> daysRemainingColumn;
-    @FXML private TableColumn<Plan504, String> disabilityColumn;
-    @FXML private TableColumn<Plan504, String> coordinatorColumn;
-    @FXML private TableColumn<Plan504, String> accommodationsColumn;
-    @FXML private TableColumn<Plan504, String> actionsColumn;
+    @FXML private TableView<Plan504DTO> planTable;
+    @FXML private TableColumn<Plan504DTO, String> studentColumn;
+    @FXML private TableColumn<Plan504DTO, String> planNumberColumn;
+    @FXML private TableColumn<Plan504DTO, String> statusColumn;
+    @FXML private TableColumn<Plan504DTO, String> startDateColumn;
+    @FXML private TableColumn<Plan504DTO, String> endDateColumn;
+    @FXML private TableColumn<Plan504DTO, String> daysRemainingColumn;
+    @FXML private TableColumn<Plan504DTO, String> disabilityColumn;
+    @FXML private TableColumn<Plan504DTO, String> coordinatorColumn;
+    @FXML private TableColumn<Plan504DTO, String> accommodationsColumn;
+    @FXML private TableColumn<Plan504DTO, String> actionsColumn;
 
     // Summary Labels
     @FXML private Label totalPlansLabel;
@@ -82,8 +82,8 @@ public class Plan504Controller {
     @FXML private ContextMenu rowContextMenu;
 
     // Data
-    private ObservableList<Plan504> allPlans = FXCollections.observableArrayList();
-    private ObservableList<Plan504> filteredPlans = FXCollections.observableArrayList();
+    private ObservableList<Plan504DTO> allPlans = FXCollections.observableArrayList();
+    private ObservableList<Plan504DTO> filteredPlans = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -94,22 +94,16 @@ public class Plan504Controller {
     }
 
     private void setupTable() {
-        // Configure columns
-        studentColumn.setCellValueFactory(data -> {
-            try {
-                Student student = data.getValue().getStudent();
-                return new SimpleStringProperty(student != null ? student.getFullName() : "N/A");
-            } catch (Exception e) {
-                return new SimpleStringProperty("N/A");
-            }
-        });
+        // Configure columns using flat DTO fields (no lazy proxies)
+        studentColumn.setCellValueFactory(data ->
+            new SimpleStringProperty(data.getValue().getStudentName()));
 
         planNumberColumn.setCellValueFactory(data ->
             new SimpleStringProperty(data.getValue().getPlanNumber() != null ?
                 data.getValue().getPlanNumber() : "DRAFT"));
 
         statusColumn.setCellValueFactory(data ->
-            new SimpleStringProperty(data.getValue().getStatus().getDisplayName()));
+            new SimpleStringProperty(data.getValue().getStatusDisplay()));
 
         startDateColumn.setCellValueFactory(data ->
             new SimpleStringProperty(data.getValue().getStartDate().toString()));
@@ -131,13 +125,11 @@ public class Plan504Controller {
             new SimpleStringProperty(data.getValue().getCoordinator() != null ?
                 data.getValue().getCoordinator() : "N/A"));
 
-        // Accommodations is a text field, show truncated preview
         accommodationsColumn.setCellValueFactory(data -> {
             String acc = data.getValue().getAccommodations();
             if (acc == null || acc.isEmpty()) {
                 return new SimpleStringProperty("None");
             }
-            // Count lines as approximate accommodation count
             int count = acc.split("\n").length;
             return new SimpleStringProperty(count + " item(s)");
         });
@@ -149,9 +141,17 @@ public class Plan504Controller {
             private final Button editBtn = new Button("Edit");
 
             {
-                viewBtn.setOnAction(e -> handleViewDetails(getTableRow().getItem()));
+                viewBtn.setOnAction(e -> {
+                    Plan504DTO dto = getTableRow().getItem();
+                    if (dto != null) handleViewDetailsDTO(dto);
+                });
                 viewBtn.getStyleClass().add("btn-link");
-                editBtn.setOnAction(e -> handleEditPlan(getTableRow().getItem()));
+                editBtn.setOnAction(e -> {
+                    Plan504DTO dto = getTableRow().getItem();
+                    if (dto != null) {
+                        plan504Service.findById(dto.getId()).ifPresent(plan -> handleEditPlan(plan));
+                    }
+                });
                 editBtn.getStyleClass().add("btn-link");
                 buttonBox.getChildren().addAll(viewBtn, editBtn);
             }
@@ -165,7 +165,7 @@ public class Plan504Controller {
 
         // Apply row styling based on status
         planTable.setRowFactory(tv -> {
-            TableRow<Plan504> row = new TableRow<>();
+            TableRow<Plan504DTO> row = new TableRow<>();
             row.setOnContextMenuRequested(event -> {
                 if (!row.isEmpty()) {
                     planTable.getSelectionModel().select(row.getItem());
@@ -196,8 +196,8 @@ public class Plan504Controller {
         // Selection listener
         planTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                selectionLabel.setText("Selected: " + newSelection.getStudent().getFullName() +
-                    " (" + newSelection.getStatus().getDisplayName() + ")");
+                selectionLabel.setText("Selected: " + newSelection.getStudentName() +
+                    " (" + newSelection.getStatusDisplay() + ")");
             } else {
                 selectionLabel.setText("No plan selected");
             }
@@ -226,17 +226,11 @@ public class Plan504Controller {
         try {
             log.info("Loading 504 Plan data");
 
-            // Load all active plans
-            List<Plan504> activePlans = plan504Service.findAllActivePlans();
-
-            // Also load draft and pending review plans
-            List<Plan504> draftPlans = plan504Service.findByStatus(Plan504Status.DRAFT);
-            List<Plan504> pendingPlans = plan504Service.findByStatus(Plan504Status.PENDING_REVIEW);
+            // Load all plans as DTOs (student data pre-resolved)
+            List<Plan504DTO> planDTOs = plan504Service.findAllPlanDTOs();
 
             allPlans.clear();
-            allPlans.addAll(activePlans);
-            allPlans.addAll(draftPlans);
-            allPlans.addAll(pendingPlans);
+            allPlans.addAll(planDTOs);
 
             // Populate coordinator filter
             updateCoordinatorFilter();
@@ -257,7 +251,7 @@ public class Plan504Controller {
 
     private void updateCoordinatorFilter() {
         List<String> coordinators = allPlans.stream()
-            .map(Plan504::getCoordinator)
+            .map(Plan504DTO::getCoordinator)
             .filter(c -> c != null && !c.isEmpty())
             .distinct()
             .sorted()
@@ -279,7 +273,7 @@ public class Plan504Controller {
             .filter(plan -> {
                 // Search filter
                 if (!searchText.isEmpty()) {
-                    String studentName = plan.getStudent().getFullName().toLowerCase();
+                    String studentName = plan.getStudentName().toLowerCase();
                     String planNumber = plan.getPlanNumber() != null ? plan.getPlanNumber().toLowerCase() : "";
                     if (!studentName.contains(searchText) && !planNumber.contains(searchText)) {
                         return false;
@@ -288,7 +282,7 @@ public class Plan504Controller {
 
                 // Status filter
                 if (!"All Statuses".equals(statusValue)) {
-                    if (!plan.getStatus().getDisplayName().equals(statusValue)) {
+                    if (!plan.getStatusDisplay().equals(statusValue)) {
                         return false;
                     }
                 }
@@ -362,16 +356,16 @@ public class Plan504Controller {
 
             // Write data rows
             DateTimeFormatter dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
-            for (Plan504 plan : filteredPlans) {
+            for (Plan504DTO plan : filteredPlans) {
                 long daysRemaining = ChronoUnit.DAYS.between(LocalDate.now(), plan.getEndDate());
                 String daysText = daysRemaining < 0 ? "EXPIRED" : String.valueOf(daysRemaining);
 
                 writer.printf("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"%n",
-                    escapeCSV(plan.getStudent() != null ? plan.getStudent().getFullName() : ""),
-                    escapeCSV(plan.getStudent() != null ? plan.getStudent().getStudentId() : ""),
-                    plan.getStudent() != null ? plan.getStudent().getGradeLevel() : "",
+                    escapeCSV(plan.getStudentName()),
+                    escapeCSV(plan.getStudentStudentId()),
+                    plan.getStudentGradeLevel() != null ? plan.getStudentGradeLevel() : "",
                     escapeCSV(plan.getPlanNumber() != null ? plan.getPlanNumber() : "DRAFT"),
-                    plan.getStatus() != null ? plan.getStatus().getDisplayName() : "",
+                    plan.getStatusDisplay(),
                     plan.getStartDate() != null ? plan.getStartDate().format(dateFormatter) : "",
                     plan.getEndDate() != null ? plan.getEndDate().format(dateFormatter) : "",
                     daysText,
@@ -419,15 +413,15 @@ public class Plan504Controller {
 
     @FXML
     private void handleViewDetails() {
-        Plan504 selected = planTable.getSelectionModel().getSelectedItem();
-        handleViewDetails(selected);
+        Plan504DTO selected = planTable.getSelectionModel().getSelectedItem();
+        if (selected != null) handleViewDetailsDTO(selected);
     }
 
-    private void handleViewDetails(Plan504 plan) {
-        if (plan == null) return;
-        log.info("Viewing 504 Plan details: {}", plan.getId());
+    private void handleViewDetailsDTO(Plan504DTO dto) {
+        if (dto == null) return;
+        log.info("Viewing 504 Plan details: {}", dto.getId());
 
-        // Build comprehensive 504 Plan detail view
+        // Build comprehensive 504 Plan detail view using DTO fields
         StringBuilder details = new StringBuilder();
         details.append("═══════════════════════════════════════\n");
         details.append("          504 PLAN DETAILS             \n");
@@ -436,43 +430,37 @@ public class Plan504Controller {
         // Student Information
         details.append("STUDENT INFORMATION\n");
         details.append("───────────────────────────────────────\n");
-        try {
-            if (plan.getStudent() != null) {
-                details.append("Name: ").append(plan.getStudent().getFullName()).append("\n");
-                details.append("Student ID: ").append(plan.getStudent().getStudentId()).append("\n");
-                details.append("Grade: ").append(plan.getStudent().getGradeLevel()).append("\n");
-            }
-        } catch (Exception e) {
-            details.append("Name: N/A (data not loaded)\n");
-        }
+        details.append("Name: ").append(dto.getStudentName()).append("\n");
+        details.append("Student ID: ").append(dto.getStudentStudentId()).append("\n");
+        details.append("Grade: ").append(dto.getStudentGradeLevel()).append("\n");
         details.append("\n");
 
         // Plan Status
         details.append("PLAN STATUS\n");
         details.append("───────────────────────────────────────\n");
-        details.append("Plan Number: ").append(plan.getPlanNumber() != null ? plan.getPlanNumber() : "DRAFT").append("\n");
-        details.append("Status: ").append(plan.getStatus() != null ? plan.getStatus().getDisplayName() : "N/A").append("\n");
-        details.append("Start Date: ").append(plan.getStartDate()).append("\n");
-        details.append("End Date: ").append(plan.getEndDate()).append("\n");
-        if (plan.getNextReviewDate() != null) {
-            details.append("Next Review: ").append(plan.getNextReviewDate()).append("\n");
+        details.append("Plan Number: ").append(dto.getPlanNumber() != null ? dto.getPlanNumber() : "DRAFT").append("\n");
+        details.append("Status: ").append(dto.getStatusDisplay()).append("\n");
+        details.append("Start Date: ").append(dto.getStartDate()).append("\n");
+        details.append("End Date: ").append(dto.getEndDate()).append("\n");
+        if (dto.getNextReviewDate() != null) {
+            details.append("Next Review: ").append(dto.getNextReviewDate()).append("\n");
         }
-        details.append("Coordinator: ").append(plan.getCoordinator() != null ? plan.getCoordinator() : "Unassigned").append("\n");
-        long daysRemaining = ChronoUnit.DAYS.between(LocalDate.now(), plan.getEndDate());
+        details.append("Coordinator: ").append(dto.getCoordinator() != null ? dto.getCoordinator() : "Unassigned").append("\n");
+        long daysRemaining = ChronoUnit.DAYS.between(LocalDate.now(), dto.getEndDate());
         details.append("Days Remaining: ").append(daysRemaining < 0 ? "EXPIRED" : daysRemaining).append("\n");
         details.append("\n");
 
         // Disability Information
         details.append("DISABILITY INFORMATION\n");
         details.append("───────────────────────────────────────\n");
-        details.append("Disability: ").append(plan.getDisability() != null ? plan.getDisability() : "N/A").append("\n");
+        details.append("Disability: ").append(dto.getDisability() != null ? dto.getDisability() : "N/A").append("\n");
         details.append("\n");
 
         // Accommodations
         details.append("ACCOMMODATIONS\n");
         details.append("───────────────────────────────────────\n");
-        if (plan.getAccommodations() != null && !plan.getAccommodations().isEmpty()) {
-            details.append(plan.getAccommodations()).append("\n");
+        if (dto.getAccommodations() != null && !dto.getAccommodations().isEmpty()) {
+            details.append(dto.getAccommodations()).append("\n");
         } else {
             details.append("No accommodations defined.\n");
         }
@@ -481,8 +469,8 @@ public class Plan504Controller {
         // Notes
         details.append("NOTES\n");
         details.append("───────────────────────────────────────\n");
-        if (plan.getNotes() != null && !plan.getNotes().isEmpty()) {
-            details.append(plan.getNotes()).append("\n");
+        if (dto.getNotes() != null && !dto.getNotes().isEmpty()) {
+            details.append(dto.getNotes()).append("\n");
         } else {
             details.append("No notes.\n");
         }
@@ -490,7 +478,7 @@ public class Plan504Controller {
         // Show in scrollable dialog
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("504 Plan Details");
-        alert.setHeaderText("504 Plan for " + (plan.getStudent() != null ? plan.getStudent().getFullName() : "Unknown Student"));
+        alert.setHeaderText("504 Plan for " + dto.getStudentName());
 
         TextArea textArea = new TextArea(details.toString());
         textArea.setEditable(false);
@@ -506,8 +494,9 @@ public class Plan504Controller {
 
     @FXML
     private void handleEditPlan() {
-        Plan504 selected = planTable.getSelectionModel().getSelectedItem();
-        handleEditPlan(selected);
+        Plan504DTO selected = planTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+        plan504Service.findById(selected.getId()).ifPresent(this::handleEditPlan);
     }
 
     private void handleEditPlan(Plan504 plan) {
@@ -563,14 +552,16 @@ public class Plan504Controller {
 
     @FXML
     private void handleManageAccommodations() {
-        Plan504 selected = planTable.getSelectionModel().getSelectedItem();
+        Plan504DTO selectedDTO = planTable.getSelectionModel().getSelectedItem();
+        if (selectedDTO == null) return;
+        Plan504 selected = plan504Service.findById(selectedDTO.getId()).orElse(null);
         if (selected == null) return;
         log.info("Managing accommodations for 504 Plan: {}", selected.getId());
 
         // Create dialog for editing accommodations
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Manage Accommodations");
-        dialog.setHeaderText("504 Plan Accommodations for " + selected.getStudent().getFullName());
+        dialog.setHeaderText("504 Plan Accommodations for " + selectedDTO.getStudentName());
 
         // Create text area for accommodations
         TextArea accommodationsArea = new TextArea(selected.getAccommodations() != null ? selected.getAccommodations() : "");
@@ -613,7 +604,7 @@ public class Plan504Controller {
 
     @FXML
     private void handleActivatePlan() {
-        Plan504 selected = planTable.getSelectionModel().getSelectedItem();
+        Plan504DTO selected = planTable.getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
         try {
@@ -629,7 +620,7 @@ public class Plan504Controller {
 
     @FXML
     private void handleMarkForReview() {
-        Plan504 selected = planTable.getSelectionModel().getSelectedItem();
+        Plan504DTO selected = planTable.getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
         try {
@@ -645,7 +636,7 @@ public class Plan504Controller {
 
     @FXML
     private void handleExpirePlan() {
-        Plan504 selected = planTable.getSelectionModel().getSelectedItem();
+        Plan504DTO selected = planTable.getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
@@ -668,16 +659,17 @@ public class Plan504Controller {
 
     @FXML
     private void handleGeneratePlanReport() {
-        Plan504 selected = planTable.getSelectionModel().getSelectedItem();
+        Plan504DTO selectedDTO = planTable.getSelectionModel().getSelectedItem();
+        if (selectedDTO == null) return;
+        Plan504 selected = plan504Service.findById(selectedDTO.getId()).orElse(null);
         if (selected == null) return;
         log.info("Generating report for 504 Plan: {}", selected.getId());
 
-        String reportContent = build504PlanReportContent(selected);
+        String reportContent = build504PlanReportContent(selectedDTO);
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save 504 Plan Report");
-        String studentName = selected.getStudent() != null ?
-            selected.getStudent().getFullName().replaceAll("[^a-zA-Z0-9]", "_") : "Unknown";
+        String studentName = selectedDTO.getStudentName().replaceAll("[^a-zA-Z0-9]", "_");
         fileChooser.setInitialFileName("504_Plan_Report_" + studentName + "_" +
             LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE) + ".txt");
         fileChooser.getExtensionFilters().addAll(
@@ -700,11 +692,11 @@ public class Plan504Controller {
 
     @FXML
     private void handlePrintPlan() {
-        Plan504 selected = planTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-        log.info("Printing 504 Plan: {}", selected.getId());
+        Plan504DTO selectedDTO = planTable.getSelectionModel().getSelectedItem();
+        if (selectedDTO == null) return;
+        log.info("Printing 504 Plan: {}", selectedDTO.getId());
 
-        String reportContent = build504PlanReportContent(selected);
+        String reportContent = build504PlanReportContent(selectedDTO);
 
         // Create a TextFlow for printing
         TextFlow textFlow = new TextFlow();
@@ -734,7 +726,7 @@ public class Plan504Controller {
     /**
      * Build formatted 504 Plan report content for export/print
      */
-    private String build504PlanReportContent(Plan504 plan) {
+    private String build504PlanReportContent(Plan504DTO dto) {
         StringBuilder report = new StringBuilder();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
 
@@ -748,39 +740,37 @@ public class Plan504Controller {
         // Student Information
         report.append("STUDENT INFORMATION\n");
         report.append("--------------------------------------------------------------------------------\n");
-        if (plan.getStudent() != null) {
-            report.append(String.format("%-20s: %s%n", "Name", plan.getStudent().getFullName()));
-            report.append(String.format("%-20s: %s%n", "Student ID", plan.getStudent().getStudentId()));
-            report.append(String.format("%-20s: %s%n", "Grade Level", plan.getStudent().getGradeLevel()));
-        }
+        report.append(String.format("%-20s: %s%n", "Name", dto.getStudentName()));
+        report.append(String.format("%-20s: %s%n", "Student ID", dto.getStudentStudentId()));
+        report.append(String.format("%-20s: %s%n", "Grade Level", dto.getStudentGradeLevel()));
         report.append("\n");
 
         // Plan Information
         report.append("PLAN STATUS INFORMATION\n");
         report.append("--------------------------------------------------------------------------------\n");
-        report.append(String.format("%-20s: %s%n", "Plan Number", plan.getPlanNumber() != null ? plan.getPlanNumber() : "DRAFT"));
-        report.append(String.format("%-20s: %s%n", "Status", plan.getStatus() != null ? plan.getStatus().getDisplayName() : "N/A"));
-        report.append(String.format("%-20s: %s%n", "Start Date", plan.getStartDate() != null ? plan.getStartDate().format(dateFormatter) : "N/A"));
-        report.append(String.format("%-20s: %s%n", "End Date", plan.getEndDate() != null ? plan.getEndDate().format(dateFormatter) : "N/A"));
-        if (plan.getNextReviewDate() != null) {
-            report.append(String.format("%-20s: %s%n", "Next Review", plan.getNextReviewDate().format(dateFormatter)));
+        report.append(String.format("%-20s: %s%n", "Plan Number", dto.getPlanNumber() != null ? dto.getPlanNumber() : "DRAFT"));
+        report.append(String.format("%-20s: %s%n", "Status", dto.getStatusDisplay()));
+        report.append(String.format("%-20s: %s%n", "Start Date", dto.getStartDate() != null ? dto.getStartDate().format(dateFormatter) : "N/A"));
+        report.append(String.format("%-20s: %s%n", "End Date", dto.getEndDate() != null ? dto.getEndDate().format(dateFormatter) : "N/A"));
+        if (dto.getNextReviewDate() != null) {
+            report.append(String.format("%-20s: %s%n", "Next Review", dto.getNextReviewDate().format(dateFormatter)));
         }
-        report.append(String.format("%-20s: %s%n", "Coordinator", plan.getCoordinator() != null ? plan.getCoordinator() : "Unassigned"));
-        long daysRemaining = ChronoUnit.DAYS.between(LocalDate.now(), plan.getEndDate());
+        report.append(String.format("%-20s: %s%n", "Coordinator", dto.getCoordinator() != null ? dto.getCoordinator() : "Unassigned"));
+        long daysRemaining = ChronoUnit.DAYS.between(LocalDate.now(), dto.getEndDate());
         report.append(String.format("%-20s: %s%n", "Days Remaining", daysRemaining < 0 ? "EXPIRED" : String.valueOf(daysRemaining)));
         report.append("\n");
 
         // Disability Information
         report.append("DISABILITY INFORMATION\n");
         report.append("--------------------------------------------------------------------------------\n");
-        report.append(String.format("%-20s: %s%n", "Disability", plan.getDisability() != null ? plan.getDisability() : "N/A"));
+        report.append(String.format("%-20s: %s%n", "Disability", dto.getDisability() != null ? dto.getDisability() : "N/A"));
         report.append("\n");
 
         // Accommodations
         report.append("ACCOMMODATIONS\n");
         report.append("--------------------------------------------------------------------------------\n");
-        if (plan.getAccommodations() != null && !plan.getAccommodations().isEmpty()) {
-            report.append(plan.getAccommodations()).append("\n");
+        if (dto.getAccommodations() != null && !dto.getAccommodations().isEmpty()) {
+            report.append(dto.getAccommodations()).append("\n");
         } else {
             report.append("No accommodations defined.\n");
         }
@@ -789,8 +779,8 @@ public class Plan504Controller {
         // Notes
         report.append("ADDITIONAL NOTES\n");
         report.append("--------------------------------------------------------------------------------\n");
-        if (plan.getNotes() != null && !plan.getNotes().isEmpty()) {
-            report.append(plan.getNotes()).append("\n");
+        if (dto.getNotes() != null && !dto.getNotes().isEmpty()) {
+            report.append(dto.getNotes()).append("\n");
         } else {
             report.append("No additional notes.\n");
         }
@@ -805,7 +795,7 @@ public class Plan504Controller {
 
     @FXML
     private void handleDeletePlan() {
-        Plan504 selected = planTable.getSelectionModel().getSelectedItem();
+        Plan504DTO selected = planTable.getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);

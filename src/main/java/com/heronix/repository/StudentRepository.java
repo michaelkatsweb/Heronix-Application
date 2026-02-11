@@ -70,6 +70,10 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("SELECT DISTINCT s FROM Student s LEFT JOIN FETCH s.enrolledCourses WHERE s.id = :id")
     Optional<Student> findByIdWithEnrolledCourses(@org.springframework.data.repository.query.Param("id") Long id);
 
+    // Find student by ID with emergency contacts eagerly loaded
+    @Query("SELECT DISTINCT s FROM Student s LEFT JOIN FETCH s.emergencyContacts WHERE s.id = :id")
+    Optional<Student> findByIdWithEmergencyContacts(@org.springframework.data.repository.query.Param("id") Long id);
+
     // ========================================================================
     // SOFT DELETE SUPPORT
     // ========================================================================

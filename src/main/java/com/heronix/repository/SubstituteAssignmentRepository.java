@@ -191,4 +191,25 @@ public interface SubstituteAssignmentRepository extends JpaRepository<Substitute
     @Query("SELECT sa FROM SubstituteAssignment sa WHERE sa.status IN ('CONFIRMED', 'IN_PROGRESS') " +
            "AND sa.scheduleSlots IS EMPTY AND sa.assignmentDate >= :fromDate")
     List<SubstituteAssignment> findAssignmentsNeedingScheduling(@Param("fromDate") LocalDate fromDate);
+
+    /**
+     * Find all assignments with substitute, replacedTeacher, and room eagerly loaded
+     */
+    @Query("SELECT DISTINCT sa FROM SubstituteAssignment sa " +
+           "LEFT JOIN FETCH sa.substitute " +
+           "LEFT JOIN FETCH sa.replacedTeacher " +
+           "LEFT JOIN FETCH sa.room")
+    List<SubstituteAssignment> findAllWithRelationships();
+
+    /**
+     * Find assignments by date range with relationships eagerly loaded
+     */
+    @Query("SELECT DISTINCT sa FROM SubstituteAssignment sa " +
+           "LEFT JOIN FETCH sa.substitute " +
+           "LEFT JOIN FETCH sa.replacedTeacher " +
+           "LEFT JOIN FETCH sa.room " +
+           "WHERE sa.assignmentDate BETWEEN :startDate AND :endDate")
+    List<SubstituteAssignment> findByDateRangeWithRelationships(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 }

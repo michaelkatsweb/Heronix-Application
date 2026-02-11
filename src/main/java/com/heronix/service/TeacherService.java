@@ -1,6 +1,7 @@
 // Location: src/main/java/com/heronix/service/TeacherService.java
 package com.heronix.service;
 
+import com.heronix.dto.TeacherTableDTO;
 import com.heronix.model.domain.Teacher;
 import java.util.List;
 
@@ -113,6 +114,14 @@ public interface TeacherService {
      * @return List of teachers with all collections loaded
      */
     List<Teacher> findAllWithCollectionsForUI();
+
+    /**
+     * Get all teachers as DTOs with collections pre-resolved.
+     * Safe to use outside transaction boundaries (e.g., in JavaFX controllers).
+     *
+     * @return List of TeacherTableDTOs with all fields pre-resolved
+     */
+    List<TeacherTableDTO> findAllTeacherTableDTOs();
 
     // ========================================================================
     // SOFT DELETE OPERATIONS

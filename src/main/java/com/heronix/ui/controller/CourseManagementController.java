@@ -143,13 +143,9 @@ public class CourseManagementController {
         });
 
         teacherColumn.setCellValueFactory(cellData -> {
-            try {
-                Teacher teacher = cellData.getValue().getTeacher();
-                return new javafx.beans.property.SimpleStringProperty(
-                        teacher != null ? teacher.getName() : "Unassigned");
-            } catch (Exception e) {
-                return new javafx.beans.property.SimpleStringProperty("Unassigned");
-            }
+            Teacher teacher = cellData.getValue().getTeacher();
+            return new javafx.beans.property.SimpleStringProperty(
+                    teacher != null ? teacher.getName() : "Unassigned");
         });
 
         maxStudentsColumn.setCellValueFactory(new PropertyValueFactory<>("maxStudents"));
@@ -157,13 +153,9 @@ public class CourseManagementController {
         activeColumn.setCellValueFactory(new PropertyValueFactory<>("active"));
 
         roomColumn.setCellValueFactory(cellData -> {
-            try {
-                Room room = cellData.getValue().getRoom();
-                return new javafx.beans.property.SimpleStringProperty(
-                        room != null ? room.getRoomNumber() : "Unassigned");
-            } catch (Exception e) {
-                return new javafx.beans.property.SimpleStringProperty("Unassigned");
-            }
+            Room room = cellData.getValue().getRoom();
+            return new javafx.beans.property.SimpleStringProperty(
+                    room != null ? room.getRoomNumber() : "Unassigned");
         });
 
         durationColumn.setCellValueFactory(new PropertyValueFactory<>("duration"));
@@ -175,7 +167,7 @@ public class CourseManagementController {
         String currentLevel = levelFilter.getValue();
         String currentStatus = statusFilter.getValue();
 
-        List<String> subjects = courseRepository.findAll().stream()
+        List<String> subjects = courseRepository.findAllWithTeacherAndRoom().stream()
                 .map(Course::getSubject)
                 .filter(s -> s != null && !s.isEmpty())
                 .distinct()
@@ -507,7 +499,7 @@ public class CourseManagementController {
             courses = courseRepository.findActiveByGradeRange(
                     schoolType.getMinGradeValue(), schoolType.getMaxGradeValue());
             // Also include courses with no grade range set
-            List<Course> noGrade = courseRepository.findAll().stream()
+            List<Course> noGrade = courseRepository.findAllWithTeacherAndRoom().stream()
                     .filter(c -> c.getMinGradeLevel() == null && c.getMaxGradeLevel() == null)
                     .collect(Collectors.toList());
             java.util.Set<Long> ids = courses.stream().map(Course::getId).collect(Collectors.toSet());
@@ -517,7 +509,7 @@ public class CourseManagementController {
                 }
             }
         } else {
-            courses = courseRepository.findAll();
+            courses = courseRepository.findAllWithTeacherAndRoom();
         }
         courseTable.setItems(FXCollections.observableArrayList(courses));
         recordCountLabel.setText(courses.size() + " courses");
@@ -529,7 +521,7 @@ public class CourseManagementController {
         String level = levelFilter.getValue();
         String status = statusFilter.getValue();
 
-        List<Course> filtered = courseRepository.findAll().stream()
+        List<Course> filtered = courseRepository.findAllWithTeacherAndRoom().stream()
                 .filter(c -> {
                     // School level filter
                     if (schoolType != null) {

@@ -171,6 +171,14 @@ public class StudentService {
     }
 
     /**
+     * Find student by ID with emergency contacts eagerly loaded
+     */
+    @Transactional(readOnly = true)
+    public Optional<Student> findByIdWithEmergencyContacts(Long id) {
+        return studentRepository.findByIdWithEmergencyContacts(id);
+    }
+
+    /**
      * Check if student exists by student ID
      */
     public boolean existsByStudentId(String studentId) {

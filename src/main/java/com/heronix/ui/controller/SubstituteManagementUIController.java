@@ -1,5 +1,6 @@
 package com.heronix.ui.controller;
 
+import com.heronix.dto.SubstituteAssignmentDTO;
 import com.heronix.model.domain.Substitute;
 import com.heronix.model.domain.SubstituteAssignment;
 import com.heronix.model.enums.AssignmentStatus;
@@ -74,16 +75,16 @@ public class SubstituteManagementUIController {
     @FXML private ComboBox<Substitute> filterSubstituteComboBox;
 
     // Assignments Table
-    @FXML private TableView<SubstituteAssignment> assignmentsTable;
-    @FXML private TableColumn<SubstituteAssignment, String> assignmentDateColumn;
-    @FXML private TableColumn<SubstituteAssignment, String> assignmentSubstituteColumn;
-    @FXML private TableColumn<SubstituteAssignment, String> assignmentTimeColumn;
-    @FXML private TableColumn<SubstituteAssignment, String> assignmentDurationColumn;
-    @FXML private TableColumn<SubstituteAssignment, String> assignmentReplacedStaffColumn;
-    @FXML private TableColumn<SubstituteAssignment, String> assignmentReasonColumn;
-    @FXML private TableColumn<SubstituteAssignment, String> assignmentRoomColumn;
-    @FXML private TableColumn<SubstituteAssignment, String> assignmentStatusColumn;
-    @FXML private TableColumn<SubstituteAssignment, Void> assignmentActionsColumn;
+    @FXML private TableView<SubstituteAssignmentDTO> assignmentsTable;
+    @FXML private TableColumn<SubstituteAssignmentDTO, String> assignmentDateColumn;
+    @FXML private TableColumn<SubstituteAssignmentDTO, String> assignmentSubstituteColumn;
+    @FXML private TableColumn<SubstituteAssignmentDTO, String> assignmentTimeColumn;
+    @FXML private TableColumn<SubstituteAssignmentDTO, String> assignmentDurationColumn;
+    @FXML private TableColumn<SubstituteAssignmentDTO, String> assignmentReplacedStaffColumn;
+    @FXML private TableColumn<SubstituteAssignmentDTO, String> assignmentReasonColumn;
+    @FXML private TableColumn<SubstituteAssignmentDTO, String> assignmentRoomColumn;
+    @FXML private TableColumn<SubstituteAssignmentDTO, String> assignmentStatusColumn;
+    @FXML private TableColumn<SubstituteAssignmentDTO, Void> assignmentActionsColumn;
     @FXML private Label assignmentCountLabel;
 
     // ==================== SUBSTITUTES TAB ====================
@@ -133,7 +134,7 @@ public class SubstituteManagementUIController {
      * Setup Assignments Tab
      */
     private void setupAssignmentsTab() {
-        // Setup table columns
+        // Setup table columns using flat DTO fields (no lazy proxies)
         assignmentDateColumn.setCellValueFactory(cellData -> {
             if (cellData.getValue().getAssignmentDate() != null) {
                 return new javafx.beans.property.SimpleStringProperty(
@@ -142,18 +143,8 @@ public class SubstituteManagementUIController {
             return new javafx.beans.property.SimpleStringProperty("");
         });
 
-        assignmentSubstituteColumn.setCellValueFactory(cellData -> {
-            SubstituteAssignment assignment = cellData.getValue();
-            if (assignment != null && assignment.getSubstitute() != null) {
-                try {
-                    return new javafx.beans.property.SimpleStringProperty(assignment.getSubstitute().getFullName());
-                } catch (Exception e) {
-                    logger.warn("Could not get substitute name for assignment", e);
-                    return new javafx.beans.property.SimpleStringProperty("N/A");
-                }
-            }
-            return new javafx.beans.property.SimpleStringProperty("");
-        });
+        assignmentSubstituteColumn.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSubstituteName()));
 
         assignmentTimeColumn.setCellValueFactory(cellData -> {
             String start = cellData.getValue().getStartTime() != null ?
@@ -164,42 +155,19 @@ public class SubstituteManagementUIController {
         });
 
         assignmentDurationColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(
-                        cellData.getValue().getDurationType() != null ?
-                                cellData.getValue().getDurationType().getDisplayName() : ""));
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDurationDisplay()));
 
-        assignmentReplacedStaffColumn.setCellValueFactory(cellData -> {
-            try {
-                return new javafx.beans.property.SimpleStringProperty(cellData.getValue().getReplacedPersonName());
-            } catch (Exception e) {
-                logger.warn("Could not get replaced staff name for assignment", e);
-                return new javafx.beans.property.SimpleStringProperty(
-                        cellData.getValue().getReplacedStaffName() != null ?
-                                cellData.getValue().getReplacedStaffName() : "N/A");
-            }
-        });
+        assignmentReplacedStaffColumn.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getReplacedStaffName()));
 
         assignmentReasonColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(
-                        cellData.getValue().getAbsenceReason() != null ?
-                                cellData.getValue().getAbsenceReason().getDisplayName() : ""));
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getAbsenceReasonDisplay()));
 
-        assignmentRoomColumn.setCellValueFactory(cellData -> {
-            try {
-                if (cellData.getValue().getRoom() != null) {
-                    return new javafx.beans.property.SimpleStringProperty(cellData.getValue().getRoom().getRoomNumber());
-                }
-            } catch (Exception e) {
-                logger.warn("Could not get room for assignment", e);
-                return new javafx.beans.property.SimpleStringProperty("N/A");
-            }
-            return new javafx.beans.property.SimpleStringProperty("");
-        });
+        assignmentRoomColumn.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getRoomNumber()));
 
         assignmentStatusColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(
-                        cellData.getValue().getStatus() != null ?
-                                cellData.getValue().getStatus().getDisplayName() : ""));
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getStatusDisplay()));
 
         // Add actions column
         addAssignmentActionsColumn();
@@ -277,13 +245,15 @@ public class SubstituteManagementUIController {
                 deleteButton.setStyle("-fx-background-color: #F44336; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 4 8;");
 
                 editButton.setOnAction(event -> {
-                    SubstituteAssignment assignment = getTableView().getItems().get(getIndex());
-                    handleEditAssignment(assignment);
+                    SubstituteAssignmentDTO dto = getTableView().getItems().get(getIndex());
+                    // Load the full entity for editing
+                    substituteManagementService.getAssignmentById(dto.getId()).ifPresent(
+                            assignment -> handleEditAssignment(assignment));
                 });
 
                 deleteButton.setOnAction(event -> {
-                    SubstituteAssignment assignment = getTableView().getItems().get(getIndex());
-                    handleDeleteAssignment(assignment);
+                    SubstituteAssignmentDTO dto = getTableView().getItems().get(getIndex());
+                    handleDeleteAssignmentById(dto.getId());
                 });
             }
 
@@ -374,12 +344,12 @@ public class SubstituteManagementUIController {
         LocalDate startDate = filterStartDatePicker.getValue();
         LocalDate endDate = filterEndDatePicker.getValue();
 
-        List<SubstituteAssignment> assignments;
+        List<SubstituteAssignmentDTO> assignments;
 
         if (startDate != null && endDate != null) {
-            assignments = substituteManagementService.getAssignmentsBetweenDates(startDate, endDate);
+            assignments = substituteManagementService.getAssignmentDTOsBetweenDates(startDate, endDate);
         } else {
-            assignments = substituteManagementService.getAllAssignments();
+            assignments = substituteManagementService.getAllAssignmentDTOs();
         }
 
         // Apply filters
@@ -392,7 +362,7 @@ public class SubstituteManagementUIController {
         if (filterSubstituteComboBox.getValue() != null) {
             Substitute filterSub = filterSubstituteComboBox.getValue();
             assignments = assignments.stream()
-                    .filter(a -> a.getSubstitute() != null && a.getSubstitute().getId().equals(filterSub.getId()))
+                    .filter(a -> a.getSubstituteId() != null && a.getSubstituteId().equals(filterSub.getId()))
                     .collect(Collectors.toList());
         }
 
@@ -1009,16 +979,16 @@ public class SubstituteManagementUIController {
     }
 
     /**
-     * Handle delete assignment
+     * Handle delete assignment by ID (used from DTO table actions)
      */
-    private void handleDeleteAssignment(SubstituteAssignment assignment) {
+    private void handleDeleteAssignmentById(Long assignmentId) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Assignment");
         alert.setHeaderText("Delete Assignment");
         alert.setContentText("Are you sure you want to delete this assignment?");
 
         if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            substituteManagementService.deleteAssignment(assignment.getId());
+            substituteManagementService.deleteAssignment(assignmentId);
             loadAssignments();
             loadStatistics();
         }

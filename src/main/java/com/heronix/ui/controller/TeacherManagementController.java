@@ -5,6 +5,7 @@
 
 package com.heronix.ui.controller;
 
+import com.heronix.dto.TeacherTableDTO;
 import com.heronix.model.domain.Teacher;
 import com.heronix.model.enums.TeacherRole;
 import com.heronix.repository.TeacherRepository;
@@ -40,40 +41,40 @@ public class TeacherManagementController {
     @FXML
     private ComboBox<String> statusFilter;
     @FXML
-    private TableView<Teacher> teacherTable;
+    private TableView<TeacherTableDTO> teacherTable;
     @FXML
     private Label recordCountLabel;
     @FXML
     private HBox selectionToolbar;
     @FXML
-    private TableColumn<Teacher, String> workloadColumn;
+    private TableColumn<TeacherTableDTO, String> workloadColumn;
     @FXML
-    private TableColumn<Teacher, Long> idColumn;
+    private TableColumn<TeacherTableDTO, Long> idColumn;
     @FXML
-    private TableColumn<Teacher, String> nameColumn;
+    private TableColumn<TeacherTableDTO, String> nameColumn;
     @FXML
-    private TableColumn<Teacher, String> employeeIdColumn;
+    private TableColumn<TeacherTableDTO, String> employeeIdColumn;
     @FXML
-    private TableColumn<Teacher, String> roleColumn;
+    private TableColumn<TeacherTableDTO, String> roleColumn;
     @FXML
-    private TableColumn<Teacher, String> departmentColumn;
+    private TableColumn<TeacherTableDTO, String> departmentColumn;
     @FXML
-    private TableColumn<Teacher, String> subjectAreasColumn;
+    private TableColumn<TeacherTableDTO, String> subjectAreasColumn;
     @FXML
-    private TableColumn<Teacher, String> emailColumn;
+    private TableColumn<TeacherTableDTO, String> emailColumn;
     @FXML
-    private TableColumn<Teacher, String> phoneColumn;
+    private TableColumn<TeacherTableDTO, String> phoneColumn;
     // courseCountColumn removed - using assignedCoursesColumn instead
     @FXML
-    private TableColumn<Teacher, String> certificationsColumn;
+    private TableColumn<TeacherTableDTO, String> certificationsColumn;
     @FXML
-    private TableColumn<Teacher, String> assignedCoursesColumn;
+    private TableColumn<TeacherTableDTO, String> assignedCoursesColumn;
     @FXML
-    private TableColumn<Teacher, Integer> maxHoursColumn;
+    private TableColumn<TeacherTableDTO, Integer> maxHoursColumn;
     @FXML
-    private TableColumn<Teacher, Boolean> activeColumn;
+    private TableColumn<TeacherTableDTO, Boolean> activeColumn;
     @FXML
-    private TableColumn<Teacher, Void> actionsColumn;
+    private TableColumn<TeacherTableDTO, Void> actionsColumn;
 
     @Autowired
     private TeacherRepository teacherRepository;
@@ -128,11 +129,11 @@ public class TeacherManagementController {
         }
     }
 
-    private void handleBulkDelete(List<Teacher> teachers) {
+    private void handleBulkDelete(List<TeacherTableDTO> teachers) {
         try {
-            for (Teacher teacher : teachers) {
-                teacherRepository.delete(teacher);
-                log.info("Deleted teacher: {} (ID: {})", teacher.getName(), teacher.getId());
+            for (TeacherTableDTO dto : teachers) {
+                teacherRepository.deleteById(dto.getId());
+                log.info("Deleted teacher: {} (ID: {})", dto.getName(), dto.getId());
             }
 
             // Reload the table
@@ -152,40 +153,35 @@ public class TeacherManagementController {
 
         // Role column - display teacher role (Lead Teacher, Co-Teacher, Specialist, etc.)
         roleColumn.setCellValueFactory(cellData -> {
-            Teacher teacher = cellData.getValue();
-            TeacherRole role = teacher.getRole();
-            String displayName = role != null ? role.getDisplayName() : "Lead Teacher";
-            return new javafx.beans.property.SimpleStringProperty(displayName);
+            TeacherTableDTO dto = cellData.getValue();
+            return new javafx.beans.property.SimpleStringProperty(dto.getRoleDisplay());
         });
         roleColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 
-        // Subject Areas column - display certified subjects
+        // Subject Areas column - display certified subjects (pre-resolved in DTO)
         subjectAreasColumn.setCellValueFactory(cellData -> {
-            Teacher teacher = cellData.getValue();
-            try {
-                String subjects = teacher.getCertificationsDisplay();
-                return new javafx.beans.property.SimpleStringProperty(subjects);
-            } catch (org.hibernate.LazyInitializationException e) {
-                log.warn("LazyInitializationException loading certifications for teacher {}: {}",
-                        teacher.getId(), e.getMessage());
-                return new javafx.beans.property.SimpleStringProperty("--");
-            }
+            TeacherTableDTO dto = cellData.getValue();
+            return new javafx.beans.property.SimpleStringProperty(dto.getCertificationsDisplay());
         });
         subjectAreasColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 
         // Department - EDITABLE TextField for quick updates
         departmentColumn.setCellValueFactory(new PropertyValueFactory<>("department"));
-        departmentColumn.setCellFactory(col -> new TableCell<Teacher, String>() {
+        departmentColumn.setCellFactory(col -> new TableCell<TeacherTableDTO, String>() {
             private final TextField textField = new TextField();
 
             {
                 textField.setOnAction(e -> {
-                    Teacher teacher = getTableRow().getItem();
-                    if (teacher != null) {
-                        teacher.setDepartment(textField.getText());
-                        teacherRepository.save(teacher);
-                        commitEdit(textField.getText());
-                        log.info("Updated department for teacher {} to '{}'", teacher.getName(), textField.getText());
+                    TeacherTableDTO dto = getTableRow().getItem();
+                    if (dto != null) {
+                        Teacher teacher = teacherRepository.findById(dto.getId()).orElse(null);
+                        if (teacher != null) {
+                            teacher.setDepartment(textField.getText());
+                            teacherRepository.save(teacher);
+                            dto.setDepartment(textField.getText());
+                            commitEdit(textField.getText());
+                            log.info("Updated department for teacher {} to '{}'", dto.getName(), textField.getText());
+                        }
                     }
                 });
 
@@ -211,17 +207,21 @@ public class TeacherManagementController {
 
         // Email - EDITABLE TextField for quick updates
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
-        emailColumn.setCellFactory(col -> new TableCell<Teacher, String>() {
+        emailColumn.setCellFactory(col -> new TableCell<TeacherTableDTO, String>() {
             private final TextField textField = new TextField();
 
             {
                 textField.setOnAction(e -> {
-                    Teacher teacher = getTableRow().getItem();
-                    if (teacher != null) {
-                        teacher.setEmail(textField.getText());
-                        teacherRepository.save(teacher);
-                        commitEdit(textField.getText());
-                        log.info("Updated email for teacher {} to '{}'", teacher.getName(), textField.getText());
+                    TeacherTableDTO dto = getTableRow().getItem();
+                    if (dto != null) {
+                        Teacher teacher = teacherRepository.findById(dto.getId()).orElse(null);
+                        if (teacher != null) {
+                            teacher.setEmail(textField.getText());
+                            teacherRepository.save(teacher);
+                            dto.setEmail(textField.getText());
+                            commitEdit(textField.getText());
+                            log.info("Updated email for teacher {} to '{}'", dto.getName(), textField.getText());
+                        }
                     }
                 });
 
@@ -247,17 +247,21 @@ public class TeacherManagementController {
 
         // Phone - EDITABLE TextField for quick updates
         phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
-        phoneColumn.setCellFactory(col -> new TableCell<Teacher, String>() {
+        phoneColumn.setCellFactory(col -> new TableCell<TeacherTableDTO, String>() {
             private final TextField textField = new TextField();
 
             {
                 textField.setOnAction(e -> {
-                    Teacher teacher = getTableRow().getItem();
-                    if (teacher != null) {
-                        teacher.setPhoneNumber(textField.getText());
-                        teacherRepository.save(teacher);
-                        commitEdit(textField.getText());
-                        log.info("Updated phone for teacher {} to '{}'", teacher.getName(), textField.getText());
+                    TeacherTableDTO dto = getTableRow().getItem();
+                    if (dto != null) {
+                        Teacher teacher = teacherRepository.findById(dto.getId()).orElse(null);
+                        if (teacher != null) {
+                            teacher.setPhoneNumber(textField.getText());
+                            teacherRepository.save(teacher);
+                            dto.setPhoneNumber(textField.getText());
+                            commitEdit(textField.getText());
+                            log.info("Updated phone for teacher {} to '{}'", dto.getName(), textField.getText());
+                        }
                     }
                 });
 
@@ -282,37 +286,20 @@ public class TeacherManagementController {
             }
         });
 
-        // Certifications column - show certified subjects (handle lazy loading gracefully)
+        // Certifications column - pre-resolved in DTO
         // Note: certificationsColumn may be null if not present in FXML
         if (certificationsColumn != null) {
             certificationsColumn.setCellValueFactory(cellData -> {
-                Teacher teacher = cellData.getValue();
-                try {
-                    String display = teacher.getCertificationsDisplay();
-                    return new javafx.beans.property.SimpleStringProperty(display);
-                } catch (org.hibernate.LazyInitializationException e) {
-                    log.warn("LazyInitializationException loading certifications display for teacher {}: {}",
-                            teacher.getId(), e.getMessage());
-                    return new javafx.beans.property.SimpleStringProperty("--");
-                }
+                TeacherTableDTO dto = cellData.getValue();
+                return new javafx.beans.property.SimpleStringProperty(dto.getCertificationsDisplay());
             });
             certificationsColumn.setStyle("-fx-alignment: CENTER-LEFT;");
         }
 
-        // Assigned courses column - show count (handle lazy loading gracefully)
+        // Assigned courses column - pre-resolved in DTO
         assignedCoursesColumn.setCellValueFactory(cellData -> {
-            Teacher teacher = cellData.getValue();
-            try {
-                int count = (teacher.getCourses() != null) ? teacher.getCourses().size() : 0;
-                if (count == 0) {
-                    return new javafx.beans.property.SimpleStringProperty("None");
-                }
-                return new javafx.beans.property.SimpleStringProperty(count + " course" + (count > 1 ? "s" : ""));
-            } catch (org.hibernate.LazyInitializationException e) {
-                log.warn("LazyInitializationException loading courses for teacher {}: {}",
-                        teacher.getId(), e.getMessage());
-                return new javafx.beans.property.SimpleStringProperty("--");
-            }
+            TeacherTableDTO dto = cellData.getValue();
+            return new javafx.beans.property.SimpleStringProperty(dto.getCourseCountDisplay());
         });
         assignedCoursesColumn.setStyle("-fx-alignment: CENTER;");
 
@@ -320,19 +307,23 @@ public class TeacherManagementController {
         // Note: maxHoursColumn may be null if not present in FXML
         if (maxHoursColumn != null) {
             maxHoursColumn.setCellValueFactory(new PropertyValueFactory<>("maxHoursPerWeek"));
-            maxHoursColumn.setCellFactory(col -> new TableCell<Teacher, Integer>() {
+            maxHoursColumn.setCellFactory(col -> new TableCell<TeacherTableDTO, Integer>() {
                 private final TextField textField = new TextField();
 
                 {
                     textField.setOnAction(e -> {
                         try {
                             int hours = Integer.parseInt(textField.getText());
-                            Teacher teacher = getTableRow().getItem();
-                            if (teacher != null) {
-                                teacher.setMaxHoursPerWeek(hours);
-                                teacherRepository.save(teacher);
-                                commitEdit(hours);
-                                log.info("Updated max hours for teacher {} to {}", teacher.getName(), hours);
+                            TeacherTableDTO dto = getTableRow().getItem();
+                            if (dto != null) {
+                                Teacher teacher = teacherRepository.findById(dto.getId()).orElse(null);
+                                if (teacher != null) {
+                                    teacher.setMaxHoursPerWeek(hours);
+                                    teacherRepository.save(teacher);
+                                    dto.setMaxHoursPerWeek(hours);
+                                    commitEdit(hours);
+                                    log.info("Updated max hours for teacher {} to {}", dto.getName(), hours);
+                                }
                             }
                         } catch (NumberFormatException ex) {
                             textField.setText(String.valueOf(getItem()));
@@ -362,19 +353,23 @@ public class TeacherManagementController {
 
         // Active - EDITABLE ComboBox for quick status updates
         activeColumn.setCellValueFactory(new PropertyValueFactory<>("active"));
-        activeColumn.setCellFactory(col -> new TableCell<Teacher, Boolean>() {
+        activeColumn.setCellFactory(col -> new TableCell<TeacherTableDTO, Boolean>() {
             private final ComboBox<String> comboBox = new ComboBox<>();
 
             {
                 comboBox.getItems().addAll("✓ Active", "✗ Inactive");
                 comboBox.setOnAction(e -> {
-                    Teacher teacher = getTableRow().getItem();
-                    if (teacher != null) {
+                    TeacherTableDTO dto = getTableRow().getItem();
+                    if (dto != null) {
                         boolean isActive = comboBox.getValue().startsWith("✓");
-                        teacher.setActive(isActive);
-                        teacherRepository.save(teacher);
-                        commitEdit(isActive);
-                        log.info("Updated active status for teacher {} to {}", teacher.getName(), isActive);
+                        Teacher teacher = teacherRepository.findById(dto.getId()).orElse(null);
+                        if (teacher != null) {
+                            teacher.setActive(isActive);
+                            teacherRepository.save(teacher);
+                            dto.setActive(isActive);
+                            commitEdit(isActive);
+                            log.info("Updated active status for teacher {} to {}", dto.getName(), isActive);
+                        }
                     }
                 });
             }
@@ -418,15 +413,9 @@ public class TeacherManagementController {
         roleFilter.getItems().addAll(roles);
         roleFilter.setValue("All Roles");
 
-        // Subject filter - populated from all teachers' certifications
-        List<String> subjects = teacherRepository.findAllActive().stream()
-                .flatMap(t -> {
-                    try {
-                        return t.getCertifiedSubjects().stream();
-                    } catch (Exception e) {
-                        return java.util.stream.Stream.empty();
-                    }
-                })
+        // Subject filter - populated from teacher DTOs (collections pre-resolved)
+        List<String> subjects = teacherService.findAllTeacherTableDTOs().stream()
+                .flatMap(t -> t.getCertifiedSubjects().stream())
                 .filter(s -> s != null && !s.isEmpty())
                 .distinct()
                 .sorted()
@@ -442,12 +431,12 @@ public class TeacherManagementController {
     }
 
     private void setupWorkloadColumn() {
-        // Workload indicator column
+        // Workload indicator column - pre-resolved in DTO
         workloadColumn.setCellValueFactory(data ->
             new javafx.beans.property.SimpleStringProperty(data.getValue().getWorkloadIndicator()));
 
         // Add custom cell factory for colored background and tooltips
-        workloadColumn.setCellFactory(column -> new TableCell<Teacher, String>() {
+        workloadColumn.setCellFactory(column -> new TableCell<TeacherTableDTO, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -460,8 +449,8 @@ public class TeacherManagementController {
                     setText(item);
 
                     // Set style with proper alignment and background
-                    Teacher teacher = getTableRow().getItem();
-                    if (teacher != null) {
+                    TeacherTableDTO dto = getTableRow().getItem();
+                    if (dto != null) {
                         String style = "-fx-alignment: CENTER; -fx-font-size: 20px; -fx-padding: 5px;";
                         String bgColor = switch (item) {
                             case "🟢" -> "-fx-background-color: rgba(76, 175, 80, 0.3);";   // Green tint (light load)
@@ -472,21 +461,21 @@ public class TeacherManagementController {
                         setStyle(style + bgColor);
 
                         // Add tooltip with detailed workload information
-                        int courseCount = teacher.getCourseCount();
+                        int courseCount = dto.getCourseCount();
 
                         String tooltipText;
                         if (courseCount == 0) {
                             tooltipText = String.format("Underutilized\n✗ No courses assigned\n\nTeacher: %s\nStatus: Available for assignment",
-                                teacher.getName());
+                                dto.getName());
                         } else if (courseCount <= 3) {
                             tooltipText = String.format("Light Workload\n✓ %d course%s assigned\n\nTeacher: %s\nStatus: Can take more courses",
-                                courseCount, courseCount == 1 ? "" : "s", teacher.getName());
+                                courseCount, courseCount == 1 ? "" : "s", dto.getName());
                         } else if (courseCount <= 5) {
                             tooltipText = String.format("Normal Workload\n✓ %d courses assigned\n\nTeacher: %s\nStatus: Healthy workload",
-                                courseCount, teacher.getName());
+                                courseCount, dto.getName());
                         } else {
                             tooltipText = String.format("Overloaded\n⚠ %d courses assigned\n\nTeacher: %s\nStatus: Consider redistributing courses",
-                                courseCount, teacher.getName());
+                                courseCount, dto.getName());
                         }
 
                         Tooltip tooltip = new Tooltip(tooltipText);
@@ -502,7 +491,7 @@ public class TeacherManagementController {
     }
 
     private void setupActionsColumn() {
-        Callback<TableColumn<Teacher, Void>, TableCell<Teacher, Void>> cellFactory = param -> {
+        Callback<TableColumn<TeacherTableDTO, Void>, TableCell<TeacherTableDTO, Void>> cellFactory = param -> {
             return new TableCell<>() {
                 private final Button editBtn = new Button("Edit");
                 private final Button availabilityBtn = new Button("Availability");
@@ -513,20 +502,20 @@ public class TeacherManagementController {
                 {
                     pane.setAlignment(Pos.CENTER);
                     editBtn.setOnAction(e -> {
-                        Teacher teacher = getTableView().getItems().get(getIndex());
-                        handleEdit(teacher);
+                        TeacherTableDTO dto = getTableView().getItems().get(getIndex());
+                        handleEditById(dto.getId(), dto.getName());
                     });
                     availabilityBtn.setOnAction(e -> {
-                        Teacher teacher = getTableView().getItems().get(getIndex());
-                        handleAvailability(teacher);
+                        TeacherTableDTO dto = getTableView().getItems().get(getIndex());
+                        handleAvailabilityById(dto.getId(), dto.getName());
                     });
                     roomPrefsBtn.setOnAction(e -> {
-                        Teacher teacher = getTableView().getItems().get(getIndex());
-                        handleRoomPreferences(teacher);
+                        TeacherTableDTO dto = getTableView().getItems().get(getIndex());
+                        handleRoomPreferencesById(dto.getId(), dto.getName());
                     });
                     deleteBtn.setOnAction(e -> {
-                        Teacher teacher = getTableView().getItems().get(getIndex());
-                        handleDelete(teacher);
+                        TeacherTableDTO dto = getTableView().getItems().get(getIndex());
+                        handleDeleteById(dto.getId(), dto.getName());
                     });
                 }
 
@@ -630,7 +619,9 @@ public class TeacherManagementController {
             java.io.File file = fileChooser.showSaveDialog(teacherTable.getScene().getWindow());
 
             if (file != null) {
-                byte[] data = exportService.exportTeachersToExcel(teacherTable.getItems());
+                // Load Teacher entities for export (ExportService requires Teacher objects)
+                List<Teacher> teachersForExport = teacherService.findAllWithCollectionsForUI();
+                byte[] data = exportService.exportTeachersToExcel(teachersForExport);
                 java.nio.file.Files.write(file.toPath(), data);
 
                 showInfo("Export Successful",
@@ -745,13 +736,11 @@ public class TeacherManagementController {
     // PRIVATE HELPER METHODS
     // ========================================================================
 
-    private void handleEdit(Teacher teacher) {
-        log.info("Edit teacher clicked: {}", teacher.getName());
+    private void handleEditById(Long teacherId, String teacherName) {
+        log.info("Edit teacher clicked: {}", teacherName);
         try {
             // Load teacher with all collections using service method
-            // Service layer handles @Transactional to keep transaction management out of JavaFX controller
-            // (Adding @Transactional to controller causes Spring CGLIB proxy that breaks @FXML injection)
-            Teacher teacherWithCollections = teacherService.loadTeacherWithCollections(teacher.getId());
+            Teacher teacherWithCollections = teacherService.loadTeacherWithCollections(teacherId);
 
             log.debug("Loading TeacherDialog.fxml...");
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
@@ -789,39 +778,42 @@ public class TeacherManagementController {
 
             if (controller.isSaved()) {
                 loadTeachers();
-                log.info("Teacher updated successfully: {}", teacher.getName());
+                log.info("Teacher updated successfully: {}", teacherName);
             }
         } catch (Exception e) {
-            log.error("Error opening teacher edit dialog for teacher: {}", teacher.getName(), e);
+            log.error("Error opening teacher edit dialog for teacher: {}", teacherName, e);
             showError("Failed to Open Teacher Edit Dialog",
                      "An error occurred while trying to open the teacher edit dialog.\n\n" +
-                     "Teacher: " + teacher.getName() + "\n" +
+                     "Teacher: " + teacherName + "\n" +
                      "Error: " + e.getMessage(),
                      e);
         }
     }
 
-    private void handleDelete(Teacher teacher) {
+    private void handleDeleteById(Long teacherId, String teacherName) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Teacher");
         alert.setHeaderText("Are you sure you want to delete this teacher?");
-        alert.setContentText(teacher.getName());
+        alert.setContentText(teacherName);
 
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                teacher.setActive(false);
-                teacherRepository.save(teacher);
-                loadTeachers();
-                log.info("Teacher deleted: {}", teacher.getName());
+                Teacher teacher = teacherRepository.findById(teacherId).orElse(null);
+                if (teacher != null) {
+                    teacher.setActive(false);
+                    teacherRepository.save(teacher);
+                    loadTeachers();
+                    log.info("Teacher deleted: {}", teacherName);
+                }
             }
         });
     }
 
-    private void handleAvailability(Teacher teacher) {
-        log.info("Availability button clicked for teacher: {}", teacher.getName());
+    private void handleAvailabilityById(Long teacherId, String teacherName) {
+        log.info("Availability button clicked for teacher: {}", teacherName);
         try {
             // Load teacher with all collections
-            Teacher teacherWithCollections = teacherService.loadTeacherWithCollections(teacher.getId());
+            Teacher teacherWithCollections = teacherService.loadTeacherWithCollections(teacherId);
 
             log.debug("Loading TeacherAvailabilityDialog.fxml...");
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
@@ -857,25 +849,28 @@ public class TeacherManagementController {
 
             // Refresh table in case availability affects any display
             loadTeachers();
-            log.info("Teacher availability dialog closed for: {}", teacher.getName());
+            log.info("Teacher availability dialog closed for: {}", teacherName);
 
         } catch (Exception e) {
-            log.error("Error opening teacher availability dialog for teacher: {}", teacher.getName(), e);
+            log.error("Error opening teacher availability dialog for teacher: {}", teacherName, e);
             showError("Failed to Open Availability Dialog",
                      "An error occurred while trying to open the teacher availability dialog.\n\n" +
-                     "Teacher: " + teacher.getName() + "\n" +
+                     "Teacher: " + teacherName + "\n" +
                      "Error: " + e.getMessage(),
                      e);
         }
     }
 
-    /**
-     * Handle Room Preferences button click
-     * Phase 6B-4: Room Preferences UI Integration
-     */
-    private void handleRoomPreferences(Teacher teacher) {
-        log.info("Room Preferences button clicked for teacher: {}", teacher.getName());
+    private void handleRoomPreferencesById(Long teacherId, String teacherName) {
+        log.info("Room Preferences button clicked for teacher: {}", teacherName);
         try {
+            // Load teacher entity for room preferences dialog
+            Teacher teacher = teacherRepository.findById(teacherId).orElse(null);
+            if (teacher == null) {
+                showError("Teacher Not Found", "Could not find teacher with ID: " + teacherId);
+                return;
+            }
+
             log.debug("Loading TeacherRoomPreferencesDialog.fxml...");
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
                 getClass().getResource("/fxml/TeacherRoomPreferencesDialog.fxml")
@@ -901,7 +896,7 @@ public class TeacherManagementController {
 
             // Create dialog
             Dialog<ButtonType> dialog = new Dialog<>();
-            dialog.setTitle("Room Preferences - " + teacher.getName());
+            dialog.setTitle("Room Preferences - " + teacherName);
             dialog.setDialogPane(dialogPane);
             dialog.initModality(javafx.stage.Modality.WINDOW_MODAL);
             dialog.initOwner(teacherTable.getScene().getWindow());
@@ -921,13 +916,13 @@ public class TeacherManagementController {
                     teacher.setRoomPreferences(preferences);
                     teacherRepository.save(teacher);
 
-                    log.info("Room preferences saved for teacher: {}", teacher.getName());
+                    log.info("Room preferences saved for teacher: {}", teacherName);
 
                     // Show success alert
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Room Preferences Saved");
                     alert.setHeaderText(null);
-                    alert.setContentText("Room preferences have been successfully saved for " + teacher.getName());
+                    alert.setContentText("Room preferences have been successfully saved for " + teacherName);
                     alert.showAndWait();
 
                     // Refresh table
@@ -935,13 +930,13 @@ public class TeacherManagementController {
                 }
             });
 
-            log.info("Room preferences dialog closed for: {}", teacher.getName());
+            log.info("Room preferences dialog closed for: {}", teacherName);
 
         } catch (Exception e) {
-            log.error("Error opening room preferences dialog for teacher: {}", teacher.getName(), e);
+            log.error("Error opening room preferences dialog for teacher: {}", teacherName, e);
             showError("Failed to Open Room Preferences Dialog",
                      "An error occurred while trying to open the room preferences dialog.\n\n" +
-                     "Teacher: " + teacher.getName() + "\n" +
+                     "Teacher: " + teacherName + "\n" +
                      "Error: " + e.getMessage(),
                      e);
         }
@@ -961,11 +956,10 @@ public class TeacherManagementController {
         String status = statusFilter.getValue();
 
         try {
-            // Call service directly - @Transactional will manage session
-            // This runs on JavaFX thread but should be fast enough
-            List<Teacher> teachers = teacherService.findAllWithCollectionsForUI();
+            // Load pre-resolved DTOs - no lazy loading issues
+            List<TeacherTableDTO> teachers = teacherService.findAllTeacherTableDTOs();
 
-            List<Teacher> filtered = teachers.stream()
+            List<TeacherTableDTO> filtered = teachers.stream()
                     // Search filter - name or employee ID
                     .filter(t -> searchText.isEmpty() ||
                             t.getName().toLowerCase().contains(searchText) ||
@@ -975,19 +969,10 @@ public class TeacherManagementController {
                             department.equals(t.getDepartment()))
                     // Role filter - match by display name
                     .filter(t -> "All Roles".equals(role) ||
-                            (t.getRole() != null && t.getRole().getDisplayName().equals(role)))
-                    // Subject filter - check if teacher is certified in selected subject
-                    .filter(t -> {
-                        if ("All Subjects".equals(subject)) {
-                            return true;
-                        }
-                        try {
-                            List<String> certifiedSubjects = t.getCertifiedSubjects();
-                            return certifiedSubjects != null && certifiedSubjects.contains(subject);
-                        } catch (Exception e) {
-                            return false;
-                        }
-                    })
+                            role.equals(t.getRoleDisplay()))
+                    // Subject filter - pre-resolved in DTO
+                    .filter(t -> "All Subjects".equals(subject) ||
+                            t.getCertifiedSubjects().contains(subject))
                     // Status filter
                     .filter(t -> "All".equals(status) ||
                             ("Active".equals(status) && Boolean.TRUE.equals(t.getActive())) ||
