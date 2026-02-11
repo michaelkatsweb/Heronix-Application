@@ -30,7 +30,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -93,6 +95,8 @@ public class MainControllerV2 {
     @FXML private Circle connectionCircle;
     @FXML private Label connectionIndicator;
     @FXML private Label connectionStatus;
+    @FXML private Circle dbTypeCircle;
+    @FXML private Label dbTypeLabel;
     @FXML private Label statusLabel;
     @FXML private Label lastSyncTime;
     @FXML private Label currentUserLabel;
@@ -132,6 +136,7 @@ public class MainControllerV2 {
     // API connection status
     private ScheduledExecutorService connectionChecker;
     private Timeline blinkAnimation;
+    private Timeline dbBlinkAnimation;
     private boolean isConnected = false;
     private boolean isApiOperationInProgress = false;
 
@@ -140,6 +145,13 @@ public class MainControllerV2 {
     private static final String COLOR_RED = "#EF4444";    // Disconnected
     private static final String COLOR_BLUE = "#3B82F6";   // Communicating
     private static final String COLOR_BLUE_LIGHT = "#93C5FD";  // Blink state
+
+    // Database type indicator colors
+    private static final String COLOR_POSTGRESQL = "#8B5CF6";       // Purple for PostgreSQL
+    private static final String COLOR_POSTGRESQL_LIGHT = "#C4B5FD"; // Light purple blink
+    private static final String COLOR_H2 = "#F59E0B";              // Amber for H2
+    private static final String COLOR_H2_LIGHT = "#FCD34D";        // Light amber blink
+    private static final String COLOR_GRAY = "#6B7280";            // Unknown/default
 
     // View cache for faster navigation
     private final Map<String, Node> viewCache = new HashMap<>();
@@ -260,6 +272,19 @@ public class MainControllerV2 {
             );
             blinkAnimation.setCycleCount(Timeline.INDEFINITE);
 
+            // Create slower blink animation for database type indicator (1200ms cycle)
+            if (dbTypeCircle != null) {
+                dbBlinkAnimation = new Timeline(
+                    new KeyFrame(Duration.ZERO,
+                        new KeyValue(dbTypeCircle.fillProperty(), Color.web(COLOR_GRAY))),
+                    new KeyFrame(Duration.millis(600),
+                        new KeyValue(dbTypeCircle.fillProperty(), Color.web(COLOR_GRAY).deriveColor(0, 1, 1, 0.3))),
+                    new KeyFrame(Duration.millis(1200),
+                        new KeyValue(dbTypeCircle.fillProperty(), Color.web(COLOR_GRAY)))
+                );
+                dbBlinkAnimation.setCycleCount(Timeline.INDEFINITE);
+            }
+
             // Start periodic connection check
             connectionChecker = Executors.newSingleThreadScheduledExecutor();
             connectionChecker.scheduleAtFixedRate(this::checkApiConnection, 0, 30, TimeUnit.SECONDS);
@@ -281,7 +306,7 @@ public class MainControllerV2 {
         });
 
         try {
-            String healthUrl = serverUrl + "/actuator/health";
+            String healthUrl = serverUrl + "/api/health";
             URL url = new URL(healthUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -289,9 +314,24 @@ public class MainControllerV2 {
             connection.setReadTimeout(5000);
 
             int responseCode = connection.getResponseCode();
+
+            // Read response body to extract databaseType
+            String responseBody = "";
+            if (responseCode >= 200 && responseCode < 300) {
+                try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream()))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    responseBody = sb.toString();
+                }
+            }
             connection.disconnect();
 
             boolean connected = responseCode >= 200 && responseCode < 500;
+            String dbType = extractJsonValue(responseBody, "databaseType");
 
             Platform.runLater(() -> {
                 blinkAnimation.stop();
@@ -301,10 +341,12 @@ public class MainControllerV2 {
                     connectionCircle.setFill(Color.web(COLOR_GREEN));
                     connectionStatus.setText("Connected");
                     connectionStatus.setStyle("-fx-text-fill: " + COLOR_GREEN + ";");
+                    updateDatabaseIndicator(dbType);
                 } else {
                     connectionCircle.setFill(Color.web(COLOR_RED));
                     connectionStatus.setText("Offline");
                     connectionStatus.setStyle("-fx-text-fill: " + COLOR_RED + ";");
+                    updateDatabaseIndicator(null);
                 }
             });
 
@@ -316,6 +358,7 @@ public class MainControllerV2 {
                 connectionCircle.setFill(Color.web(COLOR_RED));
                 connectionStatus.setText("Offline");
                 connectionStatus.setStyle("-fx-text-fill: " + COLOR_RED + ";");
+                updateDatabaseIndicator(null);
             });
         }
     }
@@ -360,6 +403,9 @@ public class MainControllerV2 {
         }
         if (blinkAnimation != null) {
             blinkAnimation.stop();
+        }
+        if (dbBlinkAnimation != null) {
+            dbBlinkAnimation.stop();
         }
     }
 
@@ -860,6 +906,66 @@ public class MainControllerV2 {
                 Platform.exit();
             }
         });
+    }
+
+    // ========================================================================
+    // DATABASE INDICATOR
+    // ========================================================================
+
+    /**
+     * Update the database type indicator in the status bar
+     */
+    private void updateDatabaseIndicator(String dbType) {
+        if (dbTypeCircle == null || dbTypeLabel == null) return;
+
+        if (dbType == null || dbType.isEmpty()) {
+            dbTypeCircle.setFill(Color.web(COLOR_GRAY));
+            dbTypeLabel.setText("DB: ...");
+            dbTypeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: " + COLOR_GRAY + ";");
+            if (dbBlinkAnimation != null) dbBlinkAnimation.stop();
+            return;
+        }
+
+        boolean isPostgres = dbType.toLowerCase().contains("postgres");
+        String color = isPostgres ? COLOR_POSTGRESQL : COLOR_H2;
+        String colorLight = isPostgres ? COLOR_POSTGRESQL_LIGHT : COLOR_H2_LIGHT;
+        String label = isPostgres ? "PostgreSQL" : dbType;
+
+        dbTypeCircle.setFill(Color.web(color));
+        dbTypeLabel.setText(label);
+        dbTypeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: " + color + ";");
+
+        // Update and start the blink animation with the correct color
+        if (dbBlinkAnimation != null) {
+            dbBlinkAnimation.stop();
+            dbBlinkAnimation = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                    new KeyValue(dbTypeCircle.fillProperty(), Color.web(color))),
+                new KeyFrame(Duration.millis(600),
+                    new KeyValue(dbTypeCircle.fillProperty(), Color.web(colorLight))),
+                new KeyFrame(Duration.millis(1200),
+                    new KeyValue(dbTypeCircle.fillProperty(), Color.web(color)))
+            );
+            dbBlinkAnimation.setCycleCount(Timeline.INDEFINITE);
+            dbBlinkAnimation.play();
+        }
+    }
+
+    /**
+     * Simple JSON value extraction (avoids adding a JSON library dependency to the client)
+     */
+    private String extractJsonValue(String json, String key) {
+        if (json == null || json.isEmpty()) return null;
+        String search = "\"" + key + "\"";
+        int keyIndex = json.indexOf(search);
+        if (keyIndex < 0) return null;
+        int colonIndex = json.indexOf(':', keyIndex + search.length());
+        if (colonIndex < 0) return null;
+        int startQuote = json.indexOf('"', colonIndex + 1);
+        if (startQuote < 0) return null;
+        int endQuote = json.indexOf('"', startQuote + 1);
+        if (endQuote < 0) return null;
+        return json.substring(startQuote + 1, endQuote);
     }
 
     // ========================================================================

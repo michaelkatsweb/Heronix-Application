@@ -1294,6 +1294,12 @@
     -fx-font-size: 12px;
 }
 
+.db-indicator {
+    -fx-padding: 2 8;
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-background-radius: 10;
+}
+
 /* ============================================================================
  * CARD STYLING (Panels/Containers)
  * ============================================================================ */
