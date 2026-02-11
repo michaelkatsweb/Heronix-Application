@@ -556,9 +556,15 @@ public class MainControllerV2 {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            var resource = getClass().getResource(fxmlPath);
+            if (resource == null) {
+                log.error("FXML resource not found: {}", fxmlPath);
+                return createErrorPlaceholder(viewId, "FXML file not found: " + fxmlPath);
+            }
+            FXMLLoader loader = new FXMLLoader(resource);
             loader.setControllerFactory(springContext::getBean);
             Node view = loader.load();
+            log.info("✓ Loaded FXML for '{}': {} (node: {})", viewId, fxmlPath, view.getClass().getSimpleName());
 
             // Cache the view (except for dialogs/wizards)
             if (!viewId.equals("import")) {
@@ -567,7 +573,7 @@ public class MainControllerV2 {
 
             return view;
         } catch (Exception e) {
-            log.error("Failed to load FXML {}: {}", fxmlPath, e.getMessage());
+            log.error("Failed to load FXML {}: {}", fxmlPath, e.getMessage(), e);
             return createErrorPlaceholder(viewId, e.getMessage());
         }
     }

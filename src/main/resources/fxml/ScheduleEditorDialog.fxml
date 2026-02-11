@@ -85,8 +85,7 @@ Location: src/main/resources/fxml/ScheduleEditorDialog.fxml
                 <VBox spacing="8">
                     <Button fx:id="advancedEditButton" text="✏️ Advanced Edit"
                             onAction="#handleAdvancedEdit" maxWidth="Infinity"
-                            styleClass="primary-button"
-                            styleClass="form-label"/>
+                            styleClass="primary-button, form-label"/>
 
                     <Separator/>
 

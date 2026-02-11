@@ -107,7 +107,7 @@
                         <TextArea fx:id="differentiationUsedArea" promptText="How was instruction differentiated for this student?" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
                         <Label text="Depth/Complexity Level:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                        <TextField fx:id="depthComplexityLevelField" promptText="e.g., Kaplan's Depth & Complexity icons" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <TextField fx:id="depthComplexityLevelField" promptText="e.g., Kaplan's Depth &amp; Complexity icons" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
                         <Label text="Bloom's Level:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                         <TextField fx:id="bloomLevelField" promptText="e.g., Analyze, Evaluate, Create" GridPane.columnIndex="1" GridPane.rowIndex="2"/>

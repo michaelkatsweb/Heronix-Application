@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
@@ -284,7 +285,7 @@
 
                 <!-- Previous Services -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Previous Services & Interventions" styleClass="section-header"/>
+                    <Label text="Previous Services &amp; Interventions" styleClass="section-header"/>
 
                     <GridPane hgap="20" vgap="10">
                         <columnConstraints>

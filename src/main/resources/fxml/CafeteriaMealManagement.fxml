@@ -13,7 +13,7 @@
 
     <top>
         <VBox spacing="15" styleClass="header-gradient">
-            <Label text="Cafeteria & Meal Management" styleClass="page-title-white"/>
+            <Label text="Cafeteria &amp; Meal Management" styleClass="page-title-white"/>
             <HBox spacing="15">
                 <VBox spacing="3" HBox.hgrow="ALWAYS" styleClass="card-transparent">
                     <Label text="Meals Served Today" styleClass="text-white"/>

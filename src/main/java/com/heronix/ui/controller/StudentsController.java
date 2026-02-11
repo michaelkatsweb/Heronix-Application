@@ -1121,10 +1121,15 @@ public class StudentsController {
                 // NEW Phase 2: Save Parents/Guardians from TableView
                 TableView<ParentGuardian> parentsTable = (TableView<ParentGuardian>) parentsVBox.lookup("#parentsTable");
                 if (parentsTable != null) {
-                    // Clear existing parents and add all from table
-                    if (student.getParents() != null) {
-                        student.getParents().clear();
-                    } else {
+                    try {
+                        // Clear existing parents and add all from table
+                        if (student.getParents() != null) {
+                            student.getParents().clear();
+                        } else {
+                            student.setParents(new java.util.ArrayList<>());
+                        }
+                    } catch (Exception e) {
+                        log.warn("Could not access parents collection (lazy init), creating new list: {}", e.getMessage());
                         student.setParents(new java.util.ArrayList<>());
                     }
                     for (ParentGuardian parent : parentsTable.getItems()) {
@@ -1136,10 +1141,15 @@ public class StudentsController {
                 // NEW Phase 2: Save Emergency Contacts from TableView
                 TableView<EmergencyContact> contactsTable = (TableView<EmergencyContact>) emergencyContactsVBox.lookup("#emergencyContactsTable");
                 if (contactsTable != null) {
-                    // Clear existing contacts and add all from table
-                    if (student.getEmergencyContacts() != null) {
-                        student.getEmergencyContacts().clear();
-                    } else {
+                    try {
+                        // Clear existing contacts and add all from table
+                        if (student.getEmergencyContacts() != null) {
+                            student.getEmergencyContacts().clear();
+                        } else {
+                            student.setEmergencyContacts(new java.util.ArrayList<>());
+                        }
+                    } catch (Exception e) {
+                        log.warn("Could not access emergency contacts collection (lazy init), creating new list: {}", e.getMessage());
                         student.setEmergencyContacts(new java.util.ArrayList<>());
                     }
                     for (EmergencyContact contact : contactsTable.getItems()) {
@@ -1531,8 +1541,14 @@ public class StudentsController {
         parentsTable.getColumns().addAll(nameCol, relationshipCol, phoneCol, emailCol, custodyCol);
 
         // Load existing parents if editing
-        if (student != null && student.getParents() != null) {
-            parentsTable.getItems().addAll(student.getParents());
+        if (student != null) {
+            try {
+                if (student.getParents() != null) {
+                    parentsTable.getItems().addAll(student.getParents());
+                }
+            } catch (Exception e) {
+                log.warn("Could not load parents (lazy init): {}", e.getMessage());
+            }
         }
 
         // Buttons
@@ -1659,14 +1675,20 @@ public class StudentsController {
         contactsTable.getColumns().addAll(priorityCol, nameCol, relationshipCol, phoneCol, secondaryPhoneCol, pickupCol);
 
         // Load existing contacts if editing
-        if (student != null && student.getEmergencyContacts() != null) {
-            contactsTable.getItems().addAll(student.getEmergencyContacts());
-            // Sort by priority
-            contactsTable.getItems().sort((c1, c2) -> {
-                int p1 = c1.getPriorityOrder() != null ? c1.getPriorityOrder() : 99;
-                int p2 = c2.getPriorityOrder() != null ? c2.getPriorityOrder() : 99;
-                return Integer.compare(p1, p2);
-            });
+        if (student != null) {
+            try {
+                if (student.getEmergencyContacts() != null) {
+                    contactsTable.getItems().addAll(student.getEmergencyContacts());
+                    // Sort by priority
+                    contactsTable.getItems().sort((c1, c2) -> {
+                        int p1 = c1.getPriorityOrder() != null ? c1.getPriorityOrder() : 99;
+                        int p2 = c2.getPriorityOrder() != null ? c2.getPriorityOrder() : 99;
+                        return Integer.compare(p1, p2);
+                    });
+                }
+            } catch (Exception e) {
+                log.warn("Could not load emergency contacts (lazy init): {}", e.getMessage());
+            }
         }
 
         // Buttons

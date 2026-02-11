@@ -174,7 +174,7 @@
 
             <!-- Right: Template & Settings -->
             <VBox spacing="15" styleClass="form-panel">
-                <Label text="Template & Settings" styleClass="section-title"/>
+                <Label text="Template &amp; Settings" styleClass="section-title"/>
 
                 <!-- Template Selection -->
                 <VBox spacing="10" styleClass="card">
@@ -275,7 +275,7 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <Button text="Help & Templates" onAction="#handleShowHelp"
+            <Button text="Help &amp; Templates" onAction="#handleShowHelp"
                     style="-fx-padding: 6 12; -fx-cursor: hand;"/>
         </HBox>
     </bottom>

@@ -342,7 +342,7 @@
                     styleClass="button-footer"/>
             <Button text="📥 Download Reports" onAction="#handleDownloadReports"
                     styleClass="button-footer"/>
-            <Button text="❓ Help & Support" onAction="#handleHelp"
+            <Button text="❓ Help &amp; Support" onAction="#handleHelp"
                     styleClass="button-footer"/>
         </HBox>
     </bottom>

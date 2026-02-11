@@ -51,17 +51,14 @@ Features:
                     <VBox spacing="5" HBox.hgrow="ALWAYS">
                         <Label text="Selected File:" styleClass="label"/>
                         <Label fx:id="fileNameLabel" text="No file selected"
-                               styleClass="label"
-                               styleClass="text-muted"/>
+                               styleClass="label, text-muted"/>
                     </VBox>
 
                     <VBox spacing="5" alignment="CENTER_RIGHT">
                         <Label fx:id="detectedPlatformLabel" text="Platform: Unknown"
-                               styleClass="label"
-                               styleClass="form-label"/>
+                               styleClass="label, form-label"/>
                         <Label fx:id="recordCountLabel" text="Records: 0"
-                               styleClass="label"
-                               styleClass="text-info"/>
+                               styleClass="label, text-info"/>
                     </VBox>
                 </HBox>
 
@@ -71,8 +68,7 @@ Features:
                               text="Automatically detect field mapping"
                               selected="true"/>
                     <Label text="(Recommended for Skyward, PowerSchool, Infinite Campus)"
-                           styleClass="label"
-                           styleClass="text-muted"/>
+                           styleClass="label, text-muted"/>
                 </HBox>
             </VBox>
 
@@ -100,8 +96,7 @@ Features:
 
                 <Label text="🔧 Field Mapping Configuration" styleClass="label"/>
                 <Label text="Map your CSV columns to Heronix Scheduler fields:"
-                       styleClass="label"
-                       styleClass="text-muted"/>
+                       styleClass="label, text-muted"/>
 
                 <GridPane hgap="15" vgap="10">
                     <Label text="CSV Column →" GridPane.columnIndex="0" GridPane.rowIndex="0"
@@ -139,14 +134,12 @@ Features:
             </VBox>
 
             <!-- Info Box -->
-            <VBox spacing="5" styleClass="card"
-                  styleClass="card">
+            <VBox spacing="5" styleClass="card">
                 <padding>
                     <Insets top="10" right="10" bottom="10" left="10"/>
                 </padding>
 
-                <Label text="ℹ️ Supported Formats:" styleClass="label"
-                       styleClass="form-label"/>
+                <Label text="ℹ️ Supported Formats:" styleClass="label, form-label"/>
 
                 <HBox spacing="30">
                     <VBox spacing="3">

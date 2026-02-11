@@ -25,7 +25,7 @@ Location: src/main/resources/fxml/AttendanceReporting.fxml
 
     <!-- Header Section -->
     <HBox alignment="CENTER_LEFT" spacing="15" styleClass="card">
-        <Label text="📊 Attendance Reports & Analytics" styleClass="label-title"/>
+        <Label text="📊 Attendance Reports &amp; Analytics" styleClass="label-title"/>
         <Region HBox.hgrow="ALWAYS"/>
     </HBox>
 

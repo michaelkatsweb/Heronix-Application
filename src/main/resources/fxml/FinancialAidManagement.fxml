@@ -111,7 +111,7 @@
             </Tab>
 
             <!-- Reports & Analytics Tab -->
-            <Tab text="Reports & Analytics">
+            <Tab text="Reports &amp; Analytics">
                 <SplitPane dividerPositions="0.5" orientation="VERTICAL" style="-fx-padding: 10;">
                     <VBox spacing="10">
                         <Label text="Aid Distribution by Type" styleClass="section-title"/>

@@ -291,11 +291,11 @@
                                     GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="Infinity"
                                     styleClass="button-primary"/>
 
-                            <Button text="🎯 Clubs & Activities" onAction="#handleClubsActivities"
+                            <Button text="🎯 Clubs &amp; Activities" onAction="#handleClubsActivities"
                                     GridPane.columnIndex="2" GridPane.rowIndex="1" maxWidth="Infinity"
                                     styleClass="header-purple"/>
 
-                            <Button text="💳 Fees & Payments" onAction="#handleFeesPayments"
+                            <Button text="💳 Fees &amp; Payments" onAction="#handleFeesPayments"
                                     GridPane.columnIndex="3" GridPane.rowIndex="1" maxWidth="Infinity"
                                     styleClass="button-primary"/>
                         </GridPane>

@@ -16,7 +16,7 @@
 
     <!-- Header -->
     <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-section">
-        <Label text="Student Relationships & Family Groups" styleClass="form-title">
+        <Label text="Student Relationships &amp; Family Groups" styleClass="form-title">
             <font>
                 <Font name="System Bold" size="24"/>
             </font>

@@ -31,7 +31,7 @@ Reorganized menu structure based on 32 service categories
 
         <!-- ========== ENROLLMENT MENU ========== -->
         <Menu text="Enrollment">
-            <MenuItem text="Student Enrollment & Registration" onAction="#handleStudentEnrollment"/>
+            <MenuItem text="Student Enrollment &amp; Registration" onAction="#handleStudentEnrollment"/>
             <MenuItem text="Transfer Students" onAction="#handleTransferStudents"/>
             <MenuItem text="Enrollment Verification" onAction="#handleEnrollmentVerification"/>
             <SeparatorMenuItem/>
@@ -50,7 +50,7 @@ Reorganized menu structure based on 32 service categories
             <MenuItem text="Medical Information" onAction="#handleMedicalInfo"/>
             <MenuItem text="Student Accommodations" onAction="#handleAccommodations"/>
             <SeparatorMenuItem/>
-            <MenuItem text="Student Groups & Categories" onAction="#handleStudentGroups"/>
+            <MenuItem text="Student Groups &amp; Categories" onAction="#handleStudentGroups"/>
             <MenuItem text="Student Search" onAction="#handleStudentSearch"/>
         </Menu>
 
@@ -69,16 +69,16 @@ Reorganized menu structure based on 32 service categories
                 <MenuItem text="View Student Schedules" onAction="#handleStudentScheduleViewer"/>
             </Menu>
             <SeparatorMenuItem/>
-            <Menu text="Grading & Assessment">
+            <Menu text="Grading &amp; Assessment">
                 <MenuItem text="Grade Entry" onAction="#handleGradeEntry"/>
                 <MenuItem text="Gradebook" onAction="#handleGradebook"/>
                 <MenuItem text="Assignment Management" onAction="#handleAssignments"/>
                 <MenuItem text="Rubrics" onAction="#handleRubrics"/>
             </Menu>
-            <Menu text="Report Cards & Progress">
+            <Menu text="Report Cards &amp; Progress">
                 <MenuItem text="Report Cards" onAction="#handleReportCards"/>
                 <MenuItem text="Progress Reports" onAction="#handleProgressReports"/>
-                <MenuItem text="GPA & Class Rank" onAction="#handleGPAClassRank"/>
+                <MenuItem text="GPA &amp; Class Rank" onAction="#handleGPAClassRank"/>
             </Menu>
             <SeparatorMenuItem/>
             <MenuItem text="Transcript Management" onAction="#handleTranscripts"/>
@@ -91,7 +91,7 @@ Reorganized menu structure based on 32 service categories
             <MenuItem text="Daily Attendance" onAction="#handleDailyAttendance"/>
             <MenuItem text="Period Attendance" onAction="#handlePeriodAttendance"/>
             <SeparatorMenuItem/>
-            <MenuItem text="Attendance Tracking & Monitoring" onAction="#handleAttendanceTracking"/>
+            <MenuItem text="Attendance Tracking &amp; Monitoring" onAction="#handleAttendanceTracking"/>
             <MenuItem text="Chronic Absenteeism" onAction="#handleChronicAbsenteeism"/>
             <SeparatorMenuItem/>
             <MenuItem text="Attendance Reports" onAction="#handleAttendanceReporting"/>
@@ -109,7 +109,7 @@ Reorganized menu structure based on 32 service categories
             <MenuItem text="Disciplinary Referrals" onAction="#handleReferrals"/>
             <MenuItem text="Consequence Management" onAction="#handleConsequences"/>
             <SeparatorMenuItem/>
-            <MenuItem text="Suspension & Expulsion" onAction="#handleSuspensionExpulsion"/>
+            <MenuItem text="Suspension &amp; Expulsion" onAction="#handleSuspensionExpulsion"/>
             <MenuItem text="In-School Suspension (ISS)" onAction="#handleISS"/>
             <SeparatorMenuItem/>
             <MenuItem text="Behavior Tracking" onAction="#handleBehaviorTracking"/>
@@ -125,30 +125,30 @@ Reorganized menu structure based on 32 service categories
                 <MenuItem text="504 Plan Management" onAction="#handle504Plans"/>
                 <MenuItem text="RTI (Response to Intervention)" onAction="#handleRTI"/>
                 <MenuItem text="Special Ed Services" onAction="#handleSpecialEdServices"/>
-                <MenuItem text="SPED Compliance & Reporting" onAction="#handleSPEDCompliance"/>
+                <MenuItem text="SPED Compliance &amp; Reporting" onAction="#handleSPEDCompliance"/>
                 <MenuItem text="SPED Scheduling" onAction="#handleSPEDScheduling"/>
             </Menu>
             <MenuItem text="ELL/ESL Services" onAction="#handleELLServices"/>
-            <MenuItem text="Gifted & Talented" onAction="#handleGiftedTalented"/>
+            <MenuItem text="Gifted &amp; Talented" onAction="#handleGiftedTalented"/>
             <SeparatorMenuItem/>
             <MenuItem text="Title I Programs" onAction="#handleTitleI"/>
             <MenuItem text="McKinney-Vento (Homeless)" onAction="#handleMcKinneyVento"/>
         </Menu>
 
         <!-- ========== HEALTH & COUNSELING MENU ========== -->
-        <Menu text="Health & Counseling">
+        <Menu text="Health &amp; Counseling">
             <Menu text="Health Services">
                 <MenuItem text="Health Office Management" onAction="#handleHealthOffice"/>
                 <MenuItem text="Immunization Management" onAction="#handleImmunizations"/>
                 <MenuItem text="Medication Management" onAction="#handleMedications"/>
                 <MenuItem text="Health Screenings" onAction="#handleHealthScreenings"/>
-                <MenuItem text="Health Plans & Protocols" onAction="#handleHealthPlans"/>
+                <MenuItem text="Health Plans &amp; Protocols" onAction="#handleHealthPlans"/>
                 <MenuItem text="Health Reports" onAction="#handleHealthReports"/>
             </Menu>
             <Menu text="Counseling Services">
                 <MenuItem text="Student Counseling" onAction="#handleStudentCounseling"/>
                 <MenuItem text="Academic Counseling" onAction="#handleAcademicCounseling"/>
-                <MenuItem text="College & Career Planning" onAction="#handleCollegePlanning"/>
+                <MenuItem text="College &amp; Career Planning" onAction="#handleCollegePlanning"/>
                 <MenuItem text="Social Services" onAction="#handleSocialServices"/>
                 <MenuItem text="Crisis Intervention" onAction="#handleCrisisIntervention"/>
             </Menu>
@@ -156,11 +156,11 @@ Reorganized menu structure based on 32 service categories
 
         <!-- ========== STAFF MENU ========== -->
         <Menu text="Staff">
-            <MenuItem text="Teacher & Staff Records" onAction="#showTeachersTab"/>
+            <MenuItem text="Teacher &amp; Staff Records" onAction="#showTeachersTab"/>
             <MenuItem text="Co-Teacher Staff" onAction="#showCoTeacherStaffTab"/>
             <MenuItem text="Paraprofessional Staff" onAction="#showParaprofessionalStaffTab"/>
             <SeparatorMenuItem/>
-            <MenuItem text="Certifications & Licensing" onAction="#handleCertifications"/>
+            <MenuItem text="Certifications &amp; Licensing" onAction="#handleCertifications"/>
             <MenuItem text="Professional Development" onAction="#handleProfessionalDevelopment"/>
             <SeparatorMenuItem/>
             <MenuItem text="Teacher Schedules" onAction="#handleTeacherSchedules"/>
@@ -191,7 +191,7 @@ Reorganized menu structure based on 32 service categories
                 <MenuItem text="Route Planning" onAction="#handleRoutePlanning"/>
                 <MenuItem text="Transportation Reports" onAction="#handleTransportationReports"/>
             </Menu>
-            <Menu text="Facilities & Rooms">
+            <Menu text="Facilities &amp; Rooms">
                 <MenuItem text="Room Inventory" onAction="#showRoomsTab"/>
                 <MenuItem text="Room Scheduling" onAction="#handleRoomScheduling"/>
                 <MenuItem text="Room Utilization" onAction="#handleRoomUtilization"/>
@@ -202,7 +202,7 @@ Reorganized menu structure based on 32 service categories
 
         <!-- ========== ACTIVITIES MENU ========== -->
         <Menu text="Activities">
-            <Menu text="Athletics & Sports">
+            <Menu text="Athletics &amp; Sports">
                 <MenuItem text="Athletic Eligibility" onAction="#handleAthleticEligibility"/>
                 <MenuItem text="Sports Management" onAction="#handleSportsManagement"/>
                 <MenuItem text="Team Rosters" onAction="#handleTeamRosters"/>
@@ -210,14 +210,14 @@ Reorganized menu structure based on 32 service categories
                 <MenuItem text="Athletic Equipment" onAction="#handleAthleticEquipment"/>
                 <MenuItem text="Injury Tracking" onAction="#handleInjuryTracking"/>
             </Menu>
-            <Menu text="Clubs & Activities">
+            <Menu text="Clubs &amp; Activities">
                 <MenuItem text="Club Management" onAction="#handleClubManagement"/>
                 <MenuItem text="Club Rosters" onAction="#handleClubRosters"/>
                 <MenuItem text="Activity Participation" onAction="#handleActivityParticipation"/>
                 <MenuItem text="Field Trip Planning" onAction="#handleFieldTrips"/>
             </Menu>
             <SeparatorMenuItem/>
-            <MenuItem text="Events & Calendar" onAction="#handleEventsCalendar"/>
+            <MenuItem text="Events &amp; Calendar" onAction="#handleEventsCalendar"/>
             <MenuItem text="School Calendar" onAction="#handleSchoolCalendar"/>
             <MenuItem text="Special Event Blocks" onAction="#handleSpecialEventBlocks"/>
         </Menu>
@@ -254,7 +254,7 @@ Reorganized menu structure based on 32 service categories
             <MenuItem text="Analytics Dashboards" onAction="#handleAnalyticsDashboards"/>
             <MenuItem text="Custom Report Builder" onAction="#handleCustomReports"/>
             <SeparatorMenuItem/>
-            <Menu text="State & Federal Reporting">
+            <Menu text="State &amp; Federal Reporting">
                 <MenuItem text="State Reporting" onAction="#handleStateReporting"/>
                 <MenuItem text="Federal Reporting" onAction="#handleFederalReporting"/>
                 <MenuItem text="CRDC (Civil Rights Data)" onAction="#handleCRDC"/>

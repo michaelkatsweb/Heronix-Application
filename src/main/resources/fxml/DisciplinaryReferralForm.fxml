@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
@@ -202,7 +203,7 @@
 
                 <!-- Witnesses & Others Involved -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Witnesses & Others Involved" styleClass="section-header"/>
+                    <Label text="Witnesses &amp; Others Involved" styleClass="section-header"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>

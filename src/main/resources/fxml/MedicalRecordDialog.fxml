@@ -270,8 +270,7 @@ Purpose: Allow nurses and authorized staff to manage student medical records
                             <VBox spacing="8" styleClass="alert-section">
                                 <HBox alignment="CENTER_LEFT" spacing="10">
                                     <Label text="⚠️ MEDICAL ALERT (Critical):"
-                                           styleClass="label-bold"
-                                           styleClass="text-muted"/>
+                                           styleClass="label-bold, text-muted"/>
                                     <Label text="This will be prominently displayed to all staff"
                                            styleClass="label-hint"/>
                                 </HBox>

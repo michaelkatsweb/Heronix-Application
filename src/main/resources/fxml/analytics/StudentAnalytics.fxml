@@ -21,7 +21,7 @@
 
             <!-- Navigation and Title Row -->
             <HBox alignment="CENTER_LEFT" spacing="15">
-                <Button fx:id="backBtn" text="< Back to Hub" styleClass="button-secondary"
+                <Button fx:id="backBtn" text="&lt; Back to Hub" styleClass="button-secondary"
                         onAction="#handleBackToHub"/>
 
                 <VBox spacing="2" HBox.hgrow="ALWAYS">

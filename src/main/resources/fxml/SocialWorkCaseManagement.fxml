@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
@@ -140,7 +141,7 @@
 
                 <!-- Case Description -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Case Description & Background" styleClass="section-header"/>
+                    <Label text="Case Description &amp; Background" styleClass="section-header"/>
 
                     <VBox spacing="5">
                         <Label text="Presenting Issues *" styleClass="field-label"/>
@@ -150,14 +151,14 @@
                     </VBox>
 
                     <VBox spacing="5">
-                        <Label text="Family Background & Context" styleClass="field-label"/>
+                        <Label text="Family Background &amp; Context" styleClass="field-label"/>
                         <TextArea fx:id="familyBackgroundTextArea"
                                   promptText="Family structure, living situation, relevant history, cultural considerations..."
                                   wrapText="true" prefRowCount="4"/>
                     </VBox>
 
                     <VBox spacing="5">
-                        <Label text="Student Strengths & Protective Factors" styleClass="field-label"/>
+                        <Label text="Student Strengths &amp; Protective Factors" styleClass="field-label"/>
                         <TextArea fx:id="strengthsTextArea"
                                   promptText="Student and family strengths, support systems, resources, positive relationships..."
                                   wrapText="true" prefRowCount="3"/>
@@ -166,7 +167,7 @@
 
                 <!-- Family & Household Information -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Family & Household Information" styleClass="section-header"/>
+                    <Label text="Family &amp; Household Information" styleClass="section-header"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -273,7 +274,7 @@
 
                 <!-- Services & Interventions -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Services & Interventions Provided" styleClass="section-header"/>
+                    <Label text="Services &amp; Interventions Provided" styleClass="section-header"/>
 
                     <VBox spacing="5">
                         <Label text="Services Provided" styleClass="field-label"/>
@@ -306,7 +307,7 @@
 
                 <!-- Goals & Action Plan -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Goals & Action Plan" styleClass="section-header"/>
+                    <Label text="Goals &amp; Action Plan" styleClass="section-header"/>
 
                     <VBox spacing="5">
                         <Label text="Case Goals *" styleClass="field-label"/>
@@ -316,7 +317,7 @@
                     </VBox>
 
                     <VBox spacing="5">
-                        <Label text="Action Plan & Next Steps" styleClass="field-label"/>
+                        <Label text="Action Plan &amp; Next Steps" styleClass="field-label"/>
                         <TextArea fx:id="actionPlanTextArea"
                                   promptText="Detailed action steps, responsibilities, timelines for achieving goals..."
                                   wrapText="true" prefRowCount="4"/>
@@ -342,7 +343,7 @@
 
                 <!-- Progress & Outcomes -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Progress & Outcomes" styleClass="section-header"/>
+                    <Label text="Progress &amp; Outcomes" styleClass="section-header"/>
 
                     <VBox spacing="5">
                         <Label text="Progress Notes" styleClass="field-label"/>

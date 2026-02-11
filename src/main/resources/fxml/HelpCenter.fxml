@@ -203,7 +203,7 @@
                         </padding>
 
                         <HBox alignment="CENTER_LEFT" spacing="8">
-                            <Button fx:id="backButton" text="< Back" onAction="#handleBack" styleClass="help-back-button"/>
+                            <Button fx:id="backButton" text="&lt; Back" onAction="#handleBack" styleClass="help-back-button"/>
                         </HBox>
 
                         <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">

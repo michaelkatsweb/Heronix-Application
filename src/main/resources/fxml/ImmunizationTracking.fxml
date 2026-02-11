@@ -166,9 +166,8 @@
                     </VBox>
 
                     <!-- Verification -->
-                    <VBox spacing="15" styleClass="form-section"
-                          styleClass="card, metric-success">
-                        <Label text="Verification & Documentation" styleClass="section-header"/>
+                    <VBox spacing="15" styleClass="form-section, card, metric-success">
+                        <Label text="Verification &amp; Documentation" styleClass="section-header"/>
 
                         <GridPane hgap="15" vgap="15">
                             <columnConstraints>
@@ -231,8 +230,7 @@
                     </VBox>
 
                     <!-- Exemptions -->
-                    <VBox spacing="15" styleClass="form-section"
-                          styleClass="card">
+                    <VBox spacing="15" styleClass="form-section, card">
                         <Label text="Exemptions (if applicable)" styleClass="section-header"/>
 
                         <GridPane hgap="20" vgap="10">
@@ -268,7 +266,7 @@
 
                     <!-- Next Dose & Follow-Up -->
                     <VBox spacing="15" styleClass="form-section">
-                        <Label text="Next Dose & Follow-Up" styleClass="section-header"/>
+                        <Label text="Next Dose &amp; Follow-Up" styleClass="section-header"/>
 
                         <GridPane hgap="15" vgap="15">
                             <columnConstraints>
@@ -298,8 +296,7 @@
                         <VBox spacing="15" fx:id="adverseReactionBox" visible="false" managed="false"
                               styleClass="card, metric-danger">
                             <VBox spacing="5">
-                                <Label text="Reaction Severity" styleClass="field-label"
-                                       styleClass="text-muted"/>
+                                <Label text="Reaction Severity" styleClass="field-label, text-muted"/>
                                 <ComboBox fx:id="reactionSeverityComboBox" promptText="Select Severity"
                                           maxWidth="Infinity">
                                     <items>
@@ -315,8 +312,7 @@
                             </VBox>
 
                             <VBox spacing="5">
-                                <Label text="Reaction Description *" styleClass="field-label"
-                                       styleClass="text-muted"/>
+                                <Label text="Reaction Description *" styleClass="field-label, text-muted"/>
                                 <TextArea fx:id="adverseReactionDescriptionTextArea"
                                           promptText="Describe reaction symptoms, onset, duration..."
                                           wrapText="true" prefRowCount="3"
@@ -347,8 +343,7 @@
                            style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
 
                     <!-- Compliance Status -->
-                    <VBox spacing="10" styleClass="sidebar-section"
-                          styleClass="card, metric-info">
+                    <VBox spacing="10" styleClass="sidebar-section, card, metric-info">
                         <Label text="Compliance Status" styleClass="form-label"/>
                         <Label fx:id="complianceStatusLabel" text="--"
                                style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
@@ -365,8 +360,7 @@
                     </VBox>
 
                     <!-- Incomplete Series -->
-                    <VBox spacing="10" styleClass="sidebar-section"
-                          styleClass="card, metric-warning">
+                    <VBox spacing="10" styleClass="sidebar-section, card, metric-warning">
                         <Label text="⚠ Incomplete Series"
                                styleClass="form-label"/>
                         <ListView fx:id="incompleteSeriesListView" prefHeight="120">
@@ -377,8 +371,7 @@
                     </VBox>
 
                     <!-- Overdue Doses -->
-                    <VBox spacing="10" styleClass="sidebar-section"
-                          styleClass="card, metric-danger">
+                    <VBox spacing="10" styleClass="sidebar-section, card, metric-danger">
                         <Label text="⚠ Overdue Doses"
                                styleClass="form-label"/>
                         <ListView fx:id="overdueListView" prefHeight="100">

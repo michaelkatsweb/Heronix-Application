@@ -403,7 +403,7 @@
 
                         <VBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="1"
                               styleClass="card, metric-danger">
-                            <Label text="📋 Safety & Incidents" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="📋 Safety &amp; Incidents" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
                             <Label text="Safety inspections, incidents, and compliance records" wrapText="true"
                                    style="-fx-font-size: 11px;"/>
                             <Button text="Generate Report" onAction="#handleSafetyReport"

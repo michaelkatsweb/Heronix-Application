@@ -168,8 +168,16 @@ public class SubstituteManagementUIController {
                         cellData.getValue().getDurationType() != null ?
                                 cellData.getValue().getDurationType().getDisplayName() : ""));
 
-        assignmentReplacedStaffColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getReplacedPersonName()));
+        assignmentReplacedStaffColumn.setCellValueFactory(cellData -> {
+            try {
+                return new javafx.beans.property.SimpleStringProperty(cellData.getValue().getReplacedPersonName());
+            } catch (Exception e) {
+                logger.warn("Could not get replaced staff name for assignment", e);
+                return new javafx.beans.property.SimpleStringProperty(
+                        cellData.getValue().getReplacedStaffName() != null ?
+                                cellData.getValue().getReplacedStaffName() : "N/A");
+            }
+        });
 
         assignmentReasonColumn.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleStringProperty(
@@ -177,8 +185,13 @@ public class SubstituteManagementUIController {
                                 cellData.getValue().getAbsenceReason().getDisplayName() : ""));
 
         assignmentRoomColumn.setCellValueFactory(cellData -> {
-            if (cellData.getValue().getRoom() != null) {
-                return new javafx.beans.property.SimpleStringProperty(cellData.getValue().getRoom().getRoomNumber());
+            try {
+                if (cellData.getValue().getRoom() != null) {
+                    return new javafx.beans.property.SimpleStringProperty(cellData.getValue().getRoom().getRoomNumber());
+                }
+            } catch (Exception e) {
+                logger.warn("Could not get room for assignment", e);
+                return new javafx.beans.property.SimpleStringProperty("N/A");
             }
             return new javafx.beans.property.SimpleStringProperty("");
         });

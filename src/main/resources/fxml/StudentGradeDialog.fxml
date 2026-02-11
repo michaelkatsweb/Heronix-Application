@@ -124,7 +124,7 @@
     <!-- Info Box -->
     <HBox spacing="10" styleClass="card metric-info">
         <Label text="ℹ️" style="-fx-font-size: 16;"/>
-        <VBox VBox.hgrow="ALWAYS">
+        <VBox HBox.hgrow="ALWAYS">
             <Label text="GPA will be automatically recalculated when you save this grade."
                    styleClass="text-muted" wrapText="true"/>
             <Label text="Fields marked with * are required."

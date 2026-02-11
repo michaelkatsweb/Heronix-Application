@@ -38,7 +38,7 @@
 
                 <!-- Student & Medication Selection -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Student & Medication" styleClass="section-header"/>
+                    <Label text="Student &amp; Medication" styleClass="section-header"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -224,8 +224,7 @@
                     </HBox>
 
                     <VBox spacing="5" fx:id="refusalReasonBox" visible="false" managed="false">
-                        <Label text="Refusal Reason *" styleClass="field-label"
-                               styleClass="text-muted"/>
+                        <Label text="Refusal Reason *" styleClass="field-label, text-muted"/>
                         <TextArea fx:id="refusalReasonTextArea"
                                   promptText="Document why student refused medication..."
                                   wrapText="true" prefRowCount="2"/>
@@ -234,7 +233,7 @@
 
                 <!-- Student Response -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Student Response & Monitoring" styleClass="section-header"/>
+                    <Label text="Student Response &amp; Monitoring" styleClass="section-header"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -355,7 +354,7 @@
 
                 <!-- Notes & Documentation -->
                 <VBox spacing="15" styleClass="form-section">
-                    <Label text="Notes & Documentation" styleClass="section-header"/>
+                    <Label text="Notes &amp; Documentation" styleClass="section-header"/>
 
                     <VBox spacing="5">
                         <Label text="Administration Notes" styleClass="field-label"/>

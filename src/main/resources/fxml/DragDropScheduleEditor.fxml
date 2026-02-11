@@ -42,8 +42,7 @@ Location: src/main/resources/fxml/DragDropScheduleEditor.fxml
             </HBox>
 
             <!-- Status Bar -->
-            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="status-bar"
-                  styleClass="card">
+            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="status-bar, card">
                 <Label fx:id="editModeStatusLabel" text="📌 View Mode" styleClass="status-label"/>
                 <Separator orientation="VERTICAL"/>
                 <Label fx:id="changesStatusLabel" text="No unsaved changes" styleClass="status-label"/>
@@ -181,8 +180,7 @@ Location: src/main/resources/fxml/DragDropScheduleEditor.fxml
 
     <!-- BOTTOM: Legend & Help -->
     <bottom>
-        <HBox spacing="20" alignment="CENTER_LEFT" styleClass="footer-section"
-              styleClass="card">
+        <HBox spacing="20" alignment="CENTER_LEFT" styleClass="footer-section, card">
             <Label text="Legend:" styleClass="legend-label"/>
 
             <HBox spacing="5" alignment="CENTER_LEFT">

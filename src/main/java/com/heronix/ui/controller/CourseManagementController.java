@@ -143,9 +143,13 @@ public class CourseManagementController {
         });
 
         teacherColumn.setCellValueFactory(cellData -> {
-            Teacher teacher = cellData.getValue().getTeacher();
-            return new javafx.beans.property.SimpleStringProperty(
-                    teacher != null ? teacher.getName() : "Unassigned");
+            try {
+                Teacher teacher = cellData.getValue().getTeacher();
+                return new javafx.beans.property.SimpleStringProperty(
+                        teacher != null ? teacher.getName() : "Unassigned");
+            } catch (Exception e) {
+                return new javafx.beans.property.SimpleStringProperty("Unassigned");
+            }
         });
 
         maxStudentsColumn.setCellValueFactory(new PropertyValueFactory<>("maxStudents"));
@@ -153,9 +157,13 @@ public class CourseManagementController {
         activeColumn.setCellValueFactory(new PropertyValueFactory<>("active"));
 
         roomColumn.setCellValueFactory(cellData -> {
-            Room room = cellData.getValue().getRoom();
-            return new javafx.beans.property.SimpleStringProperty(
-                    room != null ? room.getRoomNumber() : "Unassigned");
+            try {
+                Room room = cellData.getValue().getRoom();
+                return new javafx.beans.property.SimpleStringProperty(
+                        room != null ? room.getRoomNumber() : "Unassigned");
+            } catch (Exception e) {
+                return new javafx.beans.property.SimpleStringProperty("Unassigned");
+            }
         });
 
         durationColumn.setCellValueFactory(new PropertyValueFactory<>("duration"));

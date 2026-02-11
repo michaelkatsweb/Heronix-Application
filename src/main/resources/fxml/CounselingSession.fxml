@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
@@ -160,7 +161,7 @@
                     </VBox>
 
                     <VBox spacing="5">
-                        <Label text="Interventions & Techniques Used" styleClass="field-label"/>
+                        <Label text="Interventions &amp; Techniques Used" styleClass="field-label"/>
                         <TextArea fx:id="interventionsTextArea"
                                   promptText="CBT, mindfulness, solution-focused, motivational interviewing, behavioral strategies, etc."
                                   wrapText="true" prefRowCount="3"/>
@@ -168,7 +169,7 @@
                 </VBox>
 
                 <!-- Student Progress & Observations -->\n                <VBox spacing="15" styleClass="form-section">
-                    <Label text="Student Progress & Observations" styleClass="section-header"/>
+                    <Label text="Student Progress &amp; Observations" styleClass="section-header"/>
 
                     <GridPane hgap="15" vgap="15">
                         <columnConstraints>
@@ -258,8 +259,7 @@
                     </GridPane>
 
                     <VBox spacing="5" fx:id="riskDetailsBox" visible="false" managed="false">
-                        <Label text="Risk Details & Actions Taken *" styleClass="field-label"
-                               styleClass="text-muted"/>
+                        <Label text="Risk Details &amp; Actions Taken *" styleClass="field-label, text-muted"/>
                         <TextArea fx:id="riskDetailsTextArea"
                                   promptText="REQUIRED: Document specific risk factors, level of risk, immediate safety interventions, notifications made, follow-up plan..."
                                   wrapText="true" prefRowCount="4"
@@ -268,7 +268,7 @@
                 </VBox>
 
                 <!-- Goals & Action Steps -->\n                <VBox spacing="15" styleClass="form-section">
-                    <Label text="Goals & Next Steps" styleClass="section-header"/>
+                    <Label text="Goals &amp; Next Steps" styleClass="section-header"/>
 
                     <VBox spacing="5">
                         <Label text="Goals Addressed This Session" styleClass="field-label"/>
@@ -303,7 +303,7 @@
                 </VBox>
 
                 <!-- Referrals & Collaboration -->\n                <VBox spacing="15" styleClass="form-section">
-                    <Label text="Referrals & Collaboration" styleClass="section-header"/>
+                    <Label text="Referrals &amp; Collaboration" styleClass="section-header"/>
 
                     <GridPane hgap="20" vgap="10">
                         <columnConstraints>

@@ -436,10 +436,14 @@ public class Plan504Controller {
         // Student Information
         details.append("STUDENT INFORMATION\n");
         details.append("───────────────────────────────────────\n");
-        if (plan.getStudent() != null) {
-            details.append("Name: ").append(plan.getStudent().getFullName()).append("\n");
-            details.append("Student ID: ").append(plan.getStudent().getStudentId()).append("\n");
-            details.append("Grade: ").append(plan.getStudent().getGradeLevel()).append("\n");
+        try {
+            if (plan.getStudent() != null) {
+                details.append("Name: ").append(plan.getStudent().getFullName()).append("\n");
+                details.append("Student ID: ").append(plan.getStudent().getStudentId()).append("\n");
+                details.append("Grade: ").append(plan.getStudent().getGradeLevel()).append("\n");
+            }
+        } catch (Exception e) {
+            details.append("Name: N/A (data not loaded)\n");
         }
         details.append("\n");
 

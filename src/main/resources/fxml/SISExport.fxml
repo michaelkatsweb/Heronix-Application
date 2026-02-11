@@ -57,8 +57,7 @@ Location: src/main/resources/fxml/SISExport.fxml
 
                     <VBox spacing="10">
                         <!-- PowerSchool -->
-                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="format-option"
-                              styleClass="card">
+                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="format-option, card">
                             <RadioButton fx:id="powerSchoolRadio" toggleGroup="$formatGroup" selected="true"/>
                             <VBox spacing="3">
                                 <Label text="PowerSchool" styleClass="form-label"/>
@@ -68,8 +67,7 @@ Location: src/main/resources/fxml/SISExport.fxml
                         </HBox>
 
                         <!-- Skyward -->
-                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="format-option"
-                              styleClass="card">
+                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="format-option, card">
                             <RadioButton fx:id="skywardRadio" toggleGroup="$formatGroup"/>
                             <VBox spacing="3">
                                 <Label text="Skyward" styleClass="form-label"/>
@@ -79,8 +77,7 @@ Location: src/main/resources/fxml/SISExport.fxml
                         </HBox>
 
                         <!-- Infinite Campus -->
-                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="format-option"
-                              styleClass="card">
+                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="format-option, card">
                             <RadioButton fx:id="infiniteCampusRadio" toggleGroup="$formatGroup"/>
                             <VBox spacing="3">
                                 <Label text="Infinite Campus" styleClass="form-label"/>
@@ -90,8 +87,7 @@ Location: src/main/resources/fxml/SISExport.fxml
                         </HBox>
 
                         <!-- Generic CSV -->
-                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="format-option"
-                              styleClass="card">
+                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="format-option, card">
                             <RadioButton fx:id="genericCSVRadio" toggleGroup="$formatGroup"/>
                             <VBox spacing="3">
                                 <Label text="Generic CSV" styleClass="form-label"/>
@@ -101,8 +97,7 @@ Location: src/main/resources/fxml/SISExport.fxml
                         </HBox>
 
                         <!-- Excel -->
-                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="format-option"
-                              styleClass="card">
+                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="format-option, card">
                             <RadioButton fx:id="excelRadio" toggleGroup="$formatGroup"/>
                             <VBox spacing="3">
                                 <Label text="Microsoft Excel" styleClass="form-label"/>
@@ -224,8 +219,7 @@ Location: src/main/resources/fxml/SISExport.fxml
 
     <!-- BOTTOM: Quick Actions -->
     <bottom>
-        <HBox spacing="15" alignment="CENTER_LEFT" styleClass="footer-section"
-              styleClass="card">
+        <HBox spacing="15" alignment="CENTER_LEFT" styleClass="footer-section, card">
             <Label text="Quick Export:" styleClass="filter-label"/>
             <Button text="PowerSchool Students" onAction="#handleQuickPowerSchoolStudents" styleClass="button-secondary"/>
             <Button text="Skyward Sections" onAction="#handleQuickSkywardSections" styleClass="button-secondary"/>

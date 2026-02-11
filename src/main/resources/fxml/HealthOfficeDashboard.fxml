@@ -213,8 +213,7 @@
                     </VBox>
 
                     <!-- Pending Parent Notifications -->
-                    <VBox spacing="10" styleClass="sidebar-section"
-                          styleClass="card">
+                    <VBox spacing="10" styleClass="sidebar-section, card">
                         <Label text="⚠ Pending Notifications"
                                styleClass="form-label"/>
                         <ListView fx:id="pendingNotificationsList" prefHeight="120">
@@ -236,8 +235,7 @@
                     </VBox>
 
                     <!-- High-Risk Students -->
-                    <VBox spacing="10" styleClass="sidebar-section"
-                          styleClass="card">
+                    <VBox spacing="10" styleClass="sidebar-section, card">
                         <Label text="🩺 High-Risk Students"
                                styleClass="form-label"/>
                         <ListView fx:id="highRiskStudentsList" prefHeight="150">
