@@ -198,6 +198,10 @@ public class MainControllerV2 {
         VIEW_METADATA.put("network-panel", new ViewMetadata("Network Panel", "Network monitoring and diagnostics", "/fxml/NetworkPanel.fxml"));
         VIEW_METADATA.put("secure-sync", new ViewMetadata("Secure Sync", "Secure synchronization control panel", "/fxml/SecureSyncControlPanel.fxml"));
         VIEW_METADATA.put("secure-audit", new ViewMetadata("Security Audit", "Encrypted Hub activity logs (tamper-proof)", "/fxml/SecureAuditView.fxml"));
+        VIEW_METADATA.put("teacher-certifications", new ViewMetadata("Teacher Certifications", "Track teacher certifications, renewals, and compliance", "/fxml/TeacherCertificationManagement.fxml"));
+        VIEW_METADATA.put("teacher-evaluations", new ViewMetadata("Teacher Evaluations", "Manage observations, scoring, and performance evaluations", "/fxml/TeacherEvaluationManagement.fxml"));
+        VIEW_METADATA.put("vendors", new ViewMetadata("Vendor Management", "Manage vendors, categories, and approval workflows", "/fxml/VendorManagement.fxml"));
+        VIEW_METADATA.put("api-keys", new ViewMetadata("API Key Management", "Generate, manage, and monitor API keys", "/fxml/ApiKeyManagement.fxml"));
     }
 
     // ========================================================================

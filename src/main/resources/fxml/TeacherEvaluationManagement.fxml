@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.heronix.ui.controller.TeacherEvaluationManagementController"
+      spacing="0" styleClass="page-container"
+      style="-fx-background-color: #f8fafc;">
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-padding: 24 28; -fx-background-color: white; -fx-border-color: #e2e8f0; -fx-border-width: 0 0 1 0;">
+        <VBox HBox.hgrow="ALWAYS">
+            <Label text="Teacher Evaluation Tracking" style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+            <Label text="Manage observations, scoring, and performance evaluations" style="-fx-font-size: 13; -fx-text-fill: #64748b;"/>
+        </VBox>
+        <Button fx:id="scheduleButton" text="+ Schedule Evaluation" onAction="#handleScheduleEvaluation"
+                style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20; -fx-background-radius: 6; -fx-cursor: hand;"/>
+    </HBox>
+
+    <!-- Tab Pane -->
+    <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" style="-fx-padding: 16 20 20 20;">
+
+        <!-- Evaluations Tab -->
+        <Tab text="Evaluations">
+            <VBox spacing="12">
+                <!-- Filters Row 1 -->
+                <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 12; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                    <ComboBox fx:id="schoolYearFilter" promptText="School Year" prefWidth="130"/>
+                    <ComboBox fx:id="evalStatusFilter" promptText="Status" prefWidth="160"/>
+                    <ComboBox fx:id="evalTypeFilter" promptText="Type" prefWidth="150"/>
+                    <ComboBox fx:id="ratingFilter" promptText="Rating" prefWidth="140"/>
+                    <ComboBox fx:id="evaluatorFilter" promptText="Evaluator" prefWidth="160"/>
+                    <TextField fx:id="evalSearchField" promptText="Search teacher..." prefWidth="180"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Clear" onAction="#handleClearFilters"
+                            style="-fx-background-color: #f1f5f9; -fx-text-fill: #475569; -fx-padding: 6 16; -fx-background-radius: 6; -fx-cursor: hand;"/>
+                </HBox>
+
+                <!-- Summary Cards -->
+                <HBox spacing="8">
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 8 12; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="evalTotalLabel" text="0" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        <Label text="Total" style="-fx-font-size: 10; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 8 12; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="evalScheduledLabel" text="0" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #3b82f6;"/>
+                        <Label text="Scheduled" style="-fx-font-size: 10; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 8 12; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="evalInProgressLabel" text="0" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #f59e0b;"/>
+                        <Label text="In Progress" style="-fx-font-size: 10; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 8 12; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="evalCompletedLabel" text="0" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #10b981;"/>
+                        <Label text="Completed" style="-fx-font-size: 10; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 8 12; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="evalOverdueLabel" text="0" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #ef4444;"/>
+                        <Label text="Overdue" style="-fx-font-size: 10; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 8 12; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="evalPendingSigLabel" text="0" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #8b5cf6;"/>
+                        <Label text="Pending Sig." style="-fx-font-size: 10; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 8 12; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="evalNeedingImpLabel" text="0" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #f97316;"/>
+                        <Label text="Needs Improv." style="-fx-font-size: 10; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Table -->
+                <TableView fx:id="evalTable" VBox.vgrow="ALWAYS"
+                           style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                    <columns>
+                        <TableColumn fx:id="evalTeacherCol" text="Teacher" prefWidth="150"/>
+                        <TableColumn fx:id="evalEvaluatorCol" text="Evaluator" prefWidth="140"/>
+                        <TableColumn fx:id="evalSchoolYearCol" text="School Year" prefWidth="90"/>
+                        <TableColumn fx:id="evalTypeCol" text="Type" prefWidth="120"/>
+                        <TableColumn fx:id="evalDateCol" text="Scheduled" prefWidth="90"/>
+                        <TableColumn fx:id="evalStatusCol" text="Status" prefWidth="140"/>
+                        <TableColumn fx:id="evalRatingCol" text="Overall Rating" prefWidth="120"/>
+                        <TableColumn fx:id="evalActionsCol" text="Actions" prefWidth="280"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- Overview Tab -->
+        <Tab text="Overview">
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                <VBox spacing="16" style="-fx-padding: 16;">
+                    <Label text="Evaluation Overview" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                    <HBox spacing="12">
+                        <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 20; -fx-background-color: #ecfdf5; -fx-background-radius: 10; -fx-border-color: #a7f3d0; -fx-border-radius: 10;">
+                            <Label fx:id="overviewCompletedLabel" text="0" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #059669;"/>
+                            <Label text="Completed This Year" style="-fx-text-fill: #065f46;"/>
+                        </VBox>
+                        <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 20; -fx-background-color: #eef2ff; -fx-background-radius: 10; -fx-border-color: #c7d2fe; -fx-border-radius: 10;">
+                            <Label fx:id="overviewHighlyEffectiveLabel" text="0" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #4f46e5;"/>
+                            <Label text="Highly Effective" style="-fx-text-fill: #3730a3;"/>
+                        </VBox>
+                        <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 20; -fx-background-color: #fef2f2; -fx-background-radius: 10; -fx-border-color: #fecaca; -fx-border-radius: 10;">
+                            <Label fx:id="overviewNeedingImprovLabel" text="0" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #dc2626;"/>
+                            <Label text="Needing Improvement" style="-fx-text-fill: #991b1b;"/>
+                        </VBox>
+                        <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 20; -fx-background-color: #fffbeb; -fx-background-radius: 10; -fx-border-color: #fde68a; -fx-border-radius: 10;">
+                            <Label fx:id="overviewPendingLabel" text="0" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #d97706;"/>
+                            <Label text="Pending / Overdue" style="-fx-text-fill: #92400e;"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Rating Distribution -->
+                    <Label text="Rating Distribution" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-padding: 12 0 0 0;"/>
+                    <VBox fx:id="ratingDistributionBox" spacing="8" style="-fx-padding: 16; -fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e2e8f0; -fx-border-radius: 10;">
+                        <Label text="Loading..." style="-fx-text-fill: #94a3b8;"/>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+    </TabPane>
+</VBox>

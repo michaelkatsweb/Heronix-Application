@@ -60,6 +60,8 @@ public class SidebarNavigationController {
     @FXML private HBox navDashboard;
     @FXML private HBox navStudents;
     @FXML private HBox navTeachers;
+    @FXML private HBox navTeacherCertifications;
+    @FXML private HBox navTeacherEvaluations;
     @FXML private HBox navStaff;
     @FXML private HBox navSubstitutes;
     @FXML private HBox navCourses;
@@ -87,6 +89,7 @@ public class SidebarNavigationController {
     @FXML private HBox navTransportation;
     @FXML private HBox navCafeteria;
     @FXML private HBox navLibrary;
+    @FXML private HBox navVendors;
     @FXML private HBox navTimeHR;
     @FXML private HBox navAthletics;
     @FXML private HBox navNotifications;
@@ -102,11 +105,14 @@ public class SidebarNavigationController {
     @FXML private HBox navNetworkPanel;
     @FXML private HBox navSecureSync;
     @FXML private HBox navSecureAudit;
+    @FXML private HBox navApiKeys;
 
     // Labels (for collapse mode)
     @FXML private Label navDashboardLabel;
     @FXML private Label navStudentsLabel;
     @FXML private Label navTeachersLabel;
+    @FXML private Label navTeacherCertificationsLabel;
+    @FXML private Label navTeacherEvaluationsLabel;
     @FXML private Label navStaffLabel;
     @FXML private Label navSubstitutesLabel;
     @FXML private Label navCoursesLabel;
@@ -134,6 +140,7 @@ public class SidebarNavigationController {
     @FXML private Label navTransportationLabel;
     @FXML private Label navCafeteriaLabel;
     @FXML private Label navLibraryLabel;
+    @FXML private Label navVendorsLabel;
     @FXML private Label navTimeHRLabel;
     @FXML private Label navAthleticsLabel;
     @FXML private Label navNotificationsLabel;
@@ -149,6 +156,7 @@ public class SidebarNavigationController {
     @FXML private Label navNetworkPanelLabel;
     @FXML private Label navSecureSyncLabel;
     @FXML private Label navSecureAuditLabel;
+    @FXML private Label navApiKeysLabel;
 
     // Counts
     @FXML private Label studentCount;
@@ -244,6 +252,8 @@ public class SidebarNavigationController {
         navItemsMap.put("dashboard", navDashboard);
         navItemsMap.put("students", navStudents);
         navItemsMap.put("teachers", navTeachers);
+        navItemsMap.put("teacher-certifications", navTeacherCertifications);
+        navItemsMap.put("teacher-evaluations", navTeacherEvaluations);
         navItemsMap.put("staff", navStaff);
         navItemsMap.put("substitutes", navSubstitutes);
         navItemsMap.put("courses", navCourses);
@@ -271,6 +281,7 @@ public class SidebarNavigationController {
         navItemsMap.put("transportation", navTransportation);
         navItemsMap.put("cafeteria", navCafeteria);
         navItemsMap.put("library", navLibrary);
+        navItemsMap.put("vendors", navVendors);
         navItemsMap.put("time-hr", navTimeHR);
         navItemsMap.put("athletics", navAthletics);
         navItemsMap.put("notifications", navNotifications);
@@ -286,6 +297,7 @@ public class SidebarNavigationController {
         navItemsMap.put("network-panel", navNetworkPanel);
         navItemsMap.put("secure-sync", navSecureSync);
         navItemsMap.put("secure-audit", navSecureAudit);
+        navItemsMap.put("api-keys", navApiKeys);
     }
 
     /**
@@ -849,6 +861,26 @@ public class SidebarNavigationController {
     @FXML
     private void handleNavSecureAudit(MouseEvent event) {
         navigateTo("secure-audit", navSecureAudit);
+    }
+
+    @FXML
+    private void handleNavTeacherCertifications(MouseEvent event) {
+        navigateTo("teacher-certifications", navTeacherCertifications);
+    }
+
+    @FXML
+    private void handleNavTeacherEvaluations(MouseEvent event) {
+        navigateTo("teacher-evaluations", navTeacherEvaluations);
+    }
+
+    @FXML
+    private void handleNavVendors(MouseEvent event) {
+        navigateTo("vendors", navVendors);
+    }
+
+    @FXML
+    private void handleNavApiKeys(MouseEvent event) {
+        navigateTo("api-keys", navApiKeys);
     }
 
     @FXML

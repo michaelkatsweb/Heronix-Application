@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.heronix.ui.controller.ApiKeyManagementUIController"
+      spacing="0" styleClass="page-container"
+      style="-fx-background-color: #f8fafc;">
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-padding: 24 28; -fx-background-color: white; -fx-border-color: #e2e8f0; -fx-border-width: 0 0 1 0;">
+        <VBox HBox.hgrow="ALWAYS">
+            <Label text="API Key Management" style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+            <Label text="Generate, manage, and monitor API keys" style="-fx-font-size: 13; -fx-text-fill: #64748b;"/>
+        </VBox>
+        <Button fx:id="generateButton" text="+ Generate New Key" onAction="#handleGenerateKey"
+                style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20; -fx-background-radius: 6; -fx-cursor: hand;"/>
+    </HBox>
+
+    <!-- Tab Pane -->
+    <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" style="-fx-padding: 16 20 20 20;">
+
+        <!-- API Keys Tab -->
+        <Tab text="API Keys">
+            <VBox spacing="12">
+                <!-- Filters -->
+                <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 12; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                    <CheckBox fx:id="activeOnlyToggle" text="Active Only" selected="true"/>
+                    <TextField fx:id="keySearchField" promptText="Search by name or prefix..." prefWidth="250"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Clear" onAction="#handleClearFilters"
+                            style="-fx-background-color: #f1f5f9; -fx-text-fill: #475569; -fx-padding: 6 16; -fx-background-radius: 6; -fx-cursor: hand;"/>
+                </HBox>
+
+                <!-- Summary -->
+                <HBox spacing="10">
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 10 16; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="keyTotalLabel" text="0" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        <Label text="Total" style="-fx-font-size: 11; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 10 16; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="keyActiveLabel" text="0" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #10b981;"/>
+                        <Label text="Active" style="-fx-font-size: 11; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 10 16; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="keyExpiredLabel" text="0" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #ef4444;"/>
+                        <Label text="Expired" style="-fx-font-size: 11; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 10 16; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="keyRequestsLabel" text="0" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #6366f1;"/>
+                        <Label text="Total Requests" style="-fx-font-size: 11; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Table -->
+                <TableView fx:id="keyTable" VBox.vgrow="ALWAYS"
+                           style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                    <columns>
+                        <TableColumn fx:id="keyNameCol" text="Name" prefWidth="150"/>
+                        <TableColumn fx:id="keyPrefixCol" text="Key Prefix" prefWidth="120"/>
+                        <TableColumn fx:id="keyScopesCol" text="Scopes" prefWidth="150"/>
+                        <TableColumn fx:id="keyActiveCol" text="Active" prefWidth="60"/>
+                        <TableColumn fx:id="keyRateLimitCol" text="Rate Limit" prefWidth="80"/>
+                        <TableColumn fx:id="keyCreatedCol" text="Created" prefWidth="100"/>
+                        <TableColumn fx:id="keyExpiresCol" text="Expires" prefWidth="100"/>
+                        <TableColumn fx:id="keyLastUsedCol" text="Last Used" prefWidth="100"/>
+                        <TableColumn fx:id="keyRequestsCol" text="Requests" prefWidth="80"/>
+                        <TableColumn fx:id="keyActionsCol" text="Actions" prefWidth="240"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- Usage Analytics Tab -->
+        <Tab text="Usage Analytics">
+            <VBox spacing="16" style="-fx-padding: 16;">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Select Key:" style="-fx-font-weight: bold;"/>
+                    <ComboBox fx:id="analyticsKeySelector" prefWidth="300" promptText="Choose an API key..."/>
+                    <Button text="Load Analytics" onAction="#handleLoadAnalytics"
+                            style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-padding: 6 16; -fx-background-radius: 6; -fx-cursor: hand;"/>
+                </HBox>
+                <HBox spacing="12">
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e2e8f0; -fx-border-radius: 10;">
+                        <Label fx:id="analyticsTotalRequests" text="--" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        <Label text="Total Requests" style="-fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e2e8f0; -fx-border-radius: 10;">
+                        <Label fx:id="analyticsAvgPerDay" text="--" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #3b82f6;"/>
+                        <Label text="Avg / Day" style="-fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e2e8f0; -fx-border-radius: 10;">
+                        <Label text="Rate Limit Usage" style="-fx-text-fill: #64748b; -fx-padding: 0 0 8 0;"/>
+                        <ProgressBar fx:id="analyticsRateLimitBar" prefWidth="200" prefHeight="20"/>
+                        <Label fx:id="analyticsRateLimitLabel" text="--" style="-fx-text-fill: #64748b; -fx-padding: 4 0 0 0;"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </Tab>
+
+    </TabPane>
+</VBox>

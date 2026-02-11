@@ -83,6 +83,16 @@
                 <Label fx:id="teacherCount" text="" styleClass="sidebar-count"/>
             </HBox>
 
+            <HBox fx:id="navTeacherCertifications" styleClass="sidebar-nav-item" onMouseClicked="#handleNavTeacherCertifications">
+                <Label text="&#x1F4DC;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
+                <Label fx:id="navTeacherCertificationsLabel" text="Certifications"/>
+            </HBox>
+
+            <HBox fx:id="navTeacherEvaluations" styleClass="sidebar-nav-item" onMouseClicked="#handleNavTeacherEvaluations">
+                <Label text="&#x1F4CB;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
+                <Label fx:id="navTeacherEvaluationsLabel" text="Evaluations"/>
+            </HBox>
+
             <HBox fx:id="navStaff" styleClass="sidebar-nav-item" onMouseClicked="#handleNavStaff">
                 <Label text="&#x1F465;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navStaffLabel" text="Staff"/>
@@ -244,6 +254,11 @@
                 <Label fx:id="navLibraryLabel" text="Library"/>
             </HBox>
 
+            <HBox fx:id="navVendors" styleClass="sidebar-nav-item" onMouseClicked="#handleNavVendors">
+                <Label text="&#x1F3E2;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
+                <Label fx:id="navVendorsLabel" text="Vendors"/>
+            </HBox>
+
             <HBox fx:id="navTimeHR" styleClass="sidebar-nav-item" onMouseClicked="#handleNavTimeHR">
                 <Label text="&#x1F552;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navTimeHRLabel" text="Time &amp; HR"/>
@@ -324,6 +339,11 @@
             <HBox fx:id="navSecureAudit" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSecureAudit">
                 <Label text="&#x1F6E1;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navSecureAuditLabel" text="Security Audit"/>
+            </HBox>
+
+            <HBox fx:id="navApiKeys" styleClass="sidebar-nav-item" onMouseClicked="#handleNavApiKeys">
+                <Label text="&#x1F511;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
+                <Label fx:id="navApiKeysLabel" text="API Keys"/>
             </HBox>
 
         </VBox>

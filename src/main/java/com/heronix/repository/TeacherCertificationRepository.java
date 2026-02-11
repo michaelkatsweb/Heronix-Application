@@ -131,6 +131,12 @@ public interface TeacherCertificationRepository extends JpaRepository<TeacherCer
     List<Object[]> countActiveByType();
 
     /**
+     * Find all certifications with teacher eagerly fetched (avoids LazyInitializationException on FX thread)
+     */
+    @Query("SELECT c FROM TeacherCertification c JOIN FETCH c.teacher ORDER BY c.expirationDate DESC")
+    List<TeacherCertification> findAllWithTeacher();
+
+    /**
      * Get certification statistics for a date range
      */
     @Query("SELECT c.certificateType, COUNT(c), " +

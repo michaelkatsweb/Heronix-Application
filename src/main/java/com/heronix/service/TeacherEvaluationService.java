@@ -47,6 +47,11 @@ public class TeacherEvaluationService {
     }
 
     // Queries
+    @Transactional(readOnly = true)
+    public List<TeacherEvaluation> getAllEvaluations() {
+        return evaluationRepository.findAllWithTeacherAndEvaluator();
+    }
+
     public List<TeacherEvaluation> getEvaluationsByTeacher(Long teacherId) {
         return evaluationRepository.findByTeacherIdOrderByEvaluationDateDesc(teacherId);
     }

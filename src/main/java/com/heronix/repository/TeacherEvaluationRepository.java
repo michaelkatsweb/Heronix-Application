@@ -129,6 +129,12 @@ public interface TeacherEvaluationRepository extends JpaRepository<TeacherEvalua
     List<TeacherEvaluation> findAppealedEvaluations();
 
     /**
+     * Find all evaluations with teacher and evaluator eagerly fetched (avoids LazyInitializationException on FX thread)
+     */
+    @Query("SELECT e FROM TeacherEvaluation e JOIN FETCH e.teacher LEFT JOIN FETCH e.evaluator ORDER BY e.scheduledDate DESC")
+    List<TeacherEvaluation> findAllWithTeacherAndEvaluator();
+
+    /**
      * Count evaluations by status
      */
     @Query("SELECT e.status, COUNT(e) FROM TeacherEvaluation e " +

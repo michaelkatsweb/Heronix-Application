@@ -59,6 +59,11 @@ public class TeacherCertificationService {
     // QUERY OPERATIONS
     // ========================================================================
 
+    @Transactional(readOnly = true)
+    public List<TeacherCertification> getAllCertifications() {
+        return certificationRepository.findAllWithTeacher();
+    }
+
     public List<TeacherCertification> getCertificationsByTeacher(Long teacherId) {
         return certificationRepository.findByTeacherIdOrderByExpirationDateDesc(teacherId);
     }

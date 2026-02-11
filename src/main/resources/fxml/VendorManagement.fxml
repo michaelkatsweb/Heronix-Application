@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.heronix.ui.controller.VendorManagementController"
+      spacing="0" styleClass="page-container"
+      style="-fx-background-color: #f8fafc;">
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-padding: 24 28; -fx-background-color: white; -fx-border-color: #e2e8f0; -fx-border-width: 0 0 1 0;">
+        <VBox HBox.hgrow="ALWAYS">
+            <Label text="Vendor Management" style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+            <Label text="Manage vendors, categories, and approval workflows" style="-fx-font-size: 13; -fx-text-fill: #64748b;"/>
+        </VBox>
+        <Button fx:id="addVendorButton" text="+ Add Vendor" onAction="#handleAddVendor"
+                style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20; -fx-background-radius: 6; -fx-cursor: hand;"/>
+    </HBox>
+
+    <!-- Tab Pane -->
+    <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" style="-fx-padding: 16 20 20 20;">
+
+        <!-- Vendors Tab -->
+        <Tab text="Vendors">
+            <VBox spacing="12">
+                <!-- Filters -->
+                <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 12; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                    <ComboBox fx:id="vendorStatusFilter" promptText="Status" prefWidth="150"/>
+                    <ComboBox fx:id="vendorCategoryFilter" promptText="Category" prefWidth="180"/>
+                    <TextField fx:id="vendorSearchField" promptText="Search vendor name, code, email..." prefWidth="260"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Clear" onAction="#handleClearVendorFilters"
+                            style="-fx-background-color: #f1f5f9; -fx-text-fill: #475569; -fx-padding: 6 16; -fx-background-radius: 6; -fx-cursor: hand;"/>
+                </HBox>
+
+                <!-- Summary -->
+                <HBox spacing="10">
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 10 16; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="vendorTotalLabel" text="0" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        <Label text="Total" style="-fx-font-size: 11; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 10 16; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="vendorPendingLabel" text="0" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #f59e0b;"/>
+                        <Label text="Pending" style="-fx-font-size: 11; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 10 16; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="vendorApprovedLabel" text="0" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #10b981;"/>
+                        <Label text="Approved" style="-fx-font-size: 11; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 10 16; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="vendorSuspendedLabel" text="0" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #ef4444;"/>
+                        <Label text="Suspended" style="-fx-font-size: 11; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-padding: 10 16; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <Label fx:id="vendorRejectedLabel" text="0" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #64748b;"/>
+                        <Label text="Rejected" style="-fx-font-size: 11; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Vendor Table -->
+                <TableView fx:id="vendorTable" VBox.vgrow="ALWAYS"
+                           style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                    <columns>
+                        <TableColumn fx:id="vendorCodeCol" text="Code" prefWidth="90"/>
+                        <TableColumn fx:id="vendorNameCol" text="Name" prefWidth="180"/>
+                        <TableColumn fx:id="vendorCategoryCol" text="Category" prefWidth="120"/>
+                        <TableColumn fx:id="vendorStatusCol" text="Status" prefWidth="100"/>
+                        <TableColumn fx:id="vendorPhoneCol" text="Phone" prefWidth="120"/>
+                        <TableColumn fx:id="vendorEmailCol" text="Email" prefWidth="170"/>
+                        <TableColumn fx:id="vendorContactCol" text="Contact Person" prefWidth="140"/>
+                        <TableColumn fx:id="vendorActiveCol" text="Active" prefWidth="60"/>
+                        <TableColumn fx:id="vendorActionsCol" text="Actions" prefWidth="240"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- Categories Tab -->
+        <Tab text="Categories">
+            <VBox spacing="12">
+                <HBox alignment="CENTER_RIGHT" style="-fx-padding: 8 0 0 0;">
+                    <Button text="+ Add Category" onAction="#handleAddCategory"
+                            style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20; -fx-background-radius: 6; -fx-cursor: hand;"/>
+                </HBox>
+                <TableView fx:id="categoryTable" VBox.vgrow="ALWAYS"
+                           style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                    <columns>
+                        <TableColumn fx:id="catNameCol" text="Name" prefWidth="180"/>
+                        <TableColumn fx:id="catIconCol" text="Icon" prefWidth="60"/>
+                        <TableColumn fx:id="catColorCol" text="Color" prefWidth="80"/>
+                        <TableColumn fx:id="catActiveCol" text="Active" prefWidth="60"/>
+                        <TableColumn fx:id="catApprovalCol" text="Requires Approval" prefWidth="130"/>
+                        <TableColumn fx:id="catThresholdCol" text="Threshold" prefWidth="120"/>
+                        <TableColumn fx:id="catActionsCol" text="Actions" prefWidth="160"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+    </TabPane>
+</VBox>
