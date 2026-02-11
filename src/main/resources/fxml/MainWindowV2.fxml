@@ -129,14 +129,6 @@
 
             <Separator orientation="VERTICAL"/>
 
-            <!-- Database Type Indicator -->
-            <HBox alignment="CENTER_LEFT" spacing="6" styleClass="db-indicator" style="-fx-padding: 2 8; -fx-background-color: rgba(0,0,0,0.1); -fx-background-radius: 10;">
-                <Circle fx:id="dbTypeCircle" radius="5" style="-fx-fill: #6B7280;"/>
-                <Label fx:id="dbTypeLabel" text="DB: ..." styleClass="status-label" style="-fx-font-size: 11px;"/>
-            </HBox>
-
-            <Separator orientation="VERTICAL"/>
-
             <!-- Status Message -->
             <Label fx:id="statusLabel" text="Ready" styleClass="status-label" HBox.hgrow="ALWAYS"/>
 
@@ -155,6 +147,14 @@
                 <Label fx:id="currentUserLabel" text="Admin User" styleClass="status-label"/>
                 <Label text="&#8226;" styleClass="label-caption"/>
                 <Label fx:id="currentRoleLabel" text="Administrator" styleClass="label-caption"/>
+            </HBox>
+
+            <Separator orientation="VERTICAL"/>
+
+            <!-- Database Type Indicator -->
+            <HBox alignment="CENTER_LEFT" spacing="6" styleClass="db-indicator" style="-fx-padding: 2 8; -fx-background-color: rgba(0,0,0,0.1); -fx-background-radius: 10;">
+                <Circle fx:id="dbTypeCircle" radius="5" style="-fx-fill: #6B7280;"/>
+                <Label fx:id="dbTypeLabel" text="DB: ..." styleClass="status-label" style="-fx-font-size: 11px;"/>
             </HBox>
 
             <Separator orientation="VERTICAL"/>
