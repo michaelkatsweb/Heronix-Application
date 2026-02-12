@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import com.heronix.util.ResponsiveDesignHelper;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
@@ -99,6 +100,9 @@ public class CoursesController {
         setupFilters();
         setupQuickAssignColumn(); // ENHANCED: Bug Fix #7 - Quick Teacher Assignment
         setupActionsColumn();
+        coursesTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+        actionsColumn.setMinWidth(260);
+        quickAssignColumn.setMinWidth(100);
         setupStatusFilters();
 
         // Delay loading courses until after JavaFX initialization completes
@@ -385,6 +389,9 @@ public class CoursesController {
             return;
         }
 
+        // Safety: provide a cellValueFactory so JavaFX always calls updateItem on non-empty rows
+        quickAssignColumn.setCellValueFactory(param -> new javafx.beans.property.SimpleObjectProperty<>(null));
+
         quickAssignColumn.setCellFactory(col -> new TableCell<>() {
             private final ComboBox<Teacher> teacherCombo = new ComboBox<>();
 
@@ -479,21 +486,25 @@ public class CoursesController {
     }
 
     private void setupActionsColumn() {
+        // Safety: provide a cellValueFactory so JavaFX always calls updateItem on non-empty rows
+        actionsColumn.setCellValueFactory(param -> new javafx.beans.property.SimpleObjectProperty<>(null));
+
         actionsColumn.setCellFactory(col -> new TableCell<>() {
+            private final String BTN_STYLE = "-fx-text-fill: white; -fx-padding: 2 6; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;";
             private final Button viewBtn = new Button("View");
             private final Button editBtn = new Button("Edit");
             private final Button sectionsBtn = new Button("Sections");
-            private final Button multiRoomBtn = new Button("Multi-Room");
+            private final Button multiRoomBtn = new Button("Rooms");
             private final Button deleteBtn = new Button("Delete");
-            private final HBox pane = new HBox(5, viewBtn, editBtn, sectionsBtn, multiRoomBtn, deleteBtn);
+            private final HBox pane = new HBox(4, viewBtn, editBtn, sectionsBtn, multiRoomBtn, deleteBtn);
 
             {
                 pane.setAlignment(Pos.CENTER);
-                viewBtn.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
-                editBtn.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
-                sectionsBtn.setStyle("-fx-background-color: #8b5cf6; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
-                multiRoomBtn.setStyle("-fx-background-color: #8b5cf6; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
-                deleteBtn.setStyle("-fx-background-color: #ef4444; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
+                viewBtn.setStyle("-fx-background-color: #3b82f6;" + BTN_STYLE);
+                editBtn.setStyle("-fx-background-color: #3b82f6;" + BTN_STYLE);
+                sectionsBtn.setStyle("-fx-background-color: #8b5cf6;" + BTN_STYLE);
+                multiRoomBtn.setStyle("-fx-background-color: #8b5cf6;" + BTN_STYLE);
+                deleteBtn.setStyle("-fx-background-color: #ef4444;" + BTN_STYLE);
                 viewBtn.setOnAction(e -> handleView(getTableRow().getItem()));
                 editBtn.setOnAction(e -> handleEdit(getTableRow().getItem()));
                 sectionsBtn.setOnAction(e -> handleManageSections(getTableRow().getItem()));
@@ -804,6 +815,8 @@ public class CoursesController {
             dialogStage.initModality(javafx.stage.Modality.WINDOW_MODAL);
             dialogStage.initOwner(coursesTable.getScene().getWindow());
             dialogStage.setScene(new javafx.scene.Scene(root));
+            dialogStage.setResizable(true);
+            ResponsiveDesignHelper.makeLargeDialogResponsive(dialogStage);
 
             // Initialize controller with course data
             controller.setDialogStage(dialogStage);

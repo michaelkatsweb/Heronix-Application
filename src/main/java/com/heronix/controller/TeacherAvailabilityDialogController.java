@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import com.heronix.util.ResponsiveDesignHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -113,6 +114,8 @@ public class TeacherAvailabilityDialogController {
             controller.setupForAdd();
 
             // Show and wait
+            dialogStage.setResizable(true);
+            ResponsiveDesignHelper.makeSmallDialogResponsive(dialogStage);
             dialogStage.showAndWait();
 
             // If confirmed, add the block
@@ -161,6 +164,8 @@ public class TeacherAvailabilityDialogController {
             controller.setupForEdit(selectedBlock);
 
             // Show and wait
+            dialogStage.setResizable(true);
+            ResponsiveDesignHelper.makeSmallDialogResponsive(dialogStage);
             dialogStage.showAndWait();
 
             // If confirmed, update the block

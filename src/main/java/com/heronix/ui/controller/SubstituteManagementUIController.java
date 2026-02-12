@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.heronix.util.ResponsiveDesignHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -452,6 +453,8 @@ public class SubstituteManagementUIController {
             stage.setTitle("Import from Frontline");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(stage);
             stage.showAndWait();
 
             // Refresh after import
@@ -1045,18 +1048,9 @@ public class SubstituteManagementUIController {
             Scene scene = new Scene(root);
             stage.setScene(scene);
 
-            // Set size constraints to fit on screen
-            stage.setWidth(900);  // Fixed width
-            stage.setHeight(700); // Fixed height (will fit on most screens)
-            stage.setMinWidth(700);
-            stage.setMinHeight(600);
-            stage.setMaxWidth(1000);
-            stage.setMaxHeight(800);
-
-            // Center on screen
-            stage.centerOnScreen();
-
             stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(true);
+            ResponsiveDesignHelper.makeLargeDialogResponsive(stage);
             stage.show();
 
         } catch (Exception e) {

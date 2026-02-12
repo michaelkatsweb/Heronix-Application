@@ -29,6 +29,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import lombok.extern.slf4j.Slf4j;
+import com.heronix.util.ResponsiveDesignHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -750,6 +751,8 @@ public class StudentsController {
             controller.setDialogStage(dialogStage);
             controller.setStudent(selectedStudent);
 
+            dialogStage.setResizable(true);
+            ResponsiveDesignHelper.makeSmallDialogResponsive(dialogStage);
             dialogStage.showAndWait();
 
             log.info("QR code dialog closed for student: {} {}",
@@ -3416,6 +3419,8 @@ public class StudentsController {
             controller.setDialogStage(dialogStage);
             controller.setStudent(student);
 
+            dialogStage.setResizable(true);
+            ResponsiveDesignHelper.makeSmallDialogResponsive(dialogStage);
             dialogStage.showAndWait();
 
             // Refresh table to show updated QR code

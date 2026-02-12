@@ -6,6 +6,7 @@ import com.heronix.model.enums.AssignmentStatus;
 import com.heronix.model.enums.StaffType;
 import com.heronix.model.enums.SubstituteType;
 import com.heronix.service.SubstituteManagementService;
+import com.heronix.util.ResponsiveDesignHelper;
 import com.heronix.service.SubstituteReportService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -392,6 +393,8 @@ public class CoTeacherManagementController {
             stage.setTitle("New Co-Teacher Assignment");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
+            stage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(stage);
             stage.showAndWait();
 
         } catch (Exception e) {

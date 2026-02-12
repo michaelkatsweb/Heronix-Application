@@ -4,6 +4,7 @@ import com.heronix.model.domain.Poll;
 import com.heronix.model.domain.Poll.PollStatus;
 import com.heronix.model.domain.Poll.TargetAudience;
 import com.heronix.service.PollService;
+import com.heronix.util.ResponsiveDesignHelper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -202,7 +203,9 @@ public class PollManagementController {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle(poll == null ? "Create New Poll" : "Edit Poll");
-            stage.setScene(new Scene(root, 700, 650));
+            stage.setScene(new Scene(root));
+            stage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(stage);
             stage.showAndWait();
         } catch (Exception e) {
             log.error("Error opening poll editor", e);
@@ -265,7 +268,9 @@ public class PollManagementController {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Poll Results: " + poll.getTitle());
-            stage.setScene(new Scene(root, 650, 550));
+            stage.setScene(new Scene(root));
+            stage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(stage);
             stage.showAndWait();
         } catch (Exception e) {
             log.error("Error opening results", e);

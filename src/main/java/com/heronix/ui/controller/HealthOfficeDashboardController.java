@@ -23,6 +23,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.heronix.util.ResponsiveDesignHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -524,6 +525,8 @@ public class HealthOfficeDashboardController {
             stage.setTitle("New Nurse Visit");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(stage);
             stage.showAndWait();
 
             handleRefresh();
@@ -545,6 +548,8 @@ public class HealthOfficeDashboardController {
             stage.setTitle("Health Screening");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(stage);
             stage.showAndWait();
 
             handleRefresh();
@@ -566,6 +571,8 @@ public class HealthOfficeDashboardController {
             stage.setTitle("Medication Administration");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(stage);
             stage.showAndWait();
 
             handleRefresh();
@@ -587,6 +594,8 @@ public class HealthOfficeDashboardController {
             stage.setTitle("Immunization Tracking");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(stage);
             stage.showAndWait();
 
             handleRefresh();
@@ -632,6 +641,8 @@ public class HealthOfficeDashboardController {
                 visit.getStudent().getLastName());
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(stage);
             stage.showAndWait();
 
         } catch (Exception e) {
@@ -654,6 +665,8 @@ public class HealthOfficeDashboardController {
                 visit.getStudent().getLastName());
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(stage);
             stage.showAndWait();
 
             handleRefresh();

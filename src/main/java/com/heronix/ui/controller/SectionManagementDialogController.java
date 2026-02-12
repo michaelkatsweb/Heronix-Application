@@ -3,6 +3,7 @@ package com.heronix.ui.controller;
 import com.heronix.model.domain.Course;
 import com.heronix.model.domain.CourseSection;
 import com.heronix.service.CourseSectionService;
+import com.heronix.util.ResponsiveDesignHelper;
 import com.heronix.ui.util.CopyableErrorDialog;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -299,6 +300,8 @@ public class SectionManagementDialogController {
             }
 
             // Show and wait
+            dialogStage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(dialogStage);
             dialogStage.showAndWait();
 
             // Refresh if saved

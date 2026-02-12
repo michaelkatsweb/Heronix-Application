@@ -3,6 +3,7 @@ package com.heronix.ui.controller;
 import com.heronix.model.domain.AcademicYear;
 import com.heronix.model.domain.GradeProgressionHistory;
 import com.heronix.service.AcademicYearService;
+import com.heronix.util.ResponsiveDesignHelper;
 import com.heronix.repository.StudentRepository;
 import com.heronix.repository.GradeProgressionHistoryRepository;
 import javafx.application.Platform;
@@ -376,7 +377,8 @@ public class AcademicYearManagementController {
             dialogStage.setTitle("Grade Progression");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.setScene(new Scene(root));
-
+            dialogStage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(dialogStage);
             dialogStage.showAndWait();
 
             // Refresh data after dialog closes

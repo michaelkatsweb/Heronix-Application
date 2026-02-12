@@ -20,6 +20,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.heronix.util.ResponsiveDesignHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -378,6 +379,8 @@ public class BehaviorDashboardController {
             stage.setTitle("New Behavior Incident");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
+            stage.setResizable(true);
+            ResponsiveDesignHelper.makeLargeDialogResponsive(stage);
             stage.showAndWait();
 
             // Refresh data after closing
@@ -771,6 +774,8 @@ public class BehaviorDashboardController {
             // Set scene and show
             Scene scene = new Scene(tabPane, 800, 600);
             trendStage.setScene(scene);
+            trendStage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(trendStage);
             trendStage.show();
 
         } catch (Exception e) {
@@ -858,6 +863,8 @@ public class BehaviorDashboardController {
 
             Scene scene = new Scene(layout, 700, 500);
             interventionStage.setScene(scene);
+            interventionStage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(interventionStage);
             interventionStage.show();
 
         } catch (Exception e) {
@@ -953,6 +960,8 @@ public class BehaviorDashboardController {
             stage.setTitle("Edit Behavior Incident");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
+            stage.setResizable(true);
+            ResponsiveDesignHelper.makeLargeDialogResponsive(stage);
             stage.showAndWait();
 
             // Refresh data after closing

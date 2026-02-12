@@ -2,6 +2,7 @@
 
 <?import java.lang.String?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -10,49 +11,175 @@
             fx:controller="com.heronix.ui.controller.AthleticsExtracurricularController"
             prefWidth="1500" prefHeight="900">
 
-
     <top>
-        <VBox spacing="15" styleClass="header-gradient">
+        <VBox spacing="15" styleClass="header-gradient" style="-fx-padding: 20;">
             <Label text="Athletics and Extracurricular Activities" styleClass="page-title-white"/>
+
+            <!-- Stat Cards -->
             <HBox spacing="15">
                 <VBox spacing="3" HBox.hgrow="ALWAYS" styleClass="card-transparent">
-                    <Label text="Teams/Clubs" styleClass="text-white"/>
-                    <Label fx:id="teamsLabel" text="42" styleClass="text-white"/>
+                    <Label text="Teams" styleClass="text-white"/>
+                    <Label fx:id="teamsLabel" text="0" styleClass="text-white" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
                 </VBox>
                 <VBox spacing="3" HBox.hgrow="ALWAYS" styleClass="card-transparent">
                     <Label text="Participants" styleClass="text-white"/>
-                    <Label fx:id="participantsLabel" text="845" styleClass="text-white"/>
+                    <Label fx:id="participantsLabel" text="0" styleClass="text-white" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
                 </VBox>
+                <VBox spacing="3" HBox.hgrow="ALWAYS" styleClass="card-transparent">
+                    <Label text="Clubs" styleClass="text-white"/>
+                    <Label fx:id="clubsLabel" text="0" styleClass="text-white" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+                <VBox spacing="3" HBox.hgrow="ALWAYS" styleClass="card-transparent">
+                    <Label text="Club Members" styleClass="text-white"/>
+                    <Label fx:id="clubMembersLabel" text="0" styleClass="text-white" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Toolbar -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button text="Add Team" onAction="#handleCreateTeam" styleClass="button-success"/>
+                <Button text="Schedule Event" onAction="#handleScheduleEvent" styleClass="button-primary"/>
+                <Button text="Create Club" onAction="#handleCreateClub" styleClass="button-primary"/>
+                <Button text="Refresh" onAction="#handleRefresh" styleClass="button"/>
+                <Button text="Check Eligibility" onAction="#handleViewEligibility" styleClass="button-warning"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="statusLabel" text="" styleClass="text-white"/>
             </HBox>
         </VBox>
     </top>
 
     <center>
-        <TabPane tabClosingPolicy="UNAVAILABLE">
-            <Tab text="Teams and Clubs">
-                <TableView fx:id="teamsTableView" style="-fx-padding: 15;">
-                    <columns>
-                        <TableColumn fx:id="teamNameColumn" text="Name" prefWidth="200"/>
-                        <TableColumn fx:id="sportColumn" text="Sport" prefWidth="100"/>
-                        <TableColumn fx:id="seasonColumn" text="Season" prefWidth="80"/>
-                        <TableColumn fx:id="coachColumn" text="Coach/Advisor" prefWidth="150"/>
-                        <TableColumn fx:id="rosterSizeColumn" text="Members" prefWidth="80"/>
-                        <TableColumn fx:id="recordColumn" text="Record" prefWidth="80"/>
-                    </columns>
-                </TableView>
+        <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+
+            <!-- Teams Tab -->
+            <Tab text="Teams">
+                <VBox spacing="10" style="-fx-padding: 15;">
+                    <!-- Inline Form -->
+                    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 10;">
+                        <Label text="Team Name:"/>
+                        <TextField fx:id="teamNameField" promptText="Team name" prefWidth="150"/>
+                        <Label text="Sport:"/>
+                        <ComboBox fx:id="sportComboBox" promptText="Sport" prefWidth="130"/>
+                        <Label text="Season:"/>
+                        <ComboBox fx:id="seasonComboBox" promptText="Season" prefWidth="100"/>
+                        <Label text="Coach ID:"/>
+                        <TextField fx:id="coachIdField" promptText="Coach ID" prefWidth="80"/>
+                        <Label text="Max Roster:"/>
+                        <TextField fx:id="maxRosterField" promptText="Max" prefWidth="60"/>
+                        <Button text="Create Team" onAction="#handleCreateTeam" styleClass="button-success"/>
+                    </HBox>
+
+                    <!-- Teams Table -->
+                    <TableView fx:id="teamsTableView" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="teamNameColumn" text="Name" prefWidth="200"/>
+                            <TableColumn fx:id="sportColumn" text="Sport" prefWidth="100"/>
+                            <TableColumn fx:id="seasonColumn" text="Season" prefWidth="80"/>
+                            <TableColumn fx:id="coachColumn" text="Coach/Advisor" prefWidth="150"/>
+                            <TableColumn fx:id="rosterSizeColumn" text="Members" prefWidth="80"/>
+                            <TableColumn fx:id="recordColumn" text="Record" prefWidth="80"/>
+                            <TableColumn fx:id="teamActionsColumn" text="Actions" prefWidth="220"/>
+                        </columns>
+                    </TableView>
+
+                    <!-- Bottom Buttons -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button text="Add Player" onAction="#handleAddPlayerToTeam" styleClass="button-primary"/>
+                        <Button text="Remove Player" onAction="#handleRemovePlayer" styleClass="button-danger"/>
+                    </HBox>
+                </VBox>
             </Tab>
+
+            <!-- Schedules Tab -->
             <Tab text="Schedules">
-                <TableView fx:id="scheduleTableView" style="-fx-padding: 15;">
-                    <columns>
-                        <TableColumn fx:id="eventNameColumn" text="Event" prefWidth="200"/>
-                        <TableColumn fx:id="eventTeamColumn" text="Team" prefWidth="120"/>
-                        <TableColumn fx:id="eventDateColumn" text="Date" prefWidth="150"/>
-                        <TableColumn fx:id="eventTypeColumn" text="Type" prefWidth="100"/>
-                        <TableColumn fx:id="opponentColumn" text="Opponent" prefWidth="120"/>
-                        <TableColumn fx:id="resultColumn" text="Result" prefWidth="100"/>
-                    </columns>
-                </TableView>
+                <VBox spacing="10" style="-fx-padding: 15;">
+                    <!-- Inline Form -->
+                    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 10;">
+                        <Label text="Event:"/>
+                        <TextField fx:id="eventNameField" promptText="Event name" prefWidth="150"/>
+                        <Label text="Team ID:"/>
+                        <TextField fx:id="eventTeamIdField" promptText="Team ID" prefWidth="80"/>
+                        <Label text="Opponent:"/>
+                        <TextField fx:id="opponentField" promptText="Opponent" prefWidth="120"/>
+                        <Label text="Type:"/>
+                        <ComboBox fx:id="eventTypeComboBox" promptText="Event type" prefWidth="130"/>
+                        <Button text="Schedule Event" onAction="#handleScheduleEvent" styleClass="button-primary"/>
+                    </HBox>
+
+                    <!-- Schedule Table -->
+                    <TableView fx:id="scheduleTableView" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="eventNameColumn" text="Event" prefWidth="200"/>
+                            <TableColumn fx:id="eventTeamColumn" text="Team" prefWidth="120"/>
+                            <TableColumn fx:id="eventDateColumn" text="Date" prefWidth="150"/>
+                            <TableColumn fx:id="eventTypeColumn" text="Type" prefWidth="100"/>
+                            <TableColumn fx:id="opponentColumn" text="Opponent" prefWidth="120"/>
+                            <TableColumn fx:id="resultColumn" text="Result" prefWidth="100"/>
+                            <TableColumn fx:id="scheduleActionsColumn" text="Actions" prefWidth="180"/>
+                        </columns>
+                    </TableView>
+
+                    <!-- Bottom Buttons -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button text="Record Result" onAction="#handleRecordResult" styleClass="button-warning"/>
+                    </HBox>
+                </VBox>
             </Tab>
+
+            <!-- Clubs Tab -->
+            <Tab text="Clubs">
+                <VBox spacing="10" style="-fx-padding: 15;">
+                    <!-- Inline Form -->
+                    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 10;">
+                        <Label text="Club Name:"/>
+                        <TextField fx:id="clubNameField" promptText="Club name" prefWidth="150"/>
+                        <Label text="Category:"/>
+                        <ComboBox fx:id="clubCategoryComboBox" promptText="Category" prefWidth="130"/>
+                        <Label text="Advisor ID:"/>
+                        <TextField fx:id="clubAdvisorIdField" promptText="Advisor ID" prefWidth="80"/>
+                        <Button text="Create Club" onAction="#handleCreateClub" styleClass="button-success"/>
+                    </HBox>
+
+                    <!-- Clubs Table -->
+                    <TableView fx:id="clubsTableView" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="clubNameColumn" text="Club Name" prefWidth="200"/>
+                            <TableColumn fx:id="categoryColumn" text="Category" prefWidth="120"/>
+                            <TableColumn fx:id="advisorColumn" text="Advisor" prefWidth="150"/>
+                            <TableColumn fx:id="membersColumn" text="Members" prefWidth="80"/>
+                            <TableColumn fx:id="maxMembersColumn" text="Max Members" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+
+                    <!-- Bottom Buttons -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button text="Enroll Student" onAction="#handleEnrollStudent" styleClass="button-primary"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- Rosters Tab -->
+            <Tab text="Rosters">
+                <VBox spacing="10" style="-fx-padding: 15;">
+                    <!-- Rosters Table -->
+                    <TableView fx:id="rostersTableView" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="playerNameColumn" text="Player" prefWidth="180"/>
+                            <TableColumn fx:id="playerTeamColumn" text="Team" prefWidth="150"/>
+                            <TableColumn fx:id="positionColumn" text="Position" prefWidth="100"/>
+                            <TableColumn fx:id="jerseyColumn" text="Jersey #" prefWidth="80"/>
+                            <TableColumn fx:id="eligibilityColumn" text="Eligibility" prefWidth="100"/>
+                            <TableColumn fx:id="documentsColumn" text="Documents" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+
+                    <!-- Bottom Buttons -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button text="Remove Player" onAction="#handleRemovePlayer" styleClass="button-danger"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
         </TabPane>
     </center>
 </BorderPane>

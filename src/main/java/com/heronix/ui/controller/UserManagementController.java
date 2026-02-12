@@ -3,6 +3,7 @@ package com.heronix.ui.controller;
 import com.heronix.model.domain.User;
 import com.heronix.model.enums.Role;
 import com.heronix.security.SecurityContext;
+import com.heronix.util.ResponsiveDesignHelper;
 import com.heronix.service.UserService;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -496,6 +497,8 @@ public class UserManagementController {
             userDialogController.setupForCreate(); // Setup for new user
 
             // Show dialog and wait for response
+            dialogStage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(dialogStage);
             dialogStage.showAndWait();
 
             // If user was saved, reload the list
@@ -537,6 +540,8 @@ public class UserManagementController {
             userDialogController.setupForEdit(user); // Pass user for editing
 
             // Show dialog and wait for response
+            dialogStage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(dialogStage);
             dialogStage.showAndWait();
 
             // If user was saved, reload the list

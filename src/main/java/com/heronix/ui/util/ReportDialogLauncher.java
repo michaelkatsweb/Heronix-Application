@@ -1,6 +1,7 @@
 package com.heronix.ui.util;
 
 import com.heronix.ui.controller.ReportGenerationDialogController;
+import com.heronix.util.ResponsiveDesignHelper;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -72,7 +73,8 @@ public class ReportDialogLauncher {
             // Set scene
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
-            dialogStage.setResizable(false);
+            dialogStage.setResizable(true);
+            ResponsiveDesignHelper.makeDialogResponsive(dialogStage);
 
             // Set controller stage reference
             controller.setDialogStage(dialogStage);

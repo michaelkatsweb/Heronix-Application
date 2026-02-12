@@ -70,27 +70,28 @@ Location: src/main/resources/fxml/Courses.fxml
                 <Label fx:id="recordCountLabel" text="Total: 0" styleClass="label"/>
             </HBox>
 
-            <TableView fx:id="coursesTable" VBox.vgrow="ALWAYS" minHeight="400" prefHeight="500">
+            <ScrollPane fitToHeight="true" hbarPolicy="AS_NEEDED" style="-fx-background: transparent;" VBox.vgrow="ALWAYS">
+            <TableView fx:id="coursesTable" minHeight="400" prefHeight="500">
                 <columns>
                     <!-- Status Indicator Column -->
-                    <TableColumn fx:id="statusColumn" text="●" prefWidth="50" minWidth="50" maxWidth="50" sortable="true" style="-fx-alignment: CENTER;"/>
+                    <TableColumn fx:id="statusColumn" text="●" prefWidth="40" minWidth="40" maxWidth="40" sortable="true" style="-fx-alignment: CENTER;"/>
 
-                    <TableColumn fx:id="codeColumn" text="Code" prefWidth="110" minWidth="90"/>
-                    <TableColumn fx:id="nameColumn" text="Course Name" prefWidth="250" minWidth="200"/>
-                    <TableColumn fx:id="subjectColumn" text="Subject" prefWidth="130" minWidth="110"/>
-                    <TableColumn fx:id="levelColumn" text="Level" prefWidth="120" minWidth="100"/>
-                    <TableColumn fx:id="creditsColumn" text="Credits" prefWidth="80" minWidth="60"/>
-                    <TableColumn fx:id="durationColumn" text="Duration" prefWidth="90" minWidth="80"/>
-                    <TableColumn fx:id="maxStudentsColumn" text="Max Students" prefWidth="120" minWidth="100"/>
-                    <TableColumn fx:id="complexityColumn" text="Complexity" prefWidth="110" minWidth="90"/>
+                    <TableColumn fx:id="codeColumn" text="Code" prefWidth="90" minWidth="80"/>
+                    <TableColumn fx:id="nameColumn" text="Course Name" prefWidth="180" minWidth="150"/>
+                    <TableColumn fx:id="subjectColumn" text="Subject" prefWidth="100" minWidth="80"/>
+                    <TableColumn fx:id="levelColumn" text="Level" prefWidth="90" minWidth="75"/>
+                    <TableColumn fx:id="creditsColumn" text="Credits" prefWidth="65" minWidth="55"/>
+                    <TableColumn fx:id="durationColumn" text="Duration" prefWidth="70" minWidth="60"/>
+                    <TableColumn fx:id="maxStudentsColumn" text="Max" prefWidth="50" minWidth="45"/>
+                    <TableColumn fx:id="complexityColumn" text="Complexity" prefWidth="80" minWidth="70"/>
 
                     <!-- ENHANCED: Multi-Subject Teaching MVP - Qualification Indicator Column -->
-                    <TableColumn fx:id="qualificationColumn" text="Qualified" prefWidth="90" minWidth="70" maxWidth="120" sortable="true" style="-fx-alignment: CENTER;"/>
+                    <TableColumn fx:id="qualificationColumn" text="Qual" prefWidth="50" minWidth="45" maxWidth="60" sortable="true" style="-fx-alignment: CENTER;"/>
 
                     <!-- Quick Assign Column -->
                     <TableColumn fx:id="quickAssignColumn" text="Quick Assign" prefWidth="120" minWidth="100" style="-fx-alignment: CENTER;"/>
 
-                    <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="350" minWidth="320"/>
+                    <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="300" minWidth="260"/>
                 </columns>
 
                 <placeholder>
@@ -101,6 +102,7 @@ Location: src/main/resources/fxml/Courses.fxml
                     </VBox>
                 </placeholder>
             </TableView>
+            </ScrollPane>
 
             <!-- Bottom Actions -->
             <HBox spacing="10" alignment="CENTER_RIGHT">

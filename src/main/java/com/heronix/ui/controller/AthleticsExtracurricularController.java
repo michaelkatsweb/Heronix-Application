@@ -10,8 +10,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -45,6 +47,7 @@ public class AthleticsExtracurricularController {
     @FXML private TableColumn<AthleticTeam, String> coachColumn;
     @FXML private TableColumn<AthleticTeam, Integer> rosterSizeColumn;
     @FXML private TableColumn<AthleticTeam, String> recordColumn;
+    @FXML private TableColumn<AthleticTeam, Void> teamActionsColumn;
 
     // FXML fields for schedule/events tab
     @FXML private TableView<AthleticEvent> scheduleTableView;
@@ -54,6 +57,7 @@ public class AthleticsExtracurricularController {
     @FXML private TableColumn<AthleticEvent, String> eventTypeColumn;
     @FXML private TableColumn<AthleticEvent, String> opponentColumn;
     @FXML private TableColumn<AthleticEvent, String> resultColumn;
+    @FXML private TableColumn<AthleticEvent, Void> scheduleActionsColumn;
 
     // FXML fields for clubs tab
     @FXML private TableView<Club> clubsTableView;
@@ -105,6 +109,9 @@ public class AthleticsExtracurricularController {
     }
 
     private void setupTables() {
+        setupTeamActionsColumn();
+        setupScheduleActionsColumn();
+
         // Teams table setup
         if (teamsTableView != null) {
             teamNameColumn.setCellValueFactory(cellData ->
@@ -197,6 +204,136 @@ public class AthleticsExtracurricularController {
 
             rostersTableView.setItems(rostersList);
         }
+    }
+
+    private void setupTeamActionsColumn() {
+        if (teamActionsColumn == null) return;
+
+        teamActionsColumn.setCellValueFactory(param -> new javafx.beans.property.SimpleObjectProperty<>(null));
+        teamActionsColumn.setCellFactory(col -> new TableCell<>() {
+            private final String BTN_STYLE = "-fx-text-fill: white; -fx-padding: 2 6; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;";
+            private final Button editBtn = new Button("Edit");
+            private final Button deleteBtn = new Button("Delete");
+            private final Button rosterBtn = new Button("View Roster");
+            private final HBox pane = new HBox(4, editBtn, deleteBtn, rosterBtn);
+
+            {
+                pane.setAlignment(Pos.CENTER);
+                editBtn.setStyle("-fx-background-color: #3b82f6;" + BTN_STYLE);
+                deleteBtn.setStyle("-fx-background-color: #ef4444;" + BTN_STYLE);
+                rosterBtn.setStyle("-fx-background-color: #8b5cf6;" + BTN_STYLE);
+
+                editBtn.setOnAction(e -> {
+                    AthleticTeam team = getTableRow().getItem();
+                    if (team != null) {
+                        showAlert("Edit Team", "Edit functionality for: " + team.getTeamName());
+                    }
+                });
+
+                deleteBtn.setOnAction(e -> {
+                    AthleticTeam team = getTableRow().getItem();
+                    if (team != null) {
+                        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                        confirm.setTitle("Delete Team");
+                        confirm.setHeaderText("Delete " + team.getTeamName() + "?");
+                        confirm.setContentText("This action cannot be undone.");
+                        confirm.showAndWait().ifPresent(response -> {
+                            if (response == ButtonType.OK) {
+                                new Thread(() -> {
+                                    try {
+                                        athleticsService.deleteTeam(team.getId());
+                                        Platform.runLater(() -> {
+                                            showAlert("Success", "Team deleted");
+                                            loadData();
+                                            updateStatistics();
+                                        });
+                                    } catch (Exception ex) {
+                                        Platform.runLater(() -> showAlert("Error", "Failed to delete team: " + ex.getMessage()));
+                                    }
+                                }).start();
+                            }
+                        });
+                    }
+                });
+
+                rosterBtn.setOnAction(e -> {
+                    AthleticTeam team = getTableRow().getItem();
+                    if (team != null) {
+                        new Thread(() -> {
+                            try {
+                                List<TeamMembership> roster = athleticsService.getActiveRoster(team.getId());
+                                Platform.runLater(() -> rostersList.setAll(roster));
+                            } catch (Exception ex) {
+                                Platform.runLater(() -> showAlert("Error", "Failed to load roster: " + ex.getMessage()));
+                            }
+                        }).start();
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : pane);
+            }
+        });
+    }
+
+    private void setupScheduleActionsColumn() {
+        if (scheduleActionsColumn == null) return;
+
+        scheduleActionsColumn.setCellValueFactory(param -> new javafx.beans.property.SimpleObjectProperty<>(null));
+        scheduleActionsColumn.setCellFactory(col -> new TableCell<>() {
+            private final String BTN_STYLE = "-fx-text-fill: white; -fx-padding: 2 6; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;";
+            private final Button resultBtn = new Button("Record Result");
+            private final Button cancelBtn = new Button("Cancel");
+            private final HBox pane = new HBox(4, resultBtn, cancelBtn);
+
+            {
+                pane.setAlignment(Pos.CENTER);
+                resultBtn.setStyle("-fx-background-color: #f59e0b;" + BTN_STYLE);
+                cancelBtn.setStyle("-fx-background-color: #ef4444;" + BTN_STYLE);
+
+                resultBtn.setOnAction(e -> {
+                    AthleticEvent event = getTableRow().getItem();
+                    if (event != null) {
+                        // Select this event in the table, then call the existing handler
+                        scheduleTableView.getSelectionModel().select(event);
+                        handleRecordResult();
+                    }
+                });
+
+                cancelBtn.setOnAction(e -> {
+                    AthleticEvent event = getTableRow().getItem();
+                    if (event != null) {
+                        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                        confirm.setTitle("Cancel Event");
+                        confirm.setHeaderText("Cancel " + event.getEventName() + "?");
+                        confirm.showAndWait().ifPresent(response -> {
+                            if (response == ButtonType.OK) {
+                                new Thread(() -> {
+                                    try {
+                                        athleticsService.cancelEvent(event.getId(), "Cancelled by user");
+                                        Platform.runLater(() -> {
+                                            showAlert("Success", "Event cancelled");
+                                            loadData();
+                                        });
+                                    } catch (Exception ex) {
+                                        Platform.runLater(() -> showAlert("Error", "Failed to cancel event: " + ex.getMessage()));
+                                    }
+                                }).start();
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : pane);
+            }
+        });
     }
 
     private void setupComboBoxes() {
