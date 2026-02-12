@@ -90,7 +90,7 @@ Location: src/main/resources/fxml/Courses.fxml
                     <!-- Quick Assign Column -->
                     <TableColumn fx:id="quickAssignColumn" text="Quick Assign" prefWidth="120" minWidth="100" style="-fx-alignment: CENTER;"/>
 
-                    <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="220" minWidth="200"/>
+                    <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="350" minWidth="320"/>
                 </columns>
 
                 <placeholder>

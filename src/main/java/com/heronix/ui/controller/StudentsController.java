@@ -476,22 +476,18 @@ public class StudentsController {
             @Override
             public TableCell<Student, Void> call(TableColumn<Student, Void> param) {
                 return            new TableCell<Student, Void>() {
-                    private final Button editBtn = new Button("✏️");
-                    private final Button gradesBtn = new Button("📝");
-                    private final Button coursesBtn = new Button("📚");
-                    private final Button deleteBtn = new Button("🗑️");
+                    private final Button editBtn = new Button("Edit");
+                    private final Button gradesBtn = new Button("Grades");
+                    private final Button coursesBtn = new Button("Courses");
+                    private final Button deleteBtn = new Button("Delete");
                     private final HBox pane = new HBox(5, editBtn, gradesBtn, coursesBtn, deleteBtn);
 
                     {
                         pane.setAlignment(Pos.CENTER);
-                        editBtn.getStyleClass().add("button-success");
-                        editBtn.setStyle("-fx-cursor: hand; -fx-font-size: 11px;");
-                        gradesBtn.getStyleClass().add("button-accent");
-                        gradesBtn.setStyle("-fx-cursor: hand; -fx-font-size: 11px;");
-                        coursesBtn.getStyleClass().add("button-primary");
-                        coursesBtn.setStyle("-fx-cursor: hand; -fx-font-size: 11px;");
-                        deleteBtn.getStyleClass().add("button-danger");
-                        deleteBtn.setStyle("-fx-cursor: hand; -fx-font-size: 11px;");
+                        editBtn.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
+                        gradesBtn.setStyle("-fx-background-color: #8b5cf6; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
+                        coursesBtn.setStyle("-fx-background-color: #8b5cf6; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
+                        deleteBtn.setStyle("-fx-background-color: #ef4444; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
 
                         editBtn.setTooltip(new Tooltip("Edit Student"));
                         gradesBtn.setTooltip(new Tooltip("Add/View Grades"));

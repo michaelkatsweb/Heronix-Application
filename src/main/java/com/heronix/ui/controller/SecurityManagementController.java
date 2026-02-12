@@ -277,11 +277,13 @@ public class SecurityManagementController implements Initializable {
 
         // Actions column with buttons
         devActionsCol.setCellFactory(col -> new TableCell<>() {
-            private final Button viewBtn = new Button("👁️");
-            private final Button editBtn = new Button("✏️");
+            private final Button viewBtn = new Button("View");
+            private final Button editBtn = new Button("Edit");
             private final HBox buttons = new HBox(5, viewBtn, editBtn);
 
             {
+                viewBtn.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
+                editBtn.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
                 viewBtn.setTooltip(new Tooltip("View Details"));
                 editBtn.setTooltip(new Tooltip("Edit Device"));
                 viewBtn.setOnAction(e -> handleViewDevice(getTableRow().getItem()));

@@ -278,17 +278,19 @@ public class EventsController {
      */
     private void setupActionsColumn() {
         actionsColumn.setCellFactory(col -> new TableCell<>() {
-            private final Button viewBtn = new Button("👁️");
-            private final Button editBtn = new Button("✏️");
-            private final Button deleteBtn = new Button("🗑️");
+            private final Button viewBtn = new Button("View");
+            private final Button editBtn = new Button("Edit");
+            private final Button deleteBtn = new Button("Delete");
             private final HBox pane = new HBox(5, viewBtn, editBtn, deleteBtn);
 
             {
                 pane.setAlignment(Pos.CENTER);
+                viewBtn.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
+                editBtn.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
+                deleteBtn.setStyle("-fx-background-color: #ef4444; -fx-text-fill: white; -fx-padding: 2 8; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;");
                 viewBtn.setOnAction(e -> handleView(getTableRow().getItem()));
                 editBtn.setOnAction(e -> handleEdit(getTableRow().getItem()));
                 deleteBtn.setOnAction(e -> handleDelete(getTableRow().getItem()));
-                deleteBtn.setStyle("-fx-background-color: #F44336; -fx-text-fill: white;");
             }
 
             @Override
