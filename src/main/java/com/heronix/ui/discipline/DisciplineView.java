@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.Screen;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -340,7 +341,8 @@ public class DisciplineView extends BorderPane {
             new String[]{"Time", incident.getTime() != null ? incident.getTime().format(DateTimeFormatter.ofPattern("h:mm a")) : "N/A"},
             new String[]{"Location", incident.getLocation()},
             new String[]{"Type", incident.getIncidentType().getDisplayName()},
-            new String[]{"Reported By", incident.getReportedBy()}
+            new String[]{"Reported By", incident.getReportedBy()},
+            new String[]{"Issued By", incident.getIssuedByAdministrator() != null ? incident.getIssuedByAdministrator() : "N/A"}
         ));
 
         // Description
@@ -428,10 +430,13 @@ public class DisciplineView extends BorderPane {
         Dialog<DisciplineIncident> dialog = new Dialog<>();
         dialog.setTitle("New Discipline Incident");
         dialog.setHeaderText("Record a new incident");
+        dialog.setResizable(true);
 
         DialogPane pane = dialog.getDialogPane();
         pane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         pane.setPrefWidth(500);
+        pane.setPrefHeight(500);
+        pane.setMaxHeight(Screen.getPrimary().getVisualBounds().getHeight() * 0.85);
 
         GridPane form = new GridPane();
         form.setHgap(12);
@@ -465,6 +470,11 @@ public class DisciplineView extends BorderPane {
         TextField reporterField = new TextField();
         reporterField.setPromptText("Your name");
 
+        // Issued By Administrator
+        ComboBox<String> administratorBox = new ComboBox<>();
+        administratorBox.getItems().addAll("Dean", "Vice Principal", "Principal", "Assistant Principal", "Counselor", "Other");
+        administratorBox.setPromptText("Select administrator...");
+
         form.add(new Label("Student:"), 0, 0);
         form.add(studentField, 1, 0);
         form.add(new Label("Date:"), 0, 1);
@@ -479,8 +489,13 @@ public class DisciplineView extends BorderPane {
         form.add(descArea, 1, 5);
         form.add(new Label("Reported By:"), 0, 6);
         form.add(reporterField, 1, 6);
+        form.add(new Label("Issued By:"), 0, 7);
+        form.add(administratorBox, 1, 7);
 
-        pane.setContent(form);
+        ScrollPane scrollPane = new ScrollPane(form);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        pane.setContent(scrollPane);
 
         dialog.setResultConverter(button -> {
             if (button == ButtonType.OK) {
@@ -492,6 +507,7 @@ public class DisciplineView extends BorderPane {
                 incident.setIncidentType(typeBox.getValue());
                 incident.setDescription(descArea.getText());
                 incident.setReportedBy(reporterField.getText());
+                incident.setIssuedByAdministrator(administratorBox.getValue());
                 incident.setStatus(IncidentStatus.OPEN);
                 return incident;
             }
@@ -516,6 +532,7 @@ public class DisciplineView extends BorderPane {
         Dialog<DisciplineAction> dialog = new Dialog<>();
         dialog.setTitle("Add Action");
         dialog.setHeaderText("Record an action for this incident");
+        dialog.setResizable(true);
 
         DialogPane pane = dialog.getDialogPane();
         pane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
@@ -544,7 +561,10 @@ public class DisciplineView extends BorderPane {
             notifyParent
         );
 
-        pane.setContent(form);
+        ScrollPane scrollPane = new ScrollPane(form);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        pane.setContent(scrollPane);
 
         dialog.setResultConverter(button -> {
             if (button == ButtonType.OK && actionType.getValue() != null) {
@@ -597,6 +617,7 @@ public class DisciplineView extends BorderPane {
         incident.setStatus(status);
         incident.setDate(date);
         incident.setReportedBy("Mr. Smith");
+        incident.setIssuedByAdministrator("Dean");
 
         if (status == IncidentStatus.IN_PROGRESS || status == IncidentStatus.RESOLVED) {
             DisciplineAction action = new DisciplineAction();
@@ -640,6 +661,7 @@ public class DisciplineView extends BorderPane {
         private List<DisciplineAction> actions = new ArrayList<>();
         private List<String> witnesses = new ArrayList<>();
         private String parentNotified;
+        private String issuedByAdministrator;
     }
 
     @Getter @Setter

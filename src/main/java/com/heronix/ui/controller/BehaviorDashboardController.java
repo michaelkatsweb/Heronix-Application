@@ -5,6 +5,7 @@ import com.heronix.model.domain.Student;
 import com.heronix.service.BehaviorDashboardService;
 import com.heronix.service.BehaviorIncidentService;
 import com.heronix.service.StudentService;
+import com.heronix.ui.component.StudentCardPopup;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -186,6 +187,21 @@ public class BehaviorDashboardController {
                 super.updateItem(item, empty);
                 setGraphic(empty ? null : buttons);
             }
+        });
+
+        // Double-click row to open Student Card popup
+        incidentsTable.setRowFactory(tv -> {
+            TableRow<BehaviorIncident> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    BehaviorIncident incident = row.getItem();
+                    if (incident != null && incident.getStudent() != null && incident.getStudent().getId() != null) {
+                        StudentCardPopup.show(applicationContext, incident.getStudent().getId(),
+                            incidentsTable.getScene().getWindow());
+                    }
+                }
+            });
+            return row;
         });
     }
 

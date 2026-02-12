@@ -11,6 +11,7 @@ import com.heronix.service.StudentService;
 import com.heronix.service.GradeService;
 import com.heronix.service.StudentPlacementService;
 import com.heronix.ui.component.EditableTableCell;
+import com.heronix.ui.component.StudentCardPopup;
 import com.heronix.ui.controller.MedicalRecordDialogController;
 import com.heronix.ui.controller.StudentGradeDialogController;
 import com.heronix.ui.controller.GradeImportDialogController;
@@ -530,45 +531,59 @@ public class StudentsController {
      * Color-codes entire rows based on academic standing
      */
     private void setupRowFactory() {
-        studentsTable.setRowFactory(tv -> new TableRow<Student>() {
-            @Override
-            protected void updateItem(Student student, boolean empty) {
-                super.updateItem(student, empty);
+        studentsTable.setRowFactory(tv -> {
+            TableRow<Student> row = new TableRow<>() {
+                @Override
+                protected void updateItem(Student student, boolean empty) {
+                    super.updateItem(student, empty);
 
-                if (empty || student == null || graduationRequirementsService == null) {
-                    setStyle("");
-                    setTooltip(null);
-                } else {
-                    // Use default table row styling (no custom background colors)
-                    setStyle("");
+                    if (empty || student == null || graduationRequirementsService == null) {
+                        setStyle("");
+                        setTooltip(null);
+                    } else {
+                        // Use default table row styling (no custom background colors)
+                        setStyle("");
 
-                    // Add tooltip with graduation status summary
-                    String status = graduationRequirementsService.getAcademicStandingStatus(student);
-                    double creditsBehind = graduationRequirementsService.getCreditsBehind(student);
-                    Double gpa = student.getCurrentGPA();
-                    String gpaStr = gpa != null ? String.format("%.2f", gpa) : "N/A";
+                        // Add tooltip with graduation status summary
+                        String status = graduationRequirementsService.getAcademicStandingStatus(student);
+                        double creditsBehind = graduationRequirementsService.getCreditsBehind(student);
+                        Double gpa = student.getCurrentGPA();
+                        String gpaStr = gpa != null ? String.format("%.2f", gpa) : "N/A";
 
-                    StringBuilder tooltipText = new StringBuilder();
-                    tooltipText.append(String.format("%s %s\n",
-                        graduationRequirementsService.getStandingIcon(student), status));
-                    tooltipText.append(String.format("GPA: %s\n", gpaStr));
+                        StringBuilder tooltipText = new StringBuilder();
+                        tooltipText.append(String.format("%s %s\n",
+                            graduationRequirementsService.getStandingIcon(student), status));
+                        tooltipText.append(String.format("GPA: %s\n", gpaStr));
 
-                    if (creditsBehind > 0) {
-                        tooltipText.append(String.format("Credits Behind: %.1f\n", creditsBehind));
+                        if (creditsBehind > 0) {
+                            tooltipText.append(String.format("Credits Behind: %.1f\n", creditsBehind));
+                        }
+
+                        if ("Retention Risk".equals(status)) {
+                            tooltipText.append("\n⚠️ URGENT: Immediate intervention required");
+                        } else if ("At Risk".equals(status)) {
+                            tooltipText.append("\n⚠️ Monitor progress closely");
+                        }
+
+                        Tooltip tooltip = new Tooltip(tooltipText.toString());
+                        tooltip.setWrapText(true);
+                        tooltip.setMaxWidth(300);
+                        setTooltip(tooltip);
                     }
-
-                    if ("Retention Risk".equals(status)) {
-                        tooltipText.append("\n⚠️ URGENT: Immediate intervention required");
-                    } else if ("At Risk".equals(status)) {
-                        tooltipText.append("\n⚠️ Monitor progress closely");
-                    }
-
-                    Tooltip tooltip = new Tooltip(tooltipText.toString());
-                    tooltip.setWrapText(true);
-                    tooltip.setMaxWidth(300);
-                    setTooltip(tooltip);
                 }
-            }
+            };
+
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Student student = row.getItem();
+                    if (student != null && student.getId() != null) {
+                        StudentCardPopup.show(applicationContext, student.getId(),
+                            studentsTable.getScene().getWindow());
+                    }
+                }
+            });
+
+            return row;
         });
     }
 
