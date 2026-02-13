@@ -1168,8 +1168,9 @@ public class TeacherDialogController extends BaseDialogController {
                         teacherRepository.save(teacher);
 
                         // Update UI list (use managed courses)
-                        // Reload teacher's courses to get managed entities
-                        Teacher refreshedTeacher = teacherRepository.findById(teacher.getId())
+                        // Reload teacher's courses with JOIN FETCH to avoid LazyInitializationException
+                        // (open-in-view=false means no Hibernate session outside transactions)
+                        Teacher refreshedTeacher = teacherRepository.findByIdWithCourses(teacher.getId())
                             .orElseThrow(() -> new RuntimeException("Teacher not found"));
                         assignedCourses.clear();
                         assignedCourses.addAll(refreshedTeacher.getCourses());
