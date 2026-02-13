@@ -465,7 +465,7 @@ public class SubstituteAssignmentController {
                 try {
                     assignment.setTotalHours(Double.parseDouble(totalHoursField.getText()));
                 } catch (NumberFormatException e) {
-                    // Ignore
+                    logger.debug("Invalid numeric input for totalHours, skipping", e);
                 }
             }
 
@@ -473,7 +473,7 @@ public class SubstituteAssignmentController {
                 try {
                     assignment.setPayAmount(Double.parseDouble(payAmountField.getText()));
                 } catch (NumberFormatException e) {
-                    // Ignore
+                    logger.debug("Invalid numeric input for payAmount, skipping", e);
                 }
             }
 

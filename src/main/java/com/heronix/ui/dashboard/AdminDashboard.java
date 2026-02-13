@@ -118,7 +118,7 @@ public class AdminDashboard extends ScrollPane {
             // Simulate refresh
             enrollmentKpi.setLoading(true);
             new Thread(() -> {
-                try { Thread.sleep(1000); } catch (Exception e) {}
+                try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
                 javafx.application.Platform.runLater(() -> {
                     enrollmentKpi.setValue(2850 + (int)(Math.random() * 50), 2650);
                     enrollmentKpi.setLoading(false);

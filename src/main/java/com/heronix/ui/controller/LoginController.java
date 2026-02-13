@@ -324,7 +324,7 @@ public class LoginController {
                                     try {
                                         Thread.sleep(500);
                                     } catch (InterruptedException e) {
-                                        // Ignore
+                                        Thread.currentThread().interrupt();
                                     }
                                     Platform.runLater(() -> {
                                         if (dialogStage != null) {
@@ -469,7 +469,7 @@ public class LoginController {
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
-                            // Ignore
+                            Thread.currentThread().interrupt();
                         }
                         Platform.runLater(() -> {
                             if (dialogStage != null) {

@@ -678,7 +678,7 @@ public class CourseConflictResolutionController {
         try {
             Thread.sleep(1500);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
 
         long endTime = System.currentTimeMillis();

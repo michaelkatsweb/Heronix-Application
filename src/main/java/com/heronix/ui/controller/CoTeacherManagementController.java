@@ -559,7 +559,7 @@ public class CoTeacherManagementController {
                     if (!hourlyRateField.getText().trim().isEmpty()) {
                         try {
                             sub.setHourlyRate(Double.parseDouble(hourlyRateField.getText().trim()));
-                        } catch (NumberFormatException ignored) {}
+                        } catch (NumberFormatException e) { logger.debug("Invalid numeric input for hourlyRate, skipping", e); }
                     }
                     sub.setNotes(notesArea.getText().trim().isEmpty() ? null : notesArea.getText().trim());
                     sub.setActive(activeCheckBox.isSelected());

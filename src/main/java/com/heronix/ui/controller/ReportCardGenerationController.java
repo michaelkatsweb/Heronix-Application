@@ -1,10 +1,13 @@
 package com.heronix.ui.controller;
 
+import com.heronix.model.DistrictSettings;
 import com.heronix.model.domain.*;
 import com.heronix.repository.GradingPeriodRepository;
 import com.heronix.repository.StudentRepository;
+import com.heronix.service.DistrictSettingsService;
 import com.heronix.service.GradebookService;
 import com.heronix.service.GradeService;
+import com.heronix.service.ReportCardPdfService;
 import com.heronix.service.impl.AttendanceService;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -24,7 +27,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -48,6 +56,12 @@ public class ReportCardGenerationController {
 
     @Autowired
     private AttendanceService attendanceService;
+
+    @Autowired
+    private DistrictSettingsService districtSettingsService;
+
+    @Autowired
+    private ReportCardPdfService reportCardPdfService;
 
     // Header Components
     @FXML private ComboBox<GradingPeriodItem> gradingPeriodComboBox;
@@ -297,7 +311,8 @@ public class ReportCardGenerationController {
                                             entry.getLetterGrade() != null ? entry.getLetterGrade() : "N/A",
                                             entry.getFinalGrade() != null ? entry.getFinalGrade() : 0.0,
                                             entry.getCredits() != null ? entry.getCredits().intValue() : 0,
-                                            entry.getTeacher() != null ? entry.getTeacher() : ""
+                                            entry.getTeacher() != null ? entry.getTeacher() : "",
+                                            entry.getComments() != null ? entry.getComments() : ""
                                     ));
                                 }
                                 if (reportCard.getTermGPA() != null) {
@@ -427,9 +442,26 @@ public class ReportCardGenerationController {
             html.append("<div class='watermark'>DRAFT</div>");
         }
 
-        // Header
+        // Header with dynamic school info
+        DistrictSettings settings = districtSettingsService.getOrCreateDistrictSettings();
+        String schoolName = settings.getDistrictNameOrDefault();
+
         html.append("<div class='header'>");
-        html.append("<h1>HERONIX HIGH SCHOOL</h1>");
+        if (showSchoolLogoCheckBox.isSelected() && settings.getLogoPath() != null && !settings.getLogoPath().trim().isEmpty()) {
+            java.io.File logoFile = new java.io.File(settings.getLogoPath());
+            if (logoFile.exists()) {
+                html.append("<img src='file:///").append(settings.getLogoPath().replace("\\", "/"))
+                        .append("' style='max-height: 80px; margin-bottom: 10px;'><br>");
+            }
+        }
+        html.append("<h1>").append(escapeHtml(schoolName)).append("</h1>");
+        String campusName = settings.getCampusNameOrDefault();
+        if (campusName != null && !campusName.equals("Main Campus")) {
+            html.append("<h3 style='margin:0; color:#9575cd;'>").append(escapeHtml(campusName)).append("</h3>");
+        }
+        if (settings.getDistrictAddress() != null && !settings.getDistrictAddress().trim().isEmpty()) {
+            html.append("<p style='color:#757575; margin:5px 0;'>").append(escapeHtml(settings.getDistrictAddress())).append("</p>");
+        }
         html.append("<h2>Official Report Card</h2>");
         html.append("<p><strong>").append(period != null ? period.getName() : "").append("</strong> | ");
         html.append("<strong>").append(academicYearComboBox.getValue()).append("</strong></p>");
@@ -459,24 +491,26 @@ public class ReportCardGenerationController {
         html.append("<div class='section'>");
         html.append("<div class='section-title'>Course Grades</div>");
         html.append("<table>");
-        html.append("<tr><th>Course</th><th style='text-align:center'>Grade</th><th style='text-align:center'>Percentage</th><th style='text-align:center'>Credits</th>");
+        html.append("<tr><th>Course</th><th style='text-align:center'>Grade</th><th style='text-align:center'>Percentage</th><th style='text-align:center'>Credits</th><th>Teacher</th>");
         if (showTeacherCommentsCheckBox.isSelected()) {
-            html.append("<th>Teacher</th>");
+            html.append("<th>Comments</th>");
         }
         html.append("</tr>");
 
+        int colSpan = showTeacherCommentsCheckBox.isSelected() ? 6 : 5;
         if (student.getCourseGrades().isEmpty()) {
-            html.append("<tr><td colspan='5' style='text-align:center; color:#999; padding:20px;'>No course grades available for this period</td></tr>");
+            html.append("<tr><td colspan='").append(colSpan).append("' style='text-align:center; color:#999; padding:20px;'>No course grades available for this period</td></tr>");
         } else {
             for (CourseGrade course : student.getCourseGrades()) {
                 String gradeClass = "grade-" + (course.getLetterGrade().isEmpty() ? "F" : course.getLetterGrade().substring(0, 1));
                 html.append("<tr>");
-                html.append("<td>").append(course.getCourseName()).append("</td>");
+                html.append("<td>").append(escapeHtml(course.getCourseName())).append("</td>");
                 html.append("<td style='text-align:center'><span class='grade-letter ").append(gradeClass).append("'>").append(course.getLetterGrade()).append("</span></td>");
                 html.append("<td style='text-align:center'>").append(String.format("%.1f%%", course.getPercentage())).append("</td>");
                 html.append("<td style='text-align:center'>").append(course.getCredits()).append("</td>");
+                html.append("<td>").append(escapeHtml(course.getTeacher())).append("</td>");
                 if (showTeacherCommentsCheckBox.isSelected()) {
-                    html.append("<td>").append(course.getComment()).append("</td>");
+                    html.append("<td>").append(escapeHtml(course.getComment())).append("</td>");
                 }
                 html.append("</tr>");
             }
@@ -663,11 +697,64 @@ public class ReportCardGenerationController {
         File dir = dirChooser.showDialog(studentListView.getScene().getWindow());
 
         if (dir != null) {
+            generationProgressBar.setVisible(true);
+            progressLabel.setVisible(true);
             statusLabel.setText("Exporting " + selected.size() + " report cards...");
-            Platform.runLater(() -> {
-                statusLabel.setText("Exported " + selected.size() + " report cards to " + dir.getName());
-                showAlert("Success", "Exported " + selected.size() + " report cards to:\n" + dir.getAbsolutePath());
+
+            Task<Void> exportTask = new Task<>() {
+                @Override
+                protected Void call() throws Exception {
+                    GradingPeriodItem period = gradingPeriodComboBox.getSelectionModel().getSelectedItem();
+                    Long termId = period != null ? period.getDbId() : null;
+                    ReportCardPdfService.ReportCardOptions options = buildPdfOptions();
+
+                    int total = selected.size();
+                    int successCount = 0;
+                    for (int i = 0; i < total; i++) {
+                        StudentReportData student = selected.get(i);
+                        updateMessage("Exporting " + student.getName() + " (" + (i + 1) + "/" + total + ")");
+                        updateProgress(i, total);
+
+                        try {
+                            byte[] pdfBytes = reportCardPdfService.generateReportCardPdf(
+                                    student.getDbId(), termId, options);
+
+                            File outputFile = new File(dir, student.getStudentId() + "_ReportCard.pdf");
+                            try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+                                fos.write(pdfBytes);
+                            }
+                            successCount++;
+                        } catch (Exception e) {
+                            log.warn("Failed to export report card for {}: {}", student.getName(), e.getMessage());
+                        }
+                    }
+                    updateProgress(total, total);
+                    int finalCount = successCount;
+                    Platform.runLater(() -> {
+                        statusLabel.setText("Exported " + finalCount + " report cards to " + dir.getName());
+                    });
+                    return null;
+                }
+            };
+
+            exportTask.setOnSucceeded(e -> {
+                generationProgressBar.setVisible(false);
+                progressLabel.setVisible(false);
+                showAlert("Export Complete", "Report cards exported to:\n" + dir.getAbsolutePath());
             });
+
+            exportTask.setOnFailed(e -> {
+                generationProgressBar.setVisible(false);
+                progressLabel.setVisible(false);
+                statusLabel.setText("Export failed");
+                log.error("Batch export failed", exportTask.getException());
+                showAlert("Export Failed", "Failed to export report cards:\n" + exportTask.getException().getMessage());
+            });
+
+            generationProgressBar.progressProperty().bind(exportTask.progressProperty());
+            progressLabel.textProperty().bind(exportTask.messageProperty());
+
+            new Thread(exportTask).start();
         }
     }
 
@@ -682,8 +769,67 @@ public class ReportCardGenerationController {
             return;
         }
 
-        statusLabel.setText("Sending " + selected.size() + " report cards to printer...");
-        showAlert("Print", "Printing " + selected.size() + " report cards");
+        generationProgressBar.setVisible(true);
+        progressLabel.setVisible(true);
+        statusLabel.setText("Printing " + selected.size() + " report cards...");
+
+        Task<Void> printTask = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                GradingPeriodItem period = gradingPeriodComboBox.getSelectionModel().getSelectedItem();
+                Long termId = period != null ? period.getDbId() : null;
+                ReportCardPdfService.ReportCardOptions options = buildPdfOptions();
+
+                int total = selected.size();
+                int printedCount = 0;
+                for (int i = 0; i < total; i++) {
+                    StudentReportData student = selected.get(i);
+                    updateMessage("Printing " + student.getName() + " (" + (i + 1) + "/" + total + ")");
+                    updateProgress(i, total);
+
+                    try {
+                        byte[] pdfBytes = reportCardPdfService.generateReportCardPdf(
+                                student.getDbId(), termId, options);
+
+                        Path tempFile = Files.createTempFile(
+                                "reportcard_" + student.getStudentId() + "_", ".pdf");
+                        Files.write(tempFile, pdfBytes);
+
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop.getDesktop().print(tempFile.toFile());
+                        }
+                        printedCount++;
+                    } catch (Exception e) {
+                        log.warn("Failed to print report card for {}: {}", student.getName(), e.getMessage());
+                    }
+                }
+                updateProgress(total, total);
+                int finalCount = printedCount;
+                Platform.runLater(() -> {
+                    statusLabel.setText("Sent " + finalCount + " report cards to printer");
+                });
+                return null;
+            }
+        };
+
+        printTask.setOnSucceeded(e -> {
+            generationProgressBar.setVisible(false);
+            progressLabel.setVisible(false);
+            showAlert("Print Complete", "Sent " + selected.size() + " report cards to printer");
+        });
+
+        printTask.setOnFailed(e -> {
+            generationProgressBar.setVisible(false);
+            progressLabel.setVisible(false);
+            statusLabel.setText("Print failed");
+            log.error("Batch print failed", printTask.getException());
+            showAlert("Print Failed", "Failed to print report cards:\n" + printTask.getException().getMessage());
+        });
+
+        generationProgressBar.progressProperty().bind(printTask.progressProperty());
+        progressLabel.textProperty().bind(printTask.messageProperty());
+
+        new Thread(printTask).start();
     }
 
     @FXML
@@ -694,9 +840,35 @@ public class ReportCardGenerationController {
 
     @FXML
     private void handlePrintCurrent() {
-        if (currentPreviewStudent != null) {
-            statusLabel.setText("Printing report card for " + currentPreviewStudent.getName());
-            showAlert("Print", "Printing report card for " + currentPreviewStudent.getName());
+        if (currentPreviewStudent == null) {
+            showAlert("No Student", "Please select a student first");
+            return;
+        }
+
+        try {
+            GradingPeriodItem period = gradingPeriodComboBox.getSelectionModel().getSelectedItem();
+            Long termId = period != null ? period.getDbId() : null;
+            ReportCardPdfService.ReportCardOptions options = buildPdfOptions();
+
+            byte[] pdfBytes = reportCardPdfService.generateReportCardPdf(
+                    currentPreviewStudent.getDbId(), termId, options);
+
+            // Write to temp file and open system print dialog
+            Path tempFile = Files.createTempFile("reportcard_" + currentPreviewStudent.getStudentId() + "_", ".pdf");
+            Files.write(tempFile, pdfBytes);
+
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().print(tempFile.toFile());
+                statusLabel.setText("Sent report card to printer for " + currentPreviewStudent.getName());
+            } else {
+                // Fallback: open the PDF and let user print manually
+                Desktop.getDesktop().open(tempFile.toFile());
+                statusLabel.setText("Opened report card PDF for " + currentPreviewStudent.getName());
+            }
+        } catch (Exception e) {
+            log.error("Failed to print report card", e);
+            statusLabel.setText("Print failed: " + e.getMessage());
+            showAlert("Print Failed", "Failed to print report card:\n" + e.getMessage());
         }
     }
 
@@ -714,8 +886,25 @@ public class ReportCardGenerationController {
 
         File file = fileChooser.showSaveDialog(studentListView.getScene().getWindow());
         if (file != null) {
-            statusLabel.setText("Exported report card to " + file.getName());
-            showAlert("Success", "Report card exported to:\n" + file.getAbsolutePath());
+            try {
+                GradingPeriodItem period = gradingPeriodComboBox.getSelectionModel().getSelectedItem();
+                Long termId = period != null ? period.getDbId() : null;
+                ReportCardPdfService.ReportCardOptions options = buildPdfOptions();
+
+                byte[] pdfBytes = reportCardPdfService.generateReportCardPdf(
+                        currentPreviewStudent.getDbId(), termId, options);
+
+                try (FileOutputStream fos = new FileOutputStream(file)) {
+                    fos.write(pdfBytes);
+                }
+
+                statusLabel.setText("Exported report card to " + file.getName());
+                showAlert("Success", "Report card exported to:\n" + file.getAbsolutePath());
+            } catch (Exception e) {
+                log.error("Failed to export report card PDF", e);
+                statusLabel.setText("Export failed: " + e.getMessage());
+                showAlert("Export Failed", "Failed to export report card:\n" + e.getMessage());
+            }
         }
     }
 
@@ -856,6 +1045,31 @@ public class ReportCardGenerationController {
         alert.showAndWait();
     }
 
+    private String escapeHtml(String text) {
+        if (text == null) return "";
+        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                .replace("\"", "&quot;").replace("'", "&#39;");
+    }
+
+    private ReportCardPdfService.ReportCardOptions buildPdfOptions() {
+        ReportCardPdfService.GradeFormat format = ReportCardPdfService.GradeFormat.LETTER;
+        if (percentageGradeRadio.isSelected()) format = ReportCardPdfService.GradeFormat.PERCENTAGE;
+        else if (bothGradeRadio.isSelected()) format = ReportCardPdfService.GradeFormat.BOTH;
+
+        return ReportCardPdfService.ReportCardOptions.builder()
+                .showGPA(showGPACheckBox.isSelected())
+                .showClassRank(showClassRankCheckBox.isSelected())
+                .showAttendance(showAttendanceCheckBox.isSelected())
+                .showBehavior(showBehaviorCheckBox.isSelected())
+                .showTeacherComments(showTeacherCommentsCheckBox.isSelected())
+                .showSchoolLogo(showSchoolLogoCheckBox.isSelected())
+                .showSignatures(showSignaturesCheckBox.isSelected())
+                .gradeFormat(format)
+                .principalMessage(principalMessageArea.getText())
+                .draft(watermarkCheckBox.isSelected())
+                .build();
+    }
+
     // Data Classes
 
     public static class GradingPeriodItem {
@@ -929,13 +1143,15 @@ public class ReportCardGenerationController {
         private String letterGrade;
         private double percentage;
         private int credits;
+        private String teacher;
         private String comment;
 
-        public CourseGrade(String courseName, String letterGrade, double percentage, int credits, String comment) {
+        public CourseGrade(String courseName, String letterGrade, double percentage, int credits, String teacher, String comment) {
             this.courseName = courseName;
             this.letterGrade = letterGrade;
             this.percentage = percentage;
             this.credits = credits;
+            this.teacher = teacher;
             this.comment = comment;
         }
 
@@ -943,6 +1159,7 @@ public class ReportCardGenerationController {
         public String getLetterGrade() { return letterGrade; }
         public double getPercentage() { return percentage; }
         public int getCredits() { return credits; }
+        public String getTeacher() { return teacher; }
         public String getComment() { return comment; }
     }
 }

@@ -1,5 +1,8 @@
 package com.heronix.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -9,6 +12,8 @@ import java.sql.ResultSet;
  * Verify Phase 4B migration completed successfully
  */
 public class VerifyMigration {
+
+    private static final Logger log = LoggerFactory.getLogger(VerifyMigration.class);
 
     public static void main(String[] args) {
         String url = "jdbc:h2:file:./data/heronix;AUTO_SERVER=TRUE;MODE=LEGACY;IFEXISTS=TRUE";
@@ -87,10 +92,7 @@ public class VerifyMigration {
             }
 
         } catch (Exception e) {
-            System.err.println();
-            System.err.println("❌ Verification failed:");
-            System.err.println("   " + e.getMessage());
-            e.printStackTrace();
+            log.error("Verification failed: {}", e.getMessage(), e);
             System.exit(1);
         }
     }

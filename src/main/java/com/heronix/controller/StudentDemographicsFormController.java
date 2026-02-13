@@ -228,8 +228,8 @@ public class StudentDemographicsFormController {
         // Languages
         ObservableList<String> languages = FXCollections.observableArrayList(
             "English", "Spanish", "Chinese (Mandarin)", "Chinese (Cantonese)",
-            "French", "German", "Arabic", "Vietnamese", "Korean", "Tagalog",
-            "Russian", "Portuguese", "Japanese", "Other"
+            "French", "German", "Greek", "Italian", "Polish", "Japanese", "Thai",
+            "Vietnamese", "Korean", "Tagalog", "Russian", "Portuguese", "Other"
         );
         cmbNativeLanguage.setItems(languages);
         cmbHomeLanguage.setItems(languages);

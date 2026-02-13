@@ -66,6 +66,7 @@ public class SidebarNavigationController {
     @FXML private HBox navSubstitutes;
     @FXML private HBox navCourses;
     @FXML private HBox navSchedules;
+    @FXML private HBox navMasterSchedule;
     @FXML private HBox navGradebook;
     @FXML private HBox navAttendance;
     @FXML private HBox navTranscripts;
@@ -117,6 +118,7 @@ public class SidebarNavigationController {
     @FXML private Label navSubstitutesLabel;
     @FXML private Label navCoursesLabel;
     @FXML private Label navSchedulesLabel;
+    @FXML private Label navMasterScheduleLabel;
     @FXML private Label navGradebookLabel;
     @FXML private Label navAttendanceLabel;
     @FXML private Label navTranscriptsLabel;
@@ -258,6 +260,7 @@ public class SidebarNavigationController {
         navItemsMap.put("substitutes", navSubstitutes);
         navItemsMap.put("courses", navCourses);
         navItemsMap.put("schedules", navSchedules);
+        navItemsMap.put("master-schedule", navMasterSchedule);
         navItemsMap.put("gradebook", navGradebook);
         navItemsMap.put("attendance", navAttendance);
         navItemsMap.put("transcripts", navTranscripts);
@@ -671,6 +674,11 @@ public class SidebarNavigationController {
     @FXML
     private void handleNavSchedules(MouseEvent event) {
         navigateTo("schedules", navSchedules);
+    }
+
+    @FXML
+    private void handleNavMasterSchedule(MouseEvent event) {
+        navigateTo("master-schedule", navMasterSchedule);
     }
 
     @FXML

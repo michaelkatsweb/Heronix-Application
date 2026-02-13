@@ -440,7 +440,7 @@ public class TeacherEvaluationManagementController {
                 eval.setScheduledDate(datePicker.getValue());
                 if (timeField.getText() != null && !timeField.getText().isBlank()) {
                     try { eval.setScheduledTime(LocalTime.parse(timeField.getText())); }
-                    catch (Exception ignored) {}
+                    catch (Exception e) { log.debug("Invalid time input for scheduledTime, skipping", e); }
                 }
                 eval.setObservationLocation(locationField.getText());
                 if (existing == null) eval.setStatus(EvaluationStatus.SCHEDULED);

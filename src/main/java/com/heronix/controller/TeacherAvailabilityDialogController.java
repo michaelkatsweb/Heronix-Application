@@ -13,6 +13,8 @@ import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import com.heronix.util.ResponsiveDesignHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -32,6 +34,8 @@ import java.util.Optional;
  */
 @Component
 public class TeacherAvailabilityDialogController {
+
+    private static final Logger log = LoggerFactory.getLogger(TeacherAvailabilityDialogController.class);
 
     @FXML private Label teacherNameLabel;
     @FXML private TableView<UnavailableTimeBlock> blocksTable;
@@ -133,8 +137,8 @@ public class TeacherAvailabilityDialogController {
                 updateBlockCount();
             }
         } catch (Exception e) {
+            log.error("Failed to open add block dialog", e);
             showError("Error", "Failed to open add block dialog: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -185,8 +189,8 @@ public class TeacherAvailabilityDialogController {
                 changesMade = true;
             }
         } catch (Exception e) {
+            log.error("Failed to open edit block dialog", e);
             showError("Error", "Failed to open edit block dialog: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -232,8 +236,8 @@ public class TeacherAvailabilityDialogController {
             closeDialog();
 
         } catch (Exception e) {
+            log.error("Failed to save teacher availability", e);
             showError("Save Failed", "Failed to save teacher availability: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

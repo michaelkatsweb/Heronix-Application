@@ -1,7 +1,9 @@
 package com.heronix.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heronix.service.integration.SchedulerProcessManager;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -26,6 +28,9 @@ public class SchedulerApiClient {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+
+    @Autowired(required = false)
+    private SchedulerProcessManager schedulerProcessManager;
 
     public SchedulerApiClient(@Qualifier("schedulerRestTemplate") RestTemplate restTemplate,
                               ObjectMapper objectMapper) {
@@ -95,7 +100,12 @@ public class SchedulerApiClient {
         }
 
         if (!isSchedulerAvailable()) {
-            throw new SchedulerApiException("SchedulerV2 is not available");
+            log.warn("SchedulerV2 is not available, attempting auto-start...");
+            if (schedulerProcessManager != null && schedulerProcessManager.ensureSchedulerRunning()) {
+                log.info("SchedulerV2 auto-started successfully");
+            } else {
+                throw new SchedulerApiException("SchedulerV2 is not available and could not be auto-started");
+            }
         }
 
         try {

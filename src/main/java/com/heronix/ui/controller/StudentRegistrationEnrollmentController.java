@@ -239,7 +239,7 @@ public class StudentRegistrationEnrollmentController {
 
         // Language
         languageComboBox.setItems(FXCollections.observableArrayList(
-                "English", "Spanish", "Chinese", "French", "German", "Arabic", "Other"
+                "English", "Spanish", "Chinese", "French", "German", "Greek", "Italian", "Polish", "Japanese", "Thai", "Other"
         ));
 
         // State

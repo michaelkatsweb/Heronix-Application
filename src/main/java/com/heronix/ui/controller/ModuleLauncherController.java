@@ -14,6 +14,8 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,8 @@ import java.io.IOException;
  */
 @Component
 public class ModuleLauncherController {
+
+    private static final Logger log = LoggerFactory.getLogger(ModuleLauncherController.class);
 
     @FXML private TextField searchField;
     @FXML private Button userButton;
@@ -280,8 +284,7 @@ public class ModuleLauncherController {
                 mainController.loadView(fxmlFile);
                 System.out.println("Navigating to: " + title);
             } catch (Exception e) {
-                System.err.println("Error navigating to " + title + ": " + e.getMessage());
-                e.printStackTrace();
+                log.error("Error navigating to {}", title, e);
             }
         } else {
             System.err.println("MainController not set. Cannot navigate.");
@@ -301,8 +304,7 @@ public class ModuleLauncherController {
             BorderPane root = (BorderPane) searchField.getScene().getRoot();
             root.setCenter(view);
         } catch (IOException e) {
-            System.err.println("Error loading view: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error loading view", e);
         }
     }
 }

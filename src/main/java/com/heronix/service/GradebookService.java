@@ -52,6 +52,9 @@ public class GradebookService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private StudentGradeRepository studentGradeRepository;
+
     // ========================================================================
     // CATEGORY MANAGEMENT
     // ========================================================================
@@ -1150,6 +1153,21 @@ public class GradebookService {
             Course course = courseRepository.findById(courseGrade.getCourseId()).orElse(null);
             if (course == null) continue;
 
+            // Fetch teacher comments from StudentGrade if available
+            String comments = null;
+            try {
+                List<StudentGrade> studentGrades = studentGradeRepository.findByStudentAndCourse(student, course);
+                if (studentGrades != null && !studentGrades.isEmpty()) {
+                    comments = studentGrades.stream()
+                            .filter(sg -> sg.getComments() != null && !sg.getComments().trim().isEmpty())
+                            .map(StudentGrade::getComments)
+                            .findFirst()
+                            .orElse(null);
+                }
+            } catch (Exception e) {
+                log.debug("Could not load comments for student {} course {}: {}", studentId, course.getId(), e.getMessage());
+            }
+
             entries.add(ReportCardEntry.builder()
                     .courseId(course.getId())
                     .courseName(course.getCourseName())
@@ -1159,6 +1177,7 @@ public class GradebookService {
                     .letterGrade(courseGrade.getLetterGrade())
                     .gpaPoints(courseGrade.getGpaPoints())
                     .teacher(course.getTeacher() != null ? course.getTeacher().getFullName() : "N/A")
+                    .comments(comments)
                     .build());
         }
 
@@ -1445,6 +1464,7 @@ public class GradebookService {
         private String letterGrade;
         private Double gpaPoints;
         private String teacher;
+        private String comments;
     }
 
     @Data

@@ -5,6 +5,7 @@ import com.heronix.service.GlobalSearchService;
 import com.heronix.ui.component.BreadcrumbNavigation;
 import com.heronix.ui.service.FilterPersistenceService;
 import com.heronix.ui.service.KeyboardShortcutManager;
+import jakarta.annotation.PreDestroy;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -214,6 +215,7 @@ public class MainControllerV2 {
         VIEW_METADATA.put("teacher-evaluations", new ViewMetadata("Teacher Evaluations", "Manage observations, scoring, and performance evaluations", "/fxml/TeacherEvaluationManagement.fxml"));
         VIEW_METADATA.put("vendors", new ViewMetadata("Vendor Management", "Manage vendors, categories, and approval workflows", "/fxml/VendorManagement.fxml"));
         VIEW_METADATA.put("api-keys", new ViewMetadata("API Key Management", "Generate, manage, and monitor API keys", "/fxml/ApiKeyManagement.fxml"));
+        VIEW_METADATA.put("master-schedule", new ViewMetadata("Master Schedule Board", "Interactive kanban-style master schedule editor", "/fxml/DragDropScheduleEditor.fxml"));
     }
 
     // ========================================================================
@@ -397,6 +399,7 @@ public class MainControllerV2 {
     /**
      * Stop connection monitoring (call on shutdown)
      */
+    @PreDestroy
     public void stopConnectionMonitoring() {
         if (connectionChecker != null && !connectionChecker.isShutdown()) {
             connectionChecker.shutdown();

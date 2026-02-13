@@ -549,7 +549,7 @@ public class GradebookView extends BorderPane {
                     double value = Double.parseDouble(grade.replace("%", ""));
                     earnedPoints += (value / 100) * a.getMaxPoints();
                     totalPoints += a.getMaxPoints();
-                } catch (NumberFormatException ignored) {}
+                } catch (NumberFormatException e) { log.debug("Invalid numeric input for grade percentage, skipping", e); }
             }
         }
 

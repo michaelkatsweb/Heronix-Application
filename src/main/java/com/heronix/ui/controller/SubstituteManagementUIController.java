@@ -1252,7 +1252,7 @@ public class SubstituteManagementUIController {
                         try {
                             sub.setHourlyRate(Double.parseDouble(hourlyRateField.getText().trim()));
                         } catch (NumberFormatException e) {
-                            // Invalid number, skip
+                            logger.debug("Invalid numeric input for hourlyRate, skipping", e);
                         }
                     }
 
@@ -1260,7 +1260,7 @@ public class SubstituteManagementUIController {
                         try {
                             sub.setDailyRate(Double.parseDouble(dailyRateField.getText().trim()));
                         } catch (NumberFormatException e) {
-                            // Invalid number, skip
+                            logger.debug("Invalid numeric input for dailyRate, skipping", e);
                         }
                     }
 

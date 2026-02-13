@@ -38,3 +38,9 @@ heronix:
     # Auto-sync mode (automatically sync data changes to SchedulerV2)
     # Set to false for manual sync only
     auto-sync: false
+
+    # Auto-start SchedulerV2 as subprocess if not running
+    auto-start:
+      enabled: true
+      jar-path: ../Heronix-SchedulerV2/target/heronix-scheduler.jar
+      startup-timeout: 30

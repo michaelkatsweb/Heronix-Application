@@ -12,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
@@ -28,17 +29,20 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Drag-Drop Schedule Editor Controller
+ * Master Schedule Board Controller (Kanban-Style)
  *
- * Provides intuitive visual schedule editing with drag-and-drop functionality.
+ * Provides an interactive, touch-friendly master schedule board where course sections
+ * appear as rich cards on a Teacher x Period grid. Highlights conflicts in real-time
+ * using a kanban color scheme (green=OK, amber=warning, red=conflict).
+ *
  * Features:
- * - Drag-and-drop section movement
- * - Conflict detection and highlighting
+ * - Rich kanban-style cards with subject-colored borders
+ * - Unassigned sections pool with search filtering
+ * - Real-time conflict detection (teacher double-booking, room double-booking, near-capacity)
+ * - Summary statistics bar (assigned, unassigned, conflicts, utilization)
+ * - Drag-and-drop with CSS-based visual feedback
  * - Undo/redo support
- * - Teacher/room/period swapping
- * - Real-time validation
- *
- * Location: src/main/java/com/heronix/ui/controller/DragDropScheduleEditorController.java
+ * - Department-grouped teacher rows
  */
 @Component
 @Slf4j
@@ -66,6 +70,12 @@ public class DragDropScheduleEditorController {
     @FXML private Label changesStatusLabel;
     @FXML private Label conflictsStatusLabel;
 
+    // Statistics Bar
+    @FXML private Label assignedCountLabel;
+    @FXML private Label unassignedCountLabel;
+    @FXML private Label conflictCountLabel;
+    @FXML private Label teacherUtilLabel;
+
     // Filters
     @FXML private ComboBox<String> teacherFilterComboBox;
     @FXML private ComboBox<String> roomFilterComboBox;
@@ -75,6 +85,10 @@ public class DragDropScheduleEditorController {
     // Schedule Grid
     @FXML private GridPane scheduleGrid;
     @FXML private VBox scheduleGridContainer;
+
+    // Unassigned Pool
+    @FXML private VBox unassignedPoolContainer;
+    @FXML private TextField poolSearchField;
 
     // Details Panel
     @FXML private VBox sectionDetailsContainer;
@@ -92,9 +106,54 @@ public class DragDropScheduleEditorController {
     @FXML private ListView<String> recentChangesList;
     @FXML private VBox suggestionsContainer;
 
+    // Constants
     private static final int NUM_PERIODS = 8;
     private static final DataFormat SECTION_DATA_FORMAT = new DataFormat("application/section-id");
 
+    // Subject color map (from ModernScheduleGrid)
+    private static final Map<String, String> SUBJECT_COLORS = new HashMap<>();
+    static {
+        SUBJECT_COLORS.put("Mathematics", "#2563eb");
+        SUBJECT_COLORS.put("Algebra", "#2563eb");
+        SUBJECT_COLORS.put("Geometry", "#2563eb");
+        SUBJECT_COLORS.put("Calculus", "#2563eb");
+        SUBJECT_COLORS.put("Pre-Calculus", "#2563eb");
+        SUBJECT_COLORS.put("Statistics", "#2563eb");
+        SUBJECT_COLORS.put("Science", "#10b981");
+        SUBJECT_COLORS.put("Biology", "#10b981");
+        SUBJECT_COLORS.put("Chemistry", "#10b981");
+        SUBJECT_COLORS.put("Physics", "#10b981");
+        SUBJECT_COLORS.put("Environmental Science", "#10b981");
+        SUBJECT_COLORS.put("English", "#f59e0b");
+        SUBJECT_COLORS.put("Literature", "#f59e0b");
+        SUBJECT_COLORS.put("Spanish", "#f59e0b");
+        SUBJECT_COLORS.put("French", "#f59e0b");
+        SUBJECT_COLORS.put("History", "#ef4444");
+        SUBJECT_COLORS.put("World History", "#ef4444");
+        SUBJECT_COLORS.put("US History", "#ef4444");
+        SUBJECT_COLORS.put("Government", "#ef4444");
+        SUBJECT_COLORS.put("Physical Education", "#06b6d4");
+        SUBJECT_COLORS.put("Health", "#06b6d4");
+        SUBJECT_COLORS.put("Art", "#a855f7");
+        SUBJECT_COLORS.put("Music", "#a855f7");
+        SUBJECT_COLORS.put("Theater", "#a855f7");
+        SUBJECT_COLORS.put("Programming", "#8b5cf6");
+        SUBJECT_COLORS.put("Computer Science", "#8b5cf6");
+        SUBJECT_COLORS.put("Introduction", "#8b5cf6");
+    }
+
+    // Period time ranges for headers
+    private static final String[] PERIOD_TIMES = {
+        "8:00-8:50", "8:55-9:45", "9:50-10:40", "10:45-11:35",
+        "11:40-12:30", "12:35-1:25", "1:30-2:20", "2:25-3:15"
+    };
+
+    // Conflict status enum
+    private enum ConflictStatus {
+        OK, WARNING, CONFLICT
+    }
+
+    // State
     private boolean editMode = false;
     private CourseSection selectedSection;
     private Map<Long, CourseSection> modifiedSections = new HashMap<>();
@@ -102,16 +161,29 @@ public class DragDropScheduleEditorController {
     private Stack<ScheduleChange> redoStack = new Stack<>();
     private Map<String, VBox> cellMap = new HashMap<>();
 
+    // Cached data to avoid repeated DB calls per grid build
+    private List<CourseSection> cachedSections = new ArrayList<>();
+    private List<Teacher> cachedTeachers = new ArrayList<>();
+
+    // ========================================================================
+    // INITIALIZATION
+    // ========================================================================
+
     @FXML
     public void initialize() {
-        log.info("Initializing Drag-Drop Schedule Editor Controller");
+        log.info("Initializing Master Schedule Board Controller");
 
         setupFilters();
+
+        // Wire pool search field listener
+        if (poolSearchField != null) {
+            poolSearchField.textProperty().addListener((obs, oldVal, newVal) -> buildUnassignedPool());
+        }
+
         loadScheduleData();
     }
 
     private void setupFilters() {
-        // Teacher filter
         if (teacherFilterComboBox != null) {
             List<Teacher> teachers = teacherRepository.findAllActive();
             ObservableList<String> teacherNames = FXCollections.observableArrayList("All Teachers");
@@ -122,7 +194,6 @@ public class DragDropScheduleEditorController {
             teacherFilterComboBox.setValue("All Teachers");
         }
 
-        // Room filter
         if (roomFilterComboBox != null) {
             List<Room> rooms = roomRepository.findAll();
             ObservableList<String> roomNumbers = FXCollections.observableArrayList("All Rooms");
@@ -133,7 +204,6 @@ public class DragDropScheduleEditorController {
             roomFilterComboBox.setValue("All Rooms");
         }
 
-        // Grade filter
         if (gradeFilterComboBox != null) {
             ObservableList<String> grades = FXCollections.observableArrayList(
                 "All Grades", "9", "10", "11", "12"
@@ -143,18 +213,22 @@ public class DragDropScheduleEditorController {
         }
     }
 
+    // ========================================================================
+    // TOOLBAR HANDLERS
+    // ========================================================================
+
     @FXML
     private void handleEditModeToggle() {
         editMode = editModeToggle.isSelected();
 
         if (editMode) {
-            safeSetText(editModeStatusLabel, "🔓 Edit Mode ACTIVE");
+            safeSetText(editModeStatusLabel, "Edit Mode ACTIVE");
             editModeStatusLabel.setStyle("-fx-text-fill: #d32f2f; -fx-font-weight: bold;");
-            editModeToggle.setText("🔒 Lock Mode");
+            editModeToggle.setText("Lock Mode");
         } else {
-            safeSetText(editModeStatusLabel, "📌 View Mode");
+            safeSetText(editModeStatusLabel, "View Mode");
             editModeStatusLabel.setStyle("-fx-text-fill: #388e3c; -fx-font-weight: bold;");
-            editModeToggle.setText("🔓 Edit Mode");
+            editModeToggle.setText("Edit Mode");
         }
 
         updateGridInteractivity();
@@ -238,6 +312,10 @@ public class DragDropScheduleEditorController {
     private void handleShowConflictsToggle() {
         refreshScheduleGrid();
     }
+
+    // ========================================================================
+    // SECTION ACTIONS
+    // ========================================================================
 
     @FXML
     private void handleSwapTeacher() {
@@ -348,15 +426,24 @@ public class DragDropScheduleEditorController {
         });
     }
 
+    // ========================================================================
+    // DATA LOADING
+    // ========================================================================
+
     private void loadScheduleData() {
         log.info("Loading schedule data");
 
         Task<Void> loadTask = new Task<>() {
             @Override
             protected Void call() throws Exception {
+                // Cache data on background thread reference
+                List<CourseSection> sections = courseSectionRepository.findAll();
+                List<Teacher> teachers = teacherRepository.findAllActive();
+
                 Platform.runLater(() -> {
-                    buildScheduleGrid();
-                    updateConflictsList();
+                    cachedSections = sections;
+                    cachedTeachers = teachers;
+                    refreshScheduleGrid();
                     updateSuggestions();
                 });
                 return null;
@@ -372,41 +459,66 @@ public class DragDropScheduleEditorController {
         new Thread(loadTask).start();
     }
 
+    // ========================================================================
+    // SCHEDULE GRID (Kanban-Style)
+    // ========================================================================
+
     private void buildScheduleGrid() {
         if (scheduleGrid == null) return;
 
         scheduleGrid.getChildren().clear();
         cellMap.clear();
 
-        // Build header row (periods)
-        Label cornerLabel = new Label("Teacher");
-        cornerLabel.setStyle("-fx-font-weight: bold; -fx-padding: 10; -fx-border-color: #ccc;");
-        cornerLabel.setMinWidth(150);
-        scheduleGrid.add(cornerLabel, 0, 0);
+        // Refresh cached data
+        cachedSections = courseSectionRepository.findAll();
+        cachedTeachers = teacherRepository.findAllActive();
 
-        for (int period = 1; period <= NUM_PERIODS; period++) {
-            Label periodLabel = new Label("Period " + period);
-            periodLabel.setStyle("-fx-font-weight: bold; -fx-padding: 10; -fx-alignment: center; -fx-border-color: #ccc;");
-            periodLabel.setMinWidth(150);
-            scheduleGrid.add(periodLabel, period, 0);
+        // Apply teacher filter
+        List<Teacher> filteredTeachers = cachedTeachers;
+        if (teacherFilterComboBox != null && teacherFilterComboBox.getValue() != null
+                && !"All Teachers".equals(teacherFilterComboBox.getValue())) {
+            String selected = teacherFilterComboBox.getValue();
+            filteredTeachers = cachedTeachers.stream()
+                .filter(t -> (t.getFirstName() + " " + t.getLastName()).equals(selected))
+                .collect(Collectors.toList());
         }
 
-        // Get all teachers and sections
-        List<Teacher> teachers = teacherRepository.findAllActive();
-        List<CourseSection> sections = courseSectionRepository.findAll();
+        // Sort teachers by department then name
+        filteredTeachers.sort(Comparator
+            .comparing((Teacher t) -> t.getDepartment() != null ? t.getDepartment() : "ZZZ")
+            .thenComparing(Teacher::getLastName)
+            .thenComparing(Teacher::getFirstName));
 
-        // Build rows for each teacher
+        // Build header row
+        buildGridHeaders();
+
+        // Build rows for each teacher, inserting department dividers
         int row = 1;
-        for (Teacher teacher : teachers) {
-            // Teacher name label
+        String currentDept = null;
+
+        for (Teacher teacher : filteredTeachers) {
+            String dept = teacher.getDepartment() != null ? teacher.getDepartment() : "Other";
+
+            // Department divider
+            if (!dept.equals(currentDept)) {
+                currentDept = dept;
+                Label deptLabel = new Label(dept.toUpperCase());
+                deptLabel.getStyleClass().add("msb-department-divider");
+                deptLabel.setMaxWidth(Double.MAX_VALUE);
+                scheduleGrid.add(deptLabel, 0, row, NUM_PERIODS + 1, 1);
+                row++;
+            }
+
+            // Teacher name header
             Label teacherLabel = new Label(teacher.getFirstName() + " " + teacher.getLastName());
-            teacherLabel.setStyle("-fx-font-weight: bold; -fx-padding: 10; -fx-border-color: #ccc;");
-            teacherLabel.setMinWidth(150);
+            teacherLabel.getStyleClass().add("msb-teacher-header");
+            teacherLabel.setMinWidth(180);
+            teacherLabel.setMaxWidth(180);
             scheduleGrid.add(teacherLabel, 0, row);
 
             // Create cells for each period
             for (int period = 1; period <= NUM_PERIODS; period++) {
-                VBox cell = createScheduleCell(teacher, period, sections);
+                VBox cell = createScheduleCell(teacher, period);
                 scheduleGrid.add(cell, period, row);
 
                 String cellKey = teacher.getId() + "-" + period;
@@ -417,16 +529,36 @@ public class DragDropScheduleEditorController {
         }
     }
 
-    private VBox createScheduleCell(Teacher teacher, int period, List<CourseSection> allSections) {
-        VBox cell = new VBox(5);
+    private void buildGridHeaders() {
+        // Corner cell
+        Label cornerLabel = new Label("Teacher");
+        cornerLabel.getStyleClass().add("msb-header-cell");
+        cornerLabel.setMinWidth(180);
+        cornerLabel.setMaxWidth(180);
+        scheduleGrid.add(cornerLabel, 0, 0);
+
+        // Period headers with time ranges
+        for (int period = 1; period <= NUM_PERIODS; period++) {
+            String timeRange = (period - 1 < PERIOD_TIMES.length) ? PERIOD_TIMES[period - 1] : "";
+            Label periodLabel = new Label("Period " + period + "\n" + timeRange);
+            periodLabel.getStyleClass().add("msb-header-cell");
+            periodLabel.setMinWidth(180);
+            periodLabel.setAlignment(Pos.CENTER);
+            periodLabel.setWrapText(true);
+            scheduleGrid.add(periodLabel, period, 0);
+        }
+    }
+
+    private VBox createScheduleCell(Teacher teacher, int period) {
+        VBox cell = new VBox(4);
         cell.setAlignment(Pos.TOP_LEFT);
-        cell.setStyle("-fx-border-color: #ccc; -fx-padding: 8; -fx-background-color: white;");
-        cell.setMinWidth(150);
-        cell.setMinHeight(80);
+        cell.setMinWidth(180);
+        cell.setMinHeight(100);
+        cell.setPadding(new Insets(6));
 
         // Find section for this teacher/period
         final int p = period;
-        Optional<CourseSection> sectionOpt = allSections.stream()
+        Optional<CourseSection> sectionOpt = cachedSections.stream()
             .filter(s -> s.getAssignedTeacher() != null &&
                        s.getAssignedTeacher().getId().equals(teacher.getId()) &&
                        s.getAssignedPeriod() != null &&
@@ -435,63 +567,282 @@ public class DragDropScheduleEditorController {
 
         if (sectionOpt.isPresent()) {
             CourseSection section = sectionOpt.get();
-            addSectionToCell(cell, section);
+            VBox card = buildSectionCard(section, teacher, period);
+            cell.getChildren().add(card);
         } else {
+            // Empty cell
+            cell.getStyleClass().add("msb-cell-empty");
             Label emptyLabel = new Label("(empty)");
-            emptyLabel.setStyle("-fx-text-fill: #999; -fx-font-style: italic;");
+            emptyLabel.setStyle("-fx-text-fill: #666; -fx-font-style: italic; -fx-font-size: 11px;");
             cell.getChildren().add(emptyLabel);
         }
 
-        // Setup drag-and-drop if in edit mode
+        // Setup drag-and-drop
         setupCellDragAndDrop(cell, teacher, period);
 
         return cell;
     }
 
-    private void addSectionToCell(VBox cell, CourseSection section) {
-        // Course name
-        Label courseLabel = new Label(section.getCourse().getCourseName());
-        courseLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 11px;");
+    private VBox buildSectionCard(CourseSection section, Teacher teacher, int period) {
+        VBox card = new VBox(3);
+        card.getStyleClass().add("msb-card");
+        card.setPadding(new Insets(8));
 
-        // Section number
-        Label sectionLabel = new Label("Sec: " + section.getSectionNumber());
-        sectionLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #666;");
+        // Determine conflict status
+        ConflictStatus status = determineConflictStatus(section);
 
-        // Room
-        Label roomLabel = new Label("Room: " +
-            (section.getAssignedRoom() != null ? section.getAssignedRoom().getRoomNumber() : "TBA"));
-        roomLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #666;");
-
-        // Enrollment
-        Label enrollmentLabel = new Label(String.format("Students: %d/%d",
-            section.getCurrentEnrollment() != null ? section.getCurrentEnrollment() : 0,
-            section.getMaxEnrollment() != null ? section.getMaxEnrollment() : 0));
-        enrollmentLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #666;");
-
-        cell.getChildren().addAll(courseLabel, sectionLabel, roomLabel, enrollmentLabel);
-
-        // Highlight if modified
-        if (modifiedSections.containsKey(section.getId())) {
-            cell.setStyle(cell.getStyle() + "-fx-background-color: #fff9c4;");
+        // Apply conflict status CSS class
+        switch (status) {
+            case OK:
+                card.getStyleClass().add("msb-card-ok");
+                break;
+            case WARNING:
+                card.getStyleClass().add("msb-card-warning");
+                break;
+            case CONFLICT:
+                card.getStyleClass().add("msb-card-conflict");
+                break;
         }
 
-        // Highlight conflicts if enabled
-        if (showConflictsCheckbox != null && showConflictsCheckbox.isSelected()) {
-            if (hasConflict(section)) {
-                cell.setStyle(cell.getStyle() + "-fx-background-color: #ffebee; -fx-border-color: #f44336; -fx-border-width: 2;");
-            }
+        // Apply subject-colored left border via inline style (overrides conflict border color for left)
+        String courseName = section.getCourse() != null ? section.getCourse().getCourseName() : "";
+        String subjectColor = getSubjectColor(courseName);
+        if (status == ConflictStatus.OK) {
+            card.setStyle("-fx-border-width: 0 0 0 4; -fx-border-color: transparent transparent transparent " + subjectColor + ";");
+        }
+
+        // Highlight if selected
+        if (selectedSection != null && selectedSection.getId().equals(section.getId())) {
+            card.getStyleClass().add("msb-card-selected");
+        }
+
+        // Teacher name (bold)
+        Label teacherNameLabel = new Label(teacher.getFirstName() + " " + teacher.getLastName());
+        teacherNameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #E0E0E0;");
+
+        // Course name
+        Label courseLabel = new Label(courseName);
+        courseLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #CCCCCC;");
+        courseLabel.setWrapText(true);
+
+        // Room badge (colored pill)
+        String roomText = section.getAssignedRoom() != null ? section.getAssignedRoom().getRoomNumber() : "TBA";
+        Label roomBadge = new Label(roomText);
+        roomBadge.getStyleClass().add("msb-card-room-badge");
+        String roomBadgeColor = section.getAssignedRoom() != null ? "#0078D4" : "#6B7280";
+        roomBadge.setStyle("-fx-background-color: " + roomBadgeColor + "; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 2 8;");
+
+        // Enrollment count
+        int current = section.getCurrentEnrollment() != null ? section.getCurrentEnrollment() : 0;
+        int max = section.getMaxEnrollment() != null ? section.getMaxEnrollment() : 30;
+        Label enrollLabel = new Label(current + "/" + max + " students");
+        enrollLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #999;");
+
+        // Layout: top row has teacher name, bottom has course + room badge + enrollment
+        HBox topRow = new HBox(6);
+        topRow.setAlignment(Pos.CENTER_LEFT);
+        topRow.getChildren().addAll(teacherNameLabel);
+
+        HBox bottomRow = new HBox(8);
+        bottomRow.setAlignment(Pos.CENTER_LEFT);
+        bottomRow.getChildren().addAll(roomBadge, enrollLabel);
+
+        card.getChildren().addAll(courseLabel, bottomRow);
+
+        // Modified indicator
+        if (modifiedSections.containsKey(section.getId())) {
+            card.setStyle(card.getStyle() + " -fx-effect: dropshadow(gaussian, rgba(245,158,11,0.5), 6, 0, 0, 0);");
         }
 
         // Click to select
-        cell.setOnMouseClicked(event -> selectSection(section));
+        card.setOnMouseClicked(event -> selectSection(section));
+
+        return card;
     }
+
+    private ConflictStatus determineConflictStatus(CourseSection section) {
+        if (section.getAssignedTeacher() == null || section.getAssignedPeriod() == null) {
+            return ConflictStatus.OK;
+        }
+
+        // Check teacher double-booking
+        boolean teacherConflict = cachedSections.stream()
+            .anyMatch(s -> !s.getId().equals(section.getId()) &&
+                       s.getAssignedTeacher() != null &&
+                       s.getAssignedTeacher().getId().equals(section.getAssignedTeacher().getId()) &&
+                       s.getAssignedPeriod() != null &&
+                       s.getAssignedPeriod().equals(section.getAssignedPeriod()));
+
+        if (teacherConflict) return ConflictStatus.CONFLICT;
+
+        // Check room double-booking
+        if (section.getAssignedRoom() != null) {
+            boolean roomConflict = cachedSections.stream()
+                .anyMatch(s -> !s.getId().equals(section.getId()) &&
+                           s.getAssignedRoom() != null &&
+                           s.getAssignedRoom().getId().equals(section.getAssignedRoom().getId()) &&
+                           s.getAssignedPeriod() != null &&
+                           s.getAssignedPeriod().equals(section.getAssignedPeriod()));
+
+            if (roomConflict) return ConflictStatus.CONFLICT;
+        }
+
+        // Check near-capacity (>=90%)
+        int current = section.getCurrentEnrollment() != null ? section.getCurrentEnrollment() : 0;
+        int max = section.getMaxEnrollment() != null ? section.getMaxEnrollment() : 30;
+        if (max > 0 && ((double) current / max) >= 0.9) {
+            return ConflictStatus.WARNING;
+        }
+
+        // Also check room capacity
+        if (section.getAssignedRoom() != null && section.getAssignedRoom().getCapacity() != null) {
+            int roomCap = section.getAssignedRoom().getCapacity();
+            if (roomCap > 0 && ((double) current / roomCap) >= 0.9) {
+                return ConflictStatus.WARNING;
+            }
+        }
+
+        return ConflictStatus.OK;
+    }
+
+    // ========================================================================
+    // UNASSIGNED SECTIONS POOL
+    // ========================================================================
+
+    private void buildUnassignedPool() {
+        if (unassignedPoolContainer == null) return;
+
+        unassignedPoolContainer.getChildren().clear();
+
+        // Filter sections with no teacher or no period
+        List<CourseSection> unassigned = cachedSections.stream()
+            .filter(s -> s.getAssignedTeacher() == null || s.getAssignedPeriod() == null)
+            .collect(Collectors.toList());
+
+        // Apply search filter from poolSearchField
+        if (poolSearchField != null && poolSearchField.getText() != null && !poolSearchField.getText().isBlank()) {
+            String search = poolSearchField.getText().toLowerCase().trim();
+            unassigned = unassigned.stream()
+                .filter(s -> {
+                    String courseName = s.getCourse() != null ? s.getCourse().getCourseName() : "";
+                    String courseCode = s.getCourse() != null ? s.getCourse().getCourseCode() : "";
+                    String secNum = s.getSectionNumber() != null ? s.getSectionNumber() : "";
+                    return courseName.toLowerCase().contains(search) ||
+                           courseCode.toLowerCase().contains(search) ||
+                           secNum.toLowerCase().contains(search);
+                })
+                .collect(Collectors.toList());
+        }
+
+        // Build pool cards
+        for (CourseSection section : unassigned) {
+            VBox poolCard = buildPoolCard(section);
+            unassignedPoolContainer.getChildren().add(poolCard);
+        }
+
+        if (unassigned.isEmpty()) {
+            Label emptyLabel = new Label("No unassigned sections");
+            emptyLabel.setStyle("-fx-text-fill: #888; -fx-font-style: italic; -fx-padding: 10;");
+            unassignedPoolContainer.getChildren().add(emptyLabel);
+        }
+    }
+
+    private VBox buildPoolCard(CourseSection section) {
+        VBox card = new VBox(2);
+        card.getStyleClass().add("msb-pool-card");
+        card.setPadding(new Insets(6, 8, 6, 8));
+
+        // Course name
+        String courseName = section.getCourse() != null ? section.getCourse().getCourseName() : "Unknown";
+        Label nameLabel = new Label(courseName);
+        nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 11px; -fx-text-fill: #E0E0E0;");
+        nameLabel.setWrapText(true);
+
+        // Course code + section number
+        String courseCode = section.getCourse() != null ? section.getCourse().getCourseCode() : "";
+        String secNum = section.getSectionNumber() != null ? section.getSectionNumber() : "";
+        Label codeLabel = new Label(courseCode + " - Sec " + secNum);
+        codeLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #999;");
+
+        // Enrollment
+        int current = section.getCurrentEnrollment() != null ? section.getCurrentEnrollment() : 0;
+        int max = section.getMaxEnrollment() != null ? section.getMaxEnrollment() : 30;
+        Label enrollLabel = new Label(current + "/" + max + " enrolled");
+        enrollLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #888;");
+
+        // Subject-colored left border
+        String subjectColor = getSubjectColor(courseName);
+        card.setStyle("-fx-border-width: 0 0 0 3; -fx-border-color: transparent transparent transparent " + subjectColor + ";");
+
+        card.getChildren().addAll(nameLabel, codeLabel, enrollLabel);
+
+        // Setup drag source for pool cards
+        card.setOnDragDetected(event -> {
+            if (!editMode) return;
+
+            Dragboard db = card.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent content = new ClipboardContent();
+            content.put(SECTION_DATA_FORMAT, section.getId());
+            db.setContent(content);
+
+            card.setOpacity(0.5);
+            event.consume();
+        });
+
+        card.setOnDragDone(event -> {
+            card.setOpacity(1.0);
+            event.consume();
+        });
+
+        // Click to select
+        card.setOnMouseClicked(event -> selectSection(section));
+
+        return card;
+    }
+
+    // ========================================================================
+    // STATISTICS BAR
+    // ========================================================================
+
+    private void updateStatistics() {
+        long assignedCount = cachedSections.stream()
+            .filter(s -> s.getAssignedTeacher() != null && s.getAssignedPeriod() != null)
+            .count();
+
+        long unassignedCount = cachedSections.size() - assignedCount;
+
+        long conflictCount = cachedSections.stream()
+            .filter(s -> determineConflictStatus(s) == ConflictStatus.CONFLICT)
+            .count();
+
+        // Teacher utilization: assigned slots / (teachers * periods)
+        int totalSlots = cachedTeachers.size() * NUM_PERIODS;
+        double utilization = totalSlots > 0 ? ((double) assignedCount / totalSlots) * 100.0 : 0;
+
+        safeSetText(assignedCountLabel, String.valueOf(assignedCount));
+        safeSetText(unassignedCountLabel, String.valueOf(unassignedCount));
+        safeSetText(conflictCountLabel, String.valueOf(conflictCount));
+        safeSetText(teacherUtilLabel, String.format("%.0f%%", utilization));
+
+        // Color-code conflict count
+        if (conflictCountLabel != null) {
+            if (conflictCount > 0) {
+                conflictCountLabel.setStyle("-fx-text-fill: #EF4444; -fx-font-weight: bold;");
+            } else {
+                conflictCountLabel.setStyle("-fx-text-fill: #10B981; -fx-font-weight: bold;");
+            }
+        }
+    }
+
+    // ========================================================================
+    // DRAG AND DROP (Enhanced Visual Feedback)
+    // ========================================================================
 
     private void setupCellDragAndDrop(VBox cell, Teacher teacher, int period) {
         // Drag source
         cell.setOnDragDetected(event -> {
             if (!editMode) return;
 
-            // Find section in this cell
             Optional<CourseSection> sectionOpt = findSectionInCell(teacher, period);
             if (sectionOpt.isEmpty()) return;
 
@@ -499,6 +850,9 @@ public class DragDropScheduleEditorController {
             ClipboardContent content = new ClipboardContent();
             content.put(SECTION_DATA_FORMAT, sectionOpt.get().getId());
             db.setContent(content);
+
+            // Visual feedback: reduce opacity of source
+            cell.setOpacity(0.5);
 
             event.consume();
         });
@@ -514,20 +868,20 @@ public class DragDropScheduleEditorController {
             event.consume();
         });
 
-        // Drag entered
+        // Drag entered — add CSS class
         cell.setOnDragEntered(event -> {
             if (!editMode) return;
 
             if (event.getGestureSource() != cell && event.getDragboard().hasContent(SECTION_DATA_FORMAT)) {
-                cell.setStyle(cell.getStyle() + "-fx-background-color: #e3f2fd;");
+                cell.getStyleClass().add("msb-cell-drop-target");
             }
 
             event.consume();
         });
 
-        // Drag exited
+        // Drag exited — remove CSS class
         cell.setOnDragExited(event -> {
-            cell.setStyle(cell.getStyle().replace("-fx-background-color: #e3f2fd;", ""));
+            cell.getStyleClass().remove("msb-cell-drop-target");
             event.consume();
         });
 
@@ -545,6 +899,12 @@ public class DragDropScheduleEditorController {
             }
 
             event.setDropCompleted(success);
+            event.consume();
+        });
+
+        // Drag done — restore opacity
+        cell.setOnDragDone(event -> {
+            cell.setOpacity(1.0);
             event.consume();
         });
     }
@@ -576,6 +936,10 @@ public class DragDropScheduleEditorController {
         addToRecentChanges(change.getDescription());
         refreshScheduleGrid();
     }
+
+    // ========================================================================
+    // CHANGE MANAGEMENT
+    // ========================================================================
 
     private void applyChange(ScheduleChange change) {
         CourseSection section = courseSectionRepository.findById(change.getSectionId()).orElse(null);
@@ -636,6 +1000,20 @@ public class DragDropScheduleEditorController {
                 section.getMaxEnrollment() != null ? section.getMaxEnrollment() : 30));
     }
 
+    private void clearSelection() {
+        selectedSection = null;
+
+        if (sectionDetailsBox != null) {
+            sectionDetailsBox.setVisible(false);
+            sectionDetailsBox.setManaged(false);
+        }
+
+        if (noSelectionLabel != null) {
+            noSelectionLabel.setVisible(true);
+            noSelectionLabel.setManaged(true);
+        }
+    }
+
     private void saveChanges() {
         try {
             for (CourseSection section : modifiedSections.values()) {
@@ -682,13 +1060,18 @@ public class DragDropScheduleEditorController {
         addToRecentChanges("Unassigned " + section.getCourse().getCourseName());
     }
 
+    // ========================================================================
+    // REFRESH & STATUS
+    // ========================================================================
+
     private void refreshScheduleGrid() {
         buildScheduleGrid();
+        buildUnassignedPool();
+        updateStatistics();
         updateConflictsList();
     }
 
     private void updateGridInteractivity() {
-        // Grid interactivity is handled by drag-and-drop setup
         buildScheduleGrid();
     }
 
@@ -717,12 +1100,14 @@ public class DragDropScheduleEditorController {
 
         ObservableList<String> conflicts = FXCollections.observableArrayList();
 
-        // Detect conflicts using the service
-        List<CourseSection> allSections = courseSectionRepository.findAll();
-
-        for (CourseSection section : allSections) {
-            if (hasConflict(section)) {
-                conflicts.add(String.format("%s (P%d): Conflict detected",
+        for (CourseSection section : cachedSections) {
+            ConflictStatus status = determineConflictStatus(section);
+            if (status == ConflictStatus.CONFLICT) {
+                conflicts.add(String.format("CONFLICT: %s (P%d) - Teacher/Room double-booking",
+                    section.getCourse().getCourseName(),
+                    section.getAssignedPeriod() != null ? section.getAssignedPeriod() : 0));
+            } else if (status == ConflictStatus.WARNING) {
+                conflicts.add(String.format("WARNING: %s (P%d) - Near capacity (>=90%%)",
                     section.getCourse().getCourseName(),
                     section.getAssignedPeriod() != null ? section.getAssignedPeriod() : 0));
             }
@@ -730,12 +1115,16 @@ public class DragDropScheduleEditorController {
 
         conflictsList.setItems(conflicts);
 
-        // Update status
-        if (conflicts.isEmpty()) {
+        // Update status label
+        long conflictOnly = cachedSections.stream()
+            .filter(s -> determineConflictStatus(s) == ConflictStatus.CONFLICT)
+            .count();
+
+        if (conflictOnly == 0) {
             safeSetText(conflictsStatusLabel, "No conflicts detected");
             conflictsStatusLabel.setStyle("-fx-text-fill: #388e3c;");
         } else {
-            safeSetText(conflictsStatusLabel, conflicts.size() + " conflict(s) detected");
+            safeSetText(conflictsStatusLabel, conflictOnly + " conflict(s) detected");
             conflictsStatusLabel.setStyle("-fx-text-fill: #d32f2f; -fx-font-weight: bold;");
         }
     }
@@ -746,9 +1135,9 @@ public class DragDropScheduleEditorController {
         suggestionsContainer.getChildren().clear();
 
         List<String> suggestions = new ArrayList<>();
-        suggestions.add("💡 Drag sections to rearrange schedule");
-        suggestions.add("🔄 Use Ctrl+Z to undo changes");
-        suggestions.add("💾 Remember to save your changes");
+        suggestions.add("Drag sections to rearrange schedule");
+        suggestions.add("Use Ctrl+Z to undo changes");
+        suggestions.add("Remember to save your changes");
 
         for (String suggestion : suggestions) {
             Label label = new Label(suggestion);
@@ -771,8 +1160,12 @@ public class DragDropScheduleEditorController {
         }
     }
 
+    // ========================================================================
+    // HELPERS
+    // ========================================================================
+
     private Optional<CourseSection> findSectionInCell(Teacher teacher, int period) {
-        return courseSectionRepository.findAll().stream()
+        return cachedSections.stream()
             .filter(s -> s.getAssignedTeacher() != null &&
                        s.getAssignedTeacher().getId().equals(teacher.getId()) &&
                        s.getAssignedPeriod() != null &&
@@ -780,25 +1173,25 @@ public class DragDropScheduleEditorController {
             .findFirst();
     }
 
-    private boolean hasConflict(CourseSection section) {
-        // Simple conflict detection - can be enhanced
-        if (section.getAssignedTeacher() == null || section.getAssignedPeriod() == null) {
-            return false;
+    private static String getSubjectColor(String courseName) {
+        if (courseName == null) return "#6B7280";
+
+        // Direct match
+        String color = SUBJECT_COLORS.get(courseName);
+        if (color != null) return color;
+
+        // Partial match: check if course name contains any key
+        String lowerName = courseName.toLowerCase();
+        for (Map.Entry<String, String> entry : SUBJECT_COLORS.entrySet()) {
+            if (lowerName.contains(entry.getKey().toLowerCase())) {
+                return entry.getValue();
+            }
         }
 
-        // Check for teacher double-booking
-        long teacherConflicts = courseSectionRepository.findAll().stream()
-            .filter(s -> s.getId() != section.getId() &&
-                       s.getAssignedTeacher() != null &&
-                       s.getAssignedTeacher().getId().equals(section.getAssignedTeacher().getId()) &&
-                       s.getAssignedPeriod() != null &&
-                       s.getAssignedPeriod().equals(section.getAssignedPeriod()))
-            .count();
-
-        return teacherConflicts > 0;
+        // Default gray
+        return "#6B7280";
     }
 
-    // Helper methods
     private void safeSetText(Label label, String text) {
         if (label != null && text != null) {
             label.setText(text);
@@ -819,7 +1212,10 @@ public class DragDropScheduleEditorController {
         alert.showAndWait();
     }
 
-    // Inner classes
+    // ========================================================================
+    // INNER CLASSES
+    // ========================================================================
+
     @Data
     private static class ScheduleChange {
         private final Long sectionId;

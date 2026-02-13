@@ -116,6 +116,11 @@
                 <Label fx:id="navSchedulesLabel" text="Schedules"/>
             </HBox>
 
+            <HBox fx:id="navMasterSchedule" styleClass="sidebar-nav-item" onMouseClicked="#handleNavMasterSchedule">
+                <Label text="&#x1F4CB;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
+                <Label fx:id="navMasterScheduleLabel" text="Master Schedule"/>
+            </HBox>
+
             <HBox fx:id="navGradebook" styleClass="sidebar-nav-item" onMouseClicked="#handleNavGradebook">
                 <Label text="&#x1F4DD;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
                 <Label fx:id="navGradebookLabel" text="Gradebook"/>

@@ -226,7 +226,8 @@ public class ParentGuardianManagementFormController {
         // Languages
         cmbPreferredLanguage.setItems(FXCollections.observableArrayList(
             "English", "Spanish", "French", "Chinese", "Vietnamese",
-            "Arabic", "Korean", "Tagalog", "Russian", "Portuguese", "Other"
+            "Greek", "Italian", "Polish", "Japanese", "Thai",
+            "Korean", "Tagalog", "Russian", "Portuguese", "Other"
         ));
 
         // Student combo box converter

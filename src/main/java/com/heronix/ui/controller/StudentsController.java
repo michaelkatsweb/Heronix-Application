@@ -716,7 +716,6 @@ public class StudentsController {
         } catch (Exception e) {
             log.error("Error opening medical record dialog", e);
             showError("Error", "Failed to open medical record dialog: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -761,7 +760,6 @@ public class StudentsController {
         } catch (Exception e) {
             log.error("Error opening QR code dialog", e);
             showError("Error", "Failed to open QR code dialog: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -828,7 +826,6 @@ public class StudentsController {
         } catch (Exception e) {
             log.error("Error uploading photo", e);
             showError("Error", "Failed to upload photo: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -2229,7 +2226,7 @@ public class StudentsController {
         // Preferred Language
         ComboBox<String> languageCombo = new ComboBox<>();
         languageCombo.setId("languageCombo");
-        languageCombo.getItems().addAll("English", "Spanish", "Chinese", "French", "Arabic", "Vietnamese", "Other");
+        languageCombo.getItems().addAll("English", "Spanish", "Chinese", "French", "Greek", "Italian", "Polish", "Japanese", "Thai", "Vietnamese", "Other");
         languageCombo.setPromptText("Select Language");
         if (student != null && student.getPreferredLanguage() != null) {
             languageCombo.setValue(student.getPreferredLanguage());
@@ -3059,7 +3056,6 @@ public class StudentsController {
         } catch (Exception e) {
             log.error("Error opening import dialog", e);
             showError("Error", "Failed to open import dialog: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -3108,7 +3104,6 @@ public class StudentsController {
         } catch (Exception e) {
             log.error("Error opening grade dialog", e);
             showError("Error", "Failed to open grade dialog: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -3243,7 +3238,6 @@ public class StudentsController {
         } catch (Exception e) {
             log.error("Error showing grade history", e);
             showError("Error", "Failed to load grade history: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -3343,7 +3337,6 @@ public class StudentsController {
         } catch (Exception e) {
             log.error("Error showing recommendations", e);
             showError("Error", "Failed to load recommendations: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

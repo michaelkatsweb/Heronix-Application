@@ -584,7 +584,6 @@ public class SettingsController {
 
         } catch (Exception e) {
             log.error("Failed to apply theme", e);
-            e.printStackTrace();
         }
     }
 
@@ -682,7 +681,6 @@ public class SettingsController {
             });
         } catch (Exception e) {
             log.error("Failed to apply theme stylesheet to windows", e);
-            e.printStackTrace();
         }
     }
 

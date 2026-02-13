@@ -41,7 +41,8 @@
             <!-- Selection Toolbar (will be populated programmatically) -->
             <HBox fx:id="selectionToolbar"/>
 
-            <TableView fx:id="courseTable" VBox.vgrow="ALWAYS">
+            <ScrollPane fitToHeight="true" hbarPolicy="AS_NEEDED" style="-fx-background: transparent;" VBox.vgrow="ALWAYS">
+            <TableView fx:id="courseTable">
             <columns>
                 <TableColumn fx:id="idColumn" text="ID" prefWidth="60"/>
                 <TableColumn fx:id="courseCodeColumn" text="Course Code" prefWidth="100"/>
@@ -54,9 +55,10 @@
                 <TableColumn fx:id="enrollmentColumn" text="Enrolled" prefWidth="80"/>
                 <TableColumn fx:id="durationColumn" text="Duration" prefWidth="80"/>
                 <TableColumn fx:id="activeColumn" text="Active" prefWidth="70"/>
-                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
+                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="300" minWidth="260"/>
             </columns>
         </TableView>
+            </ScrollPane>
         </VBox>
     </center>
 

@@ -374,8 +374,8 @@ public class TeacherDialogController extends BaseDialogController {
 
                             showSuccess("Course removed successfully");
                         } catch (Exception ex) {
+                            log.error("Error removing course", ex);
                             showError("Error removing course: " + ex.getMessage());
-                            ex.printStackTrace();
                         }
                     }
                 } else {
@@ -568,8 +568,8 @@ public class TeacherDialogController extends BaseDialogController {
                 closeDialog();
 
             } catch (Exception e) {
+                log.error("Error saving teacher", e);
                 showError("Error saving teacher: " + e.getMessage());
-                e.printStackTrace();
             }
         }
     }
@@ -1177,8 +1177,8 @@ public class TeacherDialogController extends BaseDialogController {
                         showSuccess(String.format("Successfully assigned %d course(s) to %s",
                             selectedCourses.size(), teacher.getName()));
                     } catch (Exception e) {
+                        log.error("Error assigning courses", e);
                         showError("Error assigning courses: " + e.getMessage());
-                        e.printStackTrace();
                     }
                 } else {
                     // In add mode, just update UI list (will be saved when teacher is saved)
@@ -1825,7 +1825,7 @@ public class TeacherDialogController extends BaseDialogController {
             try {
                 teacher.setSalary(new java.math.BigDecimal(salaryField.getText().trim()));
             } catch (NumberFormatException e) {
-                // Invalid number, skip
+                log.debug("Invalid numeric input for salary, skipping", e);
             }
         }
 

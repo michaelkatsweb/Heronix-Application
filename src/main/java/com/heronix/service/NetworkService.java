@@ -7,6 +7,7 @@ import com.heronix.model.enums.NetworkCheckType;
 import com.heronix.repository.NetworkDeviceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import jakarta.annotation.PreDestroy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,19 @@ public class NetworkService {
     private final NetworkDeviceRepository networkDeviceRepository;
 
     private final ExecutorService pingExecutor = Executors.newFixedThreadPool(10);
+
+    @PreDestroy
+    public void shutdown() {
+        log.info("Shutting down NetworkService ping executor...");
+        pingExecutor.shutdown();
+        try {
+            if (!pingExecutor.awaitTermination(2, TimeUnit.SECONDS)) {
+                pingExecutor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            pingExecutor.shutdownNow();
+        }
+    }
 
     // ==================== Device CRUD Operations ====================
 

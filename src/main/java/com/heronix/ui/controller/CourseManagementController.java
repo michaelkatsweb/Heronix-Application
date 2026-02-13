@@ -18,6 +18,7 @@ import com.heronix.repository.TeacherRepository;
 import com.heronix.repository.RoomRepository;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
@@ -75,6 +76,9 @@ public class CourseManagementController {
     public void initialize() {
         loadSchoolType();
         setupTableColumns();
+        setupActionsColumn();
+        courseTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+        actionsColumn.setMinWidth(260);
         setupFilters();
         setupBulkSelection();
         loadCourses();
@@ -159,6 +163,141 @@ public class CourseManagementController {
         });
 
         durationColumn.setCellValueFactory(new PropertyValueFactory<>("duration"));
+    }
+
+    private void setupActionsColumn() {
+        actionsColumn.setCellValueFactory(param -> new javafx.beans.property.SimpleObjectProperty<>(null));
+
+        actionsColumn.setCellFactory(col -> new TableCell<>() {
+            private final String BTN_STYLE = "-fx-text-fill: white; -fx-padding: 2 6; -fx-font-size: 11; -fx-background-radius: 4; -fx-cursor: hand;";
+            private final Button viewBtn = new Button("View");
+            private final Button editBtn = new Button("Edit");
+            private final Button deleteBtn = new Button("Delete");
+            private final HBox pane = new HBox(4, viewBtn, editBtn, deleteBtn);
+
+            {
+                pane.setAlignment(Pos.CENTER);
+                viewBtn.setStyle("-fx-background-color: #3b82f6;" + BTN_STYLE);
+                editBtn.setStyle("-fx-background-color: #3b82f6;" + BTN_STYLE);
+                deleteBtn.setStyle("-fx-background-color: #ef4444;" + BTN_STYLE);
+
+                viewBtn.setOnAction(e -> {
+                    Course course = getTableRow().getItem();
+                    if (course != null) handleViewCourse(course);
+                });
+                editBtn.setOnAction(e -> {
+                    Course course = getTableRow().getItem();
+                    if (course != null) handleEditCourse(course);
+                });
+                deleteBtn.setOnAction(e -> {
+                    Course course = getTableRow().getItem();
+                    if (course != null) handleDeleteCourse(course);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : pane);
+            }
+        });
+    }
+
+    private void handleViewCourse(Course course) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Course Details");
+        alert.setHeaderText(course.getCourseCode() + " - " + course.getCourseName());
+        String content = String.format(
+            "Subject: %s\nLevel: %s\nDuration: %d min\nMax Students: %d\nEnrollment: %d\nTeacher: %s\nRoom: %s\nActive: %s",
+            course.getSubject() != null ? course.getSubject() : "N/A",
+            course.getLevel() != null ? course.getLevel().getDisplayName() : "N/A",
+            course.getDurationMinutes() != null ? course.getDurationMinutes() : 0,
+            course.getMaxStudents() != null ? course.getMaxStudents() : 0,
+            course.getCurrentEnrollment() != null ? course.getCurrentEnrollment() : 0,
+            course.getTeacher() != null ? course.getTeacher().getName() : "Unassigned",
+            course.getRoom() != null ? course.getRoom().getRoomNumber() : "Unassigned",
+            course.isActive() ? "Yes" : "No");
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    private void handleEditCourse(Course course) {
+        Dialog<Course> dialog = new Dialog<>();
+        dialog.setTitle("Edit Course");
+        dialog.setHeaderText("Edit " + course.getCourseCode());
+
+        ButtonType saveBtn = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+
+        TextField codeField = new TextField(course.getCourseCode());
+        TextField nameField = new TextField(course.getCourseName());
+        TextField subjectField = new TextField(course.getSubject() != null ? course.getSubject() : "");
+        TextField durationField = new TextField(String.valueOf(course.getDurationMinutes() != null ? course.getDurationMinutes() : 50));
+        TextField maxStudentsField = new TextField(String.valueOf(course.getMaxStudents() != null ? course.getMaxStudents() : 30));
+        CheckBox activeCheck = new CheckBox();
+        activeCheck.setSelected(course.isActive());
+
+        grid.add(new Label("Course Code:"), 0, 0); grid.add(codeField, 1, 0);
+        grid.add(new Label("Course Name:"), 0, 1); grid.add(nameField, 1, 1);
+        grid.add(new Label("Subject:"), 0, 2); grid.add(subjectField, 1, 2);
+        grid.add(new Label("Duration (min):"), 0, 3); grid.add(durationField, 1, 3);
+        grid.add(new Label("Max Students:"), 0, 4); grid.add(maxStudentsField, 1, 4);
+        grid.add(new Label("Active:"), 0, 5); grid.add(activeCheck, 1, 5);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(btn -> {
+            if (btn == saveBtn) {
+                course.setCourseCode(codeField.getText().trim());
+                course.setCourseName(nameField.getText().trim());
+                course.setSubject(subjectField.getText().trim());
+                try { course.setDurationMinutes(Integer.parseInt(durationField.getText().trim())); } catch (NumberFormatException e) { log.debug("Invalid numeric input for duration, skipping", e); }
+                try { course.setMaxStudents(Integer.parseInt(maxStudentsField.getText().trim())); } catch (NumberFormatException e) { log.debug("Invalid numeric input for maxStudents, skipping", e); }
+                course.setActive(activeCheck.isSelected());
+                return course;
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(updated -> {
+            try {
+                courseRepository.save(updated);
+                setupFilters();
+                loadCourses();
+                showInfo("Success", "Course updated successfully!");
+                log.info("Updated course: {}", updated.getCourseCode());
+            } catch (Exception e) {
+                log.error("Failed to update course", e);
+                showError("Error", "Failed to update course: " + e.getMessage());
+            }
+        });
+    }
+
+    private void handleDeleteCourse(Course course) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Delete Course");
+        confirm.setHeaderText("Delete " + course.getCourseCode() + " - " + course.getCourseName() + "?");
+        confirm.setContentText("This action cannot be undone.");
+
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    courseRepository.delete(course);
+                    setupFilters();
+                    loadCourses();
+                    showInfo("Success", "Course deleted successfully!");
+                    log.info("Deleted course: {}", course.getCourseCode());
+                } catch (Exception e) {
+                    log.error("Failed to delete course", e);
+                    showError("Error", "Failed to delete course: " + e.getMessage());
+                }
+            }
+        });
     }
 
     private void setupFilters() {

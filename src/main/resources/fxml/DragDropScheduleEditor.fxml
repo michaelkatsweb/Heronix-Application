@@ -5,8 +5,8 @@
 <?import javafx.scene.layout.*?>
 
 <!--
-Drag-Drop Schedule Editor
-Visual schedule editor with drag-and-drop functionality for intuitive schedule modifications
+Master Schedule Board (Kanban-Style)
+Interactive drag-and-drop master schedule editor with rich conflict visualization
 
 Location: src/main/resources/fxml/DragDropScheduleEditor.fxml
 -->
@@ -19,88 +19,116 @@ Location: src/main/resources/fxml/DragDropScheduleEditor.fxml
     <!-- HEADER -->
     <top>
         <VBox styleClass="header-section">
+            <!-- Toolbar -->
             <HBox alignment="CENTER_LEFT" spacing="20" styleClass="page-header">
-                <Label text="✏️ Drag &amp; Drop Schedule Editor" styleClass="page-title"/>
+                <Label text="Master Schedule Board" styleClass="page-title"/>
                 <Region HBox.hgrow="ALWAYS"/>
 
                 <!-- Edit Mode Toggle -->
-                <ToggleButton fx:id="editModeToggle" text="🔓 Edit Mode" onAction="#handleEditModeToggle"
+                <ToggleButton fx:id="editModeToggle" text="Edit Mode" onAction="#handleEditModeToggle"
                               styleClass="toggle-button"/>
 
                 <!-- Undo/Redo -->
-                <Button fx:id="undoButton" text="↶ Undo" onAction="#handleUndo"
+                <Button fx:id="undoButton" text="Undo" onAction="#handleUndo"
                         styleClass="button-secondary" disable="true"/>
-                <Button fx:id="redoButton" text="↷ Redo" onAction="#handleRedo"
+                <Button fx:id="redoButton" text="Redo" onAction="#handleRedo"
                         styleClass="button-secondary" disable="true"/>
 
                 <Separator orientation="VERTICAL"/>
 
                 <!-- Actions -->
-                <Button text="🔄 Refresh" onAction="#handleRefresh" styleClass="button-secondary"/>
-                <Button text="💾 Save Changes" onAction="#handleSaveChanges" styleClass="button-primary"/>
-                <Button text="❌ Discard" onAction="#handleDiscardChanges" styleClass="button-secondary"/>
+                <Button text="Refresh" onAction="#handleRefresh" styleClass="button-secondary"/>
+                <Button text="Save Changes" onAction="#handleSaveChanges" styleClass="button-primary"/>
+                <Button text="Discard" onAction="#handleDiscardChanges" styleClass="button-secondary"/>
             </HBox>
 
-            <!-- Status Bar -->
-            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="status-bar, card">
-                <Label fx:id="editModeStatusLabel" text="📌 View Mode" styleClass="status-label"/>
+            <!-- Statistics Bar -->
+            <HBox alignment="CENTER_LEFT" spacing="16" styleClass="msb-stats-bar">
+                <HBox spacing="6" alignment="CENTER_LEFT" styleClass="msb-stat-card">
+                    <Label text="Assigned:" styleClass="stat-label"/>
+                    <Label fx:id="assignedCountLabel" text="0" styleClass="stat-value"/>
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT" styleClass="msb-stat-card">
+                    <Label text="Unassigned:" styleClass="stat-label"/>
+                    <Label fx:id="unassignedCountLabel" text="0" styleClass="stat-value"/>
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT" styleClass="msb-stat-card">
+                    <Label text="Conflicts:" styleClass="stat-label"/>
+                    <Label fx:id="conflictCountLabel" text="0" styleClass="stat-value"/>
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT" styleClass="msb-stat-card">
+                    <Label text="Teacher Utilization:" styleClass="stat-label"/>
+                    <Label fx:id="teacherUtilLabel" text="0%" styleClass="stat-value"/>
+                </HBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Status -->
+                <Label fx:id="editModeStatusLabel" text="View Mode" styleClass="status-label"/>
                 <Separator orientation="VERTICAL"/>
                 <Label fx:id="changesStatusLabel" text="No unsaved changes" styleClass="status-label"/>
                 <Separator orientation="VERTICAL"/>
                 <Label fx:id="conflictsStatusLabel" text="No conflicts detected" styleClass="status-label"/>
             </HBox>
+
+            <!-- Filters -->
+            <HBox spacing="15" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8 16;">
+                <Label text="Filters:" styleClass="filter-label"/>
+                <ComboBox fx:id="teacherFilterComboBox" promptText="All Teachers"
+                          onAction="#handleFilterChange" prefWidth="150"/>
+                <ComboBox fx:id="roomFilterComboBox" promptText="All Rooms"
+                          onAction="#handleFilterChange" prefWidth="150"/>
+                <ComboBox fx:id="gradeFilterComboBox" promptText="All Grades"
+                          onAction="#handleFilterChange" prefWidth="120"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <CheckBox fx:id="showConflictsCheckbox" text="Highlight Conflicts"
+                          onAction="#handleShowConflictsToggle" selected="true"/>
+            </HBox>
         </VBox>
     </top>
 
-    <!-- MAIN CONTENT -->
+    <!-- MAIN CONTENT: 3-Panel Layout -->
     <center>
-        <SplitPane dividerPositions="0.75" styleClass="split-pane">
+        <SplitPane dividerPositions="0.18, 0.78" styleClass="split-pane">
 
-            <!-- LEFT: Schedule Grid -->
+            <!-- LEFT: Unassigned Sections Pool -->
+            <VBox spacing="10" styleClass="msb-pool">
+                <Label text="Unassigned Sections" styleClass="section-title"/>
+                <TextField fx:id="poolSearchField" promptText="Search sections..." styleClass="text-field"/>
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+                    <VBox fx:id="unassignedPoolContainer" spacing="6">
+                        <!-- Populated dynamically -->
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+            <!-- CENTER: Schedule Grid -->
             <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="scroll-pane">
-                <VBox spacing="10" styleClass="content-container">
+                <VBox spacing="0" styleClass="content-container">
                     <padding>
-                        <Insets top="10" right="10" bottom="10" left="10"/>
+                        <Insets top="4" right="4" bottom="4" left="4"/>
                     </padding>
 
-                    <!-- Filters -->
-                    <HBox spacing="15" alignment="CENTER_LEFT">
-                        <Label text="Filters:" styleClass="filter-label"/>
-                        <ComboBox fx:id="teacherFilterComboBox" promptText="All Teachers"
-                                  onAction="#handleFilterChange" prefWidth="150"/>
-                        <ComboBox fx:id="roomFilterComboBox" promptText="All Rooms"
-                                  onAction="#handleFilterChange" prefWidth="150"/>
-                        <ComboBox fx:id="gradeFilterComboBox" promptText="All Grades"
-                                  onAction="#handleFilterChange" prefWidth="120"/>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <CheckBox fx:id="showConflictsCheckbox" text="Highlight Conflicts"
-                                  onAction="#handleShowConflictsToggle" selected="true"/>
-                    </HBox>
-
-                    <Separator/>
-
                     <!-- Schedule Grid Container -->
-                    <VBox fx:id="scheduleGridContainer" spacing="0" styleClass="schedule-grid-container">
-                        <!-- Dynamic grid will be generated here -->
-                        <GridPane fx:id="scheduleGrid" hgap="2" vgap="2" styleClass="schedule-grid">
+                    <VBox fx:id="scheduleGridContainer" spacing="0">
+                        <GridPane fx:id="scheduleGrid" hgap="3" vgap="3">
                             <!-- Grid populated dynamically -->
                         </GridPane>
                     </VBox>
                 </VBox>
             </ScrollPane>
 
-            <!-- RIGHT: Details Panel -->
+            <!-- RIGHT: Details + Conflicts Panel -->
             <VBox spacing="15" styleClass="details-panel card">
 
                 <!-- Selected Section Details -->
                 <VBox spacing="10" styleClass="card">
-                    <Label text="📋 Selected Section" styleClass="section-title"/>
+                    <Label text="Selected Section" styleClass="section-title"/>
 
                     <VBox fx:id="sectionDetailsContainer" spacing="8">
                         <Label fx:id="noSelectionLabel" text="Click a section to view details"
                                styleClass="stat-description"/>
 
-                        <!-- Details shown when section is selected -->
                         <VBox fx:id="sectionDetailsBox" spacing="8" visible="false" managed="false">
                             <HBox spacing="10">
                                 <Label text="Course:" styleClass="detail-label" prefWidth="100"/>
@@ -132,13 +160,13 @@ Location: src/main/resources/fxml/DragDropScheduleEditor.fxml
                             <!-- Quick Actions -->
                             <VBox spacing="8">
                                 <Label text="Quick Actions:" styleClass="stat-label"/>
-                                <Button text="🔄 Swap Teacher" onAction="#handleSwapTeacher"
+                                <Button text="Swap Teacher" onAction="#handleSwapTeacher"
                                         prefWidth="200" styleClass="button-secondary"/>
-                                <Button text="🏫 Swap Room" onAction="#handleSwapRoom"
+                                <Button text="Swap Room" onAction="#handleSwapRoom"
                                         prefWidth="200" styleClass="button-secondary"/>
-                                <Button text="⏰ Change Period" onAction="#handleChangePeriod"
+                                <Button text="Change Period" onAction="#handleChangePeriod"
                                         prefWidth="200" styleClass="button-secondary"/>
-                                <Button text="❌ Unassign Section" onAction="#handleUnassignSection"
+                                <Button text="Unassign Section" onAction="#handleUnassignSection"
                                         prefWidth="200" styleClass="button-warning"/>
                             </VBox>
                         </VBox>
@@ -147,17 +175,17 @@ Location: src/main/resources/fxml/DragDropScheduleEditor.fxml
 
                 <!-- Conflict Warnings -->
                 <VBox spacing="10" styleClass="card">
-                    <Label text="⚠️ Conflicts" styleClass="section-title"/>
+                    <Label text="Conflicts" styleClass="section-title"/>
                     <ListView fx:id="conflictsList" prefHeight="150" styleClass="conflict-list">
                         <placeholder>
-                            <Label text="✓ No conflicts detected"/>
+                            <Label text="No conflicts detected"/>
                         </placeholder>
                     </ListView>
                 </VBox>
 
                 <!-- Recent Changes -->
                 <VBox spacing="10" styleClass="card">
-                    <Label text="📝 Recent Changes" styleClass="section-title"/>
+                    <Label text="Recent Changes" styleClass="section-title"/>
                     <ListView fx:id="recentChangesList" prefHeight="150" styleClass="changes-list">
                         <placeholder>
                             <Label text="No changes yet"/>
@@ -167,7 +195,7 @@ Location: src/main/resources/fxml/DragDropScheduleEditor.fxml
 
                 <!-- Suggestions -->
                 <VBox spacing="10" styleClass="card">
-                    <Label text="💡 Smart Suggestions" styleClass="section-title"/>
+                    <Label text="Smart Suggestions" styleClass="section-title"/>
                     <VBox fx:id="suggestionsContainer" spacing="5">
                         <Label text="Analyzing schedule..." styleClass="stat-description"/>
                     </VBox>
@@ -178,34 +206,34 @@ Location: src/main/resources/fxml/DragDropScheduleEditor.fxml
         </SplitPane>
     </center>
 
-    <!-- BOTTOM: Legend & Help -->
+    <!-- BOTTOM: Legend -->
     <bottom>
         <HBox spacing="20" alignment="CENTER_LEFT" styleClass="footer-section, card">
             <Label text="Legend:" styleClass="legend-label"/>
 
             <HBox spacing="5" alignment="CENTER_LEFT">
-                <Region prefWidth="15" prefHeight="15" styleClass="card, metric-info"/>
-                <Label text="Normal" styleClass="legend-text"/>
+                <Region prefWidth="15" prefHeight="15" style="-fx-background-color: #10B981; -fx-background-radius: 3;"/>
+                <Label text="OK" styleClass="legend-text"/>
             </HBox>
 
             <HBox spacing="5" alignment="CENTER_LEFT">
-                <Region prefWidth="15" prefHeight="15" styleClass="card, metric-danger"/>
+                <Region prefWidth="15" prefHeight="15" style="-fx-background-color: #F59E0B; -fx-background-radius: 3;"/>
+                <Label text="Warning" styleClass="legend-text"/>
+            </HBox>
+
+            <HBox spacing="5" alignment="CENTER_LEFT">
+                <Region prefWidth="15" prefHeight="15" style="-fx-background-color: #EF4444; -fx-background-radius: 3;"/>
                 <Label text="Conflict" styleClass="legend-text"/>
             </HBox>
 
             <HBox spacing="5" alignment="CENTER_LEFT">
-                <Region prefWidth="15" prefHeight="15" styleClass="card"/>
-                <Label text="Modified" styleClass="legend-text"/>
-            </HBox>
-
-            <HBox spacing="5" alignment="CENTER_LEFT">
-                <Region prefWidth="15" prefHeight="15" styleClass="card"/>
+                <Region prefWidth="15" prefHeight="15" style="-fx-background-color: #3E3E42; -fx-background-radius: 3; -fx-border-color: #555; -fx-border-style: dashed; -fx-border-radius: 3;"/>
                 <Label text="Empty" styleClass="legend-text"/>
             </HBox>
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <Label text="💡 Tip: Drag sections to move them. Ctrl+Z to undo." styleClass="help-text, text-hint-italic"/>
+            <Label text="Drag sections to move them. Ctrl+Z to undo." styleClass="help-text, text-hint-italic"/>
         </HBox>
     </bottom>
 

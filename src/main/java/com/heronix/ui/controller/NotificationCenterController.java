@@ -612,7 +612,7 @@ public class NotificationCenterController {
                     statusLabel.setStyle("-fx-text-fill: #000;");
                 });
             } catch (InterruptedException e) {
-                // Ignore
+                Thread.currentThread().interrupt();
             }
         }).start();
     }

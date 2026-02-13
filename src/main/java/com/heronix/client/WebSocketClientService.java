@@ -1,6 +1,7 @@
 package com.heronix.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -89,6 +90,7 @@ public class WebSocketClientService {
     /**
      * Disconnect from WebSocket server
      */
+    @PreDestroy
     public void disconnect() {
         if (webSocket != null) {
             try {
@@ -225,7 +227,7 @@ public class WebSocketClientService {
             log.info("WebSocket closed: {} - {}", statusCode, reason);
 
             // Attempt reconnection after delay
-            new Thread(() -> {
+            Thread reconnectThread = new Thread(() -> {
                 try {
                     Thread.sleep(5000); // Wait 5 seconds
                     log.info("Attempting to reconnect WebSocket...");
@@ -233,7 +235,9 @@ public class WebSocketClientService {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-            }).start();
+            });
+            reconnectThread.setDaemon(true);
+            reconnectThread.start();
 
             return null;
         }

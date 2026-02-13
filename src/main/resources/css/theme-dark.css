@@ -2011,3 +2011,145 @@
     -fx-background-color: #3E3E42;
     -fx-padding: 0 1 0 0;
 }
+
+/* ========================================================================
+   MASTER SCHEDULE BOARD (Kanban-Style)
+   ======================================================================== */
+
+/* Base card */
+.msb-card {
+    -fx-background-color: #252526;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 4, 0, 0, 2);
+    -fx-cursor: hand;
+}
+
+.msb-card:hover {
+    -fx-background-color: #2D2D30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 8, 0, 0, 4);
+}
+
+.msb-card-selected {
+    -fx-border-color: #A855F7;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(168,85,247,0.4), 8, 0, 0, 0);
+}
+
+/* Conflict status left borders */
+.msb-card-ok {
+    -fx-border-color: #10B981 transparent transparent transparent;
+    -fx-border-width: 0 0 0 4;
+    -fx-border-color: transparent transparent transparent #10B981;
+}
+
+.msb-card-warning {
+    -fx-border-width: 0 0 0 4;
+    -fx-border-color: transparent transparent transparent #F59E0B;
+}
+
+.msb-card-conflict {
+    -fx-border-width: 0 0 0 4;
+    -fx-border-color: transparent transparent transparent #EF4444;
+    -fx-background-color: #2D1A1A;
+}
+
+/* Grid cells */
+.msb-cell-empty {
+    -fx-border-color: #3E3E42;
+    -fx-border-style: dashed;
+    -fx-border-width: 1;
+    -fx-background-color: #1E1E1E;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+}
+
+.msb-cell-drop-target {
+    -fx-background-color: rgba(0,120,212,0.15);
+    -fx-border-color: #0078D4;
+    -fx-border-style: solid;
+    -fx-border-width: 2;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+/* Room badge pill */
+.msb-card-room-badge {
+    -fx-background-radius: 10;
+    -fx-padding: 2 8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+/* Statistics bar */
+.msb-stats-bar {
+    -fx-background-color: #252526;
+    -fx-border-color: transparent transparent #3E3E42 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 8 16;
+    -fx-spacing: 16;
+}
+
+.msb-stat-card {
+    -fx-background-color: #2D2D30;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+    -fx-border-radius: 6;
+}
+
+/* Grid headers */
+.msb-header-cell {
+    -fx-background-color: #2D2D30;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 10;
+    -fx-alignment: center;
+    -fx-background-radius: 4;
+}
+
+.msb-teacher-header {
+    -fx-font-weight: 600;
+    -fx-text-fill: #CCCCCC;
+    -fx-padding: 10;
+    -fx-alignment: center-left;
+}
+
+/* Department divider */
+.msb-department-divider {
+    -fx-background-color: #3E3E42;
+    -fx-padding: 4 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #A0A0A0;
+}
+
+/* Unassigned pool */
+.msb-pool {
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: #3E3E42;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 10;
+}
+
+.msb-pool-card {
+    -fx-background-color: #252526;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
+    -fx-cursor: hand;
+}
+
+.msb-pool-card:hover {
+    -fx-background-color: #2D2D30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 6, 0, 0, 2);
+}
+
+/* Conflict list item */
+.msb-conflict-item {
+    -fx-background-color: #2D2D30;
+    -fx-background-radius: 4;
+    -fx-padding: 6 10;
+    -fx-border-radius: 4;
+}
