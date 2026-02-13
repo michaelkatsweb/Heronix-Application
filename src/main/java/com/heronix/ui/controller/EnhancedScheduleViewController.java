@@ -5,7 +5,7 @@ package com.heronix.ui.controller;
 // Location: src/main/java/com/heronix/ui/controller/EnhancedScheduleViewController.java
 // ============================================================================
 
-import com.heronix.ui.controller.EnhancedHybridScheduler; // âœ… FIXED: Correct import
+
 import com.heronix.model.domain.*;
 import com.heronix.model.dto.Conflict; // âœ… ADDED: Conflict DTO import
 import com.heronix.model.enums.*;
@@ -109,8 +109,7 @@ public class EnhancedScheduleViewController {
     private Label weekLabel;
 
     // ========================================================================
-    // SERVICES - âœ… FIXED: Changed HybridSchedulingSolver to
-    // EnhancedHybridScheduler
+    // SERVICES
     // ========================================================================
 
     @Autowired
@@ -118,9 +117,6 @@ public class EnhancedScheduleViewController {
 
     @Autowired
     private ConflictDetectionService conflictDetectionService;
-
-    @Autowired
-    private EnhancedHybridScheduler hybridSolver; // âœ… FIXED: Correct class name
 
     @Autowired
     private ScheduleSlotService scheduleSlotService;
@@ -1327,14 +1323,15 @@ public class EnhancedScheduleViewController {
 
         CompletableFuture.runAsync(() -> {
             try {
-                // âœ… FIXED: Changed HybridSchedulingSolver to EnhancedHybridScheduler
-                // Use hybrid solver to resolve conflicts
-                Schedule resolved = hybridSolver.resolveConflict(currentSchedule, slot, newTime);
+                // Conflict resolution is now handled by SchedulerV2 during full schedule generation.
+                // For individual slot moves, apply the change and let the user review conflicts manually.
+                slot.setTimeSlot(newTime);
+                scheduleSlotService.save(slot);
 
                 Platform.runLater(() -> {
                     refreshScheduleGrid();
                     hideProgress();
-                    showSuccessNotification("Conflicts resolved successfully!");
+                    showSuccessNotification("Slot moved. Review any remaining conflicts manually or regenerate schedule via SchedulerV2.");
                 });
 
             } catch (Exception e) {

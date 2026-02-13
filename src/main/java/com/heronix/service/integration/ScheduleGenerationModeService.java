@@ -175,19 +175,7 @@ public class ScheduleGenerationModeService {
                         .build();
             }
 
-            // Step 2: Export data to SchedulerV2
-            log.info("Exporting data to SchedulerV2...");
-            SchedulerSyncService.SchedulerExportResult exportResult =
-                    schedulerSyncService.exportToScheduler(schedule.getId());
-
-            if (!exportResult.getSuccess()) {
-                return ScheduleGenerationResult.builder()
-                        .success(false)
-                        .scheduleId(schedule.getId())
-                        .mode(request.getMode())
-                        .message("Data export failed: " + exportResult.getMessage())
-                        .build();
-            }
+            // SchedulerV2 pulls data from SIS via its own SISApiClient — no export step needed.
 
             // Step 3: Request schedule generation
             log.info("Requesting schedule generation from SchedulerV2...");
@@ -242,8 +230,8 @@ public class ScheduleGenerationModeService {
                     .scheduleId(schedule.getId())
                     .mode(request.getMode())
                     .jobId(jobId)
-                    .exportId(exportResult.getExportId())
-                    .importId(exportResult.getImportId())
+                    .exportId(null)
+                    .importId(null)
                     .sectionsCreated(importResult.getSectionsCreated())
                     .studentsScheduled(importResult.getStudentsScheduled())
                     .hardScore(importResult.getHardScore())

@@ -7,10 +7,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import org.optaplanner.core.api.domain.entity.PlanningEntity;
-import org.optaplanner.core.api.domain.entity.PlanningPin;
-import org.optaplanner.core.api.domain.lookup.PlanningId;
-import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -18,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Schedule Slot - Planning Entity for OptaPlanner
+ * Schedule Slot - Domain entity for schedule assignments
  * Location: src/main/java/com/heronix/model/domain/ScheduleSlot.java
  * 
  * ✅ PHASE 1 FIX: Changed students to EAGER fetch to prevent
@@ -34,40 +30,23 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@PlanningEntity
 public class ScheduleSlot {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @PlanningId
     private Long id;
 
-    // ========== PLANNING VARIABLES (OptaPlanner will assign these) ==========
+    // ========== ASSIGNED VARIABLES ==========
 
-    /**
-     * PLANNING VARIABLE: Teacher assigned to this slot
-     * OptaPlanner will choose from teacherRange value range
-     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")
-    @PlanningVariable(valueRangeProviderRefs = "teacherRange")
     private Teacher teacher;
 
-    /**
-     * PLANNING VARIABLE: Room assigned to this slot
-     * OptaPlanner will choose from roomRange value range
-     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
-    @PlanningVariable(valueRangeProviderRefs = "roomRange")
     private Room room;
 
-    /**
-     * PLANNING VARIABLE: Time slot assigned
-     * OptaPlanner will choose from timeSlotRange value range
-     */
     @Transient // Not persisted directly, we store dayOfWeek, startTime, endTime instead
-    @PlanningVariable(valueRangeProviderRefs = "timeSlotRange")
     private TimeSlot timeSlot;
 
     // ========== PROBLEM FACTS (Fixed during solving) ==========
@@ -167,7 +146,6 @@ public class ScheduleSlot {
      * (teacher, room, timeSlot). Useful for preserving user's manual changes.
      */
     @Column(name = "pinned")
-    @PlanningPin
     private Boolean pinned = false;
 
     @Column(name = "pinned_by")

@@ -6,12 +6,12 @@ import com.heronix.model.enums.RoomType;
 import com.heronix.model.enums.ScheduleStatus;
 import com.heronix.model.enums.ScheduleType;
 import com.heronix.model.enums.SlotStatus;
-import com.heronix.model.planning.SchedulingSolution;
+import com.heronix.integration.SchedulerApiClient;
 import com.heronix.repository.*;
+import com.heronix.service.integration.ScheduleImportService;
 import lombok.extern.slf4j.Slf4j;
-import org.optaplanner.core.api.solver.SolverJob;
-import org.optaplanner.core.api.solver.SolverManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.heronix.model.enums.SchedulePeriod;
@@ -26,13 +26,12 @@ import java.util.stream.Collectors;
  * Location:
  * src/main/java/com/heronix/service/ScheduleGenerationService.java
  * 
- * Orchestrates the complete AI-powered schedule generation process using
- * OptaPlanner:
+ * Orchestrates schedule generation by delegating optimization to SchedulerV2:
  * 1. Loads and validates resources (teachers, courses, rooms, students)
  * 2. Generates available time slots based on school hours
  * 3. Creates schedule slots for each course
- * 4. Runs OptaPlanner AI solver to optimize assignments
- * 5. Saves optimized schedule to database
+ * 4. Delegates to SchedulerV2 for AI optimization
+ * 5. Imports optimized results back to SIS database
  * 6. Calculates quality metrics
  * 
  * @author Heronix Scheduling System Team
@@ -66,7 +65,13 @@ public class ScheduleGenerationService {
     private ScheduleSlotRepository scheduleSlotRepository;
 
     @Autowired
-    private SolverManager<SchedulingSolution, UUID> solverManager;
+    private SchedulerApiClient schedulerApiClient;
+
+    @Autowired
+    private ScheduleImportService scheduleImportService;
+
+    @Value("${heronix.scheduler.poll-interval:5}")
+    private Integer pollInterval;
 
     @Autowired
     private com.heronix.util.DiagnosticHelper diagnosticHelper;
@@ -87,13 +92,6 @@ public class ScheduleGenerationService {
     @Autowired
     private LunchWaveRepository lunchWaveRepository;
 
-    // ✅ PRIORITY 2 FIX December 15, 2025: Inject lunch assignment repositories
-    // Needed for OptaPlanner constraint validation
-    @Autowired
-    private StudentLunchAssignmentRepository studentLunchAssignmentRepository;
-
-    @Autowired
-    private TeacherLunchAssignmentRepository teacherLunchAssignmentRepository;
 
     // ========================================================================
     // CONSTANTS
@@ -145,7 +143,6 @@ public class ScheduleGenerationService {
         // Print diagnostics before generation
         diagnosticHelper.printSchedulingDiagnostics();
 
-        UUID problemId = UUID.randomUUID();
         long startTime = System.currentTimeMillis();
 
         try {
@@ -284,70 +281,58 @@ public class ScheduleGenerationService {
                     String.format("Created %d schedule slots", scheduleSlots.size()));
 
             // ================================================================
-            // PHASE 5: BUILD OPTAPLANNER SOLUTION (35% - 45%)
+            // PHASE 5: DELEGATE TO SCHEDULERV2 (35% - 90%)
             // ================================================================
-            updateProgress(progressCallback, 38, "Building optimization problem...");
-
-            // ✅ PRIORITY 2 FIX December 15, 2025: Load lunch wave assignments for constraint validation
-            // These provide OptaPlanner with the student/teacher lunch wave mappings
-            // so constraints can validate that students/teachers are in correct lunch waves
-            List<StudentLunchAssignment> studentLunchAssignments = new ArrayList<>();
-            List<TeacherLunchAssignment> teacherLunchAssignments = new ArrayList<>();
-
-            if (isLunchEnabled(request)) {
-                studentLunchAssignments = studentLunchAssignmentRepository.findByScheduleId(schedule.getId());
-                teacherLunchAssignments = teacherLunchAssignmentRepository.findByScheduleId(schedule.getId());
-                log.info("✓ Loaded {} student lunch assignments and {} teacher lunch assignments for constraint validation",
-                        studentLunchAssignments.size(), teacherLunchAssignments.size());
-            }
-
-            SchedulingSolution problem = new SchedulingSolution(
-                    scheduleSlots, teachers, rooms, timeSlots, courses, students);
-
-            // Set lunch assignments (new fields added to SchedulingSolution)
-            problem.setStudentLunchAssignments(studentLunchAssignments);
-            problem.setTeacherLunchAssignments(teacherLunchAssignments);
-
-            log.info("✓ OptaPlanner solution built with {} planning variables",
-                    scheduleSlots.size());
-            updateProgress(progressCallback, 45, "Optimization problem ready");
-
-            // ================================================================
-            // PHASE 6: RUN AI OPTIMIZATION (45% - 90%)
-            // ================================================================
-            updateProgress(progressCallback, 45, "Starting AI optimization...");
+            updateProgress(progressCallback, 38, "Sending schedule to SchedulerV2 for optimization...");
 
             log.info("═══════════════════════════════════════════════════════════════");
-            log.info("RUNNING OPTAPLANNER SOLVER");
+            log.info("DELEGATING TO SCHEDULERV2");
             log.info("═══════════════════════════════════════════════════════════════");
 
-            SolverJob<SchedulingSolution, UUID> solverJob = solverManager.solve(problemId, problem);
-            monitorSolverProgress(solverJob, progressCallback, 45, 90);
-            SchedulingSolution solution = solverJob.getFinalBestSolution();
+            // Build generation request for SchedulerV2
+            SchedulerApiClient.ScheduleGenerationRequest genRequest =
+                    SchedulerApiClient.ScheduleGenerationRequest.builder()
+                            .optimizationTimeSeconds(request.getOptimizationTimeSeconds() != null ?
+                                    request.getOptimizationTimeSeconds() : 120)
+                            .enableAdvancedOptimization(true)
+                            .optimizationMode("THOROUGH")
+                            .build();
 
-            validateSolution(solution, allowPartial);
+            String jobId = schedulerApiClient.requestScheduleGeneration(genRequest);
+            log.info("SchedulerV2 job started: {}", jobId);
+
+            updateProgress(progressCallback, 45, "SchedulerV2 optimization running...");
+
+            // Poll for completion
+            SchedulerApiClient.ScheduleJobStatus finalStatus =
+                    schedulerApiClient.pollUntilComplete(jobId, pollInterval);
 
             log.info("═══════════════════════════════════════════════════════════════");
-            log.info("SOLVER COMPLETED - Score: {}", solution.getScore());
+            log.info("SCHEDULERV2 COMPLETED - Status: {}", finalStatus.getStatus());
             log.info("═══════════════════════════════════════════════════════════════");
             updateProgress(progressCallback, 90, "Optimization complete!");
 
             // ================================================================
-            // PHASE 7: SAVE RESULTS (90% - 95%)
+            // PHASE 6: IMPORT RESULTS (90% - 95%)
             // ================================================================
-            updateProgress(progressCallback, 92, "Saving optimized schedule...");
+            updateProgress(progressCallback, 92, "Importing optimized schedule from SchedulerV2...");
 
-            saveOptimizedSchedule(schedule, solution);
+            ScheduleImportService.ScheduleImportResult importResult =
+                    scheduleImportService.importFromScheduler(schedule.getId(), jobId);
 
-            log.info("✓ Schedule saved to database");
+            if (!importResult.getSuccess()) {
+                throw new RuntimeException("Failed to import schedule from SchedulerV2: " + importResult.getMessage());
+            }
+
+            log.info("✓ Schedule imported from SchedulerV2");
             updateProgress(progressCallback, 95, "Schedule saved");
 
             // ================================================================
-            // PHASE 8: CALCULATE METRICS (95% - 100%)
+            // PHASE 7: CALCULATE METRICS (95% - 100%)
             // ================================================================
             updateProgress(progressCallback, 97, "Calculating metrics...");
 
-            calculateScheduleMetrics(schedule, solution);
+            calculateScheduleMetrics(schedule);
             schedule = scheduleRepository.save(schedule);
 
             // Analyze the generated schedule for issues
@@ -361,8 +346,7 @@ public class ScheduleGenerationService {
             log.info("╔════════════════════════════════════════════════════════════════╗");
             log.info("║   SCHEDULE GENERATION COMPLETE                                 ║");
             log.info("║   Schedule: {:50} ║", schedule.getName());
-            log.info("║   Score: {:55} ║", solution.getScore());
-            log.info("║   Duration: {} seconds {:40} ║", duration);
+            log.info("║   Duration: {} seconds                                         ║", duration);
             log.info("╚════════════════════════════════════════════════════════════════╝");
 
             return schedule;
@@ -1390,173 +1374,33 @@ public class ScheduleGenerationService {
      * @param endProgress      Ending progress percentage
      * @throws InterruptedException if thread is interrupted
      */
-    private void monitorSolverProgress(SolverJob<SchedulingSolution, UUID> solverJob,
-            BiConsumer<Integer, String> progressCallback,
-            int startProgress,
-            int endProgress) throws InterruptedException {
-
-        long startTime = System.currentTimeMillis();
-        int lastProgress = startProgress;
-
-        while (solverJob.getSolverStatus() == org.optaplanner.core.api.solver.SolverStatus.SOLVING_ACTIVE) {
-            Thread.sleep(1000); // Check every second
-
-            long elapsed = (System.currentTimeMillis() - startTime) / 1000;
-
-            // Estimate progress based on elapsed time (assumes 120 second max)
-            int currentProgress = startProgress +
-                    (int) ((elapsed / 120.0) * (endProgress - startProgress));
-            currentProgress = Math.min(currentProgress, endProgress);
-
-            if (currentProgress > lastProgress) {
-                updateProgress(progressCallback, currentProgress,
-                        String.format("Optimizing... (%d seconds elapsed)", elapsed));
-                lastProgress = currentProgress;
-
-                // Log every 10 seconds
-                if (elapsed % 10 == 0) {
-                    log.info("Solver running: {} seconds elapsed", elapsed);
-                }
-            }
-        }
-    }
-
-    // ========================================================================
-    // SOLUTION VALIDATION
-    // ========================================================================
-
-    /**
-     * Validate that solver produced a valid solution
-     *
-     * @param solution Solver output
-     * @throws IllegalStateException if solution is invalid
-     */
-    private void validateSolution(SchedulingSolution solution) {
-        validateSolution(solution, false);
-    }
-
-    /**
-     * Validate solution with option to allow partial schedules
-     *
-     * @param solution       Solver output
-     * @param allowPartial   If true, allows solutions with hard constraint violations
-     * @throws IllegalStateException if solution is invalid
-     */
-    private void validateSolution(SchedulingSolution solution, boolean allowPartial) {
-        if (solution == null) {
-            throw new IllegalStateException("Solver returned null solution");
-        }
-
-        if (solution.getScheduleSlots() == null || solution.getScheduleSlots().isEmpty()) {
-            throw new IllegalStateException("Solution contains no schedule slots");
-        }
-
-        if (solution.getScore() == null) {
-            log.warn("Solution has null score - using unscored solution");
-        } else if (solution.getScore().hardScore() < 0) {
-            int violations = Math.abs(solution.getScore().hardScore());
-
-            if (allowPartial) {
-                // Log warning but continue with partial schedule
-                log.warn("Solution has {} hard constraint violations - proceeding with partial schedule", violations);
-                log.warn("Partial schedule will require manual review and conflict resolution");
-            } else {
-                // Original strict behavior
-                log.error("Solution has {} hard constraint violations - cannot save invalid schedule", violations);
-                throw new IllegalStateException(
-                    String.format("Schedule generation failed: %d hard constraint violations detected. " +
-                                 "This indicates conflicts that cannot be resolved (e.g., teacher double-booked, " +
-                                 "room capacity exceeded). Please review your constraints or add more resources.",
-                                 violations));
-            }
-        }
-
-        log.debug("Solution validated: {} slots, score: {}",
-                solution.getScheduleSlots().size(), solution.getScore());
-    }
-
-    // ========================================================================
-    // SAVE OPTIMIZED RESULTS
-    // ========================================================================
-
-    /**
-     * Save the optimized schedule slots to database
-     * Syncs OptaPlanner planning variables to database fields
-     * 
-     * @param schedule Parent schedule entity
-     * @param solution Optimized solution from solver
-     */
-    @Transactional
-    private void saveOptimizedSchedule(Schedule schedule, SchedulingSolution solution) {
-        List<ScheduleSlot> optimizedSlots = solution.getScheduleSlots();
-        int assignedCount = 0;
-
-        for (ScheduleSlot slot : optimizedSlots) {
-            // Sync TimeSlot planning variable to database fields
-            if (slot.getTimeSlot() != null) {
-                slot.syncWithTimeSlot();
-            }
-
-            // Update status based on assignment
-            if (slot.isAssigned()) {
-                slot.setStatus(SlotStatus.ACTIVE);
-                assignedCount++;
-            } else {
-                slot.setStatus(SlotStatus.BLOCKED);
-            }
-
-            // Save to database
-            scheduleSlotRepository.save(slot);
-        }
-
-        double assignmentRate = (double) assignedCount / optimizedSlots.size() * 100;
-        log.info("✓ Saved {} schedule slots to database ({} assigned, {:.1f}% assignment rate)",
-                optimizedSlots.size(), assignedCount, assignmentRate);
-    }
-
     // ========================================================================
     // METRICS CALCULATION
     // ========================================================================
 
     /**
-     * Calculate schedule quality metrics
-     * Updates schedule entity with optimization score and conflict count
-     * 
+     * Calculate schedule quality metrics from database slots
+     * Updates schedule entity with conflict count and basic metrics
+     *
      * @param schedule Schedule to update
-     * @param solution Optimized solution
      */
-    private void calculateScheduleMetrics(Schedule schedule, SchedulingSolution solution) {
-        // Calculate optimization score from hard/soft scores
-        if (solution.getScore() != null) {
-            double hardScore = solution.getScore().hardScore();
-            double softScore = solution.getScore().softScore();
+    private void calculateScheduleMetrics(Schedule schedule) {
+        List<ScheduleSlot> slots = scheduleSlotRepository.findByScheduleId(schedule.getId());
 
-            // If hard score is 0 (no violations), base quality on soft score
-            // Otherwise, quality is 0% (has hard constraint violations)
-            double optimizationScore;
-            if (hardScore == 0) {
-                // Map soft score to 0-100% range
-                // Soft score is typically negative, so we add 100 and clamp
-                optimizationScore = Math.max(0, Math.min(100, 50 + (softScore / 10.0)));
-            } else {
-                optimizationScore = 0.0;
-            }
-
-            schedule.setOptimizationScore(optimizationScore / 100.0); // Store as 0.0-1.0
-
-            log.debug("Optimization score calculated: {:.1f}% (hard: {}, soft: {})",
-                    optimizationScore, hardScore, softScore);
-        }
-
-        // Count conflicts
-        List<ScheduleSlot> slots = solution.getScheduleSlots();
         int conflictCount = (int) slots.stream()
                 .filter(slot -> Boolean.TRUE.equals(slot.getHasConflict()))
                 .count();
         schedule.setTotalConflicts(conflictCount);
 
-        log.info("Schedule metrics: Score={:.1f}%, Conflicts={}",
-                schedule.getOptimizationScore() * 100, conflictCount);
+        int assignedCount = (int) slots.stream()
+                .filter(ScheduleSlot::isAssigned)
+                .count();
+
+        double assignmentRate = slots.isEmpty() ? 0 : (double) assignedCount / slots.size();
+        schedule.setOptimizationScore(assignmentRate);
+
+        log.info("Schedule metrics: AssignmentRate={:.1f}%, Conflicts={}",
+                assignmentRate * 100, conflictCount);
     }
 
     // ========================================================================

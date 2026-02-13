@@ -33,7 +33,6 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javafx.version>21</javafx.version>
-        <optaplanner.version>9.40.0.Final</optaplanner.version>
     </properties>
 
     <!-- Dependencies -->
@@ -112,13 +111,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
-        </dependency>
-
-        <!-- OptaPlanner AI Constraint Solver -->
-        <dependency>
-            <groupId>org.optaplanner</groupId>
-            <artifactId>optaplanner-spring-boot-starter</artifactId>
-            <version>${optaplanner.version}</version>
         </dependency>
 
         <!-- JavaFX -->

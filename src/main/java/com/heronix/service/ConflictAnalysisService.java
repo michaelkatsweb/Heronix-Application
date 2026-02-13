@@ -5,7 +5,6 @@ import com.heronix.model.dto.ConflictDetail;
 import com.heronix.model.dto.ConflictDetail.ManualOverrideOption;
 import com.heronix.model.enums.ConflictSeverity;
 import com.heronix.model.enums.ConflictType;
-import com.heronix.model.planning.SchedulingSolution;
 import com.heronix.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -59,22 +58,21 @@ public class ConflictAnalysisService {
     private CourseRepository courseRepository;
 
     /**
-     * Analyze a scheduling solution to identify all conflicts
+     * Analyze schedule slots to identify all conflicts
      *
-     * @param solution The scheduling solution to analyze
+     * @param slots The schedule slots to analyze
      * @return List of detailed conflict information
      */
-    public List<ConflictDetail> analyzeConstraintViolations(SchedulingSolution solution) {
-        log.info("Starting conflict analysis for scheduling solution");
+    public List<ConflictDetail> analyzeSlotConflicts(List<ScheduleSlot> slots) {
+        log.info("Starting conflict analysis for schedule slots");
 
         List<ConflictDetail> conflicts = new ArrayList<>();
 
-        if (solution == null || solution.getScheduleSlots() == null) {
-            log.warn("Cannot analyze null solution or solution with no slots");
+        if (slots == null || slots.isEmpty()) {
+            log.warn("Cannot analyze null or empty slot list");
             return conflicts;
         }
 
-        List<ScheduleSlot> slots = solution.getScheduleSlots();
         log.info("Analyzing {} schedule slots for conflicts", slots.size());
 
         // Analyze each slot for assignment issues
@@ -507,21 +505,21 @@ public class ConflictAnalysisService {
     }
 
     /**
-     * Calculate completion percentage for a solution
+     * Calculate completion percentage for a list of slots
      *
-     * @param solution Scheduling solution
+     * @param slots Schedule slots to evaluate
      * @return Percentage of slots fully assigned (0-100)
      */
-    public double calculateCompletionPercentage(SchedulingSolution solution) {
-        if (solution == null || solution.getScheduleSlots() == null || solution.getScheduleSlots().isEmpty()) {
+    public double calculateCompletionPercentage(List<ScheduleSlot> slots) {
+        if (slots == null || slots.isEmpty()) {
             return 0.0;
         }
 
-        long assignedCount = solution.getScheduleSlots().stream()
+        long assignedCount = slots.stream()
             .filter(this::isSlotFullyAssigned)
             .count();
 
-        return (assignedCount * 100.0) / solution.getScheduleSlots().size();
+        return (assignedCount * 100.0) / slots.size();
     }
 
     // ========================================================================

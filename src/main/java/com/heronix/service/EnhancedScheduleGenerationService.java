@@ -5,11 +5,8 @@ import com.heronix.model.dto.ConflictDetail;
 import com.heronix.model.dto.ScheduleGenerationRequest;
 import com.heronix.model.dto.ScheduleGenerationResult;
 import com.heronix.model.enums.*;
-import com.heronix.model.planning.SchedulingSolution;
 import com.heronix.repository.*;
 import lombok.extern.slf4j.Slf4j;
-import org.optaplanner.core.api.solver.SolverJob;
-import org.optaplanner.core.api.solver.SolverManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,25 +48,7 @@ public class EnhancedScheduleGenerationService {
     private ScheduleRepository scheduleRepository;
 
     @Autowired
-    private TeacherRepository teacherRepository;
-
-    @Autowired
-    private CourseRepository courseRepository;
-
-    @Autowired
-    private RoomRepository roomRepository;
-
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private TimeSlotService timeSlotService;
-
-    @Autowired
     private ScheduleSlotRepository scheduleSlotRepository;
-
-    @Autowired
-    private SolverManager<SchedulingSolution, UUID> solverManager;
 
     /**
      * Generate schedule with fallback to partial scheduling
@@ -178,63 +157,11 @@ public class EnhancedScheduleGenerationService {
             return Collections.emptyList();
         }
 
-        // Build a SchedulingSolution for analysis
-        // ✅ FIX: Load teachers with certifications for constraint evaluation
-        SchedulingSolution solution = new SchedulingSolution();
-        solution.setScheduleSlots(slots);
-        solution.setTeachers(teacherRepository.findAllWithCertificationsForScheduling());  // Only active teachers
-        solution.setRooms(roomRepository.findAll());
-        solution.setTimeSlots(timeSlotService.getAllTimeSlots());
-
-        // Use ConflictAnalysisService to analyze
-        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeConstraintViolations(solution);
+        // Use ConflictAnalysisService to analyze slots directly
+        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeSlotConflicts(slots);
 
         log.info("Identified {} conflicts", conflicts.size());
         return conflicts;
-    }
-
-    /**
-     * Generate partial schedule when full generation fails
-     *
-     * @deprecated This method is no longer used. We now call generateSchedule(request, progressCallback, true)
-     *             directly to enable partial scheduling in a single pass.
-     *
-     * This method attempts to extract whatever schedule was generated before
-     * the hard constraint failure, and provides detailed conflict analysis.
-     */
-    @Deprecated
-    private ScheduleGenerationResult generatePartialSchedule(
-            ScheduleGenerationRequest request,
-            BiConsumer<Integer, String> progressCallback,
-            IllegalStateException originalException) throws Exception {
-
-        log.info("Starting partial schedule generation...");
-
-        // Parse the original exception to understand constraint violations
-        String errorMessage = originalException.getMessage();
-        int violationCount = parseViolationCount(errorMessage);
-
-        log.info("Detected {} hard constraint violations", violationCount);
-
-        // STEP 1: Re-run solver to get partial solution
-        updateProgress(progressCallback, 50, "Attempting partial schedule generation...");
-        SchedulingSolution partialSolution = runSolverForPartialSchedule(request, progressCallback);
-
-        log.info("Partial solution obtained with score: {}", partialSolution.getScore());
-
-        // STEP 2: Analyze conflicts
-        updateProgress(progressCallback, 92, "Analyzing conflicts...");
-        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeConstraintViolations(partialSolution);
-
-        log.info("Identified {} conflicts", conflicts.size());
-
-        // STEP 3: Save partial schedule
-        updateProgress(progressCallback, 95, "Saving partial schedule...");
-        Schedule partialSchedule = savePartialScheduleFromSolution(partialSolution, request);
-
-        // STEP 4: Build and return result
-        updateProgress(progressCallback, 98, "Building result...");
-        return buildPartialResult(partialSchedule, conflicts, partialSolution, request);
     }
 
     /**
@@ -242,7 +169,6 @@ public class EnhancedScheduleGenerationService {
      */
     private int parseViolationCount(String errorMessage) {
         try {
-            // Extract number from message like "12 hard constraint violations"
             String[] parts = errorMessage.split("\\s+");
             for (int i = 0; i < parts.length - 2; i++) {
                 if (parts[i + 1].equals("hard") && parts[i + 2].equals("constraint")) {
@@ -358,24 +284,16 @@ public class EnhancedScheduleGenerationService {
             .orElseThrow(() -> new IllegalArgumentException(
                 "Schedule not found: " + scheduleId));
 
-        // Get all schedule slots for this schedule
         List<ScheduleSlot> slots = scheduleSlotRepository.findByScheduleId(schedule.getId());
 
-        // Create a SchedulingSolution from existing schedule for analysis
-        SchedulingSolution solution = new SchedulingSolution();
-        solution.setScheduleSlots(slots);
+        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeSlotConflicts(slots);
 
-        // Analyze conflicts using the existing service
-        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeConstraintViolations(solution);
-
-        // Calculate completion percentage based on assigned slots
         int totalSlots = slots.size();
         int assignedSlots = (int) slots.stream()
             .filter(s -> s.getTeacher() != null && s.getRoom() != null)
             .count();
         double completionPercentage = totalSlots > 0 ? (assignedSlots * 100.0 / totalSlots) : 100.0;
 
-        // Separate hard vs soft conflicts
         List<ConflictDetail> hardConflicts = conflicts.stream()
             .filter(c -> c.getSeverity() != null && c.getSeverity() == ConflictSeverity.CRITICAL)
             .collect(Collectors.toList());
@@ -394,317 +312,6 @@ public class EnhancedScheduleGenerationService {
             .build();
     }
 
-    // ========================================================================
-    // PARTIAL SCHEDULE GENERATION - NEW METHODS
-    // ========================================================================
-
-    /**
-     * Re-run solver to capture partial solution without validation
-     */
-    private SchedulingSolution runSolverForPartialSchedule(
-            ScheduleGenerationRequest request,
-            BiConsumer<Integer, String> progressCallback) throws Exception {
-
-        log.info("Attempting to retrieve partial solution from failed generation...");
-
-        // Strategy: The first generation attempt already ran the solver and created
-        // a schedule entity and slots in the database. The solver produced a solution
-        // but validation failed. We need to re-run the solver to get that solution again
-        // WITHOUT creating duplicate database entries.
-
-        // Find the most recently created schedule (from the failed attempt)
-        List<Schedule> recentSchedules = scheduleRepository.findAll();
-        Schedule existingSchedule = recentSchedules.stream()
-            .filter(s -> s.getName().equals(request.getScheduleName()))
-            .max((a, b) -> a.getId().compareTo(b.getId()))
-            .orElse(null);
-
-        Schedule schedule;
-        if (existingSchedule != null) {
-            log.info("Found existing schedule from failed attempt: {} (ID: {})",
-                existingSchedule.getName(), existingSchedule.getId());
-            schedule = existingSchedule;
-        } else {
-            // Fallback: Create new schedule if none found
-            log.warn("No existing schedule found, creating new one...");
-            schedule = createScheduleEntity(request);
-            schedule = scheduleRepository.save(schedule);
-        }
-
-        // PHASE 1: Load Resources
-        // ✅ CRITICAL FIX: Load teachers with certifications for OptaPlanner constraint evaluation
-        // This prevents lazy loading issues when checking teacher.hasCertificationForSubject()
-        updateProgress(progressCallback, 52, "Loading resources...");
-        List<Teacher> teachers = teacherRepository.findAllWithCertificationsForScheduling();  // Only active teachers
-        List<Course> courses = courseRepository.findAll();
-        List<Room> rooms = roomRepository.findAll();
-        List<Student> students = studentRepository.findAll();
-
-        log.info("Loaded {} teachers with certifications eagerly loaded", teachers.size());
-
-        // PHASE 2: Generate Time Slots
-        updateProgress(progressCallback, 60, "Generating time slots...");
-        List<TimeSlot> timeSlots = generateOrReuseTimeSlots(request);
-
-        // PHASE 3: Create Schedule Slots (reuse or create)
-        updateProgress(progressCallback, 65, "Preparing schedule slots...");
-        List<ScheduleSlot> existingSlots = scheduleSlotRepository.findByScheduleId(schedule.getId());
-
-        List<ScheduleSlot> slots;
-        if (!existingSlots.isEmpty()) {
-            log.info("Reusing {} existing schedule slots", existingSlots.size());
-            slots = existingSlots;
-        } else {
-            log.info("Creating new schedule slots...");
-            slots = createScheduleSlots(schedule, courses, students);
-            // Don't save yet - solver will work with transient objects
-        }
-
-        // PHASE 4: Build Optimization Problem
-        updateProgress(progressCallback, 70, "Building optimization problem...");
-        SchedulingSolution problem = new SchedulingSolution();
-        problem.setScheduleSlots(slots);
-        problem.setTeachers(teachers);
-        problem.setRooms(rooms);
-        problem.setTimeSlots(timeSlots);
-
-        // PHASE 5: Run Solver WITHOUT validation
-        updateProgress(progressCallback, 75, "Running AI optimization...");
-        UUID problemId = UUID.randomUUID();
-        SolverJob<SchedulingSolution, UUID> solverJob = solverManager.solve(problemId, problem);
-
-        // Wait for solution
-        SchedulingSolution solution = solverJob.getFinalBestSolution();
-
-        log.info("Solver completed with score: {}", solution.getScore());
-
-        // IMPORTANT: Return solution WITHOUT validation
-        return solution;
-    }
-
-    /**
-     * Generate or reuse existing time slots
-     */
-    private List<TimeSlot> generateOrReuseTimeSlots(ScheduleGenerationRequest request) {
-        // Check if time slots already exist
-        List<TimeSlot> existing = timeSlotService.getAllTimeSlots();
-        if (!existing.isEmpty()) {
-            log.info("Reusing {} existing time slots", existing.size());
-            return existing;
-        }
-
-        // Generate new time slots
-        log.info("Generating new time slots...");
-        List<TimeSlot> timeSlots = new ArrayList<>();
-
-        int startHour = request.getStartHour() != null ? request.getStartHour() : 8;
-        int endHour = request.getEndHour() != null ? request.getEndHour() : 15;
-        int duration = request.getPeriodDuration() != null ? request.getPeriodDuration() : 50;
-        boolean enableLunch = request.getEnableLunch() != null ? request.getEnableLunch() : true;
-        int lunchStartHour = request.getLunchStartHour() != null ? request.getLunchStartHour() : 12;
-        int lunchDuration = request.getLunchDuration() != null ? request.getLunchDuration() : 30;
-
-        // Generate for each day of week
-        DayOfWeek[] days = {DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
-                            DayOfWeek.THURSDAY, DayOfWeek.FRIDAY};
-
-        for (DayOfWeek day : days) {
-            LocalTime currentTime = LocalTime.of(startHour, 0);
-            LocalTime endTime = LocalTime.of(endHour, 0);
-            int slotNumber = 1;
-
-            while (currentTime.isBefore(endTime)) {
-                // Skip lunch period
-                if (enableLunch && isLunchTime(currentTime, lunchStartHour, lunchDuration)) {
-                    currentTime = currentTime.plusMinutes(lunchDuration);
-                    continue;
-                }
-
-                TimeSlot slot = new TimeSlot();
-                slot.setDayOfWeek(day);
-                slot.setStartTime(currentTime);
-                slot.setEndTime(currentTime.plusMinutes(duration));
-                // slotNumber++ - TimeSlot doesn't have setSlotNumber method
-
-                timeSlots.add(slot);
-
-                // Move to next slot (add break time)
-                currentTime = currentTime.plusMinutes(duration + 10);
-            }
-        }
-
-        // TimeSlots will be passed to OptaPlanner directly, no need to persist
-        // They're transient objects used only for schedule generation
-
-        log.info("Generated {} time slots for planning", timeSlots.size());
-        return timeSlots;
-    }
-
-    /**
-     * Check if time falls within lunch period
-     */
-    private boolean isLunchTime(LocalTime time, int lunchStartHour, int lunchDuration) {
-        LocalTime lunchStart = LocalTime.of(lunchStartHour, 0);
-        LocalTime lunchEnd = lunchStart.plusMinutes(lunchDuration);
-        return !time.isBefore(lunchStart) && time.isBefore(lunchEnd);
-    }
-
-    /**
-     * Create Schedule entity from request
-     */
-    private Schedule createScheduleEntity(ScheduleGenerationRequest request) {
-        Schedule schedule = new Schedule();
-
-        schedule.setName(request.getScheduleName());
-        schedule.setScheduleType(request.getScheduleType());
-        schedule.setStartDate(request.getStartDate());
-        schedule.setEndDate(request.getEndDate());
-        schedule.setStatus(ScheduleStatus.DRAFT);
-        schedule.setOptimizationScore(0.0);
-        schedule.setTotalConflicts(0);
-        schedule.setPeriod(SchedulePeriod.MASTER);  // Generated schedules are always MASTER
-
-        return schedule;
-    }
-
-    /**
-     * Create schedule slots for each course
-     */
-    private List<ScheduleSlot> createScheduleSlots(
-            Schedule schedule,
-            List<Course> courses,
-            List<Student> students) {
-
-        List<ScheduleSlot> slots = new ArrayList<>();
-
-        for (Course course : courses) {
-            // Determine sessions per week for this course
-            int sessionsPerWeek = course.getSessionsPerWeek() != null ?
-                course.getSessionsPerWeek() : 5;
-
-            // Create slots for each session
-            for (int sessionNum = 1; sessionNum <= sessionsPerWeek; sessionNum++) {
-                ScheduleSlot slot = new ScheduleSlot();
-
-                // Link to schedule and course
-                slot.setSchedule(schedule);
-                slot.setCourse(course);
-
-                // Initial status (OptaPlanner will assign teacher/room/time)
-                slot.setStatus(SlotStatus.DRAFT);
-                slot.setHasConflict(false);
-
-                // Assign enrolled students
-                // Note: Student enrollment linking happens through course relationships
-                // For now, leave students empty - OptaPlanner will handle assignments
-                slot.setStudents(new ArrayList<>());
-
-                slots.add(slot);
-            }
-        }
-
-        log.info("Created {} slots for {} courses", slots.size(), courses.size());
-        return slots;
-    }
-
-    /**
-     * Save partial schedule from solution
-     */
-    private Schedule savePartialScheduleFromSolution(
-            SchedulingSolution solution,
-            ScheduleGenerationRequest request) {
-
-        log.info("Saving partial schedule to database...");
-
-        // Get the schedule entity (already created during solver run)
-        List<ScheduleSlot> slots = solution.getScheduleSlots();
-
-        if (slots == null || slots.isEmpty()) {
-            throw new IllegalStateException("Solution has no schedule slots");
-        }
-
-        Schedule schedule = slots.get(0).getSchedule();
-
-        // Update schedule properties
-        schedule.setStatus(ScheduleStatus.DRAFT);  // Partial schedules stay in DRAFT
-
-        if (solution.getScore() != null) {
-            // setOptimizationScore expects Double, convert score to numeric value
-            schedule.setOptimizationScore((double) solution.getScore().hardScore());
-        }
-
-        // Count assigned vs unassigned
-        int assignedCount = 0;
-        int unassignedCount = 0;
-
-        // Update slot statuses
-        for (ScheduleSlot slot : slots) {
-            boolean fullyAssigned = slot.getTeacher() != null &&
-                                   slot.getRoom() != null &&
-                                   slot.getTimeSlot() != null;
-
-            if (fullyAssigned) {
-                slot.setStatus(SlotStatus.SCHEDULED);
-                assignedCount++;
-            } else {
-                slot.setStatus(SlotStatus.CONFLICT);
-                unassignedCount++;
-            }
-        }
-
-        schedule.setTotalConflicts(unassignedCount);
-
-        log.info("Partial schedule: {} assigned, {} unassigned", assignedCount, unassignedCount);
-
-        // Save and return
-        return scheduleRepository.save(schedule);
-    }
-
-    /**
-     * Build partial result from partial schedule and conflicts
-     */
-    private ScheduleGenerationResult buildPartialResult(
-            Schedule schedule,
-            List<ConflictDetail> conflicts,
-            SchedulingSolution solution,
-            ScheduleGenerationRequest request) {
-
-        // Count slots
-        int totalSlots = solution.getScheduleSlots().size();
-        int assignedSlots = (int) solution.getScheduleSlots().stream()
-            .filter(slot -> slot.getTeacher() != null &&
-                           slot.getRoom() != null &&
-                           slot.getTimeSlot() != null)
-            .count();
-
-        int unassignedSlots = totalSlots - assignedSlots;
-
-        // Calculate completion percentage
-        double completionPct = totalSlots > 0 ? (assignedSlots * 100.0) / totalSlots : 0.0;
-
-        // Build result
-        ScheduleGenerationResult result = ScheduleGenerationResult.builder()
-            .schedule(schedule)
-            .status(ScheduleStatus.DRAFT)
-            .conflicts(conflicts)
-            .completionPercentage(completionPct)
-            .totalCourses(totalSlots)
-            .scheduledCourses(assignedSlots)
-            .unscheduledCourses(unassignedSlots)
-            .optimizationScore(solution.getScore() != null ?
-                solution.getScore().toString() : "N/A")
-            .generationTimeSeconds(0L)  // Could track if needed
-            .build();
-
-        // Calculate statistics and add recommendations
-        result.calculateStatistics();
-        result.addRecommendation(generateRecommendations(result));
-
-        log.info("Partial result built: {}% complete, {} conflicts",
-            String.format("%.1f", completionPct), conflicts.size());
-
-        return result;
-    }
 
     /**
      * Update progress callback

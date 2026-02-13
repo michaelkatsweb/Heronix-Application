@@ -55,41 +55,20 @@ public class SchedulerSyncService {
      */
     @Transactional(readOnly = true)
     public SchedulerExportResult exportToScheduler(Long scheduleId) {
-        log.info("Starting export to SchedulerV2 for schedule ID: {}", scheduleId);
+        // SchedulerV2 now pulls data from SIS via its own SISApiClient.
+        // No data push is needed. This method returns a success stub for backwards compatibility.
+        log.info("exportToScheduler called for schedule {} — SchedulerV2 pulls data itself, no push needed", scheduleId);
 
-        try {
-            // Find the schedule
-            Schedule schedule = scheduleRepository.findById(scheduleId)
-                    .orElseThrow(() -> new IllegalArgumentException("Schedule not found: " + scheduleId));
-
-            // Build the complete payload
-            SchedulerDataPayload payload = buildSchedulerPayload(schedule);
-
-            // Send to SchedulerV2
-            SchedulerApiClient.SchedulerImportResult importResult =
-                    schedulerApiClient.importData(payload);
-
-            log.info("Export to SchedulerV2 successful: {}", importResult.getMessage());
-
-            return SchedulerExportResult.builder()
-                    .success(true)
-                    .scheduleId(scheduleId)
-                    .exportId(importResult.getImportId())
-                    .importId(importResult.getImportId())
-                    .message("Data exported successfully to SchedulerV2")
-                    .studentsExported(payload.getStudentRequests() != null ? payload.getStudentRequests().size() : 0)
-                    .coursesExported(payload.getCourses() != null ? payload.getCourses().size() : 0)
-                    .teachersExported(payload.getTeachers() != null ? payload.getTeachers().size() : 0)
-                    .build();
-
-        } catch (SchedulerApiClient.SchedulerApiException e) {
-            log.error("Failed to export to SchedulerV2", e);
-            return SchedulerExportResult.builder()
-                    .success(false)
-                    .scheduleId(scheduleId)
-                    .message("Export failed: " + e.getMessage())
-                    .build();
-        }
+        return SchedulerExportResult.builder()
+                .success(true)
+                .scheduleId(scheduleId)
+                .exportId(null)
+                .importId(null)
+                .message("No export needed — SchedulerV2 pulls data from SIS directly")
+                .studentsExported(0)
+                .coursesExported(0)
+                .teachersExported(0)
+                .build();
     }
 
     // ========================================================================

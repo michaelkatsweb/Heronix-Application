@@ -1,9 +1,10 @@
 package com.heronix.controller.api;
 
 import com.heronix.model.domain.Schedule;
+import com.heronix.model.domain.ScheduleSlot;
 import com.heronix.model.dto.ConflictDetail;
-import com.heronix.model.planning.SchedulingSolution;
 import com.heronix.repository.ScheduleRepository;
+import com.heronix.repository.ScheduleSlotRepository;
 import com.heronix.service.ConflictAnalysisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
  * REST API Controller for Schedule Conflict Analysis
  *
  * @author Heronix SIS Team
- * @version 1.0.0
+ * @version 2.0.0
  * @since December 29, 2025
  */
 @RestController
@@ -28,12 +29,13 @@ public class ScheduleConflictApiController {
 
     private final ConflictAnalysisService conflictAnalysisService;
     private final ScheduleRepository scheduleRepository;
+    private final ScheduleSlotRepository scheduleSlotRepository;
 
     // ==================== Conflict Analysis ====================
 
     @PostMapping("/analyze")
-    public ResponseEntity<List<ConflictDetail>> analyzeScheduleConflicts(@RequestBody SchedulingSolution solution) {
-        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeConstraintViolations(solution);
+    public ResponseEntity<List<ConflictDetail>> analyzeScheduleConflicts(@RequestBody List<ScheduleSlot> slots) {
+        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeSlotConflicts(slots);
         return ResponseEntity.ok(conflicts);
     }
 
@@ -42,11 +44,10 @@ public class ScheduleConflictApiController {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("Schedule not found: " + scheduleId));
 
-        // Convert Schedule to SchedulingSolution for analysis
-        SchedulingSolution solution = convertToSolution(schedule);
+        List<ScheduleSlot> slots = scheduleSlotRepository.findByScheduleId(scheduleId);
 
-        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeConstraintViolations(solution);
-        double completionPercentage = conflictAnalysisService.calculateCompletionPercentage(solution);
+        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeSlotConflicts(slots);
+        double completionPercentage = conflictAnalysisService.calculateCompletionPercentage(slots);
 
         Map<String, Object> response = new HashMap<>();
         response.put("scheduleId", scheduleId);
@@ -59,14 +60,14 @@ public class ScheduleConflictApiController {
     }
 
     @PostMapping("/completion-percentage")
-    public ResponseEntity<Map<String, Object>> calculateCompletionPercentage(@RequestBody SchedulingSolution solution) {
-        double percentage = conflictAnalysisService.calculateCompletionPercentage(solution);
+    public ResponseEntity<Map<String, Object>> calculateCompletionPercentage(@RequestBody List<ScheduleSlot> slots) {
+        double percentage = conflictAnalysisService.calculateCompletionPercentage(slots);
 
         Map<String, Object> response = new HashMap<>();
         response.put("completionPercentage", percentage);
         response.put("isComplete", percentage >= 100.0);
-        response.put("slotsAssigned", (int) (solution.getScheduleSlots().size() * percentage / 100.0));
-        response.put("totalSlots", solution.getScheduleSlots().size());
+        response.put("slotsAssigned", (int) (slots.size() * percentage / 100.0));
+        response.put("totalSlots", slots.size());
 
         return ResponseEntity.ok(response);
     }
@@ -74,8 +75,8 @@ public class ScheduleConflictApiController {
     // ==================== Conflict Filtering ====================
 
     @PostMapping("/analyze/by-severity")
-    public ResponseEntity<Map<String, Object>> analyzeConflictsBySeverity(@RequestBody SchedulingSolution solution) {
-        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeConstraintViolations(solution);
+    public ResponseEntity<Map<String, Object>> analyzeConflictsBySeverity(@RequestBody List<ScheduleSlot> slots) {
+        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeSlotConflicts(slots);
 
         Map<String, List<ConflictDetail>> bySeverity = conflicts.stream()
                 .collect(Collectors.groupingBy(
@@ -94,8 +95,8 @@ public class ScheduleConflictApiController {
     }
 
     @PostMapping("/analyze/by-type")
-    public ResponseEntity<Map<String, Object>> analyzeConflictsByType(@RequestBody SchedulingSolution solution) {
-        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeConstraintViolations(solution);
+    public ResponseEntity<Map<String, Object>> analyzeConflictsByType(@RequestBody List<ScheduleSlot> slots) {
+        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeSlotConflicts(slots);
 
         Map<String, List<ConflictDetail>> byType = conflicts.stream()
                 .collect(Collectors.groupingBy(
@@ -106,7 +107,6 @@ public class ScheduleConflictApiController {
         response.put("totalConflicts", conflicts.size());
         response.put("byType", byType);
 
-        // Count by type
         Map<String, Integer> typeCounts = new HashMap<>();
         byType.forEach((type, list) -> typeCounts.put(type, list.size()));
         response.put("typeCounts", typeCounts);
@@ -115,8 +115,8 @@ public class ScheduleConflictApiController {
     }
 
     @PostMapping("/analyze/blocking-only")
-    public ResponseEntity<List<ConflictDetail>> getBlockingConflicts(@RequestBody SchedulingSolution solution) {
-        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeConstraintViolations(solution);
+    public ResponseEntity<List<ConflictDetail>> getBlockingConflicts(@RequestBody List<ScheduleSlot> slots) {
+        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeSlotConflicts(slots);
 
         List<ConflictDetail> blockingConflicts = conflicts.stream()
                 .filter(c -> Boolean.TRUE.equals(c.getBlocking()))
@@ -126,8 +126,8 @@ public class ScheduleConflictApiController {
     }
 
     @PostMapping("/analyze/critical-only")
-    public ResponseEntity<List<ConflictDetail>> getCriticalConflicts(@RequestBody SchedulingSolution solution) {
-        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeConstraintViolations(solution);
+    public ResponseEntity<List<ConflictDetail>> getCriticalConflicts(@RequestBody List<ScheduleSlot> slots) {
+        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeSlotConflicts(slots);
 
         List<ConflictDetail> criticalConflicts = conflicts.stream()
                 .filter(c -> c.getSeverity() != null &&
@@ -140,11 +140,11 @@ public class ScheduleConflictApiController {
     // ==================== Dashboard Endpoints ====================
 
     @PostMapping("/dashboard/overview")
-    public ResponseEntity<Map<String, Object>> getConflictDashboard(@RequestBody SchedulingSolution solution) {
+    public ResponseEntity<Map<String, Object>> getConflictDashboard(@RequestBody List<ScheduleSlot> slots) {
         Map<String, Object> dashboard = new HashMap<>();
 
-        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeConstraintViolations(solution);
-        double completionPercentage = conflictAnalysisService.calculateCompletionPercentage(solution);
+        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeSlotConflicts(slots);
+        double completionPercentage = conflictAnalysisService.calculateCompletionPercentage(slots);
 
         long blockingCount = conflicts.stream().filter(c -> Boolean.TRUE.equals(c.getBlocking())).count();
         long criticalCount = conflicts.stream()
@@ -160,38 +160,34 @@ public class ScheduleConflictApiController {
         dashboard.put("highConflicts", highCount);
         dashboard.put("completionPercentage", completionPercentage);
         dashboard.put("isComplete", completionPercentage >= 100.0);
-        dashboard.put("totalSlots", solution.getScheduleSlots().size());
-        dashboard.put("assignedSlots", (int) (solution.getScheduleSlots().size() * completionPercentage / 100.0));
+        dashboard.put("totalSlots", slots.size());
+        dashboard.put("assignedSlots", (int) (slots.size() * completionPercentage / 100.0));
 
         return ResponseEntity.ok(dashboard);
     }
 
     @PostMapping("/dashboard/summary")
-    public ResponseEntity<Map<String, Object>> getConflictSummary(@RequestBody SchedulingSolution solution) {
+    public ResponseEntity<Map<String, Object>> getConflictSummary(@RequestBody List<ScheduleSlot> slots) {
         Map<String, Object> dashboard = new HashMap<>();
 
-        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeConstraintViolations(solution);
+        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeSlotConflicts(slots);
 
-        // Group by severity
         Map<String, Long> severityCounts = conflicts.stream()
                 .collect(Collectors.groupingBy(
                     c -> c.getSeverity() != null ? c.getSeverity().name() : "UNKNOWN",
                     Collectors.counting()
                 ));
 
-        // Group by type
         Map<String, Long> typeCounts = conflicts.stream()
                 .collect(Collectors.groupingBy(
                     c -> c.getType() != null ? c.getType().name() : "UNKNOWN",
                     Collectors.counting()
                 ));
 
-        // Calculate total students affected
         int totalStudentsAffected = conflicts.stream()
                 .mapToInt(ConflictDetail::getStudentsAffected)
                 .sum();
 
-        // Calculate estimated fix time
         int totalEstimatedFixTime = conflicts.stream()
                 .mapToInt(ConflictDetail::getEstimatedFixTimeMinutes)
                 .sum();
@@ -211,9 +207,9 @@ public class ScheduleConflictApiController {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("Schedule not found: " + scheduleId));
 
-        SchedulingSolution solution = convertToSolution(schedule);
-        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeConstraintViolations(solution);
-        double completionPercentage = conflictAnalysisService.calculateCompletionPercentage(solution);
+        List<ScheduleSlot> slots = scheduleSlotRepository.findByScheduleId(scheduleId);
+        List<ConflictDetail> conflicts = conflictAnalysisService.analyzeSlotConflicts(slots);
+        double completionPercentage = conflictAnalysisService.calculateCompletionPercentage(slots);
 
         Map<String, Object> dashboard = new HashMap<>();
         dashboard.put("scheduleId", scheduleId);
@@ -222,7 +218,6 @@ public class ScheduleConflictApiController {
         dashboard.put("completionPercentage", completionPercentage);
         dashboard.put("isComplete", completionPercentage >= 100.0);
 
-        // Severity breakdown
         Map<String, Long> severityCounts = conflicts.stream()
                 .collect(Collectors.groupingBy(
                     c -> c.getSeverity() != null ? c.getSeverity().name() : "UNKNOWN",
@@ -230,10 +225,8 @@ public class ScheduleConflictApiController {
                 ));
         dashboard.put("severityCounts", severityCounts);
 
-        // Top conflicts (most severe, most students affected)
         List<ConflictDetail> topConflicts = conflicts.stream()
                 .sorted((c1, c2) -> {
-                    // Sort by severity first, then by students affected
                     int severityCompare = Integer.compare(
                         c2.getSeverity() != null ? c2.getSeverity().getPriorityScore() : 0,
                         c1.getSeverity() != null ? c1.getSeverity().getPriorityScore() : 0
@@ -246,19 +239,5 @@ public class ScheduleConflictApiController {
         dashboard.put("topConflicts", topConflicts);
 
         return ResponseEntity.ok(dashboard);
-    }
-
-    // ==================== Helper Methods ====================
-
-    /**
-     * Convert Schedule entity to SchedulingSolution for analysis
-     */
-    private SchedulingSolution convertToSolution(Schedule schedule) {
-        SchedulingSolution solution = new SchedulingSolution();
-        // Set schedule slots from the schedule
-        if (schedule.getSlots() != null) {
-            solution.setScheduleSlots(schedule.getSlots());
-        }
-        return solution;
     }
 }

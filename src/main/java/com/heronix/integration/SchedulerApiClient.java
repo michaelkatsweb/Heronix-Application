@@ -1,7 +1,6 @@
 package com.heronix.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.heronix.dto.scheduler.SchedulerDataPayload;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -80,61 +79,6 @@ public class SchedulerApiClient {
     }
 
     // ========================================================================
-    // DATA IMPORT
-    // ========================================================================
-
-    /**
-     * Send scheduling data to SchedulerV2 for import
-     *
-     * @param payload Complete scheduling data payload
-     * @return Import result with status
-     * @throws SchedulerApiException if import fails
-     */
-    public SchedulerImportResult importData(SchedulerDataPayload payload) throws SchedulerApiException {
-        if (!schedulerEnabled) {
-            throw new SchedulerApiException("SchedulerV2 integration is disabled");
-        }
-
-        if (!isSchedulerAvailable()) {
-            throw new SchedulerApiException("SchedulerV2 is not available");
-        }
-
-        try {
-            String importUrl = schedulerApiUrl + "/api/admin/data/import";
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<SchedulerDataPayload> request = new HttpEntity<>(payload, headers);
-
-            log.info("Sending data import request to SchedulerV2: {} students, {} courses, {} teachers",
-                    payload.getStudentRequests() != null ? payload.getStudentRequests().size() : 0,
-                    payload.getCourses() != null ? payload.getCourses().size() : 0,
-                    payload.getTeachers() != null ? payload.getTeachers().size() : 0);
-
-            ResponseEntity<Map> response = restTemplate.postForEntity(importUrl, request, Map.class);
-
-            if (response.getStatusCode() == HttpStatus.OK || response.getStatusCode() == HttpStatus.CREATED) {
-                Map<String, Object> body = response.getBody();
-                log.info("Data import successful: {}", body);
-
-                return SchedulerImportResult.builder()
-                        .success(true)
-                        .message("Data imported successfully")
-                        .importId(body != null ? String.valueOf(body.get("importId")) : null)
-                        .timestamp(System.currentTimeMillis())
-                        .build();
-            } else {
-                throw new SchedulerApiException("Data import failed with status: " + response.getStatusCode());
-            }
-
-        } catch (RestClientException e) {
-            log.error("Failed to import data to SchedulerV2", e);
-            throw new SchedulerApiException("Data import failed: " + e.getMessage(), e);
-        }
-    }
-
-    // ========================================================================
     // SCHEDULE GENERATION
     // ========================================================================
 
@@ -155,7 +99,7 @@ public class SchedulerApiClient {
         }
 
         try {
-            String generateUrl = schedulerApiUrl + "/api/admin/schedule/generate";
+            String generateUrl = schedulerApiUrl + "/api/schedule/generate-for-sis";
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -202,7 +146,7 @@ public class SchedulerApiClient {
         }
 
         try {
-            String statusUrl = schedulerApiUrl + "/api/admin/schedule/" + jobId + "/status";
+            String statusUrl = schedulerApiUrl + "/api/schedule/job/" + jobId + "/status";
 
             ResponseEntity<Map> response = restTemplate.getForEntity(statusUrl, Map.class);
 
@@ -298,7 +242,7 @@ public class SchedulerApiClient {
         }
 
         try {
-            String exportUrl = schedulerApiUrl + "/api/admin/schedule/" + jobId + "/export";
+            String exportUrl = schedulerApiUrl + "/api/schedule/job/" + jobId + "/export";
 
             log.info("Exporting schedule from job: {}", jobId);
 
