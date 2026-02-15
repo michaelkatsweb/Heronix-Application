@@ -13,9 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.heronix.dto.SubstituteAssignmentDTO;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -343,6 +345,34 @@ public class SubstituteManagementService {
     public Double getTotalPayForSubstitute(Long substituteId, LocalDate startDate, LocalDate endDate) {
         Double total = assignmentRepository.getTotalPayForSubstituteInDateRange(substituteId, startDate, endDate);
         return total != null ? total : 0.0;
+    }
+
+    // ==================== TEMPORARY PIN ====================
+
+    /**
+     * Generate a temporary PIN for substitute check-in.
+     * Returns a map with pin, sessionCode, and expiresAt.
+     */
+    public Map<String, Object> generateTemporaryPin(Long substituteId, Integer durationHours, String generatedBy) {
+        Substitute substitute = substituteRepository.findById(substituteId)
+                .orElseThrow(() -> new IllegalArgumentException("Substitute not found: " + substituteId));
+
+        SecureRandom random = new SecureRandom();
+        String pin = String.format("%06d", random.nextInt(1_000_000));
+        String sessionCode = "SC-" + substitute.getEmployeeId() + "-" + String.format("%04d", random.nextInt(10_000));
+        LocalDateTime expiresAt = LocalDateTime.now().plusHours(durationHours);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("pin", pin);
+        result.put("sessionCode", sessionCode);
+        result.put("expiresAt", expiresAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        result.put("substituteId", substituteId);
+        result.put("generatedBy", generatedBy);
+
+        logger.info("Generated temporary PIN for substitute {} ({}), expires at {}",
+                substitute.getFullName(), sessionCode, expiresAt);
+
+        return result;
     }
 
     // ==================== DTO METHODS ====================

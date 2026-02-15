@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.heronix.ui.controller.TransferSigningDialogController"
+      prefWidth="650" prefHeight="600"
+      styleClass="dialog-container">
+
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="Sign Transfer Authorization" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <Separator>
+        <VBox.margin><Insets top="10" bottom="10"/></VBox.margin>
+    </Separator>
+
+    <!-- Authorization Summary -->
+    <Label text="Authorization Details" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+
+    <GridPane hgap="10" vgap="8">
+        <columnConstraints>
+            <ColumnConstraints hgrow="NEVER" minWidth="130"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <Label text="Auth Number:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+        <Label fx:id="authNumberLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+        <Label fx:id="statusLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Destination:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
+        <Label fx:id="destinationLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Students:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
+        <Label fx:id="studentCountLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+        <Label text="Reason:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-weight: bold;"/>
+        <Label fx:id="reasonLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+    </GridPane>
+
+    <Separator>
+        <VBox.margin><Insets top="10" bottom="10"/></VBox.margin>
+    </Separator>
+
+    <!-- Quorum Status -->
+    <Label text="Quorum Status" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+
+    <GridPane hgap="10" vgap="8">
+        <columnConstraints>
+            <ColumnConstraints hgrow="NEVER" minWidth="130"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <Label text="Registrar:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+        <Label fx:id="registrarSignLabel" text="Pending" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Principal:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+        <Label fx:id="principalSignLabel" text="Pending" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="District Admin:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
+        <Label fx:id="adminSignLabel" text="Pending" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    </GridPane>
+
+    <Separator>
+        <VBox.margin><Insets top="10" bottom="10"/></VBox.margin>
+    </Separator>
+
+    <!-- Signing Form -->
+    <Label text="Apply Your Signature" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+
+    <GridPane hgap="10" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints hgrow="NEVER" minWidth="130"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <Label text="Signing Key:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label"/>
+        <ComboBox fx:id="keyCombo" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                  maxWidth="Infinity" promptText="Select your signing key..."/>
+
+        <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label"/>
+        <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                       promptText="Enter password to unlock key"/>
+
+        <Label text="Remarks:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label"/>
+        <TextArea fx:id="remarksArea" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                  prefRowCount="2" promptText="Optional remarks..."/>
+    </GridPane>
+
+    <Region VBox.vgrow="ALWAYS"/>
+
+    <!-- Result -->
+    <Label fx:id="resultLabel" text="" wrapText="true">
+        <VBox.margin><Insets top="5"/></VBox.margin>
+    </Label>
+
+    <!-- Buttons -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <VBox.margin><Insets top="10"/></VBox.margin>
+        <Button fx:id="signButton" text="Sign" onAction="#handleSign"
+                style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Button fx:id="verifyButton" text="Verify All Signatures" onAction="#handleVerify"
+                style="-fx-background-color: #4682B4; -fx-text-fill: white;"/>
+        <Button fx:id="closeButton" text="Close" onAction="#handleClose"/>
+    </HBox>
+</VBox>

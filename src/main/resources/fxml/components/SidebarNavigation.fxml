@@ -182,6 +182,14 @@
                 <Label fx:id="navCourseEnrollmentLabel" text="Course Enrollment"/>
             </HBox>
 
+            <!-- SECURE TRANSFER Section -->
+            <Label text="SECURE TRANSFER" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
+
+            <HBox fx:id="navSecureTransfer" styleClass="sidebar-nav-item" onMouseClicked="#handleNavSecureTransfer">
+                <Label text="&#x1F512;" styleClass="sidebar-nav-icon" minWidth="24" alignment="CENTER"/>
+                <Label fx:id="navSecureTransferLabel" text="Transfer Dashboard"/>
+            </HBox>
+
             <!-- FACILITIES Section -->
             <Label text="FACILITIES" styleClass="sidebar-section-title" style="-fx-padding: 16 20 8 20;"/>
 

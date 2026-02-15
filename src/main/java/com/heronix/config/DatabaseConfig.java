@@ -1,7 +1,9 @@
 package com.heronix.config;
 
+import com.heronix.security.HeronixEncryptionService;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,20 +12,22 @@ import org.springframework.context.annotation.Profile;
 import javax.sql.DataSource;
 
 /**
- * Database Configuration
+ * Database Configuration with Heronix Encryption Support
  * Location: src/main/java/com/heronix/config/DatabaseConfig.java
  *
  * Configures HikariCP connection pools for different environments:
- * - dev: H2 embedded database
+ * - dev: H2 embedded database (encrypted via CIPHER=AES)
  * - prod: PostgreSQL or H2 file-based
+ *
+ * H2 file databases are automatically encrypted with the Heronix master key.
+ * The file password is derived from HERONIX_MASTER_KEY via PBKDF2.
  */
+@Slf4j
 @Configuration
 public class DatabaseConfig {
 
     /**
-     * Development profile: H2 embedded database
-     * Auto-starts database, stores in ./data folder
-     * Uses environment variables or defaults for credentials
+     * Development profile: H2 embedded database with encryption
      */
     @Bean
     @Profile("dev")
@@ -31,9 +35,8 @@ public class DatabaseConfig {
             @Value("${spring.datasource.username:sa}") String username,
             @Value("${spring.datasource.password:}") String password) {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:h2:file:./data/heronix_dev;AUTO_SERVER=TRUE");
-        config.setUsername(username);
-        config.setPassword(password);
+        String url = "jdbc:h2:file:./data/heronix_dev;AUTO_SERVER=TRUE";
+        applyH2Encryption(config, url, username, password);
         config.setDriverClassName("org.h2.Driver");
 
         // Dev pool settings - smaller pool
@@ -57,9 +60,14 @@ public class DatabaseConfig {
             @Value("${spring.datasource.driver-class-name}") String driverClassName) {
 
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(url);
-        config.setUsername(username);
-        config.setPassword(password);
+
+        if (url.startsWith("jdbc:h2:file:")) {
+            applyH2Encryption(config, url, username, password);
+        } else {
+            config.setJdbcUrl(url);
+            config.setUsername(username);
+            config.setPassword(password);
+        }
         config.setDriverClassName(driverClassName);
 
         // Production pool settings - larger pool, longer timeouts
@@ -70,7 +78,6 @@ public class DatabaseConfig {
         config.setMaxLifetime(1800000); // 30 minutes
 
         // Performance tuning
-        // Set autoCommit=false to match application.properties and enable proper transaction management
         config.setAutoCommit(false);
         config.setConnectionTestQuery("SELECT 1");
 
@@ -78,8 +85,7 @@ public class DatabaseConfig {
     }
 
     /**
-     * Test profile: In-memory H2 database
-     * Fast, clean database for each test run
+     * Test profile: In-memory H2 database (no file encryption for in-memory)
      */
     @Bean
     @Profile("test")
@@ -94,5 +100,34 @@ public class DatabaseConfig {
         config.setMinimumIdle(1);
 
         return new HikariDataSource(config);
+    }
+
+    /**
+     * Apply H2 CIPHER=AES encryption to a file-based H2 URL.
+     * H2 requires the password format: "filePassword userPassword"
+     */
+    private void applyH2Encryption(HikariConfig config, String url, String username, String userPassword) {
+        HeronixEncryptionService enc = HeronixEncryptionService.getInstance();
+        if (enc.isDisabled()) {
+            config.setJdbcUrl(url);
+            config.setUsername(username);
+            config.setPassword(userPassword);
+            log.info("H2 encryption DISABLED (dev mode) — database is unencrypted");
+            return;
+        }
+
+        // Add CIPHER=AES to URL if not already present
+        if (!url.contains("CIPHER=AES")) {
+            url = url + ";CIPHER=AES";
+        }
+        config.setJdbcUrl(url);
+        config.setUsername(username);
+
+        // H2 CIPHER=AES requires password format: "filePassword userPassword"
+        String filePassword = enc.getH2FilePassword();
+        String combinedPassword = filePassword + " " + (userPassword != null ? userPassword : "");
+        config.setPassword(combinedPassword);
+
+        log.info("H2 database encryption enabled (CIPHER=AES)");
     }
 }

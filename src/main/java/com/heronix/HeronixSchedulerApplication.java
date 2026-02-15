@@ -44,6 +44,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import com.heronix.config.ApplicationProperties;
+import com.heronix.security.HeronixEncryptionService;
 
 /**
  * Heronix Scheduling System - Desktop Application
@@ -103,6 +104,9 @@ public class HeronixSchedulerApplication extends Application {
         Task<ConfigurableApplicationContext> initTask = new Task<>() {
             @Override
             protected ConfigurableApplicationContext call() throws Exception {
+                updateMessage("Initializing encryption...");
+                HeronixEncryptionService.initialize();
+
                 updateMessage("Initializing application...");
                 log.info("Initializing Spring Boot context...");
 

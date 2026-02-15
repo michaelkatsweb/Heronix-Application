@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+Secure Transfer Dashboard - HSTP Management View
+Location: src/main/resources/fxml/SecureTransferDashboard.fxml
+-->
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.ui.controller.SecureTransferDashboardController"
+            styleClass="root">
+
+    <top>
+        <VBox spacing="15">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- Header Section -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="card">
+                <Label text="&#x1F512; Secure Transfer Dashboard" styleClass="label-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="&#x2795; New Transfer" onAction="#handleNewTransfer" styleClass="button-success"/>
+                <Separator orientation="VERTICAL"/>
+                <Button text="&#x1F504; Refresh" onAction="#handleRefresh" styleClass="button"/>
+                <Button text="&#x1F4E5; Export" onAction="#handleExport" styleClass="button"/>
+            </HBox>
+
+            <!-- Statistics Cards Row -->
+            <HBox spacing="15">
+                <VBox styleClass="card" HBox.hgrow="ALWAYS" alignment="CENTER" spacing="4">
+                    <padding><Insets top="12" right="16" bottom="12" left="16"/></padding>
+                    <Label fx:id="statTotal" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #00d4ff;"/>
+                    <Label text="Total Transfers" style="-fx-text-fill: #aaa; -fx-font-size: 11px;"/>
+                </VBox>
+                <VBox styleClass="card" HBox.hgrow="ALWAYS" alignment="CENTER" spacing="4">
+                    <padding><Insets top="12" right="16" bottom="12" left="16"/></padding>
+                    <Label fx:id="statPending" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #ffaa00;"/>
+                    <Label text="Pending Signatures" style="-fx-text-fill: #aaa; -fx-font-size: 11px;"/>
+                </VBox>
+                <VBox styleClass="card" HBox.hgrow="ALWAYS" alignment="CENTER" spacing="4">
+                    <padding><Insets top="12" right="16" bottom="12" left="16"/></padding>
+                    <Label fx:id="statReady" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #00ff88;"/>
+                    <Label text="Packages Ready" style="-fx-text-fill: #aaa; -fx-font-size: 11px;"/>
+                </VBox>
+                <VBox styleClass="card" HBox.hgrow="ALWAYS" alignment="CENTER" spacing="4">
+                    <padding><Insets top="12" right="16" bottom="12" left="16"/></padding>
+                    <Label fx:id="statCompleted" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #8888ff;"/>
+                    <Label text="Completed" style="-fx-text-fill: #aaa; -fx-font-size: 11px;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Search and Filter Bar -->
+            <HBox spacing="10" alignment="CENTER_LEFT" styleClass="card">
+                <Label text="&#x1F50D; Search:" styleClass="label"/>
+                <TextField fx:id="searchField" promptText="Auth #, destination, student..."
+                           prefWidth="250" onKeyReleased="#handleSearch"/>
+                <Separator orientation="VERTICAL"/>
+                <Label text="Status:" styleClass="label"/>
+                <ComboBox fx:id="statusFilter" promptText="All Statuses"
+                          prefWidth="170" onAction="#handleFilter"/>
+                <Separator orientation="VERTICAL"/>
+                <Label text="From:" styleClass="label"/>
+                <DatePicker fx:id="dateFrom" promptText="Start Date" prefWidth="140" onAction="#handleFilter"/>
+                <Label text="To:" styleClass="label"/>
+                <DatePicker fx:id="dateTo" promptText="End Date" prefWidth="140" onAction="#handleFilter"/>
+                <Button text="Clear" onAction="#handleClearFilters" styleClass="button"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox styleClass="card">
+            <padding>
+                <Insets top="10" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+
+                <!-- Tab 1: All Authorizations -->
+                <Tab text="Authorizations">
+                    <VBox spacing="10">
+                        <padding><Insets top="10" right="0" bottom="0" left="0"/></padding>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="All Transfer Authorizations" styleClass="label-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="authCountLabel" text="Total: 0" styleClass="label"/>
+                        </HBox>
+                        <TableView fx:id="authorizationsTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="authNumColumn" text="Auth #" prefWidth="140" minWidth="120"/>
+                                <TableColumn fx:id="authStatusColumn" text="Status" prefWidth="130" minWidth="100"/>
+                                <TableColumn fx:id="authStudentsColumn" text="Students" prefWidth="80" minWidth="60"/>
+                                <TableColumn fx:id="authDestColumn" text="Destination" prefWidth="200" minWidth="160"/>
+                                <TableColumn fx:id="authReasonColumn" text="Reason" prefWidth="150" minWidth="120"/>
+                                <TableColumn fx:id="authCreatedColumn" text="Created" prefWidth="140" minWidth="120"/>
+                                <TableColumn fx:id="authDeliveryColumn" text="Delivery" prefWidth="130" minWidth="100"/>
+                                <TableColumn fx:id="authActionsColumn" text="Actions" prefWidth="240" minWidth="200" sortable="false"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+
+                <!-- Tab 2: Pending My Signature -->
+                <Tab text="Pending My Signature">
+                    <VBox spacing="10">
+                        <padding><Insets top="10" right="0" bottom="0" left="0"/></padding>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="Awaiting Your Signature" styleClass="label-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="pendingCountLabel" text="Total: 0" styleClass="label"/>
+                        </HBox>
+                        <TableView fx:id="pendingTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="pendingAuthNumColumn" text="Auth #" prefWidth="140" minWidth="120"/>
+                                <TableColumn fx:id="pendingDestColumn" text="Destination" prefWidth="220" minWidth="180"/>
+                                <TableColumn fx:id="pendingStudentsColumn" text="Students" prefWidth="80" minWidth="60"/>
+                                <TableColumn fx:id="pendingReasonColumn" text="Reason" prefWidth="160" minWidth="120"/>
+                                <TableColumn fx:id="pendingCreatedColumn" text="Requested" prefWidth="140" minWidth="120"/>
+                                <TableColumn fx:id="pendingActionsColumn" text="Actions" prefWidth="160" minWidth="140" sortable="false"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+
+                <!-- Tab 3: Key Management -->
+                <Tab text="Key Management">
+                    <VBox spacing="15">
+                        <padding><Insets top="10" right="0" bottom="0" left="0"/></padding>
+
+                        <!-- My Keys Section -->
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="My Signing Keys" styleClass="label-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="&#x2795; Generate New Key" onAction="#handleGenerateKey" styleClass="button-success"/>
+                        </HBox>
+                        <TableView fx:id="keysTable" prefHeight="200">
+                            <columns>
+                                <TableColumn fx:id="keyFingerprintColumn" text="Fingerprint" prefWidth="220" minWidth="180"/>
+                                <TableColumn fx:id="keyLabelColumn" text="Label" prefWidth="180" minWidth="140"/>
+                                <TableColumn fx:id="keyRoleColumn" text="Role" prefWidth="120" minWidth="100"/>
+                                <TableColumn fx:id="keyCreatedColumn" text="Registered" prefWidth="150" minWidth="120"/>
+                                <TableColumn fx:id="keyStatusColumn" text="Status" prefWidth="100" minWidth="80"/>
+                                <TableColumn fx:id="keyActionsColumn" text="Actions" prefWidth="120" minWidth="100" sortable="false"/>
+                            </columns>
+                        </TableView>
+
+                        <!-- Authorizer Status Section -->
+                        <Separator/>
+                        <Label text="All Authorizers" styleClass="label-title"/>
+                        <TableView fx:id="authorizersTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="authorizerNameColumn" text="Name" prefWidth="200" minWidth="160"/>
+                                <TableColumn fx:id="authorizerRoleColumn" text="Role" prefWidth="120" minWidth="100"/>
+                                <TableColumn fx:id="authorizerFingerprintColumn" text="Key Fingerprint" prefWidth="220" minWidth="180"/>
+                                <TableColumn fx:id="authorizerKeyDateColumn" text="Key Since" prefWidth="150" minWidth="120"/>
+                                <TableColumn fx:id="authorizerKeyStatusColumn" text="Status" prefWidth="100" minWidth="80"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+
+                <!-- Tab 4: FERPA Disclosure Log -->
+                <Tab text="FERPA Log">
+                    <VBox spacing="10">
+                        <padding><Insets top="10" right="0" bottom="0" left="0"/></padding>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="FERPA Disclosure Log" styleClass="label-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="ferpaCountLabel" text="Total: 0" styleClass="label"/>
+                        </HBox>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="&#x1F50D;" styleClass="label"/>
+                            <TextField fx:id="ferpaSearchField" promptText="Student name, recipient..."
+                                       prefWidth="250" onKeyReleased="#handleFerpaSearch"/>
+                            <Separator orientation="VERTICAL"/>
+                            <Label text="From:" styleClass="label"/>
+                            <DatePicker fx:id="ferpaDateFrom" promptText="Start" prefWidth="140" onAction="#handleFerpaFilter"/>
+                            <Label text="To:" styleClass="label"/>
+                            <DatePicker fx:id="ferpaDateTo" promptText="End" prefWidth="140" onAction="#handleFerpaFilter"/>
+                            <Button text="Clear" onAction="#handleClearFerpaFilters" styleClass="button"/>
+                        </HBox>
+                        <TableView fx:id="ferpaTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="ferpaDateColumn" text="Date" prefWidth="150" minWidth="120"/>
+                                <TableColumn fx:id="ferpaStudentColumn" text="Student" prefWidth="180" minWidth="150"/>
+                                <TableColumn fx:id="ferpaRecipientColumn" text="Recipient" prefWidth="180" minWidth="150"/>
+                                <TableColumn fx:id="ferpaRecordsColumn" text="Records" prefWidth="200" minWidth="160"/>
+                                <TableColumn fx:id="ferpaLegalBasisColumn" text="Legal Basis" prefWidth="220" minWidth="180"/>
+                                <TableColumn fx:id="ferpaDisclosedByColumn" text="Disclosed By" prefWidth="130" minWidth="100"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+
+            </TabPane>
+        </VBox>
+    </center>
+
+</BorderPane>

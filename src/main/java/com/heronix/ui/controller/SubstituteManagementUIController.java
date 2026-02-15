@@ -278,10 +278,12 @@ public class SubstituteManagementUIController {
         subActionsColumn.setCellFactory(param -> new TableCell<>() {
             private final Button editButton = new Button("Edit");
             private final Button viewButton = new Button("View");
+            private final Button pinButton = new Button("PIN");
 
             {
                 editButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 4 8;");
                 viewButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 4 8;");
+                pinButton.setStyle("-fx-background-color: #FF9800; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 4 8;");
 
                 editButton.setOnAction(event -> {
                     Substitute substitute = getTableView().getItems().get(getIndex());
@@ -292,6 +294,11 @@ public class SubstituteManagementUIController {
                     Substitute substitute = getTableView().getItems().get(getIndex());
                     handleViewSubstitute(substitute);
                 });
+
+                pinButton.setOnAction(event -> {
+                    Substitute substitute = getTableView().getItems().get(getIndex());
+                    handleGeneratePin(substitute);
+                });
             }
 
             @Override
@@ -300,7 +307,7 @@ public class SubstituteManagementUIController {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    javafx.scene.layout.HBox buttons = new javafx.scene.layout.HBox(5, editButton, viewButton);
+                    javafx.scene.layout.HBox buttons = new javafx.scene.layout.HBox(5, editButton, viewButton, pinButton);
                     setGraphic(buttons);
                 }
             }
@@ -1021,6 +1028,163 @@ public class SubstituteManagementUIController {
      */
     private void handleViewSubstitute(Substitute substitute) {
         showInfo("View Substitute", "Viewing assignments for: " + substitute.getFullName());
+    }
+
+    /**
+     * Handle generate temporary PIN for SubConnect session activation
+     */
+    private void handleGeneratePin(Substitute substitute) {
+        // Validate that substitute has an employee ID
+        if (substitute.getEmployeeId() == null || substitute.getEmployeeId().trim().isEmpty()) {
+            showError("Cannot Generate PIN",
+                    "Substitute " + substitute.getFullName() + " does not have an Employee ID.\n\n" +
+                    "An Employee ID is required for SubConnect session activation.\n" +
+                    "Please edit the substitute and assign an Employee ID first.");
+            return;
+        }
+
+        // Build the PIN generation dialog
+        Dialog<Integer> dialog = new Dialog<>();
+        dialog.setTitle("Generate Temporary PIN");
+        dialog.setHeaderText("Generate SubConnect PIN for: " + substitute.getFullName());
+
+        ButtonType generateButtonType = new ButtonType("Generate PIN", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(generateButtonType, ButtonType.CANCEL);
+
+        // Duration spinner
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 20, 10, 10));
+
+        grid.add(new Label("Substitute:"), 0, 0);
+        grid.add(new Label(substitute.getFullName()), 1, 0);
+
+        grid.add(new Label("Employee ID:"), 0, 1);
+        grid.add(new Label(substitute.getEmployeeId()), 1, 1);
+
+        grid.add(new Label("Session Code:"), 0, 2);
+        Label sessionCodeLabel = new Label("SC-" + substitute.getEmployeeId());
+        sessionCodeLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #1565C0;");
+        grid.add(sessionCodeLabel, 1, 2);
+
+        grid.add(new Label("PIN Duration (hours):"), 0, 3);
+        Spinner<Integer> durationSpinner = new Spinner<>(1, 72, 8);
+        durationSpinner.setEditable(true);
+        durationSpinner.setPrefWidth(100);
+        grid.add(durationSpinner, 1, 3);
+
+        grid.add(new Label(""), 0, 4);
+        Label hintLabel = new Label("Default: 8 hours. Range: 1-72 hours.");
+        hintLabel.setStyle("-fx-text-fill: #666666; -fx-font-size: 11;");
+        grid.add(hintLabel, 1, 4);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().setPrefWidth(450);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == generateButtonType) {
+                return durationSpinner.getValue();
+            }
+            return null;
+        });
+
+        Optional<Integer> durationResult = dialog.showAndWait();
+
+        durationResult.ifPresent(durationHours -> {
+            try {
+                Map<String, Object> result = substituteManagementService.generateTemporaryPin(
+                        substitute.getId(), durationHours, "clerk-admin");
+
+                String pin = (String) result.get("pin");
+                String sessionCode = (String) result.get("sessionCode");
+                String expiresAt = (String) result.get("expiresAt");
+
+                // Show result dialog with large PIN display and copy button
+                showPinResultDialog(substitute.getFullName(), pin, sessionCode, expiresAt);
+
+            } catch (Exception e) {
+                logger.error("Error generating temporary PIN for substitute: {}", substitute.getFullName(), e);
+                showError("PIN Generation Failed", e.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Show the generated PIN result dialog with large display and copy-to-clipboard button
+     */
+    private void showPinResultDialog(String substituteName, String pin, String sessionCode, String expiresAt) {
+        Dialog<Void> resultDialog = new Dialog<>();
+        resultDialog.setTitle("Temporary PIN Generated");
+        resultDialog.setHeaderText("SubConnect PIN for: " + substituteName);
+        resultDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+        VBox content = new VBox(15);
+        content.setPadding(new Insets(20));
+        content.setAlignment(javafx.geometry.Pos.CENTER);
+
+        // Session code
+        Label sessionCodeTitle = new Label("Session Code");
+        sessionCodeTitle.setStyle("-fx-text-fill: #666666; -fx-font-size: 12;");
+        Label sessionCodeValue = new Label(sessionCode);
+        sessionCodeValue.setStyle("-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1565C0;");
+
+        // Large PIN display
+        Label pinTitle = new Label("Temporary PIN");
+        pinTitle.setStyle("-fx-text-fill: #666666; -fx-font-size: 12;");
+        Label pinDisplay = new Label(pin);
+        pinDisplay.setStyle(
+                "-fx-font-size: 48; -fx-font-weight: bold; -fx-text-fill: #E65100; " +
+                "-fx-background-color: #FFF3E0; -fx-padding: 15 30; " +
+                "-fx-border-color: #FF9800; -fx-border-radius: 8; -fx-background-radius: 8; " +
+                "-fx-font-family: 'Consolas', 'Courier New', monospace;");
+
+        // Expiration
+        Label expiresTitle = new Label("Expires At");
+        expiresTitle.setStyle("-fx-text-fill: #666666; -fx-font-size: 12;");
+
+        // Format the expiration time nicely
+        String formattedExpiry = expiresAt;
+        try {
+            java.time.LocalDateTime expiry = java.time.LocalDateTime.parse(expiresAt);
+            formattedExpiry = expiry.format(java.time.format.DateTimeFormatter.ofPattern("MMM dd, yyyy h:mm a"));
+        } catch (Exception ignored) {}
+
+        Label expiresValue = new Label(formattedExpiry);
+        expiresValue.setStyle("-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #D32F2F;");
+
+        // Copy to clipboard button
+        Button copyButton = new Button("Copy PIN to Clipboard");
+        copyButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-font-size: 13;");
+        copyButton.setOnAction(e -> {
+            javafx.scene.input.ClipboardContent clipboardContent = new javafx.scene.input.ClipboardContent();
+            clipboardContent.putString(pin);
+            javafx.scene.input.Clipboard.getSystemClipboard().setContent(clipboardContent);
+            copyButton.setText("Copied!");
+            copyButton.setStyle("-fx-background-color: #388E3C; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-font-size: 13;");
+        });
+
+        // Instructions
+        Label instructions = new Label(
+                "Give this PIN and session code to the substitute teacher.\n" +
+                "They will enter the session code and PIN in SubConnect to activate their session.");
+        instructions.setStyle("-fx-text-fill: #666666; -fx-font-size: 11; -fx-text-alignment: center;");
+        instructions.setWrapText(true);
+
+        content.getChildren().addAll(
+                sessionCodeTitle, sessionCodeValue,
+                new Separator(),
+                pinTitle, pinDisplay,
+                new Separator(),
+                expiresTitle, expiresValue,
+                copyButton,
+                new Separator(),
+                instructions
+        );
+
+        resultDialog.getDialogPane().setContent(content);
+        resultDialog.getDialogPane().setPrefWidth(400);
+        resultDialog.showAndWait();
     }
 
     /**

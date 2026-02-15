@@ -177,6 +177,7 @@ public class MainControllerV2 {
         VIEW_METADATA.put("new-student-registration", new ViewMetadata("New Student Registration", "Register new students to the school", "/fxml/StudentRegistrationEnrollment.fxml"));
         VIEW_METADATA.put("incomplete-registrations", new ViewMetadata("Incomplete Registrations", "Track incomplete student registrations", "/fxml/IncompleteRegistrations.fxml"));
         VIEW_METADATA.put("course-enrollment", new ViewMetadata("Course Enrollment", "Enroll existing students into courses", "/fxml/StudentEnrollment.fxml"));
+        VIEW_METADATA.put("secure-transfer", new ViewMetadata("Secure Transfer", "HSTP \u2014 Secure student record transfer with 3-party authorization", "/fxml/SecureTransferDashboard.fxml"));
         VIEW_METADATA.put("rooms", new ViewMetadata("Rooms", "Manage room inventory", "/fxml/RoomManagement.fxml"));
         VIEW_METADATA.put("events", new ViewMetadata("Events", "School events and calendar", "/fxml/Events.fxml"));
         VIEW_METADATA.put("iep", new ViewMetadata("IEP Management", "Manage Individual Education Plans", "/fxml/iep-management.fxml"));

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.heronix.ui.controller.TransferAuthorizationDialogController"
+      prefWidth="900" prefHeight="750"
+      styleClass="dialog-container">
+
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label fx:id="titleLabel" text="Transfer Authorization" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Status:" style="-fx-font-weight: bold;"/>
+        <Label fx:id="statusLabel" text="DRAFT" style="-fx-text-fill: #4682B4; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <Separator>
+        <VBox.margin><Insets top="10" bottom="10"/></VBox.margin>
+    </Separator>
+
+    <!-- Auth Number -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Authorization #:" style="-fx-font-weight: bold;"/>
+        <Label fx:id="authNumberLabel" text="Will be assigned on save"/>
+    </HBox>
+
+    <Separator>
+        <VBox.margin><Insets top="8" bottom="8"/></VBox.margin>
+    </Separator>
+
+    <!-- Tabbed Content -->
+    <TabPane VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+
+        <!-- TAB 1: Authorization Details -->
+        <Tab text="Authorization Details">
+            <ScrollPane fitToWidth="true">
+                <VBox spacing="15">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                    <GridPane hgap="10" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="NEVER" minWidth="150"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Reason Code:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label"/>
+                        <ComboBox fx:id="reasonCodeCombo" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                  maxWidth="Infinity" promptText="Select reason..."/>
+
+                        <Label text="Delivery Method:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label"/>
+                        <ComboBox fx:id="deliveryMethodCombo" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                  maxWidth="Infinity" promptText="Select delivery method..."/>
+
+                        <Label text="Reason Details:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label"/>
+                        <TextArea fx:id="reasonDetailsArea" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                                  prefRowCount="3" promptText="Additional details..."/>
+                    </GridPane>
+
+                    <!-- Destination School -->
+                    <Label text="Destination School" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+                    <Separator/>
+
+                    <GridPane hgap="10" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="NEVER" minWidth="150"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                            <ColumnConstraints hgrow="NEVER" minWidth="100"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="School Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="destSchoolNameField" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                   GridPane.columnSpan="3" promptText="Destination school name"/>
+
+                        <Label text="District:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="destDistrictField" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="District"/>
+
+                        <Label text="City:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                        <TextField fx:id="destCityField" GridPane.columnIndex="3" GridPane.rowIndex="1" promptText="City"/>
+
+                        <Label text="State:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="destStateField" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                                   promptText="XX" maxWidth="60"/>
+
+                        <Label text="Contact:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <TextField fx:id="destContactNameField" GridPane.columnIndex="1" GridPane.rowIndex="3" promptText="Contact name"/>
+
+                        <Label text="Email:" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                        <TextField fx:id="destContactEmailField" GridPane.columnIndex="3" GridPane.rowIndex="3" promptText="Email"/>
+
+                        <Label text="Phone:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <TextField fx:id="destContactPhoneField" GridPane.columnIndex="1" GridPane.rowIndex="4" promptText="Phone"/>
+                    </GridPane>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <!-- TAB 2: Student Selection -->
+        <Tab text="Students">
+            <VBox spacing="10">
+                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                <TableView fx:id="studentTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="selectedColumn" text="Select" prefWidth="60"/>
+                        <TableColumn fx:id="studentIdColumn" text="Student ID" prefWidth="120"/>
+                        <TableColumn fx:id="firstNameColumn" text="First Name" prefWidth="150"/>
+                        <TableColumn fx:id="lastNameColumn" text="Last Name" prefWidth="150"/>
+                        <TableColumn fx:id="gradeLevelColumn" text="Grade" prefWidth="80"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- TAB 3: Signatures -->
+        <Tab text="Signatures">
+            <VBox spacing="15">
+                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                <Label text="3-Party Quorum Status" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+                <Separator/>
+
+                <GridPane hgap="10" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" minWidth="120"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <Label text="Registrar:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+                    <Label fx:id="registrarSignLabel" text="Pending" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                    <Label text="Principal:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+                    <Label fx:id="principalSignLabel" text="Pending" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                    <Label text="District Admin:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
+                    <Label fx:id="adminSignLabel" text="Pending" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                </GridPane>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <HBox spacing="10">
+                    <Button fx:id="signButton" text="Sign Authorization" onAction="#handleSign"
+                            style="-fx-background-color: #4682B4; -fx-text-fill: white;"/>
+                </HBox>
+            </VBox>
+        </Tab>
+    </TabPane>
+
+    <!-- Error/Info Label -->
+    <Label fx:id="errorLabel" text="" wrapText="true">
+        <VBox.margin><Insets top="5"/></VBox.margin>
+    </Label>
+
+    <!-- Action Buttons -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <VBox.margin><Insets top="10"/></VBox.margin>
+        <Button fx:id="saveButton" text="Save" onAction="#handleSave"
+                style="-fx-background-color: #28a745; -fx-text-fill: white;"/>
+        <Button fx:id="submitButton" text="Submit for Signatures" onAction="#handleSubmit"
+                style="-fx-background-color: #4682B4; -fx-text-fill: white;"/>
+        <Button fx:id="packageButton" text="Package &amp; Deliver" onAction="#handlePackage"
+                style="-fx-background-color: #6f42c1; -fx-text-fill: white;"/>
+        <Button fx:id="cancelButton" text="Close" onAction="#handleCancel"/>
+    </HBox>
+</VBox>

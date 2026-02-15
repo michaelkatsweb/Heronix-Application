@@ -674,6 +674,40 @@ public class MainController {
     }
 
     @FXML
+    public void handleOpenEncryptedExport() {
+        log.info("Action: Open Encrypted Export");
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Open Encrypted Export File");
+        fileChooser.getExtensionFilters().add(
+                new javafx.stage.FileChooser.ExtensionFilter("Heronix Encrypted Files", "*.heronix"));
+        java.io.File file = fileChooser.showOpenDialog(mainBorderPane.getScene().getWindow());
+        if (file != null) {
+            try {
+                byte[] encryptedBytes = java.nio.file.Files.readAllBytes(file.toPath());
+                com.heronix.security.HeronixEncryptionService.DecryptedFile decrypted =
+                        com.heronix.security.HeronixEncryptionService.getInstance().decryptFile(encryptedBytes);
+
+                // Let user choose where to save the decrypted file
+                javafx.stage.FileChooser saveChooser = new javafx.stage.FileChooser();
+                saveChooser.setTitle("Save Decrypted File As");
+                saveChooser.setInitialFileName(decrypted.getOriginalName());
+                java.io.File saveFile = saveChooser.showSaveDialog(mainBorderPane.getScene().getWindow());
+                if (saveFile != null) {
+                    java.nio.file.Files.write(saveFile.toPath(), decrypted.getContent());
+                    showInfo("Decryption Successful",
+                            "File decrypted and saved to:\n" + saveFile.getName() +
+                            "\n\nOriginal format: " + decrypted.getOriginalName());
+                    log.info("Encrypted export decrypted: {} -> {}", file.getName(), saveFile.getName());
+                }
+            } catch (Exception e) {
+                log.error("Failed to decrypt export file", e);
+                showError("Decryption Failed", "Could not decrypt file: " + e.getMessage() +
+                        "\n\nMake sure this machine has the correct HERONIX_MASTER_KEY.");
+            }
+        }
+    }
+
+    @FXML
     public void handleExit() {
         log.info("Action: Exit");
         Platform.exit();

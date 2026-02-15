@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.heronix.ui.controller.TransferPackageDialogController"
+      prefWidth="650" prefHeight="550"
+      styleClass="dialog-container">
+
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="Transfer Package" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Status:" style="-fx-font-weight: bold;"/>
+        <Label fx:id="statusLabel" text="-" style="-fx-text-fill: #4682B4; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <Separator>
+        <VBox.margin><Insets top="10" bottom="10"/></VBox.margin>
+    </Separator>
+
+    <!-- Package Info -->
+    <Label text="Package Information" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+
+    <GridPane hgap="10" vgap="8">
+        <columnConstraints>
+            <ColumnConstraints hgrow="NEVER" minWidth="140"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <Label text="Authorization:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+        <Label fx:id="authNumberLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="SHA-256 Hash:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+        <Label fx:id="packageHashLabel" text="Not yet generated" GridPane.columnIndex="1" GridPane.rowIndex="1"
+               style="-fx-font-family: monospace; -fx-font-size: 10;"/>
+
+        <Label text="Package Size:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
+        <Label fx:id="packageSizeLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    </GridPane>
+
+    <Separator>
+        <VBox.margin><Insets top="10" bottom="10"/></VBox.margin>
+    </Separator>
+
+    <!-- Progress -->
+    <ProgressBar fx:id="progressBar" maxWidth="Infinity" visible="false"/>
+    <Label fx:id="progressLabel" text="" visible="false">
+        <VBox.margin><Insets top="3"/></VBox.margin>
+    </Label>
+
+    <!-- Actions -->
+    <Label text="Actions" style="-fx-font-size: 14; -fx-font-weight: bold;">
+        <VBox.margin><Insets top="10"/></VBox.margin>
+    </Label>
+
+    <VBox spacing="8">
+        <HBox spacing="10">
+            <Button fx:id="generateButton" text="Generate Encrypted Package" onAction="#handleGenerate"
+                    style="-fx-background-color: #4682B4; -fx-text-fill: white;" prefWidth="250"/>
+            <Label text="Encrypts all records with AES-256-GCM" style="-fx-text-fill: gray; -fx-font-size: 11;"/>
+        </HBox>
+
+        <Separator/>
+
+        <HBox spacing="10">
+            <Button fx:id="downloadUsbButton" text="Download to USB Drive" onAction="#handleDownloadUsb"
+                    style="-fx-background-color: #28a745; -fx-text-fill: white;" prefWidth="250"/>
+            <Label text="Save .heronix file to USB drive" style="-fx-text-fill: gray; -fx-font-size: 11;"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Button fx:id="downloadFileButton" text="Download to File" onAction="#handleDownloadFile"
+                    style="-fx-background-color: #28a745; -fx-text-fill: white;" prefWidth="250"/>
+            <Label text="Save .heronix file to local disk" style="-fx-text-fill: gray; -fx-font-size: 11;"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Button fx:id="downloadDocsButton" text="Download All Documentation" onAction="#handleDownloadDocs"
+                    style="-fx-background-color: #6f42c1; -fx-text-fill: white;" prefWidth="250"/>
+            <Label text="Authorization form, chain of custody, manifest, FERPA log" style="-fx-text-fill: gray; -fx-font-size: 11;"/>
+        </HBox>
+
+        <Separator/>
+
+        <HBox spacing="10">
+            <Button fx:id="markDeliveredButton" text="Mark as Delivered" onAction="#handleMarkDelivered"
+                    style="-fx-background-color: #fd7e14; -fx-text-fill: white;" prefWidth="250"/>
+            <Label text="Record that package has been delivered" style="-fx-text-fill: gray; -fx-font-size: 11;"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Button fx:id="confirmReceiptButton" text="Confirm Receipt" onAction="#handleConfirmReceipt"
+                    style="-fx-background-color: #dc3545; -fx-text-fill: white;" prefWidth="250"/>
+            <Label text="Mark destination school confirmed receipt" style="-fx-text-fill: gray; -fx-font-size: 11;"/>
+        </HBox>
+    </VBox>
+
+    <Region VBox.vgrow="ALWAYS"/>
+
+    <!-- Result -->
+    <Label fx:id="resultLabel" text="" wrapText="true">
+        <VBox.margin><Insets top="5"/></VBox.margin>
+    </Label>
+
+    <!-- Close -->
+    <HBox alignment="CENTER_RIGHT">
+        <VBox.margin><Insets top="10"/></VBox.margin>
+        <Button fx:id="closeButton" text="Close" onAction="#handleClose"/>
+    </HBox>
+</VBox>

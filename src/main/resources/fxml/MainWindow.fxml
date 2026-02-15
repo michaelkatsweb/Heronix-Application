@@ -32,6 +32,7 @@
                     <SeparatorMenuItem/>
                     <MenuItem text="Import Data" onAction="#handleImportData"/>
                     <MenuItem text="Export Data" onAction="#handleExportData"/>
+                    <MenuItem text="Open Encrypted Export..." onAction="#handleOpenEncryptedExport"/>
                     <SeparatorMenuItem/>
                     <MenuItem text="Database Backup" onAction="#handleDatabaseBackup"/>
                     <MenuItem text="Database Restore" onAction="#handleDatabaseRestore"/>

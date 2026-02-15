@@ -124,7 +124,7 @@
                             <TableColumn fx:id="subPhoneColumn" text="Phone" prefWidth="120"/>
                             <TableColumn fx:id="subCertificationsColumn" text="Certifications" prefWidth="150"/>
                             <TableColumn fx:id="subStatusColumn" text="Status" prefWidth="80"/>
-                            <TableColumn fx:id="subActionsColumn" text="Actions" prefWidth="120"/>
+                            <TableColumn fx:id="subActionsColumn" text="Actions" prefWidth="180"/>
                         </columns>
                         <placeholder>
                             <Label text="No substitutes found. Click '+ Add Substitute' to add one." styleClass="text-muted-light"/>

@@ -76,6 +76,7 @@ public class SidebarNavigationController {
     @FXML private HBox navNewStudentReg;
     @FXML private HBox navIncompleteRegs;
     @FXML private HBox navCourseEnrollment;
+    @FXML private HBox navSecureTransfer;
     @FXML private HBox navRooms;
     @FXML private HBox navEvents;
     @FXML private HBox navIEP;
@@ -128,6 +129,7 @@ public class SidebarNavigationController {
     @FXML private Label navNewStudentRegLabel;
     @FXML private Label navIncompleteRegsLabel;
     @FXML private Label navCourseEnrollmentLabel;
+    @FXML private Label navSecureTransferLabel;
     @FXML private Label navRoomsLabel;
     @FXML private Label navEventsLabel;
     @FXML private Label navIEPLabel;
@@ -270,6 +272,7 @@ public class SidebarNavigationController {
         navItemsMap.put("new-student-registration", navNewStudentReg);
         navItemsMap.put("incomplete-registrations", navIncompleteRegs);
         navItemsMap.put("course-enrollment", navCourseEnrollment);
+        navItemsMap.put("secure-transfer", navSecureTransfer);
         navItemsMap.put("rooms", navRooms);
         navItemsMap.put("events", navEvents);
         navItemsMap.put("iep", navIEP);
@@ -724,6 +727,11 @@ public class SidebarNavigationController {
     @FXML
     private void handleNavCourseEnrollment(MouseEvent event) {
         navigateTo("course-enrollment", navCourseEnrollment);
+    }
+
+    @FXML
+    private void handleNavSecureTransfer(MouseEvent event) {
+        navigateTo("secure-transfer", navSecureTransfer);
     }
 
     @FXML
